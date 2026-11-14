@@ -119,6 +119,8 @@ tests/               node --test
 
 **Host controls:** ◂ Back (view-only: steps through earlier cards and earlier
 rounds, changes nothing), Pause/Auto, Next, Back to live, Skip side stories.
+Rooms start paused (click Next); turn on Auto to advance by itself. Each
+control has a fixed slot, so buttons never move when one appears.
 **Speed** (Slow / Normal / Fast) scales how long each card stays up, based on
 how many words are on it (`rules.js` → `timing`). **Effects** toggles the
 stage-themed backgrounds (one canvas, off under reduced motion; night rounds

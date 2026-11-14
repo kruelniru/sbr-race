@@ -75,14 +75,27 @@ function raceControls(state, rh) {
   const s = state.settings;
   const nextLabel = rh.nextLabel();
   const atLiveEnd = !rh.viewing && rh.waiting;
+  // Every control has a fixed slot, so nothing moves when a button appears or
+  // disappears (a hidden button keeps its space and can't be clicked).
+  const slot = (show, attrs, label) => h('button', {
+    ...attrs,
+    class: `${attrs.class ?? 'btn btn-small'}${show ? '' : ' slot-hidden'}`,
+    disabled: !show,
+    'aria-hidden': show ? null : 'true',
+    tabindex: show ? null : '-1',
+  }, label);
+  const showNextRound = atLiveEnd && !!nextLabel;
   return h('footer', { class: 'race-controls' },
-    h('div', { class: 'control-group' },
-      h('button', { class: 'btn btn-small', onclick: () => rh.back(), title: 'Step back (view only)' }, '◂ Back'),
-      h('button', { class: 'btn btn-small', onclick: () => rh.setAuto(!rh.auto) }, rh.auto ? '❚❚ Pause' : '▶ Auto'),
-      !atLiveEnd && h('button', { class: 'btn btn-small', onclick: () => rh.next() }, 'Next ▸'),
-      rh.viewing && h('button', { class: 'btn btn-small', onclick: () => rh.backToLive() }, 'Back to live ⏭'),
-      rh.onSideStory && h('button', { class: 'btn btn-small', onclick: () => rh.skipSide() }, 'Skip side stories ⏭'),
-      atLiveEnd && nextLabel && h('button', { class: 'btn btn-primary', onclick: () => rh.nextRound() }, nextLabel),
+    h('div', { class: 'control-slots' },
+      slot(true, { onclick: () => rh.back(), title: 'Step back (view only)' }, '◂ Back'),
+      slot(true, { onclick: () => rh.setAuto(!rh.auto) }, rh.auto ? '❚❚ Pause' : '▶ Auto'),
+      h('div', { class: 'slot-main' },
+        showNextRound
+          ? slot(true, { class: 'btn btn-primary', onclick: () => rh.nextRound() }, nextLabel)
+          : slot(!atLiveEnd, { onclick: () => rh.next() }, 'Next ▸'),
+      ),
+      slot(rh.viewing, { onclick: () => rh.backToLive() }, 'Back to live ⏭'),
+      slot(rh.onSideStory, { onclick: () => rh.skipSide() }, 'Skip side stories ⏭'),
     ),
     h('div', { class: 'control-group' },
       h('label', { class: 'mini-setting' }, 'Speed',

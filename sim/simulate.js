@@ -176,6 +176,10 @@ function printStats(S) {
   console.log(`  points  avg ${f1(avg(S.winnerPoints))}, min ${Math.min(...S.winnerPoints)}, max ${Math.max(...S.winnerPoints)}`);
   console.log(`  tier    PC ${pct(S.winnerTier.pc, g)} · canon ${pct(S.winnerTier.canon, g)} · pack leader ${pct(S.winnerTier.npc, g)}`);
 
+  const pcRanks = [...S.mount.horse.placements, ...S.mount.runner.placements];
+  const share = (max) => pct(pcRanks.filter((r) => r <= max).length, pcRanks.length);
+  console.log(`\nPC stage placements: top 10 in ${share(10)}, top 3 in ${share(3)}`);
+
   console.log('\nRiders vs Runners (PCs)');
   for (const [k, m] of Object.entries(S.mount)) {
     if (!m.n) continue;

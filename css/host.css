@@ -131,6 +131,11 @@
 
 /* ---------------------------------------------------------------- controls */
 .race-controls { flex-direction: column; gap: 10px; }
+/* Fixed slots: buttons never shift when one appears or disappears. */
+.control-slots { display: grid; grid-template-columns: 7.5em 7.5em 19em 10em 12.5em; gap: 10px; align-items: center; justify-content: center; }
+.control-slots > .btn, .slot-main > .btn { width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.slot-hidden { visibility: hidden; pointer-events: none; }
+@media (max-width: 800px) { .control-slots { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .control-group { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; }
 .mini-setting { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); font-size: .85rem; background: #000a; padding: 4px 10px; border-radius: 999px; }
 .mini-setting select, .lobby-settings select { font: inherit; color: var(--text); background: var(--bg-2); border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; }

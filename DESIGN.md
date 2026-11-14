@@ -126,7 +126,7 @@ The race runs 9 stages. Stage 1 has 2 rounds, Stages 2–4 have 4, and the rest 
 
 **Side stories are skipped automatically by default** to keep games at 30–40 minutes. They still reach the phones' feeds. The host can turn the setting off for long game nights, and when it's off a **Skip side stories** button skips them round by round.
 
-**Pacing:** auto-advance by default. Each card stays up for a time based on how many words are on it, with a host **speed** setting: Slow, Normal or Fast. Auto-advance pauses at stage results; the host starts the next stage.
+**Pacing:** new rooms start **paused**: the host clicks Next through each card. **Auto** is a toggle; with it on, each card stays up for a time based on how many words are on it, with a host **speed** setting: Slow, Normal or Fast. Auto-advance pauses at stage results; the host starts the next stage. Every host control has a fixed slot, so buttons never shift when "Back to live" or "Skip side stories" appears.
 
 **Back button:** steps back through earlier cards in the current round and earlier rounds. It's view-only: it changes nothing in the game and re-sends nothing to phones. "Back to live" returns.
 
@@ -385,3 +385,5 @@ Decisions made after the original design, in the order they came up:
 17. Stage-themed backgrounds with light particle effects, darker at night, with an Effects toggle.
 18. The ending is a sequence: podium (3rd → 2nd → pause → winner), awards, survivors, a memorial, and later the secrets reveal as the final moment.
 19. Spares are tracked from milestone 2 onward and feed the Most Merciful award.
+20. New rooms start paused (host clicks Next); Auto is a toggle. Host controls sit in fixed slots so nothing shifts.
+21. PCs buffed slightly after the first live test: PC skill 60 → 63, PC death odds 0.6 → 0.45. About 51% of PCs reach New York (was ~45%). Final retune after milestone 6.

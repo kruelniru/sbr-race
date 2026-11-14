@@ -8,7 +8,7 @@ export default {
   // ---------------------------------------------------------------- placement
   // score = skill + pace*paceWeight - penalties + terrain + noise
   placement: {
-    pcSkill: 60,          // every PC (canon skills live in canon-racers.js)
+    pcSkill: 63,          // every PC (canon skills live in canon-racers.js)
     paceWeight: 7,        // per point of pace earned in events this stage
     injuredPenalty: 15,
     onFootPenalty: 40,    // a Rider whose horse died
@@ -34,7 +34,7 @@ export default {
   canonEventChance: 0.4,   // a canon racer gets their own event this often
   retiredEventChance: 0.25,// a retired racer gets an event this often
   // How likely an event that would kill this tier is (weight multiplier).
-  deathOdds: { pc: 0.6, canon: 0.35, npc: 1 },
+  deathOdds: { pc: 0.45, canon: 0.35, npc: 1 },
   canonImmuneStages: [1],  // canon racers can't die in these stages
 
   // Personality nudges: multiply an event's weight by tag for the FOCUS racer.

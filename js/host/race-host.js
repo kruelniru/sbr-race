@@ -24,7 +24,7 @@ export class RaceHost {
     this.lobby = lobby;
     this.state = lobby.state;
     this.onChange = onChange;
-    this.auto = true;
+    this.auto = false; // paused by default: the host clicks Next (Auto is a toggle)
     this.timer = null;
     this.cursor = null; // { r, i } while looking back; null = live
   }
