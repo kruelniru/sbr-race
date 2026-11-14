@@ -35,7 +35,7 @@ export function createGameState(seed) {
       minPlayers: DEFAULT_MIN_PLAYERS, // riders needed before the host can start
       canon: Object.fromEntries(CANON.map((c) => [c.id, true])), // canon racer toggles
       revealSpeed: 'normal', // 'slow' | 'normal' | 'fast' (host auto-advance)
-      autoSkipSide: false,   // skip Side Stories automatically (shorter games)
+      autoSkipSide: true,    // skip Side Stories automatically (on by default; off for long game nights)
       effects: true,         // stage-themed particle effects on the host
     },
     players: [],

@@ -111,8 +111,9 @@ tests/               node --test
 1. **Main Story**: every event with a PC, canon racer or breakout NPC who's still racing.
 2. **Side Stories**: retired racers and NPC-only lines, then "Meanwhile on the
    trail..." (up to 4 short lines; the rest go to phones only) with the NPC field
-   report. Use the **Skip side stories** button, or the setting that skips them
-   automatically for a shorter game.
+   report. They're **skipped automatically by default** (they still reach the
+   phones). Turn the "Skip side stories" setting off for long game nights, or
+   use the **Skip side stories** button when it's off.
 3. **The Fallen** (after Night rounds and Finish Lines), then **stage results**
    and **standings**. These always show.
 
