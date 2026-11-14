@@ -1,0 +1,69 @@
+// Finish Line: rank everyone still racing and hand out points.
+//
+//   score = skill + pace * paceWeight
+//           - injuredPenalty (if injured this stage)
+//           - onFootPenalty  (Rider whose horse died)
+//           + runner terrain modifiers (Runners only)
+//           + luck (canon trait)
+//           + noise (normal, sd = noiseSd)
+// Contenders: named racers still racing + the field's pack leaders.
+
+import RULES from '../../data/rules.js';
+import { namedRacers } from './racers.js';
+import { npcName, keepNpc } from './field.js';
+
+export function runnerTerrainBonus(stage) {
+  let bonus = RULES.runner.base ?? 0;
+  for (const tag of stage.terrain) bonus += RULES.runner.terrain[tag] ?? 0;
+  return bonus;
+}
+
+export function placementScore(racer, stage, rng) {
+  const P = RULES.placement;
+  let score = racer.tier === 'npc' ? RULES.packLeaderSkill : racer.skill;
+  score += racer.pace * P.paceWeight;
+  if (racer.injured) score -= P.injuredPenalty;
+  if (racer.mount === 'horse' && racer.onFoot) score -= P.onFootPenalty;
+  if (racer.mount === 'runner') score += runnerTerrainBonus(stage);
+  score += racer.luck ?? 0;
+  // Stage Plans (milestone 3) and horse quality (milestone 5) plug in here.
+  return score + rng.normal(0, P.noiseSd);
+}
+
+/** Returns placements [{ rank, id, name, tier, points, unnamed }] and updates racers. */
+export function placeStage(state, rng, stage) {
+  const named = namedRacers(state).filter((r) => r.status === 'racing');
+  const pack = state.field.packLeaders.filter((n) => n.status === 'racing');
+  const scored = [...named, ...pack]
+    .map((r) => ({ r, score: placementScore(r, stage, rng) }))
+    .sort((a, b) => b.score - a.score);
+
+  const placements = scored.map(({ r }, i) => {
+    const rank = i + 1;
+    const pts = RULES.points[i] ?? 0;
+    r.points += pts;
+    if (r.tier !== 'npc') r.placements.push({ stage: stage.id, rank });
+    // A pack leader who places top 10 earns a name and joins the kept NPCs.
+    if (r.tier === 'npc' && !r.name && rank <= 10) {
+      r.name = npcName(state, rng, r.pronouns);
+      keepNpc(state, r);
+    }
+    return { rank, id: r.id, name: r.name, tier: r.tier, points: pts, unnamed: !r.name };
+  });
+
+  // Reset per-stage modifiers.
+  for (const r of [...namedRacers(state), ...state.field.packLeaders, ...state.field.kept]) {
+    r.pace = 0;
+    r.injured = false;
+  }
+  return placements;
+}
+
+/** Overall standings by points (named racers and named NPCs who scored). */
+export function standings(state) {
+  const npcs = [...state.field.packLeaders, ...state.field.kept].filter((n) => n.name && n.points > 0);
+  const unique = [...new Map([...namedRacers(state), ...npcs].map((r) => [r.id, r])).values()];
+  return unique
+    .sort((a, b) => b.points - a.points)
+    .map((r) => ({ id: r.id, name: r.name, tier: r.tier, points: r.points, status: r.status }));
+}

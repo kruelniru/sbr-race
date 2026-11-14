@@ -1,12 +1,14 @@
 // Name parts for AI racers (game-controlled PCs that fill empty lobby slots).
-// Frontier-era flavor; avoid canon SBR names so nobody mistakes them for canon racers.
+// First names are grouped by pronouns so text reads naturally; they/them
+// racers draw from unisex names. Avoid canon SBR names.
 export default {
-  first: [
-    'Silas', 'Ada', 'Ezra', 'June', 'Clay', 'Hattie', 'Wade', 'Opal', 'Abel', 'Della', 'Rufus', 'Mae',
-    'Jesse', 'Nell', 'Cyrus', 'Ivy', 'Amos', 'Lottie', 'Boone', 'Pearl', 'Hank', 'Vera', 'Otis', 'Rosa',
-    'Eli', 'Clementine', 'Gus', 'Winnie', 'Josiah', 'Belle', 'Virgil', 'Etta', 'Luther', 'Cora', 'Ike', 'Mabel',
-    'Sterling', 'Florence', 'Tobias', 'Ruby', 'Calvin', 'Iris', 'Rowan', 'Sage', 'Quinn', 'Ellis',
-  ],
+  first: {
+    he: ['Silas', 'Ezra', 'Clay', 'Wade', 'Abel', 'Rufus', 'Jesse', 'Cyrus', 'Amos', 'Boone', 'Hank', 'Otis',
+      'Eli', 'Gus', 'Josiah', 'Virgil', 'Luther', 'Ike', 'Tobias', 'Calvin', 'Sterling', 'Jedediah'],
+    she: ['Ada', 'June', 'Hattie', 'Opal', 'Della', 'Mae', 'Nell', 'Ivy', 'Lottie', 'Pearl', 'Vera', 'Rosa',
+      'Clementine', 'Winnie', 'Belle', 'Etta', 'Cora', 'Mabel', 'Florence', 'Ruby', 'Iris', 'Annie'],
+    they: ['Rowan', 'Sage', 'Quinn', 'Ellis', 'Jules', 'Avery', 'Morgan', 'Reese', 'Emery', 'Marlow', 'Shiloh', 'Wren'],
+  },
   last: [
     'Crane', 'Holloway', 'Briggs', 'Vance', 'Tate', 'McCrae', 'Doyle', 'Pike', 'Sutter', 'Hale', 'Rook',
     'Calloway', 'Finch', 'Garrett', 'Shaw', 'Wilder', 'Booker', 'Larkin', 'Mercer', 'Thorne', 'Ashby',

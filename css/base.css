@@ -80,3 +80,8 @@ h1, h2, h3 { font-family: var(--display); font-weight: 700; margin: 0 0 .5em; }
 
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 [hidden] { display: none !important; }
+.feed-round { color: var(--gold-2); font-family: var(--display); letter-spacing: .05em; padding-top: .7em; }
+.feed-death, .feed-fallen { color: #ffb4a8; }
+.feed-minor, .feed-report { color: var(--muted); font-size: .88rem; }
+.feed-stage, .feed-final { color: var(--gold-2); font-weight: 600; }
+.feed-item.mine { background: #4a341866; border-left: 3px solid var(--gold); padding-left: 8px; }

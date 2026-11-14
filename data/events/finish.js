@@ -1,0 +1,21 @@
+// Finish Line rounds (the last round of every stage).
+export default [
+  { id: 'finish-final-gallop', text: '{a} spurs {a.horse} into a final gallop toward the line.',
+    cast: { a: { is: 'focus', hasHorse: true } }, effects: { a: { pace: 1 } }, tags: ['minor', 'pace'], when: { rounds: ['finish'] }, weight: 6 },
+  { id: 'finish-last-sprint-runner', text: '{a} finds one last burst in {a.their} legs for the finish.',
+    cast: { a: { is: 'focus', mount: 'runner' } }, effects: { a: { pace: 1 } }, tags: ['minor', 'pace'], when: { rounds: ['finish'] }, weight: 6 },
+  { id: 'finish-fades', text: '{a} fades badly in the final miles.',
+    cast: { a: 'focus' }, effects: { a: { pace: -1 } }, tags: ['minor'], when: { rounds: ['finish'] }, weight: 4 },
+  { id: 'finish-npc-collapse', text: '{a} passes {b}, who has collapsed a mile short of the finish.',
+    cast: { a: 'focus', b: 'npc' }, effects: { b: { retires: true } }, tags: [], when: { rounds: ['finish'] }, weight: 2.5 },
+  { id: 'finish-photo', text: '{a} and {b} cross the line almost together, both claiming the better time.',
+    cast: { a: 'focus', b: 'named' }, tags: ['minor'], when: { rounds: ['finish'] }, weight: 3 },
+  { id: 'finish-crowd-crush', text: '{a} is pinned against a fence when the crowd surges onto the track at the finish.',
+    cast: { a: 'focus' }, effects: { a: { injured: true } }, tags: ['hazard'], when: { rounds: ['finish'] }, weight: 1.5 },
+  { id: 'finish-heart-gives-out', text: "{a.horse}'s heart gives out within sight of the finish line. {a} walks the rest.",
+    cast: { a: { is: 'focus', hasHorse: true } }, effects: { a: { horse: 'dies', pace: -1 } }, tags: ['hazard'], when: { rounds: ['finish'] }, weight: 0.3 },
+  { id: 'finish-trip', text: "{a} crowds {b} into the rail on the final turn.",
+    cast: { a: 'focus', b: 'named' }, effects: { a: { points: -10, pace: 1 }, b: { pace: -2 } }, tags: ['sabotage'], when: { rounds: ['finish'] }, weight: 1.2 },
+  { id: 'finish-sprint-bonus', text: '{a} takes the time bonus for leading the final mile.',
+    cast: { a: 'focus' }, effects: { a: { points: 10, pace: 1 } }, tags: ['sprint'], when: { rounds: ['finish'] }, weight: 2 },
+];

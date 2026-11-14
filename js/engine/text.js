@@ -10,6 +10,7 @@
 //   {racer.theirs}     possessive pronoun                 -> "hers" / "theirs"
 //   {racer.themself}   reflexive                          -> "herself" / "themself"
 //   Capitalize the first letter to capitalize the word: {racer.They}, {racer.Their}
+//   {racer.horse}      the racer's horse's name            -> "Valkyrie"
 //
 //   {racer:is/are}     verb agreement with the PRONOUN    -> "is" (she) / "are" (they)
 //   {racer:s}          shorthand for {racer:s/}           -> "ride{racer:s}" = "rides" / "ride"
@@ -41,6 +42,7 @@ export function render(template, roles) {
     if (!sep) return who.name;
 
     if (sep === '.') {
+      if (rest === 'horse') return who.horse || 'the horse';
       const lower = rest.charAt(0).toLowerCase() + rest.slice(1);
       if (!FORMS.includes(lower)) return unknown(whole, `unknown pronoun form "${rest}"`);
       const word = p[lower];
@@ -70,7 +72,7 @@ export function lintTemplate(template, allowedRoles) {
   for (const m of template.matchAll(TOKEN)) {
     const [whole, role, sep, rest] = m;
     if (!allowedRoles.includes(role)) problems.push(`${whole}: role "${role}" not in [${allowedRoles.join(', ')}]`);
-    if (sep === '.' && !FORMS.includes(rest.charAt(0).toLowerCase() + rest.slice(1))) problems.push(`${whole}: unknown pronoun form`);
+    if (sep === '.' && rest !== 'horse' && !FORMS.includes(rest.charAt(0).toLowerCase() + rest.slice(1))) problems.push(`${whole}: unknown pronoun form`);
     if (sep === ':' && !rest.includes('/') && rest !== 's' && rest !== 'es') problems.push(`${whole}: bad verb agreement`);
   }
   const stray = template.replace(TOKEN, '').match(/[{}]/);

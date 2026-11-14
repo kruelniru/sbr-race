@@ -115,6 +115,7 @@ function handle(m) {
 
     case TO_PHONE.YOU:
       you = m.you;
+      feed.setMine(you?.id);
       if (saving && you.hasCharacter) {
         saving = false;
         form = null;
@@ -319,11 +320,37 @@ function renderLobby() {
 }
 
 function renderRacing() {
+  const r = you?.race;
+  const head = pub?.race;
   mount(ui.main,
     h('section', {},
+      head && (head.over
+        ? h('div', { class: 'race-where' }, 'The race is over: New York!')
+        : h('div', { class: 'race-where' }, `Stage ${head.stageId} · ${head.stageName}`, h('span', { class: 'race-round' }, head.label))),
       youCard(),
-      h('p', { class: 'waiting' }, 'The race is on! Watch the stream. Choices will appear here.'),
+      r ? statusCard(r) : null,
+      r?.status === 'dead'
+        ? h('p', { class: 'waiting fallen' }, 'You can still follow the race below. Dead riders get to vote on the living in a later update.')
+        : h('p', { class: 'waiting' }, 'Watch the stream. Choices will appear here in a later update.'),
     ),
+  );
+}
+
+function statusCard(r) {
+  const status = {
+    racing: ['Racing', 'ok'],
+    retired: ['Retired: out of the points race, still on the trail', 'warn'],
+    dead: [`Fallen: ${r.death?.cause ?? 'unknown'}${r.death?.by ? ` (${r.death.by})` : ''}`, 'bad'],
+  }[r.status];
+  const mount = r.mount === 'runner'
+    ? 'Runner: no horse, ever'
+    : r.onFoot ? `On foot (lost ${r.horse})` : `Horse: ${r.horse}`;
+  return h('dl', { class: 'status-card' },
+    h('dt', {}, 'Status'), h('dd', { class: `st-${status[1]}` }, status[0]),
+    h('dt', {}, r.mount === 'runner' ? 'Running' : 'Horse'), h('dd', {}, mount),
+    h('dt', {}, 'Points'), h('dd', {}, String(r.points)),
+    r.lastPlacement && [h('dt', {}, 'Last stage'), h('dd', {}, `${ordinal(r.lastPlacement.rank)} in Stage ${r.lastPlacement.stage}`)],
+    r.kills ? [h('dt', {}, 'Kills'), h('dd', {}, String(r.kills))] : null,
   );
 }
 
@@ -335,7 +362,7 @@ function youCard() {
     h('div', {},
       h('div', { class: 'player-name' }, you.name),
       h('div', { class: 'player-meta' }, [PRONOUNS[you.pronouns]?.label, you.gender].filter(Boolean).join(' · ')),
-      h('div', { class: 'player-personality' }, personality?.label ?? ''),
+      h('div', { class: 'player-personality' }, [personality?.label, you.mount === 'runner' ? 'Runner' : 'Rider'].filter(Boolean).join(' · ')),
     ),
   );
 }
@@ -365,6 +392,13 @@ function renderStatus(status) {
     form?.setBusy(false);
     form?.showError('The connection dropped before your changes were saved. Tap save again once reconnected.');
   }
+}
+
+/** 1 -> "1st", 2 -> "2nd", 11 -> "11th", 23 -> "23rd" */
+function ordinal(n) {
+  const teens = n % 100 >= 11 && n % 100 <= 13;
+  const suffix = teens ? 'th' : { 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] ?? 'th';
+  return n + suffix;
 }
 
 function normalizeCode(v, partial = false) {

@@ -9,13 +9,18 @@ Phones talk to the host browser over WebRTC (PeerJS, pinned in `js/config.js`).
 
 ## Run it locally
 
-Any static server works. Python is the simplest:
+Use the included no-cache server, so the browser always loads your latest edits:
 
 ```bash
-python -m http.server 8000 --bind 0.0.0.0
+python tools/serve.py
 ```
 
-(Or `npm run serve`, which uses `npx http-server`.)
+It serves on port 8000 and all network interfaces. Any static server works,
+but plain `python -m http.server` lets the browser cache old JS modules, and
+you'll get confusing errors after edits.
+
+**After pushing to GitHub Pages**, wait about 10 minutes before running a game.
+Pages caches files for 10 minutes, and a phone that mixes old and new files can break.
 
 - **Host:** open <http://localhost:8000/host.html> on the computer you stream from.
   Add `?debug=1` for the debug bar (fill the lobby with bots, see the seed).
@@ -70,12 +75,54 @@ js/engine/           pure game logic, no DOM (Node can import it)
   text.js            event template tokens + pronouns (see header comment)
   state.js           game state + publicView / privateView / hostScreenView
   roster.js          AI racer characters
-js/host/             host-main.js (screen), lobby.js (sessions, joins), persist.js, debug.js
+  race.js            the round loop: startRace, runRound, syncShown
+  events.js          picking, casting and resolving events (+ content linter)
+  effects.js         what events can do (dies, retires, pace, horse...); add handlers here
+  racers.js          PCs and canon racers share one racer shape
+  field.js           the NPC field, pack leaders, named NPCs, field reports
+  placement.js       Finish Line scores, points, standings
+  reveal.js          round result -> host cards with timings (shared with the sim)
+js/host/             host-main.js, lobby.js, race-host.js (reveal controller), race-view.js, persist.js, debug.js
 js/phone/            phone-main.js, character-form.js, image.js, wake-lock.js, feed.js
 js/ui/dom.js         small DOM helpers
-data/                game content (personalities, pronouns, AI racer names; events, Stands, racers later)
+data/                game content, separate from the engine
+  rules.js           every tunable number (points, placement, death odds, pacing...)
+  stages.js          the 9 stages: rounds, terrain, NPC attrition
+  canon-racers.js    the 15 canon racers (each a host toggle)
+  events/            event templates; see data/events/README.md
+  horse-names.js, npc-names.js, ai-names.js, personalities.js, pronouns.js
+sim/simulate.js      headless balance simulator
 tests/               node --test
 ```
+
+## The race (milestone 2)
+
+- Each stage alternates Day and Night rounds, and the last round is the Finish Line.
+  Every alive PC gets one main event per round. Canon racers get one in about
+  50% of rounds and retired racers in about 25%; both always appear when another
+  event casts them.
+- Small `minor` events go on one "Meanwhile on the trail..." card, along with the
+  NPC field report. The Fallen show after Night rounds and Finish Lines.
+- Placements at each Finish Line rank named racers plus 6 "pack leader" NPCs.
+  A pack leader gets a name when it places top 10.
+- Riders have a named horse. If it dies, they continue on foot (−40). Runners never
+  have a horse: rough terrain helps them, open flats hurt them.
+- The host auto-advances cards and stops at stage results. Phones get each line
+  in the mini feed as it's revealed, and their own status after the round.
+
+## Balance sim
+
+```bash
+node sim/simulate.js --games 500                 # 18 PCs by default
+node sim/simulate.js --games 500 --runners 0.3   # 30% Runners
+node sim/simulate.js --seed demo --verbose       # read one full game
+```
+
+The sim prints deaths and retirements per stage by tier, who reaches New York,
+winners by tier, Riders vs Runners, kills, game length (reveal time plus
+projected choice time) and event usage. It ends with sanity checks. Tune the
+numbers in `data/rules.js`, `data/stages.js` and the event weights.
+`sim/sample-game.txt` is one full game.
 
 ### Privacy rule
 

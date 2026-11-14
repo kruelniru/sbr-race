@@ -1,0 +1,21 @@
+// Stage 2: Arizona Desert
+export default [
+  { id: 's2-mirage', text: "{a} chases a mirage for an hour before {a.they} realize{a:s} the lake isn't real.",
+    cast: { a: 'focus' }, effects: { a: { pace: -1 } }, tags: ['minor'], when: { stages: [2], rounds: ['day'] }, weight: 5 },
+  { id: 's2-dead-of-thirst', text: '{a} finds {b} dead of thirst beside {b.their} horse.',
+    cast: { a: 'focus', b: 'npc' }, effects: { b: { dies: 'dehydration' } }, tags: ['hazard'], when: { stages: [2] }, weight: 3 },
+  { id: 's2-thirst-death', text: '{a} runs out of water in the desert. {a.They} {a:is/are} never seen again.',
+    cast: { a: 'focus' }, effects: { a: { dies: 'dehydration' } }, tags: ['hazard'], when: { stages: [2] }, weight: 0.8 },
+  { id: 's2-sandstorm', text: '{a} waits out a sandstorm under {a.their} blanket.',
+    cast: { a: 'focus' }, effects: { a: { pace: -1 } }, tags: ['minor'], when: { stages: [2] }, weight: 4 },
+  { id: 's2-share-water', text: '{a} shares {a.their} last canteen with {b}, who was about to collapse.',
+    cast: { a: 'focus', b: 'named' }, effects: { a: { points: 5 }, b: { pace: 1 } }, tags: ['help'], when: { stages: [2] }, weight: 2.5 },
+  { id: 's2-scorpion', text: "A scorpion stings {a.horse} in the night. The horse doesn't see morning.",
+    cast: { a: { is: 'focus', hasHorse: true } }, effects: { a: { horse: 'dies' } }, tags: ['hazard'], when: { stages: [2], rounds: ['night'] }, weight: 0.5 },
+  { id: 's2-devils-palm-rumor', text: "{a} hears whispers about the Devil's Palm and gives the dunes a wide berth.",
+    cast: { a: 'focus' }, tags: ['minor'], when: { stages: [2] }, weight: 3 },
+  { id: 's2-oasis', text: '{a} finds a hidden spring and lets {a.horse} drink {a.their} fill.',
+    cast: { a: { is: 'focus', hasHorse: true } }, effects: { a: { pace: 1 } }, tags: ['minor'], when: { stages: [2] }, weight: 3 },
+  { id: 's2-water-thief', text: "{a} steals {b}'s water while {b.they} sleep{b:s} and leaves {b.them} to the desert.",
+    cast: { a: 'focus', b: 'named' }, effects: { a: { pace: 1 }, b: { pace: -2 } }, tags: ['sabotage', 'cold'], when: { stages: [2], rounds: ['night'] }, weight: 1 },
+];

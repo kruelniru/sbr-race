@@ -1,0 +1,903 @@
+STEEL BALL RUN · seed "kruel-1" · 18 PCs, 15 canon, 500 in the field
+
+The racers:
+  Cora Booker (PC, she, ruthless, horse Nugget)
+  Reese Ketchum (PC, they, ruthless, horse Juniper)
+  Jules Rook (PC, they, honorable, horse Quicksilver)
+  Belle Sutter (PC, she, ruthless, horse Buckshot)
+  Ezra Thorne (PC, he, opportunist, horse Comet)
+  Ada Shaw (PC, she, honorable, horse Dixie)
+  Rosa Larkin (PC, she, ruthless, Runner)
+  Annie Ketchum (PC, she, ruthless, horse Tornado)
+  Hattie Sutter (PC, she, ruthless, horse Outlaw)
+  Rufus Marsh (PC, he, glory, horse Hickory)
+  Morgan Booker (PC, they, cautious, horse Bandit)
+  Winnie Carver (PC, she, ruthless, horse Duke)
+  Marlow Briggs (PC, they, ruthless, horse Thunder)
+  Clementine Prescott (PC, she, honorable, horse Midnight)
+  Ellis Danner (PC, they, opportunist, horse Ghost)
+  Etta Blackwood (PC, she, glory, Runner)
+  Ivy Prescott (PC, she, honorable, horse Ranger)
+  Wren Garrett (PC, they, honorable, horse Yankee)
+  Hot Pants (canon, she, honorable, horse Whiskey)
+  Johnny Joestar (canon, he, glory, horse Slow Dancer)
+  Gyro Zeppeli (canon, he, honorable, horse Valkyrie)
+  Diego Brando (canon, he, opportunist, horse Silver Bullet)
+  Sandman (canon, he, opportunist, Runner)
+  Mountain Tim (canon, he, honorable, horse Domino)
+  Pocoloco (canon, he, glory, horse Flint)
+  Wekapipo (canon, he, cautious, horse Pinto)
+  Norisuke Higashikata IV (canon, he, cautious, horse Tumbleweed)
+  Mrs. Robinson (canon, he, ruthless, horse Apache Wind)
+  Oyecomova (canon, he, ruthless, horse Sagebrush)
+  Urmd Avdul (canon, he, opportunist, horse Prairie Fire)
+  Benjamin Boom Boom (canon, he, ruthless, horse Valentina)
+  Andre Boom Boom (canon, he, ruthless, horse Shiloh)
+  L.A. Boom Boom (canon, he, ruthless, horse Pepper)
+
+======================================================================
+STAGE 1: 15,000 METERS
+San Diego West Coast Beach → Santa Maria Novella Church
+======================================================================
+
+--- Day 1 ---
+✝ Percival Delacroix challenges Jules Rook to a duel over a water hole. Jules Rook draws first, and Percival Delacroix drops into the dust.
+✝ Shots ring out in the crush at the start. Sawyer Barlow falls. Ezra Thorne keeps his head down and rides.
+✝ Dozens of horses collide off the start line. Belle Sutter gets clear, but Ambrose Prentiss is trampled.
+  Mountain Tim lassoes Benjamin Boom Boom out of a flash flood.
+  A bullet meant for Pocoloco hits his hat instead. Pocoloco laughs and rides on.
+✝ Elias Hawthorne ambushes Rufus Marsh from behind a rock. Rufus Marsh never sees the shot coming.
+  Clementine Prescott follows a trapper's map down a shortcut and gains half a day.
+✝ Annie Ketchum catches Ivy Prescott alone on the trail and kills her for her supplies.
+  With no horse to steer, Sandman weaves through the chaos at the start.
+  Wren Garrett takes the cliff path along the coast while the pack fights over the beach.
+  Diego Brando's foot catches in the stirrup and he is dragged until Ada Shaw cuts the strap.
+  Meanwhile on the trail...
+    · Etta Blackwood and L.A. Boom Boom race neck and neck for miles until Etta Blackwood edges ahead.
+    · Oyecomova finds a steady rhythm and makes good time.
+    · Andre Boom Boom finds a steady rhythm and makes good time.
+    · Johnny Joestar finds a shallow ford and crosses the river dry.
+    · Clara Ashcroft waves for help by the trail. Marlow Briggs rides straight past.
+    · Rosa Larkin finds a shallow ford and crosses the river dry.
+    · Prairie Fire throws a shoe, and Urmd Avdul loses an hour at a roadside smithy.
+    · Morgan Booker stops to splint the arm of Philippa Prentiss, who was thrown from her horse.
+    · Hattie Sutter and Reese Ketchum race neck and neck for miles until Hattie Sutter edges ahead.
+    · Ghost bogs down in the deep sand.
+    · Tatum Voss waves for help by the trail. Winnie Carver rides straight past.
+    · A whole town turns out to cheer Cora Booker through.
+  [Field] 33 racers retired and 19 died. 448 remain.
+
+--- Finish Line ---
+  Rosa Larkin runs until her legs give out and has to rest for hours.
+  Sandman runs in long, silent strides and keeps pace with the horses.
+  Norisuke Higashikata IV follows a trapper's map down a shortcut and gains half a day.
+  Winnie Carver cuts Johnny Joestar's cinch strap at a water stop. Johnny Joestar loses an hour fixing it.
+  Mountain Tim passes Silas Delacroix, who has collapsed a mile short of the finish.
+✝ Oyecomova plants a bomb under a bridge. Elias Hawthorne rides over it.
+  Wekapipo's foot catches in the stirrup and he is dragged until Wren Garrett cuts the strap.
+  Etta Blackwood takes the cliff path along the coast while the pack fights over the beach.
+  Jules Rook lashes Philippa Prentiss across the face with a riding crop to get past.
+  Meanwhile on the trail...
+    · Belle Sutter spurs Buckshot into a final gallop toward the line.
+    · Morgan Booker and Diego Brando cross the line almost together, both claiming the better time.
+    · Clementine Prescott fades badly in the final miles.
+    · Annie Ketchum fades badly in the final miles.
+    · Reese Ketchum stops to splint the arm of Clara Ashcroft, who was thrown from her horse.
+    · Ghost throws a shoe, and Ellis Danner loses an hour at a roadside smithy.
+    · Hattie Sutter and Ezra Thorne cross the line almost together, both claiming the better time.
+    · Gyro Zeppeli stops to splint the arm of Yusuf Nightingale, who was thrown from his horse.
+    · Mrs. Robinson is so saddle-sore he can barely sit.
+    · Barnabas Goodnight waves for help by the trail. Benjamin Boom Boom rides straight past.
+    · Pocoloco's luck holds again: a full canteen lying in the dirt, right where he needs it.
+    · Marlow Briggs spurs Thunder into a final gallop toward the line.
+    · Nugget bogs down in the deep sand.
+    · Ada Shaw finds a steady rhythm and makes good time.
+  [Field] 26 racers retired and 18 died. 404 remain.
+  [The Fallen] Rufus Marsh (shot from ambush, by Elias Hawthorne); Ivy Prescott (killed for supplies, by Annie Ketchum) And 37 from the field.
+
+  STAGE 1 RESULTS
+     1. Ezra Thorne  +100
+     2. Oyecomova  +90
+     3. Norisuke Higashikata IV  +80
+     4. Hot Pants  +70
+     5. Hattie Sutter  +60
+     6. Gyro Zeppeli  +50
+     7. Etta Blackwood  +40
+     8. Reese Ketchum  +30
+     9. Marlow Briggs  +20
+    10. Belle Sutter  +10
+  STANDINGS
+    Ezra Thorne  100
+    Oyecomova  90
+    Norisuke Higashikata IV  85
+    Hot Pants  70
+    Hattie Sutter  60
+    Gyro Zeppeli  55
+
+======================================================================
+STAGE 2: ACROSS THE ARIZONA DESERT
+Santa Maria Novella Church → Monument Valley
+======================================================================
+
+--- Day 1 ---
+  Ada Shaw wins a mid-stage sprint and pockets the bonus.
+✝ Harper Lockhart challenges Rosa Larkin to a duel over a water hole. Rosa Larkin draws first, and Harper Lockhart drops into the dust.
+  Clementine Prescott shares her last canteen with Pocoloco, who was about to collapse.
+✝ Belle Sutter finds Wilhelmina Oakes dead of thirst beside her horse.
+  Casimir Jessup fires on L.A. Boom Boom from a ridge. The bullet grazes his side.
+  Etta Blackwood leaps a canyon gap that no horse could cross and gains half a day.
+  Meanwhile on the trail...
+    · Wekapipo chases a mirage for an hour before he realizes the lake isn't real.
+    · Reese Ketchum finds a steady rhythm and makes good time.
+    · Ezra Thorne takes the wrong fork and has to double back.
+    · Ellis Danner takes the wrong fork and has to double back.
+    · Winnie Carver finds a steady rhythm and makes good time.
+    · A whole town turns out to cheer Benjamin Boom Boom through.
+    · Mountain Tim finds a hidden spring and lets Domino drink his fill.
+    · Morgan Booker and Diego Brando ride together for an afternoon, trading stories.
+    · Urmd Avdul is so saddle-sore he can barely sit.
+    · Hattie Sutter finds a shallow ford and crosses the river dry.
+    · A whole town turns out to cheer Norisuke Higashikata IV through.
+    · Marlow Briggs and Hot Pants ride together for an afternoon, trading stories.
+    · Andre Boom Boom is so saddle-sore he can barely sit.
+    · Cora Booker hears whispers about the Devil's Palm and gives the dunes a wide berth.
+    · Jules Rook chases a mirage for an hour before they realize the lake isn't real.
+    · Tornado throws a shoe, and Annie Ketchum loses an hour at a roadside smithy.
+    · Yankee throws a shoe, and Wren Garrett loses an hour at a roadside smithy.
+  [Field] The desert keeps what it takes. 18 racers retired and 14 died. 372 remain.
+
+--- Night 1 ---
+  Clementine Prescott shares her last canteen with Marlow Briggs, who was about to collapse.
+✝ Rosa Larkin finds Yusuf Nightingale dead of thirst beside his horse.
+  Cora Booker steals Sandman's water while he sleeps and leaves him to the desert.
+  Norisuke Higashikata IV's foot catches in the stirrup and he is dragged until Wren Garrett cuts the strap.
+  Ada Shaw keeps watch so Jules Rook can sleep. Nobody bothers them.
+✝ Winnie Carver runs out of water in the desert. She is never seen again.
+  Reese Ketchum follows a trapper's map down a shortcut and gains half a day.
+✝ Clara Ashcroft ambushes Morgan Booker from behind a rock. Morgan Booker never sees the shot coming.
+  Meanwhile on the trail...
+    · Etta Blackwood settles into a long-distance stride.
+    · Pocoloco rides through the night while the others sleep.
+    · Buckshot throws a shoe, and Belle Sutter loses an hour at a roadside smithy.
+    · Ezra Thorne hears whispers about the Devil's Palm and gives the dunes a wide berth.
+    · Gyro Zeppeli hums a made-up song about cheese to pass the miles.
+    · Andre Boom Boom and Wekapipo share a campfire and agree not to shoot each other tonight.
+    · Ellis Danner hears whispers about the Devil's Palm and gives the dunes a wide berth.
+    · Domino throws a shoe, and Mountain Tim loses an hour at a roadside smithy.
+    · Annie Ketchum sleeps under the stars.
+    · Hattie Sutter stops to splint the arm of Percival Gallagher, who was thrown from his horse.
+    · L.A. Boom Boom finds a steady rhythm and makes good time.
+  [Field] 15 racers retired and 15 died. 342 remain.
+  [The Fallen] Winnie Carver (dehydration); Morgan Booker (shot from ambush, by Clara Ashcroft) And 29 from the field.
+
+--- Day 2 ---
+  Wren Garrett shares their last canteen with Benjamin Boom Boom, who was about to collapse.
+  Riders laugh as they pass Etta Blackwood. By evening, Etta Blackwood has caught every one of them.
+  Marlow Briggs cuts Gyro Zeppeli's cinch strap at a water stop. Gyro Zeppeli loses an hour fixing it.
+  Casimir Gallagher fires on Sandman from a ridge. The bullet grazes his side.
+✝ Rosa Larkin watches Tatum Voss pick a fight with the wrong stranger and fall in the dust.
+  Andre Boom Boom strings wire across the trail. Mountain Tim's horse goes down hard.
+  L.A. Boom Boom's foot catches in the stirrup and he is dragged until Norisuke Higashikata IV cuts the strap.
+  Meanwhile on the trail...
+    · Wekapipo finds a hidden spring and lets Pinto drink his fill.
+    · Ellis Danner hears whispers about the Devil's Palm and gives the dunes a wide berth.
+    · Urmd Avdul reads the desert like a map and finds water where no one else can.
+    · Jules Rook stops to splint the arm of Hiroshi Fairweather, who was thrown from his horse.
+    · Annie Ketchum and Oyecomova race neck and neck for miles until Annie Ketchum edges ahead.
+    · Mrs. Robinson stops to splint the arm of Marguerite Ashcroft, who was thrown from her horse.
+    · Clementine Prescott waits out a sandstorm under her blanket.
+    · Bartholomew Hawthorne waves for help by the trail. Hattie Sutter rides straight past.
+    · Juniper throws a shoe, and Reese Ketchum loses an hour at a roadside smithy.
+    · Buckshot throws a shoe, and Belle Sutter loses an hour at a roadside smithy.
+    · Ada Shaw finds a steady rhythm and makes good time.
+    · Cora Booker finds a steady rhythm and makes good time.
+    · Ezra Thorne waits out a sandstorm under his blanket.
+  [Field] Vultures follow the field. 18 racers retired and 8 died. 316 remain.
+
+--- Finish Line ---
+✝ Etta Blackwood finds Percival Gallagher dead of thirst beside his horse.
+  Ada Shaw is thrown hard from the saddle and can't go on. Her race is over.
+  Rosa Larkin runs until her legs give out and has to rest for hours.
+  Wren Garrett takes the time bonus for leading the final mile.
+✝ Annie Ketchum watches Casimir Jessup pick a fight with the wrong stranger and fall in the dust.
+  Mountain Tim shares his last canteen with Andre Boom Boom, who was about to collapse.
+  Wekapipo's foot catches in the stirrup and he is dragged until Hot Pants cuts the strap.
+  Ingrid Nightingale draws on Gyro Zeppeli. A spinning steel ball knocks the gun away, and Gyro Zeppeli lets her go.
+  Meanwhile on the trail...
+    · Reese Ketchum spurs Juniper into a final gallop toward the line.
+    · Belle Sutter is so saddle-sore she can barely sit.
+    · Henrietta Coburn waves for help by the trail. Hattie Sutter rides straight past.
+    · Sandman finds one last burst in his legs for the finish.
+    · Cora Booker spurs Nugget into a final gallop toward the line.
+    · Jules Rook waits out a sandstorm under their blanket.
+    · Norisuke Higashikata IV takes the wrong fork and has to double back.
+    · Ghost throws a shoe, and Ellis Danner loses an hour at a roadside smithy.
+    · Marlow Briggs fades badly in the final miles.
+    · Ezra Thorne takes the wrong fork and has to double back.
+    · Clementine Prescott waits out a sandstorm under her blanket.
+  [Field] 15 racers retired and 9 died. 292 remain.
+  [The Fallen] No named racers. And 17 from the field.
+
+  STAGE 2 RESULTS
+     1. Etta Blackwood  +100
+     2. Reese Ketchum  +90
+     3. Elias Faraday [pack]  +80
+     4. Hattie Sutter  +70
+     5. Gyro Zeppeli  +60
+     6. Rosa Larkin  +50
+     7. Marlow Briggs  +40
+     8. Johnny Joestar  +30
+     9. Benjamin Boom Boom  +20
+    10. Cora Booker  +10
+  STANDINGS
+    Etta Blackwood  145
+    Hattie Sutter  135
+    Reese Ketchum  130
+    Gyro Zeppeli  115
+    Ezra Thorne  100
+    Norisuke Higashikata IV  100
+
+======================================================================
+STAGE 3: ROCKY MOUNTAIN BREAKDOWN
+Monument Valley → Cañon City
+======================================================================
+
+--- Day 1 ---
+  Riders laugh as they pass Etta Blackwood. By evening, Etta Blackwood has caught every one of them.
+✝ Belle Sutter watches Winifred Faraday pick a fight with the wrong stranger and fall in the dust.
+✝ Marlow Briggs catches Reese Ketchum alone on the trail and kills them for their supplies.
+  Norisuke Higashikata IV follows a trapper's map down a shortcut and gains half a day.
+  L.A. Boom Boom's foot catches in the stirrup and he is dragged until Wekapipo cuts the strap.
+  Urmd Avdul loses feeling in his fingers and has to stop to thaw them.
+  Wren Garrett wins a mid-stage sprint and pockets the bonus.
+  Elias Faraday fires on Cora Booker from a ridge. The bullet grazes her side.
+  Ezra Thorne cuts Gyro Zeppeli's cinch strap at a water stop. Gyro Zeppeli loses an hour fixing it.
+  Meanwhile on the trail...
+    · Andre Boom Boom stops to splint the arm of Bartholomew Hawthorne, who was thrown from his horse.
+    · Quicksilver throws a shoe, and Jules Rook loses an hour at a roadside smithy.
+    · Ada Shaw, out of the race, watches the leaders pass from a saloon porch.
+    · Ellis Danner and Mountain Tim ride together for an afternoon, trading stories.
+    · Silver Bullet throws a shoe, and Diego Brando loses an hour at a roadside smithy.
+    · Johnny Joestar finds a steady rhythm and makes good time.
+    · Pocoloco finds a steady rhythm and makes good time.
+    · Clementine Prescott stops to splint the arm of Harper Moreau, who was thrown from their horse.
+    · Annie Ketchum and Mrs. Robinson ride together for an afternoon, trading stories.
+    · Oyecomova is so saddle-sore he can barely sit.
+    · Rosa Larkin and Benjamin Boom Boom race neck and neck for miles until Rosa Larkin edges ahead.
+    · Hattie Sutter and Sandman race neck and neck for miles until Hattie Sutter edges ahead.
+  [Field] Snow covers the passes. 16 racers retired and 3 died. 273 remain.
+
+--- Night 1 ---
+✝ Tatum McAllister and Hiroshi Fairweather jump Hattie Sutter in the dark. Hattie Sutter kills Tatum McAllister, and Hiroshi Fairweather flees into the night.
+✝ Belle Sutter catches Mountain Tim alone on the trail and kills him for his supplies.
+  Rosa Larkin runs until her legs give out and has to rest for hours.
+  Ellis Danner follows a trapper's map down a shortcut and gains half a day.
+✝ Dmitri Tanaka creeps up to Pocoloco's camp to steal his water. Pocoloco wakes and shoots him dead.
+  Johnny Joestar's foot catches in the stirrup and he is dragged until Wren Garrett cuts the strap.
+  Gyro Zeppeli keeps watch so L.A. Boom Boom can sleep. Nobody bothers them.
+  A rockslide crushes Midnight. Clementine Prescott climbs on alone.
+  Meanwhile on the trail...
+    · Andre Boom Boom takes the wrong fork and has to double back.
+    · Etta Blackwood settles into a long-distance stride.
+    · Annie Ketchum finds a steady rhythm and makes good time.
+    · Cora Booker rides through the night while the others sleep.
+    · Jules Rook rides through the night while the others sleep.
+    · Silver Bullet throws a shoe, and Diego Brando loses an hour at a roadside smithy.
+    · Ezra Thorne finds a steady rhythm and makes good time.
+    · Bartholomew Hawthorne waves for help by the trail. Mrs. Robinson rides straight past.
+    · Tumbleweed throws a shoe, and Norisuke Higashikata IV loses an hour at a roadside smithy.
+    · Harper Moreau waves for help by the trail. Marlow Briggs rides straight past.
+  [Field] 13 racers retired and 12 died. 248 remain.
+  [The Fallen] Reese Ketchum (killed for supplies, by Marlow Briggs); Mountain Tim (killed for supplies, by Belle Sutter) And 15 from the field.
+
+--- Day 2 ---
+  Urmd Avdul slips into a crevasse. Andre Boom Boom lowers a rope and pulls him out.
+✝ Oyecomova catches Rosa Larkin alone on the trail and kills her for her supplies.
+  Johnny Joestar wins a mid-stage sprint and pockets the bonus.
+  Wekapipo loses feeling in his fingers and has to stop to thaw them.
+  Norisuke Higashikata IV's foot catches in the stirrup and he is dragged until Ezra Thorne cuts the strap.
+✝ Wendell Moreau challenges Annie Ketchum to a duel over a water hole. Annie Ketchum draws first, and Wendell Moreau drops into the dust.
+  A rockslide crushes Thunder. Marlow Briggs climbs on alone.
+  Meanwhile on the trail...
+    · Belle Sutter and Ellis Danner race neck and neck for miles until Belle Sutter edges ahead.
+    · Wren Garrett is so saddle-sore they can barely sit.
+    · Hot Pants and Mrs. Robinson ride together for an afternoon, trading stories.
+    · Benjamin Boom Boom and L.A. Boom Boom ride together for an afternoon, trading stories.
+    · Clementine Prescott takes the wrong fork and has to double back.
+    · A whole town turns out to cheer Cora Booker through.
+    · Outlaw throws a shoe, and Hattie Sutter loses an hour at a roadside smithy.
+    · Jules Rook is so saddle-sore they can barely sit.
+    · Etta Blackwood takes the wrong fork and has to double back.
+  [Field] 13 racers retired and 4 died. 231 remain.
+
+--- Finish Line ---
+  Jules Rook passes Marguerite Hartley, who has collapsed a mile short of the finish.
+  Clementine Prescott follows a trapper's map down a shortcut and gains half a day.
+  Etta Blackwood loses feeling in her fingers and has to stop to thaw them.
+  Pocoloco takes the time bonus for leading the final mile.
+  Norisuke Higashikata IV's foot catches in the stirrup and he is dragged until Sandman cuts the strap.
+  Mrs. Robinson slips into a crevasse. Marlow Briggs lowers a rope and pulls him out.
+  Meanwhile on the trail...
+    · Ezra Thorne finds a steady rhythm and makes good time.
+    · Tornado throws a shoe, and Annie Ketchum loses an hour at a roadside smithy.
+    · Yankee throws a shoe, and Wren Garrett loses an hour at a roadside smithy.
+    · Cora Booker finds a steady rhythm and makes good time.
+    · Ellis Danner takes the wrong fork and has to double back.
+    · Urmd Avdul spurs Prairie Fire into a final gallop toward the line.
+    · Belle Sutter spurs Buckshot into a final gallop toward the line.
+    · Johnny Joestar stops to splint the arm of Sawyer Fairweather, who was thrown from their horse.
+    · Ada Shaw trails the race, following the field's dust toward New York.
+    · Hattie Sutter is so saddle-sore she can barely sit.
+    · Wekapipo takes the wrong fork and has to double back.
+    · L.A. Boom Boom rides with the rest of the Boom Boom family, eyeing the other racers.
+    · Diego Brando fades badly in the final miles.
+  [Field] Snow covers the passes. 7 racers retired and 1 died. 223 remain.
+  [The Fallen] Rosa Larkin (killed for supplies, by Oyecomova) And 5 from the field.
+
+  STAGE 3 RESULTS
+     1. Mortimer Dunmore [pack]  +100
+     2. Belle Sutter  +90
+     3. Wren Garrett  +80
+     4. Hattie Sutter  +70
+     5. Etta Blackwood  +60
+     6. Johnny Joestar  +50
+     7. Annie Ketchum  +40
+     8. Ellis Danner  +30
+     9. Winifred McAllister [pack]  +20
+    10. Mrs. Robinson  +10
+  STANDINGS
+    Hattie Sutter  205
+    Etta Blackwood  205
+    Wren Garrett  140
+    Reese Ketchum (dead)  130
+    Gyro Zeppeli  115
+    Norisuke Higashikata IV  110
+
+======================================================================
+STAGE 4: LITTLE TOMB ON THE WIDE, WIDE PRAIRIE
+Cañon City → Kansas City
+======================================================================
+
+--- Day 1 ---
+✝ Bellamy Kincaid challenges Ezra Thorne to a duel over a water hole. Ezra Thorne draws first, and Bellamy Kincaid drops into the dust.
+  Norisuke Higashikata IV follows a trapper's map down a shortcut and gains half a day.
+  Ottoline Thibodeaux fires on Andre Boom Boom from a ridge. The bullet grazes his side.
+  Sandman runs until his legs give out and has to rest for hours.
+  Meanwhile on the trail...
+    · Wekapipo finds a steady rhythm and makes good time.
+    · Jules Rook is so saddle-sore they can barely sit.
+    · Ellis Danner gallops flat out across the open grass.
+    · Gyro Zeppeli stops to splint the arm of Bartholomew McAllister, who was thrown from his horse.
+    · Lightning strikes the prairie beside Pocoloco. Flint bolts for an hour.
+    · Sawyer Fairweather waves for help by the trail. Marlow Briggs rides straight past.
+    · A whole town turns out to cheer Etta Blackwood through.
+    · Belle Sutter finds a steady rhythm and makes good time.
+    · Wren Garrett finds a shallow ford and crosses the river dry.
+    · A whole town turns out to cheer Clementine Prescott through.
+    · Oyecomova stops to splint the arm of Barnabas Blackwell, who was thrown from his horse.
+    · Cora Booker stops at a lonely grave on the prairie to pay her respects.
+    · Johnny Joestar gallops flat out across the open grass.
+    · Diego Brando reads the terrain like a jockey reads a track and finds the fastest line.
+    · Annie Ketchum takes the wrong fork and has to double back.
+    · Outlaw throws a shoe, and Hattie Sutter loses an hour at a roadside smithy.
+    · Urmd Avdul stops at a lonely grave on the prairie to pay his respects.
+    · Lightning strikes the prairie beside Mrs. Robinson. Apache Wind bolts for an hour.
+  [Field] Nothing but grass to the horizon. 14 racers retired and 5 died. 204 remain.
+
+--- Night 1 ---
+✝ Fitzgerald Hawthorne snipes at riders from the tall grass until Cora Booker circles around and ends it.
+  Ezra Thorne cuts Andre Boom Boom's cinch strap at a water stop. Andre Boom Boom loses an hour fixing it.
+✝ A bison stampede thunders across the prairie. Belle Sutter gets clear, but Rupert Fairweather goes under.
+  Urmd Avdul keeps watch so Sandman can sleep. Nobody bothers them.
+✝ Finley Hartley creeps up to Annie Ketchum's camp to steal her water. Annie Ketchum wakes and shoots them dead.
+  Meanwhile on the trail...
+    · Clementine Prescott finds a steady rhythm and makes good time.
+    · Marlow Briggs finds a steady rhythm and makes good time.
+    · On the open flats, Etta Blackwood watches rider after rider gallop away.
+    · Ghost throws a shoe, and Ellis Danner loses an hour at a roadside smithy.
+    · Ada Shaw sleeps under the stars.
+    · Outlaw throws a shoe, and Hattie Sutter loses an hour at a roadside smithy.
+    · Jules Rook takes the wrong fork and has to double back.
+    · Pocoloco stops to splint the arm of Corey Goodnight, who was thrown from their horse.
+    · Wren Garrett takes the wrong fork and has to double back.
+    · Benjamin Boom Boom sleeps under the stars.
+    · Diego Brando and Mrs. Robinson share a campfire and agree not to shoot each other tonight.
+    · Norisuke Higashikata IV stops to splint the arm of Winifred Goodnight, who was thrown from her horse.
+  [Field] Nothing but grass to the horizon. 5 racers retired and 6 died. 193 remain.
+  [The Fallen] No named racers. And 11 from the field.
+
+--- Day 2 ---
+  Elias Faraday fires on Annie Ketchum from a ridge. The bullet grazes her side.
+✝ Marlow Briggs is caught in the open when the bison stampede hits.
+  Ezra Thorne's foot catches in the stirrup and he is dragged until Wren Garrett cuts the strap.
+  Ada Shaw may be out of the race, but she still points a lost Lars Grimsby back to the trail.
+✝ Hiroshi McAllister challenges Belle Sutter to a duel over a water hole. Belle Sutter draws first, and Hiroshi McAllister drops into the dust.
+  Etta Blackwood runs until her legs give out and has to rest for hours.
+  Meanwhile on the trail...
+    · Gyro Zeppeli gallops flat out across the open grass.
+    · Pocoloco and Hot Pants race neck and neck for miles until Pocoloco edges ahead.
+    · A whole town turns out to cheer Oyecomova through.
+    · Benjamin Boom Boom stops at a lonely grave on the prairie to pay his respects.
+    · Ellis Danner and Mrs. Robinson ride together for an afternoon, trading stories.
+    · Cora Booker and Andre Boom Boom ride together for an afternoon, trading stories.
+    · Jules Rook gallops flat out across the open grass.
+    · Pepper throws a shoe, and L.A. Boom Boom loses an hour at a roadside smithy.
+    · Johnny Joestar takes the wrong fork and has to double back.
+    · Clementine Prescott stops to splint the arm of Beatrix Faraday, who was thrown from her horse.
+    · Lightning strikes the prairie beside Diego Brando. Silver Bullet bolts for an hour.
+    · Hattie Sutter stops at a lonely grave on the prairie to pay her respects.
+  [Field] Nothing but grass to the horizon. 7 racers retired and 1 died. 185 remain.
+
+--- Finish Line ---
+  Hot Pants sprays Cream Starter over Annie Ketchum's wounds, and the flesh knits shut. Annie Ketchum can ride again.
+  Cora Booker follows a trapper's map down a shortcut and gains half a day.
+  A rattlesnake spooks Shiloh, and the horse goes down with a broken leg. Andre Boom Boom has to go on foot.
+✝ A bison stampede thunders across the prairie. Gyro Zeppeli gets clear, but Harper Dunmore goes under.
+  Fitzgerald Barlow fires on Jules Rook from a ridge. The bullet grazes their side.
+  Riders laugh as they pass Etta Blackwood. By evening, Etta Blackwood has caught every one of them.
+  Meanwhile on the trail...
+    · Lars Grimsby waves for help by the trail. L.A. Boom Boom rides straight past.
+    · Ezra Thorne finds a steady rhythm and makes good time.
+    · Clementine Prescott fades badly in the final miles.
+    · Wren Garrett stops to splint the arm of Kit Everhart, who was thrown from their horse.
+    · Ada Shaw, out of the race, watches the leaders pass from a saloon porch.
+    · Mrs. Robinson finds a steady rhythm and makes good time.
+    · Ellis Danner gallops flat out across the open grass.
+    · Belle Sutter fades badly in the final miles.
+    · Paloma Hawthorne waves for help by the trail. Hattie Sutter rides straight past.
+    · Wekapipo gallops flat out across the open grass.
+    · Lightning strikes the prairie beside Urmd Avdul. Prairie Fire bolts for an hour.
+  [Field] Nothing but grass to the horizon. 3 racers retired and 4 died. 178 remain.
+  [The Fallen] Marlow Briggs (trampled by bison) And 5 from the field.
+
+  STAGE 4 RESULTS
+     1. Diego Brando  +100
+     2. Cora Booker  +90
+     3. Norisuke Higashikata IV  +80
+     4. Gyro Zeppeli  +70
+     5. Annie Ketchum  +60
+     6. Wren Garrett  +50
+     7. Hot Pants  +40
+     8. Wekapipo  +30
+     9. Obadiah Gallagher [pack]  +20
+    10. Mrs. Robinson  +10
+  STANDINGS
+    Hattie Sutter  210
+    Etta Blackwood  210
+    Wren Garrett  205
+    Norisuke Higashikata IV  200
+    Gyro Zeppeli  190
+    Reese Ketchum (dead)  130
+
+======================================================================
+STAGE 5: ILLINOIS SKYLINE
+Kansas City → Chicago
+======================================================================
+
+--- Day 1 ---
+  Wekapipo warns Norisuke Higashikata IV about an ambush ahead.
+  Pocoloco wins a mid-stage sprint and pockets the bonus.
+  Meanwhile on the trail...
+    · Horace Delacroix waves for help by the trail. Sandman rides straight past.
+    · Hattie Sutter finds a steady rhythm and makes good time.
+    · Chicago's crowds slow Jules Rook to a walk.
+    · Benjamin Boom Boom finds a steady rhythm and makes good time.
+    · Chicago's crowds slow Belle Sutter to a walk.
+    · Annie Ketchum and Urmd Avdul race neck and neck for miles until Annie Ketchum edges ahead.
+    · Ezra Thorne and Andre Boom Boom ride together for an afternoon, trading stories.
+    · Matilda Yardley lifts L.A. Boom Boom's wallet on a crowded street.
+    · Beatrix Rourke lifts Ellis Danner's wallet on a crowded street.
+    · A whole town turns out to cheer Etta Blackwood through.
+    · Ambrose Faraday waves for help by the trail. Clementine Prescott rides straight past.
+    · A whole town turns out to cheer Mrs. Robinson through.
+    · Johnny Joestar takes the wrong fork and has to double back.
+    · Wren Garrett stops to splint the arm of Hiroshi Whitaker, who was thrown from his horse.
+    · Cora Booker finds a shallow ford and crosses the river dry.
+  [Field] 7 racers retired and 4 died. 167 remain.
+
+--- Night 1 ---
+  Bartholomew Moreau draws on Gyro Zeppeli. A spinning steel ball knocks the gun away, and Gyro Zeppeli lets him go.
+  Wekapipo keeps watch so Ezra Thorne can sleep. Nobody bothers them.
+  Meanwhile on the trail...
+    · Belle Sutter and Diego Brando share a campfire and agree not to shoot each other tonight.
+    · Chicago's crowds slow Oyecomova to a walk.
+    · Jules Rook rides through the night while the others sleep.
+    · L.A. Boom Boom sleeps in a real bed for once and rides out refreshed.
+    · Annie Ketchum sleeps in a real bed for once and rides out refreshed.
+    · Benjamin Boom Boom rides through the night while the others sleep.
+    · Cora Booker and Hattie Sutter share a campfire and agree not to shoot each other tonight.
+    · Etta Blackwood finds a steady rhythm and makes good time.
+    · Wren Garrett finds a steady rhythm and makes good time.
+    · Finley Fairweather waves for help by the trail. Urmd Avdul rides straight past.
+    · Beatrix Faraday lifts Clementine Prescott's wallet on a crowded street.
+    · Ellis Danner sleeps under the stars.
+    · Tumbleweed throws a shoe, and Norisuke Higashikata IV loses an hour at a roadside smithy.
+  [Field] 5 racers retired and 3 died. 159 remain.
+  [The Fallen] No named racers. And 7 from the field.
+
+--- Finish Line ---
+  Hattie Sutter is pinned against a fence when the crowd surges onto the track at the finish.
+✝ Oyecomova plants a bomb under a bridge. Delphine Rourke rides over it.
+  Riders laugh as they pass Etta Blackwood. By evening, Etta Blackwood has caught every one of them.
+  Mrs. Robinson's foot catches in the stirrup and he is dragged until Norisuke Higashikata IV cuts the strap.
+  Belle Sutter crowds Diego Brando into the rail on the final turn.
+  Annie Ketchum passes Temperance Lockhart, who has collapsed a mile short of the finish.
+  Meanwhile on the trail...
+    · Valentina throws a shoe, and Benjamin Boom Boom loses an hour at a roadside smithy.
+    · Barnabas Goodnight lifts Cora Booker's wallet on a crowded street.
+    · Horace Delacroix waves for help by the trail. Pocoloco rides straight past.
+    · Sandman finds one last burst in his legs for the finish.
+    · Barnabas Barlow waves for help by the trail. L.A. Boom Boom rides straight past.
+    · Wekapipo spurs Pinto into a final gallop toward the line.
+    · Ezra Thorne finds a steady rhythm and makes good time.
+    · Quicksilver throws a shoe, and Jules Rook loses an hour at a roadside smithy.
+    · Ellis Danner finds a steady rhythm and makes good time.
+    · Hot Pants and Clementine Prescott cross the line almost together, both claiming the better time.
+    · Wren Garrett spurs Yankee into a final gallop toward the line.
+  [Field] 5 racers retired and 2 died. 152 remain.
+  [The Fallen] No named racers. And 2 from the field.
+
+  STAGE 5 RESULTS
+     1. Annie Ketchum  +100
+     2. Wekapipo  +90
+     3. Jules Rook  +80
+     4. Obadiah Lindqvist [pack]  +70
+     5. Ellis Danner  +60
+     6. Obadiah Gallagher [pack]  +50
+     7. Benjamin Boom Boom  +40
+     8. Elias Faraday [pack]  +30
+     9. Urmd Avdul  +20
+    10. Ezra Thorne  +10
+  STANDINGS
+    Hattie Sutter  215
+    Etta Blackwood  215
+    Wren Garrett  215
+    Annie Ketchum  210
+    Norisuke Higashikata IV  210
+    Gyro Zeppeli  195
+
+======================================================================
+STAGE 6: MICHIGAN LAKELINE
+Chicago → Mackinaw City
+======================================================================
+
+--- Day 1 ---
+  Pocoloco wins a mid-stage sprint and pockets the bonus.
+✝ Prudence Hawthorne challenges L.A. Boom Boom to a duel over a water hole. L.A. Boom Boom draws first, and Prudence Hawthorne drops into the dust.
+  Jules Rook follows a trapper's map down a shortcut and gains half a day.
+✝ Belle Sutter hears the ice crack behind her and turns to see Lucius McAllister disappear.
+  A rattlesnake spooks Valentina, and the horse goes down with a broken leg. Benjamin Boom Boom has to go on foot.
+  Lucius Whitaker fires on Clementine Prescott from a ridge. The bullet grazes her side.
+  Meanwhile on the trail...
+    · Ezra Thorne finds a shallow ford and crosses the river dry.
+    · Cora Booker and Annie Ketchum race neck and neck for miles until Cora Booker edges ahead.
+    · Oyecomova takes the wrong fork and has to double back.
+    · Gyro Zeppeli and Wren Garrett race neck and neck for miles until Gyro Zeppeli edges ahead.
+    · Etta Blackwood settles into a long-distance stride.
+    · A whole town turns out to cheer Sandman through.
+    · A whole town turns out to cheer Ellis Danner through.
+    · Diego Brando stops to splint the arm of Tatum Sinclair, who was thrown from their horse.
+    · Ada Shaw trails the race, following the field's dust toward New York.
+    · Hattie Sutter takes the wrong fork and has to double back.
+    · Urmd Avdul and Johnny Joestar ride together for an afternoon, trading stories.
+    · Andre Boom Boom and Norisuke Higashikata IV ride together for an afternoon, trading stories.
+  [Field] 1 racer retired and 5 died. 146 remain.
+
+--- Night 1 ---
+  A bullet meant for Pocoloco hits his hat instead. Pocoloco laughs and rides on.
+✝ Sawyer Fairweather creeps up to Wekapipo's camp to steal his water. Wekapipo wakes and shoots them dead.
+✝ L.A. Boom Boom catches Andre Boom Boom alone on the trail and kills him for his supplies.
+  Hattie Sutter's foot catches in the stirrup and she is dragged until Ezra Thorne cuts the strap.
+  Ada Shaw may be out of the race, but she still points a lost Yusuf Ingram back to the trail.
+  Meanwhile on the trail...
+    · Gyro Zeppeli follows the lakeshore at a steady clip.
+    · Prairie Fire throws a shoe, and Urmd Avdul loses an hour at a roadside smithy.
+    · Fog rolls off the lake and Cora Booker loses the trail for hours.
+    · Ellis Danner sleeps under the stars.
+    · Belle Sutter finds a steady rhythm and makes good time.
+    · Etta Blackwood settles into a long-distance stride.
+    · Annie Ketchum sleeps under the stars.
+    · Clementine Prescott and Mrs. Robinson share a campfire and agree not to shoot each other tonight.
+    · Wren Garrett stops to splint the arm of Imogen Tanaka, who was thrown from her horse.
+    · Diego Brando rides through the night while the others sleep.
+    · Sandman takes the wrong fork and has to double back.
+    · Fog rolls off the lake and Jules Rook loses the trail for hours.
+  [Field] The ice on the Straits groans under the field. 6 racers retired and 7 died. 133 remain.
+  [The Fallen] Andre Boom Boom (killed for supplies, by L.A. Boom Boom) And 12 from the field.
+
+--- Day 2 ---
+✝ Annie Ketchum catches Sandman alone on the trail and kills him for his supplies.
+✝ Lucius Whitaker challenges Jules Rook to a duel over a water hole. Jules Rook draws first, and Lucius Whitaker drops into the dust.
+✝ Wekapipo hears the ice crack behind him and turns to see Rupert Tanaka disappear.
+  Meanwhile on the trail...
+    · Ottoline Thibodeaux waves for help by the trail. Benjamin Boom Boom rides straight past.
+    · Fog rolls off the lake and Ellis Danner loses the trail for hours.
+    · Clementine Prescott finds a steady rhythm and makes good time.
+    · Fog rolls off the lake and Norisuke Higashikata IV loses the trail for hours.
+    · L.A. Boom Boom stops to splint the arm of Matilda Yardley, who was thrown from her horse.
+    · Diego Brando finds a shallow ford and crosses the river dry.
+    · Hattie Sutter finds a steady rhythm and makes good time.
+    · A whole town turns out to cheer Ezra Thorne through.
+    · Wren Garrett and Hot Pants race neck and neck for miles until Wren Garrett edges ahead.
+    · Pocoloco is so saddle-sore he can barely sit.
+    · Apache Wind throws a shoe, and Mrs. Robinson loses an hour at a roadside smithy.
+    · Ines Nightingale waves for help by the trail. Belle Sutter rides straight past.
+    · Etta Blackwood follows the lakeshore at a steady clip.
+    · Cora Booker follows the lakeshore at a steady clip.
+  [Field] The ice on the Straits groans under the field. 5 racers retired and 3 died. 125 remain.
+
+--- Finish Line ---
+✝ L.A. Boom Boom hears the ice crack behind him and turns to see Imogen Whitaker disappear.
+  Ellis Danner falls through the ice, and Clementine Prescott hauls them out by the collar.
+  Gyro Zeppeli shares his cheese and dried meat with Oyecomova.
+  Meanwhile on the trail...
+    · Cora Booker fades badly in the final miles.
+    · Apache Wind throws a shoe, and Mrs. Robinson loses an hour at a roadside smithy.
+    · Hot Pants stops to splint the arm of Henrietta Vandermeer, who was thrown from her horse.
+    · Wren Garrett stops to splint the arm of Rupert Oakes, who was thrown from his horse.
+    · Wekapipo finds a steady rhythm and makes good time.
+    · Jules Rook fades badly in the final miles.
+    · Tornado throws a shoe, and Annie Ketchum loses an hour at a roadside smithy.
+    · Ezra Thorne and Etta Blackwood cross the line almost together, both claiming the better time.
+    · Fog rolls off the lake and Hattie Sutter loses the trail for hours.
+    · Ada Shaw trails the race, following the field's dust toward New York.
+    · Pocoloco spurs Flint into a final gallop toward the line.
+    · Johnny Joestar finds a steady rhythm and makes good time.
+    · Belle Sutter is so saddle-sore she can barely sit.
+    · Urmd Avdul follows the lakeshore at a steady clip.
+  [Field] 5 racers retired and 3 died. 117 remain.
+  [The Fallen] Sandman (killed for supplies, by Annie Ketchum) And 6 from the field.
+
+  STAGE 6 RESULTS
+     1. Wekapipo  +100
+     2. Seraphina Lindqvist [pack]  +90
+     3. Johnny Joestar  +80
+     4. Diego Brando  +70
+     5. Ezra Thorne  +60
+     6. Urmd Avdul  +50
+     7. Hot Pants  +40
+     8. Winifred McAllister [pack]  +30
+     9. Etta Blackwood  +20
+    10. Oyecomova  +10
+  STANDINGS
+    Etta Blackwood  235
+    Wekapipo  235
+    Wren Garrett  230
+    Annie Ketchum  215
+    Hattie Sutter  215
+    Norisuke Higashikata IV  215
+
+======================================================================
+STAGE 7: PHILADELPHIA TRIANGLE
+Mackinaw City → Philadelphia
+======================================================================
+
+--- Day 1 ---
+✝ Oyecomova plants a bomb under a bridge. Hester Jessup rides over it.
+  Ellis Danner wins a mid-stage sprint and pockets the bonus.
+✝ L.A. Boom Boom finds Horace Tanaka shot dead on the road, saddlebags slashed open.
+  Pocoloco's foot catches in the stirrup and he is dragged until Clementine Prescott cuts the strap.
+  Meanwhile on the trail...
+    · Ezra Thorne stops to splint the arm of Kit Tanaka, who was thrown from their horse.
+    · Yankee throws a shoe, and Wren Garrett loses an hour at a roadside smithy.
+    · Etta Blackwood and Norisuke Higashikata IV ride together for an afternoon, trading stories.
+    · A whole town turns out to cheer Hattie Sutter through.
+    · Wekapipo takes the wrong fork and has to double back.
+    · Annie Ketchum is so saddle-sore she can barely sit.
+    · A whole town turns out to cheer Cora Booker through.
+    · Jules Rook and Mrs. Robinson race neck and neck for miles until Jules Rook edges ahead.
+    · Diego Brando finds a steady rhythm and makes good time.
+    · Gyro Zeppeli and Hot Pants ride together for an afternoon, trading stories.
+    · Belle Sutter finds a steady rhythm and makes good time.
+  [Field] 1 racer retired and 2 died. 114 remain.
+
+--- Night 1 ---
+✝ Wolves circle Wren Garrett's campfire all night. Wren Garrett survives, but Silas Tanaka, camped nearby, does not.
+✝ Etta Blackwood finds Philippa Whitaker shot dead on the road, saddlebags slashed open.
+  Ellis Danner follows a trapper's map down a shortcut and gains half a day.
+  Mrs. Robinson is thrown hard from the saddle and can't go on. His race is over.
+  Johnny Joestar grips the reins with his legs useless beneath him and refuses to fall behind.
+  Meanwhile on the trail...
+    · Diego Brando finds a steady rhythm and makes good time.
+    · Annie Ketchum rides through dense forest toward Philadelphia.
+    · Jules Rook finds a steady rhythm and makes good time.
+    · Pocoloco rides through the night while the others sleep.
+    · Hot Pants loses the trail in the woods and wanders until dawn.
+    · Buckshot throws a shoe, and Belle Sutter loses an hour at a roadside smithy.
+    · Clementine Prescott and Cora Booker share a campfire and agree not to shoot each other tonight.
+    · Oyecomova takes the wrong fork and has to double back.
+    · Hattie Sutter rides through the night while the others sleep.
+    · Gyro Zeppeli stops to splint the arm of Marguerite Sinclair, who was thrown from her horse.
+    · Henrietta Coburn waves for help by the trail. Ezra Thorne rides straight past.
+  [Field] 3 racers retired and 3 died. 108 remain.
+  [The Fallen] No named racers. And 5 from the field.
+
+--- Finish Line ---
+✝ Yusuf Moreau ambushes Ezra Thorne from behind a rock. Ezra Thorne never sees the shot coming.
+✝ Ellis Danner finds Obadiah Lindqvist shot dead on the road, saddlebags slashed open.
+  Belle Sutter is pinned against a fence when the crowd surges onto the track at the finish.
+  A rider in a dark hat ambushes Oyecomova on a forest road. Oyecomova barely escapes.
+  Wren Garrett passes Silas Hartley, who has collapsed a mile short of the finish.
+  Meanwhile on the trail...
+    · Benjamin Boom Boom finds a steady rhythm and makes good time.
+    · Etta Blackwood finds one last burst in her legs for the finish.
+    · Norisuke Higashikata IV fades badly in the final miles.
+    · Cora Booker is so saddle-sore she can barely sit.
+    · Jules Rook fades badly in the final miles.
+    · Gyro Zeppeli stops to splint the arm of Horace Goodnight, who was thrown from his horse.
+    · Clementine Prescott and Annie Ketchum cross the line almost together, both claiming the better time.
+    · Hattie Sutter takes the wrong fork and has to double back.
+  [Field] 7 racers retired and 5 died. 96 remain.
+  [The Fallen] Ezra Thorne (shot from ambush, by Yusuf Moreau) And 5 from the field.
+
+  STAGE 7 RESULTS
+     1. Ellis Danner  +100
+     2. Leopold Ingram [pack]  +90
+     3. Diego Brando  +80
+     4. Wekapipo  +70
+     5. Johnny Joestar  +60
+     6. L.A. Boom Boom  +50
+     7. Norisuke Higashikata IV  +40
+     8. Jules Rook  +30
+     9. Hattie Sutter  +20
+    10. Hot Pants  +10
+  STANDINGS
+    Wekapipo  305
+    Diego Brando  270
+    Norisuke Higashikata IV  255
+    Etta Blackwood  240
+    Johnny Joestar  240
+    Hattie Sutter  235
+
+======================================================================
+STAGE 8: BOTH SIDES NOW
+Philadelphia → Union Beach
+======================================================================
+
+--- Day 1 ---
+  Benjamin Boom Boom cuts Norisuke Higashikata IV's cinch strap at a water stop. Norisuke Higashikata IV loses an hour fixing it.
+✝ Ingrid Underhill challenges Hattie Sutter to a duel over a water hole. Hattie Sutter draws first, and Ingrid Underhill drops into the dust.
+  Jules Rook wins a mid-stage sprint and pockets the bonus.
+  Meanwhile on the trail...
+    · Etta Blackwood and L.A. Boom Boom race neck and neck for miles until Etta Blackwood edges ahead.
+    · Oyecomova stops to splint the arm of Fitzgerald Moreau, who was thrown from his horse.
+    · Clementine Prescott finds a shallow ford and crosses the river dry.
+    · Wren Garrett takes the wrong fork and has to double back.
+    · Annie Ketchum takes the wrong fork and has to double back.
+    · Belle Sutter races along the coast road at full speed.
+    · Wekapipo finds a steady rhythm and makes good time.
+    · Jebediah Quigley waves for help by the trail. Cora Booker rides straight past.
+    · Ellis Danner is so saddle-sore they can barely sit.
+  [Field] 1 racer retired and 3 died. 92 remain.
+
+--- Night 1 ---
+✝ Tatum Sinclair shares a bottle of whiskey with Wekapipo. It was poisoned.
+  Ellis Danner keeps watch so Oyecomova can sleep. Nobody bothers them.
+✝ Clementine Prescott is swept off a causeway by a rogue wave.
+  Elias Zamora fires on Annie Ketchum from a ridge. The bullet grazes her side.
+  Urmd Avdul's foot catches in the stirrup and he is dragged until Norisuke Higashikata IV cuts the strap.
+  Meanwhile on the trail...
+    · Gyro Zeppeli sleeps under the stars.
+    · Pepper throws a shoe, and L.A. Boom Boom loses an hour at a roadside smithy.
+    · Hot Pants stops to splint the arm of Dakota Hawthorne, who was thrown from their horse.
+    · Buckshot throws a shoe, and Belle Sutter loses an hour at a roadside smithy.
+    · Etta Blackwood sleeps under the stars.
+    · Cora Booker takes the wrong fork and has to double back.
+    · Hattie Sutter stops to splint the arm of Silas Thibodeaux, who was thrown from his horse.
+    · Jules Rook finds a steady rhythm and makes good time.
+    · Wren Garrett finds a steady rhythm and makes good time.
+  [Field] 2 racers died. No one else gave up. 90 remain.
+  [The Fallen] Wekapipo (poisoned, by Tatum Sinclair); Clementine Prescott (drowned) And 5 from the field.
+
+--- Finish Line ---
+  L.A. Boom Boom's foot catches in the stirrup and he is dragged until Belle Sutter cuts the strap.
+  Ellis Danner cuts Oyecomova's cinch strap at a water stop. Oyecomova loses an hour fixing it.
+  Annie Ketchum takes the time bonus for leading the final mile.
+  Gyro Zeppeli shares his cheese and dried meat with Hattie Sutter.
+  Meanwhile on the trail...
+    · Jules Rook spurs Quicksilver into a final gallop toward the line.
+    · Etta Blackwood races along the coast road at full speed.
+    · Johnny Joestar finds a steady rhythm and makes good time.
+    · Cora Booker finds a steady rhythm and makes good time.
+    · Norisuke Higashikata IV fords a river mouth near Union Beach as the tide comes in.
+    · Hot Pants fades badly in the final miles.
+    · Wren Garrett spurs Yankee into a final gallop toward the line.
+  [Field] 1 racer retired and 2 died. 87 remain.
+  [The Fallen] No named racers. And 2 from the field.
+
+  STAGE 8 RESULTS
+     1. Johnny Joestar  +100
+     2. Wren Garrett  +90
+     3. Etta Blackwood  +80
+     4. Jules Rook  +70
+     5. Hattie Sutter  +60
+     6. Ellis Danner  +50
+     7. Rosalind Holloway [pack]  +40
+     8. Diego Brando  +30
+     9. Leopold Ingram [pack]  +20
+    10. Winifred McAllister [pack]  +10
+  STANDINGS
+    Johnny Joestar  340
+    Wren Garrett  325
+    Etta Blackwood  320
+    Wekapipo (dead)  305
+    Hattie Sutter  300
+    Diego Brando  300
+
+======================================================================
+STAGE 9: MANHATTAN RHAPSODY
+Union Beach → Trinity Church
+======================================================================
+
+--- Day 1 ---
+  Oyecomova's foot catches in the stirrup and he is dragged until Jules Rook cuts the strap.
+✝ Shots ring out near Trinity Church. Yusuf Moreau is killed in the crossfire as Diego Brando rides past.
+  Ellis Danner and Urmd Avdul trade blows on a crowded avenue, neither willing to yield.
+  Meanwhile on the trail...
+    · Ada Shaw rides ahead as a scout, warning anyone who will listen about the trail ahead.
+    · Annie Ketchum catches the ferry across to Manhattan just as it pulls away.
+    · Etta Blackwood and Hot Pants race neck and neck for miles until Etta Blackwood edges ahead.
+    · Wren Garrett catches the ferry across to Manhattan just as it pulls away.
+    · Gyro Zeppeli finds a steady rhythm and makes good time.
+    · Cora Booker and Hattie Sutter ride together for an afternoon, trading stories.
+    · Belle Sutter is so saddle-sore she can barely sit.
+  [Field] 3 racers retired and 2 died. 82 remain.
+
+--- Night 1 ---
+✝ Pocoloco watches Temperance Blackwell pick a fight with the wrong stranger and fall in the dust.
+  Ellis Danner keeps watch so Jules Rook can sleep. Nobody bothers them.
+  Henrietta Vandermeer robs Oyecomova's camp in the night, taking food and water.
+✝ Barnabas Goodnight ambushes Belle Sutter from behind a rock. Belle Sutter never sees the shot coming.
+  Hot Pants follows a trapper's map down a shortcut and gains half a day.
+  Meanwhile on the trail...
+    · Etta Blackwood finds a steady rhythm and makes good time.
+    · Casimir Gallagher waves for help by the trail. Cora Booker rides straight past.
+    · Urmd Avdul and L.A. Boom Boom share a campfire and agree not to shoot each other tonight.
+    · Norisuke Higashikata IV catches the ferry across to Manhattan just as it pulls away.
+    · Wren Garrett rides through the night while the others sleep.
+    · Annie Ketchum and Hattie Sutter share a campfire and agree not to shoot each other tonight.
+  [Field] 1 racer retired and 3 died. 78 remain.
+  [The Fallen] Belle Sutter (shot from ambush, by Barnabas Goodnight) And 5 from the field.
+
+--- Finish Line ---
+  Ellis Danner and Wren Garrett trade blows on a crowded avenue, neither willing to yield.
+  Cora Booker takes the time bonus for leading the final mile.
+✝ Philippa Kincaid ambushes Hot Pants from behind a rock. Hot Pants never sees the shot coming.
+  Meanwhile on the trail...
+    · Johnny Joestar catches the ferry across to Manhattan just as it pulls away.
+    · Jules Rook spurs Quicksilver into a final gallop toward the line.
+    · Pocoloco and Annie Ketchum cross the line almost together, both claiming the better time.
+    · Sagebrush throws a shoe, and Oyecomova loses an hour at a roadside smithy.
+    · Etta Blackwood finds a steady rhythm and makes good time.
+    · L.A. Boom Boom spurs Pepper into a final gallop toward the line.
+    · Mrs. Robinson rides ahead as a scout, warning anyone who will listen about the trail ahead.
+    · Temperance Voss waves for help by the trail. Hattie Sutter rides straight past.
+  [Field] New York is in sight. 1 racer retired. No one in the field died. 77 remain.
+  [The Fallen] Hot Pants (shot from ambush, by Philippa Kincaid)
+
+  STAGE 9 RESULTS
+     1. Gyro Zeppeli  +100
+     2. Etta Blackwood  +90
+     3. Johnny Joestar  +80
+     4. Ignatius Rourke [pack]  +70
+     5. Norisuke Higashikata IV  +60
+     6. L.A. Boom Boom  +50
+     7. Wren Garrett  +40
+     8. Cora Booker  +30
+     9. Elias Faraday [pack]  +20
+    10. Diego Brando  +10
+  STANDINGS
+    Johnny Joestar  420
+    Etta Blackwood  410
+    Wren Garrett  365
+    Norisuke Higashikata IV  325
+    Gyro Zeppeli  320
+    Diego Brando  310
+
+======================================================================
+NEW YORK
+Winner: Johnny Joestar with 420 points
+Reached New York (16 named): Cora Booker, Jules Rook, Annie Ketchum, Hattie Sutter, Ellis Danner, Etta Blackwood, Wren Garrett, Johnny Joestar, Gyro Zeppeli, Diego Brando, Pocoloco, Norisuke Higashikata IV, Oyecomova, Urmd Avdul, Benjamin Boom Boom, L.A. Boom Boom
+From the field: 77 riders.
+
+(30 rounds, ~26 min of reveals)

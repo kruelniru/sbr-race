@@ -7,12 +7,16 @@ import { newSeed } from '../engine/rng.js';
 import { HostLobby } from './lobby.js';
 import { loadSavedGame, saveGame, clearSavedGame } from './persist.js';
 import { addBots, removeBots } from './debug.js';
+import { RaceHost } from './race-host.js';
+import { raceView } from './race-view.js';
+import CANON from '../../data/canon-racers.js';
 import { h, $, mount, avatar } from '../ui/dom.js';
 
 const DEBUG = new URLSearchParams(location.search).has('debug');
 const app = $('#app');
 
 let lobby = null;
+let raceHost = null;
 let code = null;
 let closing = false;
 let fillTarget = null; // the host's "fill to" number; null = use the minimum
@@ -90,8 +94,19 @@ async function openRoom(saved) {
       render();
     },
   });
+  if (state.phase === PHASE.RACING && state.race) {
+    raceHost = new RaceHost({ lobby, onChange: lobby.onChange });
+    raceHost.resume();
+  }
   saveGame(code, state, sessions);
   render();
+}
+
+function startRace() {
+  if (!confirm(`Lock the lobby and start with ${riders(hostScreenView(lobby.state).players.length)}? New players won't be able to join.`)) return;
+  lobby.lock();
+  raceHost = new RaceHost({ lobby, onChange: lobby.onChange });
+  raceHost.start();
 }
 
 function riders(n) {
@@ -109,6 +124,7 @@ function randomCode() {
 function render() {
   if (!lobby) return;
   const view = hostScreenView(lobby.state);
+  if (view.phase === PHASE.RACING && raceHost) return renderRace(view);
   const count = view.players.length;
   const minPlayers = view.settings.minPlayers;
   const joinUrl = new URL('phone.html', location.href);
@@ -157,9 +173,7 @@ function render() {
           h('button', {
             class: 'btn btn-primary btn-big',
             disabled: count < minPlayers,
-            onclick: () => {
-              if (confirm(`Lock the lobby and start with ${riders(count)}? New players won't be able to join.`)) lobby.lock();
-            },
+            onclick: startRace,
           }, count < minPlayers ? `Need ${minPlayers - count} more` : 'Start the race'),
         h('div', { class: 'feed host-feed' }, view.feed.slice(-4).map((f) => h('div', { class: `feed-item feed-${f.kind}` }, f.text))),
         h('button', { class: 'btn btn-quiet', onclick: endRoom }, 'Close room'),
@@ -168,6 +182,28 @@ function render() {
       DEBUG && debugPanel(view),
     ),
   );
+}
+
+function renderRace(view) {
+  mount(app,
+    h('div', { class: 'host host-race' },
+      h('header', { class: 'host-header' },
+        h('div', { class: 'brand' }, h('span', { class: 'title small' }, 'Steel Ball Run'), h('span', { class: 'subtitle small' }, `Room ${code}`)),
+        statusBadge(),
+      ),
+      raceView(lobby.state, raceHost),
+      h('footer', { class: 'host-footer race-footer' },
+        disconnectedNote(view),
+        DEBUG && h('span', { class: 'seed' }, `seed ${view.seed}`),
+        h('button', { class: 'btn btn-quiet', onclick: endRoom }, 'Close room'),
+      ),
+    ),
+  );
+}
+
+function disconnectedNote(view) {
+  const n = view.players.filter((p) => !p.connected).length;
+  return h('span', { class: 'hint' }, n ? `${n} phone${n === 1 ? '' : 's'} disconnected (playing on personality)` : '');
 }
 
 function playerCard(p) {
@@ -179,7 +215,10 @@ function playerCard(p) {
       h('div', { class: 'player-personality' }, p.personality),
     ),
     h('span', { class: 'conn-dot', title: p.connected ? 'Connected' : 'Disconnected: playing on personality' }),
-    p.isAI && h('span', { class: 'tag tag-ai' }, 'AI'),
+    h('div', { class: 'tags' },
+      p.mount === 'runner' && h('span', { class: 'tag' }, 'Runner'),
+      p.isAI && h('span', { class: 'tag tag-ai' }, 'AI'),
+    ),
     h('button', {
       class: 'kick', title: 'Remove rider',
       onclick: () => { if (confirm(`Remove ${p.name} from the race?`)) lobby.kick(p.id); },
@@ -225,6 +264,16 @@ function lobbySettings(view) {
       }, 'Fill with AI racers'),
     ),
     aiCount > 0 && h('button', { class: 'btn btn-small btn-quiet', onclick: () => lobby.removeAllAi() }, `Remove all AI (${aiCount})`),
+    h('div', { class: 'setting canon-toggles' },
+      h('span', {}, 'Canon racers'),
+      h('div', { class: 'chips' }, CANON.map((c) => {
+        const on = view.settings.canon?.[c.id] !== false;
+        return h('button', {
+          class: 'chip' + (on ? ' on' : ''), 'aria-pressed': String(on),
+          onclick: () => lobby.setCanon(c.id, !on),
+        }, c.name);
+      })),
+    ),
   );
 }
 
@@ -243,6 +292,7 @@ function endRoom() {
   if (!confirm('Close this room? Everyone will be disconnected and the game is deleted.')) return;
   closing = true;
   clearSavedGame();
+  raceHost?.stop();
   lobby.closeRoom();
   // Give the "room closed" messages a moment to reach the phones.
   mount(app, h('main', { class: 'setup' }, h('p', { class: 'subtitle' }, 'Closing the room…')));

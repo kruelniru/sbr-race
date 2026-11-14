@@ -5,6 +5,11 @@ import { NAME_MAX, GENDER_MAX } from '../config.js';
 import { h, avatar } from '../ui/dom.js';
 import { compressPicture } from './image.js';
 
+const MOUNTS = [
+  { id: 'horse', label: 'Rider', blurb: 'You get a horse. If it dies, you continue on foot, far slower.' },
+  { id: 'runner', label: 'Runner', blurb: "No horse, ever. Better in desert, mountains and on ice; worse on open flats. You can't get a horse later." },
+];
+
 /**
  * @param {object} opts
  * @param {object} opts.initial   { name, gender, pronouns, personality, picture }
@@ -19,6 +24,7 @@ export function characterForm({ initial = {}, submitLabel, onSubmit, onCancel })
     gender: initial.gender ?? '',
     pronouns: initial.pronouns ?? '',
     personality: initial.personality ?? '',
+    mount: initial.mount ?? 'horse',
     picture: initial.picture ?? null,
   };
 
@@ -65,6 +71,13 @@ export function characterForm({ initial = {}, submitLabel, onSubmit, onCancel })
     Object.values(PRONOUNS).map((p) => radio('pronouns', p.id, p.label, data.pronouns === p.id, () => { data.pronouns = p.id; })),
   );
 
+  const mountChoices = h('div', { class: 'choice-list', role: 'radiogroup' },
+    MOUNTS.map((m) =>
+      radio('mount', m.id, [h('strong', {}, m.label), h('span', { class: 'choice-blurb' }, m.blurb)],
+        data.mount === m.id, () => { data.mount = m.id; }, 'choice-card'),
+    ),
+  );
+
   const personalityChoices = h('div', { class: 'choice-list', role: 'radiogroup' },
     PERSONALITIES.map((p) =>
       radio('personality', p.id, [h('strong', {}, p.label), h('span', { class: 'choice-blurb' }, p.blurb)],
@@ -106,6 +119,7 @@ export function characterForm({ initial = {}, submitLabel, onSubmit, onCancel })
     field('Name', nameInput),
     field('Gender', genderInput),
     h('fieldset', {}, h('legend', {}, 'Pronouns'), pronounChoices),
+    h('fieldset', {}, h('legend', {}, 'Ride or run?'), mountChoices),
     h('fieldset', {}, h('legend', {}, 'Personality'),
       h('p', { class: 'hint' }, 'Plays for you when time runs out or you lose connection.'),
       personalityChoices),

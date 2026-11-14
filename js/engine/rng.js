@@ -36,6 +36,13 @@ export class Rng {
     return this.next() < p;
   }
 
+  /** Normally distributed number (Box–Muller). */
+  normal(mean = 0, sd = 1) {
+    const u = 1 - this.next(); // (0, 1], avoids log(0)
+    const v = this.next();
+    return mean + sd * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+
   /** One random element, or undefined for an empty array. */
   pick(arr) {
     return arr.length ? arr[Math.floor(this.next() * arr.length)] : undefined;

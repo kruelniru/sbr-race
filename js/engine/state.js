@@ -13,6 +13,7 @@
 
 import PERSONALITIES from '../../data/personalities.js';
 import PRONOUNS from '../../data/pronouns.js';
+import CANON from '../../data/canon-racers.js';
 import { NAME_MAX, GENDER_MAX, PICTURE_MAX_BYTES, FEED_KEEP, DEFAULT_MIN_PLAYERS } from '../config.js';
 import { Rng } from './rng.js';
 
@@ -21,7 +22,7 @@ export const PHASE = Object.freeze({
   RACING: 'racing', // lobby is locked from here on; only reconnects get in
 });
 
-export const STATE_VERSION = 2; // bump when the saved shape changes (old host saves are ignored)
+export const STATE_VERSION = 3; // bump when the saved shape changes (old host saves are ignored)
 
 export function createGameState(seed) {
   return {
@@ -32,6 +33,7 @@ export function createGameState(seed) {
     createdAt: Date.now(),
     settings: {
       minPlayers: DEFAULT_MIN_PLAYERS, // riders needed before the host can start
+      canon: Object.fromEntries(CANON.map((c) => [c.id, true])), // canon racer toggles
     },
     players: [],
     feed: [],
@@ -53,6 +55,7 @@ export function addPlayer(state, { isAI = false } = {}) {
     gender: '',
     pronouns: 'they',
     personality: 'honorable',
+    mount: 'horse', // 'horse' (Rider) or 'runner': a Runner never has a horse
     picture: null, // small JPEG data URL, or null
     isAI, // game-controlled PC: always picks by personality
     connected: isAI, // AI racers are never "disconnected"
@@ -87,10 +90,15 @@ export function validateCharacter(state, playerId, data) {
     (p) => p.id !== playerId && p.hasCharacter && p.name.toLowerCase() === name.toLowerCase(),
   );
   if (taken) return fail(`Someone is already racing as "${name}". Pick another name.`);
+  if (CANON.some((c) => c.name.toLowerCase() === name.toLowerCase())) {
+    return fail(`${name} is a canon racer. Pick your own name.`);
+  }
 
   const gender = cleanText(data.gender, GENDER_MAX);
   if (!PRONOUNS[data.pronouns]) return fail('Pick your pronouns.');
   if (!PERSONALITIES.some((p) => p.id === data.personality)) return fail('Pick a personality.');
+  const mount = data.mount ?? 'horse';
+  if (mount !== 'horse' && mount !== 'runner') return fail('Pick Rider or Runner.');
 
   let picture = null;
   if (data.picture != null) {
@@ -101,16 +109,17 @@ export function validateCharacter(state, playerId, data) {
     picture = data.picture;
   }
 
-  return { ok: true, value: { name, gender, pronouns: data.pronouns, personality: data.personality, picture } };
+  return { ok: true, value: { name, gender, pronouns: data.pronouns, personality: data.personality, mount, picture } };
 }
 
 export function applyCharacter(player, character) {
   Object.assign(player, character, { hasCharacter: true });
 }
 
-/** Append a public feed line (shown on the host and every phone). */
-export function addFeed(state, text, kind = 'info') {
+/** Append a public feed line. `ids` = named racers in it (phones highlight their own). */
+export function addFeed(state, text, kind = 'info', ids = null) {
   const item = { id: state.nextFeedId++, text, kind, at: Date.now() };
+  if (ids?.length) item.ids = ids;
   state.feed.push(item);
   if (state.feed.length > 300) state.feed.splice(0, state.feed.length - 300);
   return item;
@@ -121,7 +130,7 @@ export function recentFeed(state, n = FEED_KEEP) {
 }
 
 export function publicFeedItem(item) {
-  return { id: item.id, text: item.text, kind: item.kind };
+  return { id: item.id, text: item.text, kind: item.kind, ids: item.ids };
 }
 
 // ---------------------------------------------------------------- views
@@ -131,6 +140,8 @@ export function publicView(state) {
   return {
     phase: state.phase,
     players: readyPlayers(state).map((p) => ({ id: p.id, name: p.name, connected: p.connected, ai: p.isAI })),
+    // Round header as currently revealed on the stream (never ahead of it).
+    race: state.race?.shownHeader ?? null,
   };
 }
 
@@ -145,7 +156,11 @@ export function privateView(state, playerId) {
     gender: p.gender,
     pronouns: p.pronouns,
     personality: p.personality,
+    mount: p.mount,
     picture: p.picture,
+    // Race status as of the last fully revealed round, so a phone never
+    // spoils the stream. Secrets (Worthiness, parts...) get added here only.
+    race: p.shown ?? null,
   };
 }
 
@@ -164,6 +179,7 @@ export function hostScreenView(state) {
       picture: p.picture,
       connected: p.connected,
       isAI: p.isAI,
+      mount: p.mount,
     })),
     joining: state.players.filter((p) => !p.hasCharacter).length,
     feed: recentFeed(state, 12),

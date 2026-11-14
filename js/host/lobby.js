@@ -226,6 +226,24 @@ export class HostLobby {
     for (const p of this.state.players.filter((x) => x.isAI)) this.kick(p.id);
   }
 
+  setCanon(id, on) {
+    if (this.state.phase !== PHASE.LOBBY) return;
+    this.state.settings.canon[id] = !!on;
+    this.onChange();
+  }
+
+  /** Public feed line to the host's feed and every phone. */
+  feed(text, kind, ids) {
+    this.#feed(text, kind, ids);
+  }
+
+  /** Send every phone its private view (after a round's reveal finishes). */
+  sendPrivateAll() {
+    for (const [playerId, connId] of this.playerToConn) {
+      this.net.send(connId, msg(TO_PHONE.YOU, { you: privateView(this.state, playerId) }));
+    }
+  }
+
   setMinPlayers(n) {
     const v = Math.max(1, Math.min(MAX_PLAYERS, Math.round(Number(n)) || 1));
     if (v === this.state.settings.minPlayers) return;
@@ -240,8 +258,8 @@ export class HostLobby {
 
   // ------------------------------------------------------------ internals
 
-  #feed(text, kind) {
-    const item = addFeed(this.state, text, kind);
+  #feed(text, kind, ids) {
+    const item = addFeed(this.state, text, kind, ids);
     const m = msg(TO_PHONE.FEED, { items: [publicFeedItem(item)] });
     for (const connId of this.playerToConn.values()) this.net.send(connId, m);
   }
