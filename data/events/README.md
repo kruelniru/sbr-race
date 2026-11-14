@@ -49,6 +49,9 @@ Example: `b: { is: 'named', side: 'valentine' }`.
 | `pace` | `+1` / `-2` | placement boost or drag this stage |
 | `points` | `+10` / `-10` | bonus points (sprint +10, save +10, help +5, shortcut +5, sabotage −10) |
 | `horse` | `'dies'` | the horse is lost and the Rider continues on foot. Runners can't get these. |
+| `worthiness` | `+5` / `-5` | hidden stat. `help`-tagged events already give the focus racer +5 |
+
+Sub events (choices) use the same roles and effects; see `data/sub-events.js`.
 
 Canon racers can't die in Stage 1, so the engine never casts them into a
 death there.

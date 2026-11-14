@@ -150,23 +150,49 @@ Text sits on solid card panels so it stays easy to read on stream. The effects u
 
 ## Choices
 
-Players make one Stage Plan per stage, plus sub events when something happens to them. Every choice has a 30-second timer; if it runs out, the character's personality picks.
+Players make one Stage Plan per stage, plus sub events when something happens to them. Every choice has a 30-second timer (a host setting, 15–60 seconds); if it runs out, the character's personality picks.
+
+**How a choice window runs:**
+
+- **Stage Plans** open on phones the moment the previous stage's results card appears, so players choose while the host shows results and standings. When the host clicks "Start Stage N", the window closes if its time is up; otherwise the host shows "Choose your Stage Plan" for only the time that's left. Stage 1's plan opens right after Start.
+- **Sub events** open before each round's reveal. The host shows "Sub event! Kruel has a decision to make…" with faces and a ✓ as each person answers (never what they picked), plus a countdown.
+- A window closes when the timer runs out, when every connected player has answered, or when the host clicks **End now**. Anyone unanswered (timed out or disconnected) gets their ★ option. AI racers answer instantly by personality.
+- **Pause timer** freezes the countdown on the host and every phone ("Paused by the host") so the host can talk; **Resume** restarts it.
+- Answers can be changed until the window closes. Everything resolves together; sub event results lead the round's Main Story.
+- **Secret prompts:** a sub event can be marked secret. Secret prompts are never named or counted on the host screen; if every pending prompt is secret, the host just says "Decisions are being made…". Valentine's offer (milestone 5) uses this.
 
 **Personality hint:** on every choice, the option your personality would pick is marked "★ In character." Personality also nudges which random events you get (Honorable gets more helping and sparing events, Ruthless more kills and sabotage). Canon racers add their own leanings on top: they rarely start kills and often help.
 
 **Stage Plan** (start of each stage, everyone at once):
 
-| Plan | Upside | Downside |
-| --- | --- | --- |
-| Push hard | Better placement | More hazard and horse risk |
-| Pace yourself | Safe | Average placement |
-| Hunt a corpse part | Better odds of finding one | Valentine's agents notice you |
-| Hunt a rival | Guaranteed encounter with your pick | You might lose |
-| Ally up | Ride with someone (they accept or refuse) | They might betray you |
-| Lay low | Very safe | Bad placement |
-| Seek the Devil's Palm (Stages 2–3) | Stand gamble | Low Worthiness can kill you |
+| Plan | Upside | Downside | Arrives |
+| --- | --- | --- | --- |
+| Push hard | Better placement | More hazard and horse risk | M3 |
+| Pace yourself | Safe | Average placement | M3 |
+| Hunt a rival | A guaranteed sprint showdown with your pick | You might lose | M3 (a real fight in M5) |
+| Lay low | Very safe | Bad placement | M3 |
+| Seek the Devil's Palm (Stages 2–3) | Stand gamble | Low Worthiness can kill you | M4 |
+| Hunt a corpse part | Better odds of finding one | Valentine's agents notice you | M5 |
+| Ally up | Ride with someone (they accept or refuse) | They might betray you | M5 |
 
-**Sub events:** every round, each PC has a chance of one, and at least one PC always gets one. Everyone affected answers at the same time, and the host screen announces it while the main flow waits. Some sub events chain (win a fight, then choose kill or spare).
+Plans whose systems don't exist yet are hidden, not greyed out. The numbers live in `data/plans.js`; the sim checks that no plan dominates (`--plans random`, `--plans <id>`, `--plans star`).
+
+**Hunt a rival (milestone 3):** pick any racing named racer (a PC, canon racer or named NPC), never yourself. Sometime in the stage you get a sprint showdown with them: go all out or ride smart; a PC target chooses too (race them or don't take the bait). The winner gets +5 points and pace. If the target dies or retires first, you get a normal event and the line "X's rival is gone." Several racers can hunt one target, but a target has at most one showdown per round; a hunter who can't get one by the end of the stage "never catches up".
+
+**Sub events:** every round, each PC has a chance of one, and at least one PC always gets one (Low about 1 a round, Normal 2–3, High 4–5, a host setting; rival showdowns count toward it). Everyone affected answers at the same time, and the host screen announces it while the main flow waits. A sub event counts as that racer's event for the round. Some sub events chain (win a fight, then choose kill or spare).
+
+In milestone 3 (`data/sub-events.js`):
+
+- **Injured racer on the trail:** stop to help (lose time, +5 points, Worthiness) or ride past.
+- **Risky shortcut** (canyon gap, goat path, thin ice, back alleys, dry riverbed): take it or stay on the road.
+- **Hazard** (sandstorm, blizzard, stampede, fog, fire, flash flood): push through or take shelter.
+- **Spent horse / sore legs** (Runners): rest or push on.
+- **Sprint challenge:** race a canon racer or NPC for +10, or let them go.
+- **Bad injury:** keep riding, stop and heal, or retire.
+
+A person's choice result always shows in the Main Story, even a quiet one ("Kruel waits out the storm"). Quiet results for AI racers and timed-out players go to the Meanwhile card.
+
+Later milestones:
 
 - **Won a fight:** kill, spare, take their horse, or take their corpse part.
 - **Found a part:** keep it, hide it, or give it to someone.
@@ -195,7 +221,7 @@ Alliances are in from the start. How one forms depends on who's asking:
 
 ## Worthiness
 
-Worthiness is a hidden 0–100 stat. Each player sees only their own, as an RDR2-style bar with no number; nobody else sees it until the finale's secrets reveal.
+Worthiness is a hidden 0–100 stat, tracked silently from milestone 3 (help or save +5, spare +8; starting values from the tier table). Each player sees only their own (from milestone 4), as an RDR2-style bar with no number; nobody else sees it until the finale's secrets reveal.
 
 | Action | Change |
 | --- | --- |
@@ -343,9 +369,9 @@ In the manga, points come only from stage placements, plus a time bonus for fini
 - Reveal speed: Slow, Normal, Fast
 - Skip side stories automatically (default **on**)
 - Background effects (default on)
-- Sub event frequency: Low, Normal (about 2–3 per round), High
+- Sub event frequency: Low, Normal (about 2–3 per round), High (also on the race controls)
 - NPC field size (default ~500)
-- Choice timer (default 30 seconds)
+- Choice timer (default 30 seconds; 15–60, also on the race controls)
 
 **Tech plan:**
 
@@ -387,3 +413,14 @@ Decisions made after the original design, in the order they came up:
 19. Spares are tracked from milestone 2 onward and feed the Most Merciful award.
 20. New rooms start paused (host clicks Next); Auto is a toggle. Host controls sit in fixed slots so nothing shifts.
 21. PCs buffed slightly after the first live test: PC skill 60 → 63, PC death odds 0.6 → 0.45. About 51% of PCs reach New York (was ~45%). Final retune after milestone 6.
+22. Milestone 3 choice flow: a sub event window opens before each round's reveal; the host shows who is deciding with ✓ marks and a countdown. A window closes on the timer, on **End now**, or when every connected player has answered; unanswered players get ★. **Pause timer / Resume** freeze the countdown everywhere.
+23. Stage Plans overlap the stage results: they open on the results card, and "Start Stage N" only waits for any time left. Stage 1's plan opens right after Start.
+24. Sub event prompts have a `secret` flag: never named or counted on the host; all-secret windows just say "Decisions are being made…". Built now for Valentine's offer (M5).
+25. Hunt a rival in M3 is a sprint showdown (+5 to the winner; plain sprint challenges keep +10). Targets are racing named racers, never yourself; a gone target gives "X's rival is gone" and a normal event; at most one showdown per target per round. It becomes a real fight in M5.
+26. M3 sub events: injured racer, risky shortcut, hazard, spent horse / sore legs, sprint challenge, bad injury. Kill or spare, corpse parts, agents, the Devil's Palm and Valentine's offer wait for M4–5.
+27. A sub event replaces that racer's main event for the round (keeps the reveal short).
+28. A person's choice result always stays in the Main Story; only AI racers' and timed-out players' quiet results go to the Meanwhile card.
+29. Hunt a corpse part is hidden until M5 (with corpse parts); Seek the Devil's Palm arrives in M4; Ally up in M5.
+30. Worthiness is tracked silently from M3 (help/save +5, spare +8), shown nowhere until M4.
+31. Retune for Stage Plans: PC skill 65, PC death odds 0.65 (about 51% of PCs reach New York, top 10 in about 38% of stages). The 77% PC win rate waits for the M6 retune.
+32. The host logs every choice window (open time, time beyond the results, each answer time). "Export choice times" downloads it; `node sim/simulate.js --choice-times file.json` replays it to settle game length.

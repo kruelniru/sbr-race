@@ -176,3 +176,22 @@
 /* Re-rendered (not new) cards don't replay their entrance. */
 .card.no-anim, .card.no-anim .event-line { animation: none; opacity: 1; }
 .card-podium.winner.no-anim { animation: winner-glow 2.4s ease-in-out infinite; }
+
+/* ---------------------------------------------------------------- choices (waiting screen) */
+.card-choice { text-align: center; padding: 36px 40px; display: grid; gap: 14px; justify-items: center; }
+.choice-who { font-size: clamp(1.3rem, 2.2vw, 1.9rem); margin: 0; color: var(--gold-2); }
+.deciders { list-style: none; padding: 0; margin: 6px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 22px; max-width: 100%; }
+.deciders li { display: grid; justify-items: center; gap: 4px; width: 92px; transition: opacity .3s; }
+.deciders li .avatar { transition: box-shadow .3s, border-color .3s; }
+.deciders li.done .avatar { border-color: var(--green); box-shadow: 0 0 14px #5fbf7a88; }
+.deciders li.offline { opacity: .5; }
+.decider-name { font-size: .9rem; max-width: 92px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.decider-mark { font-weight: 700; color: var(--muted); }
+.deciders li.done .decider-mark { color: var(--green); }
+.countdown { width: min(520px, 100%); display: grid; gap: 8px; justify-items: center; }
+.countdown-num { font-family: var(--display); font-size: clamp(2.4rem, 5vw, 3.6rem); color: var(--gold-2); line-height: 1; }
+.countdown.paused .countdown-num { color: var(--muted); }
+.countdown-bar { width: 100%; height: 10px; border-radius: 999px; background: #0008; overflow: hidden; }
+.countdown-fill { height: 100%; background: linear-gradient(90deg, #c98a22, #f2c66d); transition: width .25s linear; }
+.overlap-hint { font-size: .85rem; color: var(--gold-2); background: #000a; padding: 4px 10px; border-radius: 999px; }
+@media (prefers-reduced-motion: reduce) { .countdown-fill { transition: none; } }

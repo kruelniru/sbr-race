@@ -422,8 +422,10 @@ function resolveSub(ctx, prompt) {
   if (option.tags?.includes('help')) addWorthiness(roles.a, RULES.worthiness.help);
   const death = Object.values(outcome.effects).some((e) => e.dies);
   const line = lineFor(ctx, `${sub.id}:${option.id}`, text, roles, { death, tags: option.tags ?? [] });
-  // Quiet results ("waits out the storm") go to the Meanwhile card.
-  if (outcome.minor && !death) Object.assign(line, { minor: true, side: true });
+  // Quiet results ("waits out the storm") go to the Meanwhile card, but only
+  // for AI racers and timed-out players: a person's own choice always lands
+  // in the Main Story, so they see it on stream.
+  if (outcome.minor && !death && prompt.answer.by !== 'player') Object.assign(line, { minor: true, side: true });
   return line;
 }
 

@@ -282,11 +282,11 @@ export const RIVAL = {
     { id: 'smart', label: 'Ride smart', hint: 'Safer, lower odds', bonus: 0, risk: 0, lean: L(2, 1, 4, 1, 2.2) },
   ],
   target: [
-    { id: 'race', label: 'Race them', hint: 'Win +10 points', bonus: 4, risk: 0.08, lean: L(2, 3, 0.8, 4, 1.5) },
+    { id: 'race', label: 'Race them', hint: 'Win +5 points', bonus: 4, risk: 0.08, lean: L(2, 3, 0.8, 4, 1.5) },
     { id: 'refuse', label: "Don't take the bait", hint: 'They gain a little time on you', bonus: 0, risk: 0, lean: L(1.5, 0.3, 4, 0.1, 2) },
   ],
   contestSd: 12,
-  win: { points: 10, pace: 1 },
+  win: { points: 5, pace: 1 },   // plain sprint challenges keep +10
   lose: { pace: -1 },
   lines: {
     win: '{a} hunts down {b} and beats {b.them} in a sprint showdown.',

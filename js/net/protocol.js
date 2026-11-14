@@ -8,7 +8,7 @@ export const PROTOCOL_VERSION = 1;
 export const TO_HOST = Object.freeze({
   HELLO: 'hello',         // { v, token? }  first message on every connection
   CHARACTER: 'character', // { name, gender, pronouns, personality, picture? }
-  CHOICE: 'choice',       // { promptId, optionId }        (milestone 3)
+  CHOICE: 'choice',       // { promptId, optionId, targetId? }  answer a Stage Plan or sub event
   VOTE: 'vote',           // { promptId, optionId }        (milestone 6)
   PING: 'ping',           // {}
 });
@@ -17,7 +17,7 @@ export const TO_HOST = Object.freeze({
 export const TO_PHONE = Object.freeze({
   WELCOME: 'welcome',     // { token, playerId, needsCharacter }
   REJECTED: 'rejected',   // { reason, message }
-  YOU: 'you',             // { you }  this player's private snapshot
+  YOU: 'you',             // { you, timer }  private snapshot (+ choice timer: { remainingMs, durationMs, paused })
   PUBLIC: 'public',       // { phase, players: [{ id, name, connected }] }
   FEED: 'feed',           // { items: [{ id, text }], reset? }
   CHAR_ERROR: 'char_error', // { message }  character was refused (e.g. name taken)

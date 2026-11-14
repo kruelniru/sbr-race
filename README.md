@@ -81,13 +81,17 @@ js/engine/           pure game logic, no DOM (Node can import it)
   racers.js          PCs and canon racers share one racer shape
   field.js           the NPC field, pack leaders, named NPCs, field reports
   placement.js       Finish Line scores, points, standings
+  choices.js         Stage Plans, sub events, Hunt a rival, personality picks
+  plans.js           Stage Plan lookups
   reveal.js          round result -> host cards + text-based timing (shared with the sim)
   finale.js          podium, awards, memorial, and the registry for later finale sections
 js/host/             host-main.js, lobby.js, race-host.js (reveal, Back, skipping), race-view.js, backdrop.js, persist.js, debug.js
 js/phone/            phone-main.js, character-form.js, image.js, wake-lock.js, feed.js
 js/ui/dom.js         small DOM helpers
 data/                game content, separate from the engine
-  rules.js           every tunable number (points, placement, death odds, pacing...)
+  rules.js           every tunable number (points, placement, death odds, choices, pacing...)
+  plans.js           Stage Plans
+  sub-events.js      sub events and Hunt a rival showdowns
   stages.js          the 9 stages: rounds, terrain, NPC attrition
   canon-racers.js    the 15 canon racers (each a host toggle)
   events/            event templates; see data/events/README.md
@@ -117,8 +121,27 @@ tests/               node --test
 3. **The Fallen** (after Night rounds and Finish Lines), then **stage results**
    and **standings**. These always show.
 
+### Choices (milestone 3)
+- **Stage Plans** open on phones when a stage's results card appears (Stage 1:
+  right after Start). Players choose while the results and standings are up;
+  "Start Stage N" waits only for any time left.
+- **Sub events** open before each round: the host shows "Sub event! X has a
+  decision to make…" with a ✓ per answer and a countdown, while phones show
+  the choice with "★ In character" on the personality's pick.
+- A window closes when its timer runs out, when every connected player has
+  answered, or on **End now**. Unanswered players get their ★ option.
+  **Pause timer** freezes the countdown on every phone.
+- Settings: **Sub events** (Low / Normal / High) and **Timer** (15–60 s), in the
+  lobby and on the race controls.
+- **Export choice times** (debug bar with `?debug=1`, and at the end of every
+  game) downloads a JSON log of every window. Replay it in the sim:
+  `node sim/simulate.js --choice-times sbr-choice-times-ABCD.json`.
+- Content: `data/plans.js` (Stage Plans) and `data/sub-events.js` (sub events,
+  Hunt a rival). Engine: `js/engine/choices.js`.
+
 **Host controls:** ◂ Back (view-only: steps through earlier cards and earlier
 rounds, changes nothing), Pause/Auto, Next, Back to live, Skip side stories.
+While a choice window is open, the same slots hold Pause timer and End now.
 Rooms start paused (click Next); turn on Auto to advance by itself. Each
 control has a fixed slot, so buttons never move when one appears.
 **Speed** (Slow / Normal / Fast) scales how long each card stays up, based on
@@ -147,11 +170,15 @@ as the last big moment.
 node sim/simulate.js --games 500                 # 18 PCs by default
 node sim/simulate.js --games 500 --runners 0.3   # 30% Runners
 node sim/simulate.js --seed demo --verbose       # read one full game
+node sim/simulate.js --plans random              # Stage Plan balance (also: star, push, pace, rival, laylow)
+node sim/simulate.js --freq low --humans 12      # sub event frequency; how many PCs are people
+node sim/simulate.js --choice-times log.json     # use real answer times exported from a game
 ```
 
 The sim prints deaths and retirements per stage by tier, who reaches New York,
 winners by tier, Riders vs Runners, kills, game length (reveal time plus
-projected choice time) and event usage. It ends with sanity checks. Tune the
+choice windows, counting only Stage Plan time beyond the results cards),
+results per Stage Plan and per personality, and event usage. It ends with sanity checks. Tune the
 numbers in `data/rules.js`, `data/stages.js` and the event weights.
 `sim/sample-game.txt` is one full game.
 
@@ -160,7 +187,10 @@ numbers in `data/rules.js`, `data/stages.js` and the event weights.
 The host browser holds all state. The network and UI code only send or render
 the output of `publicView`, `privateView(state, playerId)` or `hostScreenView`
 in `js/engine/state.js`. Secrets (Worthiness, corpse parts, unrevealed Stands,
-Valentine allegiance) must only ever appear in `privateView`.
+Valentine allegiance) must only ever appear in `privateView`. Worthiness is
+tracked from milestone 3 and is in no view at all yet. The host's choice
+waiting screen renders only `choiceWaitingView` (who is deciding, never what
+they picked, never secret prompts).
 
 ### Message protocol
 

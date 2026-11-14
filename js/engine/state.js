@@ -168,6 +168,7 @@ export function privateView(state, playerId) {
     race: p.shown ?? null,
     // An open choice for this player (Stage Plan or sub event), phone-safe.
     prompt: promptView(state, p.id),
+    plan: p.plan ?? null, // this stage's Stage Plan (their own choice)
   };
 }
 

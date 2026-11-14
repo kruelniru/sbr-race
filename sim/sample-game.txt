@@ -1,39 +1,39 @@
-STEEL BALL RUN · seed "kruel-2" · 18 PCs, 15 canon, 500 in the field
+STEEL BALL RUN · seed "demo" · 18 PCs, 15 canon, 500 in the field
 
 The racers:
-  Marlow Ashby (PC, they, cautious, horse Dusty)
-  Iris Pike (PC, she, ruthless, horse Ghost)
-  Morgan Vance (PC, they, ruthless, Runner)
-  Della Harlan (PC, she, opportunist, horse Pinto)
-  Morgan Holloway (PC, they, cautious, horse Lady Luck)
-  Clementine Calloway (PC, she, ruthless, horse Tumbleweed)
-  Virgil Pike (PC, he, honorable, horse Rosie)
-  Amos Ketchum (PC, he, ruthless, horse Tornado)
-  Emery Hale (PC, they, ruthless, horse Biscuit)
-  Wren Ridley (PC, they, honorable, horse Duke)
-  Nell Ridley (PC, she, ruthless, horse Bandit)
-  Cora Pike (PC, she, honorable, horse Quicksilver)
-  Marlow Doyle (PC, they, honorable, horse Blaze)
-  Annie Doyle (PC, she, glory, horse Starlight)
-  Rufus McCrae (PC, he, cautious, horse Shiloh)
-  Boone Booker (PC, he, honorable, Runner)
-  Quinn Finch (PC, they, ruthless, horse Clover)
-  Florence Ketchum (PC, she, opportunist, horse Zephyr)
-  Hot Pants (canon, she, honorable, horse Hickory)
+  Cyrus Ashby (PC, he, honorable, horse Buckshot)
+  Ada Sutter (PC, she, ruthless, Runner)
+  Reese Redding (PC, they, opportunist, horse Valentina)
+  Avery Shaw (PC, they, honorable, horse Clover)
+  Della Quarles (PC, she, glory, horse Lady Luck)
+  Virgil Garrett (PC, he, glory, horse Sorrel)
+  Ruby Blackwood (PC, she, cautious, horse Starlight)
+  Rowan Vance (PC, they, glory, horse Dusty)
+  Florence Whitlock (PC, she, opportunist, horse Mesquite)
+  Iris Doyle (PC, she, cautious, horse Dixie)
+  Rowan Whitlock (PC, they, opportunist, horse Gunsmoke)
+  Rufus Thorne (PC, he, glory, horse Outlaw)
+  Ellis Booker (PC, they, glory, horse Quicksilver)
+  Marlow Pike (PC, they, opportunist, horse Midnight)
+  Ada Lowry (PC, she, ruthless, horse Biscuit)
+  Ivy Mercer (PC, she, cautious, Runner)
+  Pearl Blackwood (PC, she, glory, horse Rosie)
+  Jedediah Calloway (PC, he, cautious, Runner)
+  Hot Pants (canon, she, honorable, horse Sagebrush)
   Johnny Joestar (canon, he, glory, horse Slow Dancer)
   Gyro Zeppeli (canon, he, honorable, horse Valkyrie)
   Diego Brando (canon, he, opportunist, horse Silver Bullet)
   Sandman (canon, he, opportunist, Runner)
-  Mountain Tim (canon, he, honorable, horse Nugget)
-  Pocoloco (canon, he, glory, horse Cinder)
-  Wekapipo (canon, he, cautious, horse Honey)
-  Norisuke Higashikata IV (canon, he, cautious, horse Mesquite)
-  Mrs. Robinson (canon, he, ruthless, horse Valentina)
-  Oyecomova (canon, he, ruthless, horse Outlaw)
-  Urmd Avdul (canon, he, opportunist, horse Juniper)
-  Benjamin Boom Boom (canon, he, ruthless, horse Sagebrush)
-  Andre Boom Boom (canon, he, ruthless, horse Ranger)
-  L.A. Boom Boom (canon, he, ruthless, horse Ironside)
+  Mountain Tim (canon, he, honorable, horse Sable)
+  Pocoloco (canon, he, glory, horse Maverick)
+  Wekapipo (canon, he, cautious, horse Domino)
+  Norisuke Higashikata IV (canon, he, cautious, horse Wildfire)
+  Mrs. Robinson (canon, he, ruthless, horse Shiloh)
+  Oyecomova (canon, he, ruthless, horse Brass)
+  Urmd Avdul (canon, he, opportunist, horse Calico)
+  Benjamin Boom Boom (canon, he, ruthless, horse Paloma)
+  Andre Boom Boom (canon, he, ruthless, horse Ghost)
+  L.A. Boom Boom (canon, he, ruthless, horse Rattler)
 
 ======================================================================
 STAGE 1: 15,000 METERS
@@ -41,79 +41,70 @@ San Diego West Coast Beach → Santa Maria Novella Church
 ======================================================================
 
 --- Day 1 ---
-  L.A. Boom Boom's foot catches in the stirrup and he is dragged until Annie Doyle cuts the strap.
-✝ Dozens of horses collide off the start line. Norisuke Higashikata IV gets clear, but Casimir Ashcroft is trampled.
-  Marguerite Faraday tries to rob Marlow Ashby at gunpoint. Marlow Ashby knocks the gun away and lets her walk.
-  Iris Pike follows a trapper's map down a shortcut and gains half a day.
-  Morgan Vance takes the cliff path along the coast while the pack fights over the beach.
-✝ Harper Voss ambushes Florence Ketchum from behind a rock. Florence Ketchum never sees the shot coming.
-  Quinn Finch lashes Matteo Barlow across the face with a riding crop to get past.
+  Reese Redding catches up with Rowan Vance, but Rowan Vance refuses to race. Reese Redding rides on ahead.
+  Rowan Whitlock catches up with Norisuke Higashikata IV, but Norisuke Higashikata IV refuses to race. Rowan Whitlock rides on ahead.
+  Temperance Voss tries to rob Pocoloco at gunpoint. Pocoloco knocks the gun away and lets her walk.
+✝ Shots ring out in the crush at the start. Bartholomew Faraday falls. Ruby Blackwood keeps her head down and rides.
+✝ Dozens of horses collide off the start line. Della Quarles gets clear, but Ash Oakes is trampled.
+  Ellis Booker takes the cliff path along the coast while the pack fights over the beach.
+  Riders laugh as they pass Jedediah Calloway. By evening, Jedediah Calloway has caught every one of them.
+✝ Oyecomova catches Florence Whitlock alone on the trail and kills her for her supplies.
   -- Side stories --
     Meanwhile on the trail...
-      · Wekapipo finds a steady rhythm and makes good time.
-      · Morgan Holloway finds a steady rhythm and makes good time.
-      · A whole town turns out to cheer Virgil Pike through.
-      · Sagebrush throws a shoe, and Benjamin Boom Boom loses an hour at a roadside smithy.
-      · Emery Hale is so saddle-sore they can barely sit.
-      · Rufus McCrae takes the wrong fork and has to double back.
-      · Nell Ridley and Wren Ridley ride together for an afternoon, trading stories.
-      · Johnny Joestar and Cora Pike race neck and neck for miles until Johnny Joestar edges ahead.
-      · Mountain Tim stops to splint the arm of Percival Gallagher, who was thrown from his horse.
-      · Ingrid Ashcroft waves for help by the trail. Della Harlan rides straight past.
-      · Tumbleweed throws a shoe, and Clementine Calloway loses an hour at a roadside smithy.
-      · Amos Ketchum and Sandman ride together for an afternoon, trading stories.
-      · Boone Booker stops to splint the arm of Lane Ingram, who was thrown from their horse.
-      · Gyro Zeppeli and Marlow Doyle race neck and neck for miles until Gyro Zeppeli edges ahead.
-      · A whole town turns out to cheer Diego Brando through.
-  [Field] 8 racers retired and 5 died. 487 remain.
+      · Iris Doyle and Benjamin Boom Boom ride together for an afternoon, trading stories.
+      · Ada Lowry and Ada Sutter race neck and neck for miles until Ada Lowry edges ahead.
+      · Wekapipo and Marlow Pike race neck and neck for miles until Wekapipo edges ahead.
+      · Pearl Blackwood finds a steady rhythm and makes good time.
+      · Rufus Thorne finds a steady rhythm and makes good time.
+      · Virgil Garrett stops to splint the arm of Wilhelmina Castellanos, who was thrown from her horse.
+      · Cyrus Ashby stops to splint the arm of Wendell Nightingale, who was thrown from his horse.
+      · Ivy Mercer takes the wrong fork and has to double back.
+      · Andre Boom Boom and Avery Shaw ride together for an afternoon, trading stories.
+      · Sandman takes the wrong fork and has to double back.
+  [Field] 5 racers retired and 3 died. 492 remain.
 
 --- Finish Line ---
-  Virgil Pike is pinned against a fence when the crowd surges onto the track at the finish.
-  Gyro Zeppeli shares his cheese and dried meat with Rufus McCrae.
-  Marlow Doyle passes Marguerite Faraday, who has collapsed a mile short of the finish.
-  Clementine Calloway lashes Winifred Lockhart across the face with a riding crop to get past.
-  Iris Pike is knocked from the saddle in the first mile. Her race is over before it began.
-  Percival Hawthorne fires on Quinn Finch from a ridge. The bullet grazes their side.
-  Ash McAllister tries to rob Johnny Joestar at gunpoint. Johnny Joestar knocks the gun away and lets them walk.
-  L.A. Boom Boom draws on Urmd Avdul and misses. Urmd Avdul has him dead to rights, then lowers the gun.
-  Mrs. Robinson takes the cliff path along the coast while the pack fights over the beach.
+  Ada Sutter hunts down Virgil Garrett, but Virgil Garrett wins the sprint showdown.
+  Ada Lowry catches up with Rufus Thorne, but Rufus Thorne refuses to race. Ada Lowry rides on ahead.
+  Marlow Pike crowds Diego Brando into the rail on the final turn.
+  Rowan Whitlock draws on Avery Shaw and misses. Avery Shaw has them dead to rights, then lowers the gun.
+  Wilhelmina Castellanos fires on Della Quarles from a ridge. The bullet grazes her side.
+  Wekapipo's foot catches in the stirrup and he is dragged until Pearl Blackwood cuts the strap.
+  Rowan Vance takes the cliff path along the coast while the pack fights over the beach.
+  Pocoloco takes the time bonus for leading the final mile.
   -- Side stories --
     Meanwhile on the trail...
-      · Wren Ridley finds a steady rhythm and makes good time.
-      · Nell Ridley fades badly in the final miles.
-      · Harper Blackwell waves for help by the trail. Andre Boom Boom rides straight past.
-      · Boone Booker finds a steady rhythm and makes good time.
-      · Marlow Ashby spurs Dusty into a final gallop toward the line.
-      · Annie Doyle stops to splint the arm of Ingrid Ashcroft, who was thrown from her horse.
-      · Pocoloco spurs Cinder into a final gallop toward the line.
-      · Biscuit bogs down in the deep sand.
-      · Morgan Holloway and Wekapipo cross the line almost together, both claiming the better time.
-      · Cora Pike stops to splint the arm of Ezekiel Rourke, who was thrown from his horse.
-      · Norisuke Higashikata IV takes the wrong fork and has to double back.
-      · Lucius Okafor waves for help by the trail. Amos Ketchum rides straight past.
-      · Della Harlan takes the wrong fork and has to double back.
-      · Morgan Vance's feet are raw and bleeding.
-  [Field] The first stretch of the race is a bloodbath. 10 racers retired and 3 died. 474 remain.
-  [The Fallen] Florence Ketchum (shot from ambush, by Harper Voss) And 8 from the field.
+      · Ivy Mercer and Andre Boom Boom cross the line almost together, both claiming the better time.
+      · Jedediah Calloway takes the wrong fork and has to double back.
+      · Sandman settles into a long-distance stride.
+      · Ruby Blackwood is so saddle-sore she can barely sit.
+      · Ellis Booker finds a steady rhythm and makes good time.
+      · Iris Doyle fades badly in the final miles.
+      · Mrs. Robinson spurs Shiloh into a final gallop toward the line.
+      · Valentina throws a shoe, and Reese Redding loses an hour at a roadside smithy.
+      · Paloma throws a shoe, and Benjamin Boom Boom loses an hour at a roadside smithy.
+      · Cyrus Ashby takes the wrong fork and has to double back.
+  [Field] 5 racers retired and 3 died. 484 remain.
+  [The Fallen] Florence Whitlock (killed for supplies, by Oyecomova) And 6 from the field.
 
   STAGE 1 RESULTS
-     1. Wekapipo  +100
-     2. Mrs. Robinson  +90
-     3. Marlow Ashby  +80
-     4. Diego Brando  +70
-     5. Oyecomova  +60
-     6. Pocoloco  +50
-     7. Morgan Holloway  +40
-     8. Wren Ridley  +30
-     9. Emery Hale  +20
-    10. Amos Ketchum  +10
+     1. Pearl Blackwood  +100
+     2. Rowan Vance  +90
+     3. Gyro Zeppeli  +80
+     4. Ellis Booker  +70
+     5. Reese Redding  +60
+     6. Finley Underhill [pack]  +50
+     7. Matilda Hartley [pack]  +40
+     8. Pocoloco  +30
+     9. Sandman  +20
+    10. Della Quarles  +10
   STANDINGS
-    Wekapipo  100
-    Mrs. Robinson  90
-    Marlow Ashby  80
-    Diego Brando  70
-    Oyecomova  60
-    Pocoloco  50
+    Pearl Blackwood  110
+    Rowan Vance  90
+    Gyro Zeppeli  80
+    Ellis Booker  70
+    Reese Redding  60
+    Finley Underhill  50
 
 ======================================================================
 STAGE 2: ACROSS THE ARIZONA DESERT
@@ -121,130 +112,120 @@ Santa Maria Novella Church → Monument Valley
 ======================================================================
 
 --- Day 1 ---
-✝ Wekapipo finds Wendell Blackwell dead of thirst beside his horse.
-  A rattlesnake spooks Cinder, and the horse goes down with a broken leg. Pocoloco has to go on foot.
-  Amos Ketchum cuts Andre Boom Boom's cinch strap at a water stop. Andre Boom Boom loses an hour fixing it.
-  Cora Pike follows a trapper's map down a shortcut and gains half a day.
-  Della Harlan shares her last canteen with Benjamin Boom Boom, who was about to collapse.
+✝ Pearl Blackwood rides past Bellamy Rourke. Nobody else stops for them either.
+  Rowan Whitlock catches up with Sandman, but Sandman refuses to race. Rowan Whitlock rides on ahead.
+✝ Horace Okafor ambushes Rowan Vance from behind a rock. Rowan Vance never sees the shot coming.
+  Pocoloco draws on Wekapipo and misses. Wekapipo has him dead to rights, then lowers the gun.
+  Ada Sutter lands badly on loose rock and tears a muscle in her leg.
+  Benjamin Boom Boom's foot catches in the stirrup and he is dragged until Oyecomova cuts the strap.
+  Mountain Tim shares his last canteen with Cyrus Ashby, who was about to collapse.
+  Kofi Thibodeaux tries to rob Avery Shaw at gunpoint. Avery Shaw knocks the gun away and lets him walk.
+✝ Yusuf Barlow challenges Ada Lowry to a duel over a water hole. Ada Lowry draws first, and Yusuf Barlow drops into the dust.
   -- Side stories --
     Meanwhile on the trail...
-      · Emery Hale finds a steady rhythm and makes good time.
-      · Boone Booker waits out a sandstorm under his blanket.
-      · Virgil Pike takes the wrong fork and has to double back.
-      · Dusty throws a shoe, and Marlow Ashby loses an hour at a roadside smithy.
-      · Annie Doyle finds a hidden spring and lets Starlight drink her fill.
-      · Clementine Calloway finds a hidden spring and lets Tumbleweed drink her fill.
-      · Nell Ridley stops to splint the arm of Imogen Lindqvist, who was thrown from her horse.
-      · Rufus McCrae waits out a sandstorm under his blanket.
-      · Norisuke Higashikata IV and Gyro Zeppeli ride together for an afternoon, trading stories.
-      · Morgan Holloway chases a mirage for an hour before they realize the lake isn't real.
-      · Outlaw throws a shoe, and Oyecomova loses an hour at a roadside smithy.
-      · Quinn Finch finds a shallow ford and crosses the river dry.
-      · L.A. Boom Boom chases a mirage for an hour before he realizes the lake isn't real.
-      · Wren Ridley and Morgan Vance ride together for an afternoon, trading stories.
-      · Urmd Avdul and Hot Pants race neck and neck for miles until Urmd Avdul edges ahead.
-      · Marlow Doyle stops to splint the arm of Augustus Barlow, who was thrown from his horse.
-      · Mrs. Robinson finds a shallow ford and crosses the river dry.
-      · Diego Brando finds a steady rhythm and makes good time.
-  [Field] 2 racers retired and 9 died. 463 remain.
+      · Iris Doyle takes the wrong fork and has to double back.
+      · Rufus Thorne and Johnny Joestar race neck and neck for miles until Rufus Thorne edges ahead.
+      · Midnight throws a shoe, and Marlow Pike loses an hour at a roadside smithy.
+      · Della Quarles takes the wrong fork and has to double back.
+      · Ellis Booker hears whispers about the Devil's Palm and gives the dunes a wide berth.
+      · Ivy Mercer and Urmd Avdul ride together for an afternoon, trading stories.
+      · Ruby Blackwood finds a shallow ford and crosses the river dry.
+      · Andre Boom Boom and Reese Redding ride together for an afternoon, trading stories.
+      · Percival Crane waves for help by the trail. Jedediah Calloway rides straight past.
+      · Sorrel throws a shoe, and Virgil Garrett loses an hour at a roadside smithy.
+  [Field] Vultures follow the field. 3 racers retired and 11 died. 470 remain.
 
 --- Night 1 ---
-✝ Thaddeus Castellanos and Ingrid Jessup jump Johnny Joestar in the dark. Johnny Joestar kills Thaddeus Castellanos, and Ingrid Jessup flees into the night.
-  A scorpion stings Starlight in the night. The horse doesn't see morning.
-  Quinn Finch cuts Wren Ridley's cinch strap at a water stop. Wren Ridley loses an hour fixing it.
-  Thaddeus Everhart tries to rob Rufus McCrae at gunpoint. Rufus McCrae knocks the gun away and lets him walk.
-  Gyro Zeppeli shares his last canteen with Wekapipo, who was about to collapse.
-  Boone Booker runs until his legs give out and has to rest for hours.
-  Mountain Tim keeps watch so L.A. Boom Boom can sleep. Nobody bothers them.
-  Virgil Pike catches Finley Blackwell going through his saddlebags and sends them off with a warning.
-  Barnabas Coburn fires on Clementine Calloway from a ridge. The bullet grazes her side.
+  Reese Redding hunts down Ellis Booker and beats them in a sprint showdown.
+  Ada Sutter hunts down Avery Shaw, but Avery Shaw wins the sprint showdown. Ada Sutter pushes too hard and gets hurt.
+  Pearl Blackwood takes the long way around the canyon.
+  Rufus Thorne follows a trapper's map down a shortcut and gains half a day.
+  Wekapipo catches Prudence Dunmore going through his saddlebags and sends her off with a warning.
+  Jedediah Calloway's legs finally give out. He can't run another mile, and his race is over.
+  Iris Doyle shares her last canteen with Mountain Tim, who was about to collapse.
+✝ Rowan Whitlock finds Percival Oakes dead of thirst beside his horse.
+  Oyecomova's foot catches in the stirrup and he is dragged until Della Quarles cuts the strap.
+  Ivy Mercer steals Sandman's water while he sleeps and leaves him to the desert.
   -- Side stories --
     Meanwhile on the trail...
-      · Morgan Holloway takes the wrong fork and has to double back.
-      · Oyecomova waits out a sandstorm under his blanket.
-      · Morgan Vance settles into a long-distance stride.
-      · Emery Hale rides through the night while the others sleep.
-      · Marlow Ashby finds a steady rhythm and makes good time.
-      · Nell Ridley sleeps under the stars.
-      · Della Harlan takes the wrong fork and has to double back.
-      · Cora Pike is so saddle-sore she can barely sit.
-      · Amos Ketchum sleeps under the stars.
-      · Marlow Doyle finds a hidden spring and lets Blaze drink their fill.
-  [Field] 5 racers retired and 12 died. 446 remain.
-  [The Fallen] No named racers. And 21 from the field.
+      · Ruby Blackwood is so saddle-sore she can barely sit.
+      · Ada Lowry finds a hidden spring and lets Biscuit drink her fill.
+      · Norisuke Higashikata IV sleeps under the stars.
+      · Benjamin Boom Boom finds a hidden spring and lets Paloma drink his fill.
+      · Virgil Garrett sleeps under the stars.
+      · Marlow Pike finds a steady rhythm and makes good time.
+      · Hot Pants stops to splint the arm of Marguerite Rourke, who was thrown from her horse.
+      · Mrs. Robinson finds a steady rhythm and makes good time.
+      · Cyrus Ashby waits out a sandstorm under his blanket.
+  [Field] The desert keeps what it takes. 3 racers retired and 17 died. 450 remain.
+  [The Fallen] Rowan Vance (shot from ambush, by Horace Okafor) And 28 from the field.
 
 --- Day 2 ---
-  Marguerite Voss fires on Pocoloco from a ridge. The bullet grazes his side.
-  Morgan Vance runs until their legs give out and has to rest for hours.
-✝ Virgil Pike finds Harper Voss dead of thirst beside their horse.
-✝ Percival Oakes challenges Sandman to a duel over a water hole. Sandman draws first, and Percival Oakes drops into the dust.
-  Gyro Zeppeli shares his last canteen with Mountain Tim, who was about to collapse.
-  Diego Brando follows a trapper's map down a shortcut and gains half a day.
-  Beatrix Goodnight tries to rob Rufus McCrae at gunpoint. Rufus McCrae knocks the gun away and lets her walk.
-✝ Ines Vandermeer ambushes Andre Boom Boom from behind a rock. Andre Boom Boom never sees the shot coming.
-✝ Amos Ketchum watches Percival Gallagher pick a fight with the wrong stranger and fall in the dust.
-  Hot Pants finds Lucius Delacroix bleeding out on the trail and seals the wound with Cream Starter.
+  Ada Lowry clears the canyon gap and gains half a day.
+  Ruby Blackwood wins a mid-stage sprint and pockets the bonus.
+  Ivy Mercer cuts Pocoloco's cinch strap at a water stop. Pocoloco loses an hour fixing it.
+✝ Virgil Garrett catches Pearl Blackwood alone on the trail and kills her for her supplies.
+  Cyrus Ashby shares his last canteen with L.A. Boom Boom, who was about to collapse.
+  Wilhelmina Castellanos fires on Reese Redding from a ridge. The bullet grazes their side.
   -- Side stories --
     Meanwhile on the trail...
-      · Cora Pike chases a mirage for an hour before she realizes the lake isn't real.
-      · Marlow Doyle and Mrs. Robinson ride together for an afternoon, trading stories.
-      · Morgan Holloway and Clementine Calloway ride together for an afternoon, trading stories.
-      · Annie Doyle and L.A. Boom Boom race neck and neck for miles until Annie Doyle edges ahead.
-      · Benjamin Boom Boom finds a steady rhythm and makes good time.
-      · Biscuit throws a shoe, and Emery Hale loses an hour at a roadside smithy.
-      · Duke throws a shoe, and Wren Ridley loses an hour at a roadside smithy.
-      · Della Harlan is so saddle-sore she can barely sit.
-      · Nell Ridley finds a steady rhythm and makes good time.
-      · Boone Booker takes the wrong fork and has to double back.
-      · Quinn Finch hears whispers about the Devil's Palm and gives the dunes a wide berth.
-      · Urmd Avdul chases a mirage for an hour before he realizes the lake isn't real.
-      · Matteo Gallagher waves for help by the trail. Marlow Ashby rides straight past.
-  [Field] 7 racers retired and 8 died. 431 remain.
+      · Jedediah Calloway, out of the race, watches the leaders pass from a saloon porch.
+      · Urmd Avdul hears whispers about the Devil's Palm and gives the dunes a wide berth.
+      · A whole town turns out to cheer Rowan Whitlock through.
+      · Mrs. Robinson waits out a sandstorm under his blanket.
+      · Norisuke Higashikata IV finds a hidden spring and lets Wildfire drink his fill.
+      · Johnny Joestar chases a mirage for an hour before he realizes the lake isn't real.
+      · Brass throws a shoe, and Oyecomova loses an hour at a roadside smithy.
+      · Ada Sutter takes the wrong fork and has to double back.
+      · Avery Shaw and Wekapipo race neck and neck for miles until Avery Shaw edges ahead.
+      · Della Quarles finds a shallow ford and crosses the river dry.
+      · Mountain Tim and Sandman ride together for an afternoon, trading stories.
+      · Quicksilver throws a shoe, and Ellis Booker loses an hour at a roadside smithy.
+      · Marlow Pike chases a mirage for an hour before they realize the lake isn't real.
+      · Rufus Thorne finds a shallow ford and crosses the river dry.
+      · Iris Doyle finds a steady rhythm and makes good time.
+  [Field] 2 racers retired and 6 died. 442 remain.
 
 --- Finish Line ---
-✝ Josephine Oakes ambushes Boone Booker from behind a rock. Boone Booker never sees the shot coming.
-  Della Harlan shares her last canteen with L.A. Boom Boom, who was about to collapse.
-  Finley Blackwell tries to rob Mrs. Robinson at gunpoint. Mrs. Robinson knocks the gun away and lets them walk.
-  Pocoloco follows a trapper's map down a shortcut and gains half a day.
-  Hot Pants finds Jebediah Jessup bleeding out on the trail and seals the wound with Cream Starter.
-  Wekapipo draws on Mountain Tim and misses. Mountain Tim has him dead to rights, then lowers the gun.
-  Ignatius Fairweather fires on Marlow Doyle from a ridge. The bullet grazes their side.
-  Nell Ridley passes Paloma Barlow, who has collapsed a mile short of the finish.
-✝ Annie Doyle finds Ambrose Thibodeaux dead of thirst beside his horse.
+  Marlow Pike hunts down Avery Shaw, but Avery Shaw wins the sprint showdown.
+  Ellis Booker waves Percival Prentiss on and keeps their own pace.
+  Ada Sutter clears the canyon gap and gains half a day.
+  Ivy Mercer shares her last canteen with Rowan Whitlock, who was about to collapse.
+  A bullet meant for Pocoloco hits his hat instead. Pocoloco laughs and rides on.
+  Rufus Thorne follows a trapper's map down a shortcut and gains half a day.
+  Della Quarles crowds Oyecomova into the rail on the final turn.
+  Thaddeus Tanaka tries to rob Ada Lowry at gunpoint. Ada Lowry knocks the gun away and lets him walk.
+✝ Iris Doyle watches Horace Okafor pick a fight with the wrong stranger and fall in the dust.
+  Gyro Zeppeli shares his cheese and dried meat with Andre Boom Boom.
+  Hot Pants sprays Cream Starter over Benjamin Boom Boom's wounds, and the flesh knits shut. Benjamin Boom Boom can ride again.
   -- Side stories --
     Meanwhile on the trail...
-      · Ines Ingram waves for help by the trail. Gyro Zeppeli rides straight past.
-      · Morgan Holloway fades badly in the final miles.
-      · Morgan Vance waits out a sandstorm under their blanket.
-      · Rufus McCrae is so saddle-sore he can barely sit.
-      · Virgil Pike spurs Rosie into a final gallop toward the line.
-      · Quinn Finch and Amos Ketchum cross the line almost together, both claiming the better time.
-      · Cora Pike hears whispers about the Devil's Palm and gives the dunes a wide berth.
-      · Clementine Calloway spurs Tumbleweed into a final gallop toward the line.
-      · Dusty throws a shoe, and Marlow Ashby loses an hour at a roadside smithy.
-      · Emery Hale finds a steady rhythm and makes good time.
-      · Duke throws a shoe, and Wren Ridley loses an hour at a roadside smithy.
-  [Field] Vultures follow the field. 1 racer retired and 11 died. 419 remain.
-  [The Fallen] Andre Boom Boom (shot from ambush, by Ines Vandermeer); Boone Booker (shot from ambush, by Josephine Oakes) And 19 from the field.
+      · Starlight throws a shoe, and Ruby Blackwood loses an hour at a roadside smithy.
+      · Buckshot throws a shoe, and Cyrus Ashby loses an hour at a roadside smithy.
+      · Virgil Garrett finds a steady rhythm and makes good time.
+      · Reese Redding stops to splint the arm of Rupert Castellanos, who was thrown from his horse.
+      · Wekapipo takes the wrong fork and has to double back.
+  [Field] 3 racers retired and 11 died. 428 remain.
+  [The Fallen] Pearl Blackwood (killed for supplies, by Virgil Garrett) And 17 from the field.
 
   STAGE 2 RESULTS
-     1. Diego Brando  +100
-     2. Mrs. Robinson  +90
-     3. Lucinda Grimsby [pack]  +80
-     4. Emery Hale  +70
-     5. Wekapipo  +60
-     6. Mountain Tim  +50
-     7. Wendell Ashcroft [pack]  +40
-     8. Johnny Joestar  +30
-     9. Virgil Pike  +20
-    10. Clementine Calloway  +10
+     1. Rufus Thorne  +100
+     2. Virgil Garrett  +90
+     3. Avery Shaw  +80
+     4. Ada Lowry  +70
+     5. Horace Ingram [pack]  +60
+     6. Diego Brando  +50
+     7. Ruby Blackwood  +40
+     8. Rowan Whitlock  +30
+     9. Ellis Booker  +20
+    10. Gyro Zeppeli  +10
   STANDINGS
-    Mrs. Robinson  180
-    Diego Brando  175
-    Wekapipo  160
-    Emery Hale  90
-    Marlow Ashby  85
-    Lucinda Grimsby  80
+    Rufus Thorne  110
+    Pearl Blackwood (dead)  110
+    Virgil Garrett  105
+    Avery Shaw  90
+    Rowan Vance (dead)  90
+    Ellis Booker  90
 
 ======================================================================
 STAGE 3: ROCKY MOUNTAIN BREAKDOWN
@@ -252,120 +233,118 @@ Monument Valley → Cañon City
 ======================================================================
 
 --- Day 1 ---
-✝ Wekapipo watches Cornelius Ashcroft pick a fight with the wrong stranger and fall in the dust.
-  Cora Pike wins a mid-stage sprint and pockets the bonus.
-✝ Ottoline Prentiss challenges Emery Hale to a duel over a water hole. Emery Hale draws first, and Ottoline Prentiss drops into the dust.
-  Mountain Tim slips into a crevasse. Gyro Zeppeli lowers a rope and pulls him out.
-  Johnny Joestar loses feeling in his fingers and has to stop to thaw them.
+  Avery Shaw waves Imogen Blackwell on and keeps their own pace.
+  Sandman beats Marlow Pike to the checkpoint, and Marlow Pike has burned their legs for nothing.
+  Della Quarles pushes through the blizzard and loses feeling in her fingers.
+  Virgil Garrett wins a mid-stage sprint and pockets the bonus.
+  A rockslide crushes Outlaw. Rufus Thorne climbs on alone.
+✝ Casimir Holloway challenges Oyecomova to a duel over a water hole. Oyecomova draws first, and Casimir Holloway drops into the dust.
+  Cyrus Ashby loses feeling in his fingers and has to stop to thaw them.
+  Ada Sutter pays a mountain man to guide her over the pass.
+  Rowan Whitlock follows a trapper's map down a shortcut and gains half a day.
   -- Side stories --
     Meanwhile on the trail...
-      · Marlow Ashby finds a steady rhythm and makes good time.
-      · Annie Doyle and Norisuke Higashikata IV ride together for an afternoon, trading stories.
-      · Rufus McCrae and Quinn Finch ride together for an afternoon, trading stories.
-      · Morgan Holloway takes the wrong fork and has to double back.
-      · Della Harlan stops to splint the arm of Winifred Voss, who was thrown from her horse.
-      · A whole town turns out to cheer Pocoloco through.
-      · Iris Pike trails the race, following the field's dust toward New York.
-      · Marlow Doyle and Virgil Pike race neck and neck for miles until Marlow Doyle edges ahead.
-      · Amos Ketchum finds a steady rhythm and makes good time.
-      · Nell Ridley and Morgan Vance race neck and neck for miles until Nell Ridley edges ahead.
-      · Wren Ridley stops to splint the arm of Imogen Castellanos, who was thrown from her horse.
-      · Tumbleweed throws a shoe, and Clementine Calloway loses an hour at a roadside smithy.
-  [Field] 1 racer retired and 7 died. 411 remain.
+      · Ruby Blackwood finds a steady rhythm and makes good time.
+      · Benjamin Boom Boom finds a steady rhythm and makes good time.
+      · Ivy Mercer and Iris Doyle ride together for an afternoon, trading stories.
+      · Ellis Booker stops to splint the arm of Silas Pemberton, who was thrown from his horse.
+      · Reese Redding finds a shallow ford and crosses the river dry.
+      · Johnny Joestar and Urmd Avdul race neck and neck for miles until Johnny Joestar edges ahead.
+      · Rattler throws a shoe, and L.A. Boom Boom loses an hour at a roadside smithy.
+      · Ada Lowry is so saddle-sore she can barely sit.
+      · Wildfire throws a shoe, and Norisuke Higashikata IV loses an hour at a roadside smithy.
+  [Field] 2 racers retired and 8 died. 418 remain.
 
 --- Night 1 ---
-  Sandman leaps a canyon gap that no horse could cross and gains half a day.
-✝ An avalanche roars down the pass. Morgan Holloway outruns it, Morgan Vance is buried alive, and Remy Dunmore turns back for good.
-  Johnny Joestar draws on Marlow Ashby and misses. Marlow Ashby has him dead to rights, then lowers the gun.
-✝ Josephine Whitaker creeps up to Cora Pike's camp to steal her water. Cora Pike wakes and shoots her dead.
-  Annie Doyle slips into a crevasse. Mrs. Robinson lowers a rope and pulls her out.
-  Hot Pants finds Ignatius McAllister bleeding out on the trail and seals the wound with Cream Starter.
-  Diego Brando is thrown hard from the saddle and can't go on. His race is over.
-  Wren Ridley catches Mortimer Nightingale going through their saddlebags and sends him off with a warning.
-  Ingrid Jessup tries to rob Mountain Tim at gunpoint. Mountain Tim knocks the gun away and lets her walk.
+  Marlow Pike catches up with Ruby Blackwood, but Ruby Blackwood refuses to race. Marlow Pike rides on ahead.
+  Ada Lowry catches up with Avery Shaw, but Avery Shaw refuses to race. Ada Lowry rides on ahead.
+  Reese Redding catches up with Ivy Mercer, but Ivy Mercer refuses to race. Reese Redding rides on ahead.
+  Ada Sutter hunts down Gyro Zeppeli, but Gyro Zeppeli wins the sprint showdown. Gyro Zeppeli pushes too hard and gets hurt.
+  Wilhelmina Everhart robs Pocoloco's camp in the night, taking food and water.
+  A rattlesnake spooks Brass, and the horse goes down with a broken leg. Oyecomova has to go on foot.
+  Rufus Thorne keeps watch so Hot Pants can sleep. Nobody bothers them.
+  Cyrus Ashby loses feeling in his fingers and has to stop to thaw them.
   -- Side stories --
     Meanwhile on the trail...
-      · Rufus McCrae finds a steady rhythm and makes good time.
-      · Tumbleweed throws a shoe, and Clementine Calloway loses an hour at a roadside smithy.
-      · Marlow Doyle finds a steady rhythm and makes good time.
-      · Amos Ketchum sleeps under the stars.
-      · Iris Pike sleeps under the stars.
-      · Emery Hale and Virgil Pike share a campfire and agree not to shoot each other tonight.
-      · Pocoloco's luck holds again: a full canteen lying in the dirt, right where he needs it.
-      · Clover throws a shoe, and Quinn Finch loses an hour at a roadside smithy.
-      · Wekapipo stops to splint the arm of Bellamy Barlow, who was thrown from their horse.
-      · L.A. Boom Boom and Oyecomova share a campfire and agree not to shoot each other tonight.
-      · Nell Ridley shivers through a freezing night in the pass.
-      · Della Harlan shivers through a freezing night in the pass.
-  [Field] Snow covers the passes. 4 racers retired and 12 died. 395 remain.
-  [The Fallen] Morgan Vance (buried by an avalanche) And 19 from the field.
+      · Mrs. Robinson rides through the night while the others sleep.
+      · Benjamin Boom Boom sleeps under the stars.
+      · Rowan Whitlock sleeps under the stars.
+      · Ghost throws a shoe, and Andre Boom Boom loses an hour at a roadside smithy.
+      · Virgil Garrett stops to splint the arm of Aiyana Hawthorne, who was thrown from her horse.
+      · Beatrix Fairweather waves for help by the trail. Ellis Booker rides straight past.
+      · Iris Doyle and Norisuke Higashikata IV share a campfire and agree not to shoot each other tonight.
+      · Urmd Avdul stops to splint the arm of Ines Lockhart, who was thrown from her horse.
+      · Della Quarles shivers through a freezing night in the pass.
+      · Mountain Tim and Wekapipo share a campfire and agree not to shoot each other tonight.
+  [Field] 1 racer retired and 11 died. 406 remain.
+  [The Fallen] No named racers. And 19 from the field.
 
 --- Day 2 ---
-  Della Harlan cuts Amos Ketchum's cinch strap at a water stop. Amos Ketchum loses an hour fixing it.
-  Clementine Calloway follows a trapper's map down a shortcut and gains half a day.
-  Benjamin Boom Boom is thrown hard from the saddle and can't go on. His race is over.
-  Marlow Doyle pays a mountain man to guide them over the pass.
-✝ Urmd Avdul watches Ignatius Rourke pick a fight with the wrong stranger and fall in the dust.
+  Avery Shaw digs in and waits out the blizzard.
+  Ada Sutter picks her way over the goat path and comes out ahead of the pack.
+✝ Dmitri Oakes challenges Marlow Pike to a duel over a water hole. Marlow Pike draws first, and Dmitri Oakes drops into the dust.
+  Wekapipo pays a mountain man to guide him over the pass.
+  Ivy Mercer lands badly on loose rock and tears a muscle in her leg.
+  Johnny Joestar cuts Mrs. Robinson's cinch strap at a water stop. Mrs. Robinson loses an hour fixing it.
+  Ada Lowry wins a mid-stage sprint and pockets the bonus.
+  Rosalind Holloway tries to rob Gyro Zeppeli at gunpoint. Gyro Zeppeli knocks the gun away and lets her walk.
+  Pocoloco draws on Iris Doyle and misses. Iris Doyle has him dead to rights, then lowers the gun.
+  Hot Pants finds Josephine Jessup bleeding out on the trail and seals the wound with Cream Starter.
+  Della Quarles follows a trapper's map down a shortcut and gains half a day.
+✝ Ruby Blackwood watches Ottoline Lockhart pick a fight with the wrong stranger and fall in the dust.
+  Hiroshi Castellanos fires on L.A. Boom Boom from a ridge. The bullet grazes his side.
   -- Side stories --
     Meanwhile on the trail...
-      · A whole town turns out to cheer Marlow Ashby through.
-      · Cora Pike and Annie Doyle race neck and neck for miles until Cora Pike edges ahead.
-      · Nell Ridley finds a steady rhythm and makes good time.
-      · Morgan Holloway takes the wrong fork and has to double back.
-      · Wekapipo finds a steady rhythm and makes good time.
-      · Hot Pants and Sandman race neck and neck for miles until Hot Pants edges ahead.
-      · Mesquite throws a shoe, and Norisuke Higashikata IV loses an hour at a roadside smithy.
-      · Oyecomova is so saddle-sore he can barely sit.
-      · Emery Hale takes the wrong fork and has to double back.
-      · Clover throws a shoe, and Quinn Finch loses an hour at a roadside smithy.
-      · Virgil Pike and Mountain Tim ride together for an afternoon, trading stories.
-      · Wren Ridley and Gyro Zeppeli ride together for an afternoon, trading stories.
-      · A whole town turns out to cheer Rufus McCrae through.
-  [Field] Snow covers the passes. 4 racers retired and 8 died. 383 remain.
+      · Virgil Garrett and Oyecomova race neck and neck for miles until Virgil Garrett edges ahead.
+      · Rowan Whitlock and Sandman ride together for an afternoon, trading stories.
+      · Reese Redding stops to splint the arm of Imogen Castellanos, who was thrown from her horse.
+      · A whole town turns out to cheer Mountain Tim through.
+      · Diego Brando reads the terrain like a jockey reads a track and finds the fastest line.
+      · Cyrus Ashby finds a steady rhythm and makes good time.
+      · Urmd Avdul takes the wrong fork and has to double back.
+      · Benjamin Boom Boom and Andre Boom Boom ride together for an afternoon, trading stories.
+      · Rufus Thorne and Norisuke Higashikata IV race neck and neck for miles until Rufus Thorne edges ahead.
+      · Ellis Booker takes the wrong fork and has to double back.
+  [Field] 5 racers retired and 6 died. 395 remain.
 
 --- Finish Line ---
-  Sandman follows a trapper's map down a shortcut and gains half a day.
-  Emery Hale passes Lucinda Grimsby, who has collapsed a mile short of the finish.
-  Josephine McAllister tries to rob Virgil Pike at gunpoint. Virgil Pike knocks the gun away and lets her walk.
-✝ Mrs. Robinson catches Marlow Ashby alone on the trail and kills them for their supplies.
-  Sawyer Prentiss fires on Marlow Doyle from a ridge. The bullet grazes their side.
-✝ Ingrid Rourke ambushes Cora Pike from behind a rock. Cora Pike never sees the shot coming.
-✝ Gyro Zeppeli watches Hiroshi Dunmore pick a fight with the wrong stranger and fall in the dust.
-  Mountain Tim lassoes Urmd Avdul out of a flash flood.
+  Rowan Whitlock hunts down Cyrus Ashby and beats him in a sprint showdown.
+  Iris Doyle waves Mrs. Robinson on and keeps her own pace.
+  A rattlesnake spooks Valentina, and the horse goes down with a broken leg. Reese Redding has to go on foot.
+  Ash Dunmore tries to rob Avery Shaw at gunpoint. Avery Shaw knocks the gun away and lets them walk.
+  Rufus Thorne takes the time bonus for leading the final mile.
+  Virgil Garrett crowds Della Quarles into the rail on the final turn.
   -- Side stories --
     Meanwhile on the trail...
-      · Tumbleweed throws a shoe, and Clementine Calloway loses an hour at a roadside smithy.
-      · Wren Ridley takes the wrong fork and has to double back.
-      · Morgan Holloway spurs Lady Luck into a final gallop toward the line.
-      · Obadiah Hawthorne waves for help by the trail. Nell Ridley rides straight past.
-      · Tornado throws a shoe, and Amos Ketchum loses an hour at a roadside smithy.
-      · Della Harlan finds a steady rhythm and makes good time.
-      · Pocoloco stops to splint the arm of Rupert Everhart, who was thrown from his horse.
-      · Rufus McCrae finds a steady rhythm and makes good time.
-      · Quinn Finch spurs Clover into a final gallop toward the line.
-      · Wekapipo takes the wrong fork and has to double back.
-      · Annie Doyle fades badly in the final miles.
-  [Field] 5 racers retired and 6 died. 372 remain.
-  [The Fallen] Marlow Ashby (killed for supplies, by Mrs. Robinson); Cora Pike (shot from ambush, by Ingrid Rourke) And 14 from the field.
+      · Norisuke Higashikata IV is so saddle-sore he can barely sit.
+      · Marlow Pike finds a steady rhythm and makes good time.
+      · Ivy Mercer stops to splint the arm of Beatrix Fairweather, who was thrown from her horse.
+      · Ada Sutter finds a steady rhythm and makes good time.
+      · Ellis Booker and Wekapipo cross the line almost together, both claiming the better time.
+      · Ruby Blackwood fades badly in the final miles.
+      · Pocoloco takes the wrong fork and has to double back.
+      · Imogen Castellanos waves for help by the trail. Ada Lowry rides straight past.
+  [Field] 1 racer retired and 6 died. 388 remain.
+  [The Fallen] No named racers. And 12 from the field.
 
   STAGE 3 RESULTS
-     1. Sandman  +100
-     2. Nell Ridley  +90
-     3. Gyro Zeppeli  +80
-     4. Emery Hale  +70
-     5. Oyecomova  +60
-     6. Sawyer Tanaka [pack]  +50
-     7. Wren Ridley  +40
-     8. Marlow Doyle  +30
-     9. Wendell Ashcroft [pack]  +20
-    10. Hot Pants  +10
+     1. Ada Sutter  +100
+     2. Diego Brando  +90
+     3. Rowan Whitlock  +80
+     4. Hot Pants  +70
+     5. Johnny Joestar  +60
+     6. Sandman  +50
+     7. Avery Shaw  +40
+     8. Virgil Garrett  +30
+     9. Ruby Blackwood  +20
+    10. Finley Underhill [pack]  +10
   STANDINGS
-    Mrs. Robinson  195
-    Diego Brando (retired)  175
-    Wekapipo  170
-    Emery Hale  160
-    Oyecomova  120
-    Sandman  110
+    Virgil Garrett  140
+    Diego Brando  140
+    Avery Shaw  130
+    Rowan Whitlock  120
+    Rufus Thorne  120
+    Ada Sutter  110
 
 ======================================================================
 STAGE 4: LITTLE TOMB ON THE WIDE, WIDE PRAIRIE
@@ -373,110 +352,122 @@ Cañon City → Kansas City
 ======================================================================
 
 --- Day 1 ---
-✝ Kit Thibodeaux snipes at riders from the tall grass until Wekapipo circles around and ends it.
-  Mountain Tim lassoes L.A. Boom Boom out of a flash flood.
-  Sandman cuts Gyro Zeppeli's cinch strap at a water stop. Gyro Zeppeli loses an hour fixing it.
-  Hot Pants's foot catches in the stirrup and she is dragged until Annie Doyle cuts the strap.
+  Reese Redding catches up with Ivy Mercer, but Ivy Mercer refuses to race. Reese Redding rides on ahead.
+  Avery Shaw walks Clover for an afternoon and lets the horse recover.
+  Rowan Whitlock hunts down Matilda Hartley, but Matilda Hartley wins the sprint showdown.
+✝ A bison stampede thunders across the prairie. Virgil Garrett gets clear, but Ash Dunmore goes under.
+✝ Lane Okafor challenges Ada Lowry to a duel over a water hole. Ada Lowry draws first, and Lane Okafor drops into the dust.
+  Riders laugh as they pass Ada Sutter. By evening, Ada Sutter has caught every one of them.
+  Percival Tanaka tries to rob Iris Doyle at gunpoint. Iris Doyle knocks the gun away and lets him walk.
+  Mountain Tim lassoes Gyro Zeppeli out of a flash flood.
   -- Side stories --
     Meanwhile on the trail...
-      · Pocoloco finds a steady rhythm and makes good time.
-      · Wren Ridley and Oyecomova ride together for an afternoon, trading stories.
-      · Amos Ketchum stops at a lonely grave on the prairie to pay his respects.
-      · Marlow Doyle finds a shallow ford and crosses the river dry.
-      · Lightning strikes the prairie beside Clementine Calloway. Tumbleweed bolts for an hour.
-      · Rufus McCrae takes the wrong fork and has to double back.
-      · Iris Pike, out of the race, watches the leaders pass from a saloon porch.
-      · Nell Ridley and Quinn Finch ride together for an afternoon, trading stories.
-      · A whole town turns out to cheer Della Harlan through.
-      · Emery Hale gallops flat out across the open grass.
-      · Morgan Holloway stops to splint the arm of Finley Prentiss, who was thrown from their horse.
-      · Virgil Pike gallops flat out across the open grass.
-  [Field] Nothing but grass to the horizon. 16 racers retired and 3 died. 353 remain.
+      · Mrs. Robinson and L.A. Boom Boom race neck and neck for miles until Mrs. Robinson edges ahead.
+      · Rufus Thorne and Marlow Pike race neck and neck for miles until Rufus Thorne edges ahead.
+      · Della Quarles takes the wrong fork and has to double back.
+      · A whole town turns out to cheer Cyrus Ashby through.
+      · Ellis Booker finds a shallow ford and crosses the river dry.
+      · Urmd Avdul finds a steady rhythm and makes good time.
+      · Wekapipo finds a steady rhythm and makes good time.
+      · Ruby Blackwood stops at a lonely grave on the prairie to pay her respects.
+      · Prudence Ingram waves for help by the trail. Johnny Joestar rides straight past.
+  [Field] Nothing but grass to the horizon. 19 racers retired and 6 died. 363 remain.
 
 --- Night 1 ---
-  Ines Nightingale snipes at riders from the tall grass. Virgil Pike takes a bullet in the shoulder.
-  Mountain Tim lassoes Wekapipo out of a flash flood.
-✝ Mortimer Sinclair and Ottoline Tanaka jump Quinn Finch in the dark. Quinn Finch kills Mortimer Sinclair, and Ottoline Tanaka flees into the night.
-✝ Wolves circle Urmd Avdul's campfire all night. Urmd Avdul survives, but Yusuf McAllister, camped nearby, does not.
-  Gyro Zeppeli keeps watch so Mrs. Robinson can sleep. Nobody bothers them.
-✝ A bison stampede thunders across the prairie. Hot Pants gets clear, but Thaddeus Everhart goes under.
-✝ Morgan Holloway slips into Norisuke Higashikata IV's camp while he sleeps and makes sure he never wakes.
-  Amos Ketchum cuts Johnny Joestar's cinch strap at a water stop. Johnny Joestar loses an hour fixing it.
-✝ Philippa Moreau creeps up to Wren Ridley's camp to steal their water. Wren Ridley wakes and shoots her dead.
+  Ada Lowry hunts down Avery Shaw and beats them in a sprint showdown.
+  Rufus Thorne is swept against the rocks while fording the river.
+  Ivy Mercer keeps to the trail.
+✝ A bison stampede thunders across the prairie. Reese Redding gets clear, but Clara Faraday goes under.
+  Andre Boom Boom cuts Gyro Zeppeli's cinch strap at a water stop. Gyro Zeppeli loses an hour fixing it.
+✝ Wolves circle Della Quarles's campfire all night. Della Quarles survives, but Hiroshi Lindqvist, camped nearby, does not.
+  Marlow Pike catches Adelaide Ashcroft going through their saddlebags and sends her off with a warning.
+✝ Horace Faraday and Adelaide Pemberton jump Pocoloco in the dark. Pocoloco kills Horace Faraday, and Adelaide Pemberton flees into the night.
   -- Side stories --
-    Iris Pike may be out of the race, but she still points a lost Obadiah Gallagher back to the trail.
     Meanwhile on the trail...
-      · Biscuit throws a shoe, and Emery Hale loses an hour at a roadside smithy.
-      · Henrietta Gallagher waves for help by the trail. Della Harlan rides straight past.
-      · Sandman sleeps under the stars.
-      · L.A. Boom Boom gallops flat out across the open grass.
-      · Pocoloco sleeps under the stars.
-      · Marlow Doyle stops at a lonely grave on the prairie to pay their respects.
-      · Nell Ridley stops at a lonely grave on the prairie to pay her respects.
-      · Annie Doyle finds a steady rhythm and makes good time.
-      · Rufus McCrae finds a steady rhythm and makes good time.
-      · Clementine Calloway gallops flat out across the open grass.
-  [Field] 18 racers retired and 6 died. 329 remain.
-  [The Fallen] Norisuke Higashikata IV (murdered in camp, by Morgan Holloway) And 9 from the field.
+      · L.A. Boom Boom rides with the rest of the Boom Boom family, eyeing the other racers.
+      · Slow Dancer throws a shoe, and Johnny Joestar loses an hour at a roadside smithy.
+      · Ada Sutter takes the wrong fork and has to double back.
+      · Rowan Whitlock finds a steady rhythm and makes good time.
+      · Iris Doyle finds a steady rhythm and makes good time.
+      · Virgil Garrett and Diego Brando share a campfire and agree not to shoot each other tonight.
+      · Ellis Booker gallops flat out across the open grass.
+      · Wekapipo takes the wrong fork and has to double back.
+      · Mrs. Robinson sleeps under the stars.
+      · Calico throws a shoe, and Urmd Avdul loses an hour at a roadside smithy.
+      · Cyrus Ashby gallops flat out across the open grass.
+      · Norisuke Higashikata IV stops at a lonely grave on the prairie to pay his respects.
+      · Ruby Blackwood stops at a lonely grave on the prairie to pay her respects.
+  [Field] Nothing but grass to the horizon. 12 racers retired and 9 died. 342 remain.
+  [The Fallen] No named racers. And 15 from the field.
 
 --- Day 2 ---
-✝ Nell Ridley catches Wekapipo alone on the trail and kills him for his supplies.
-  Rosalind Rourke snipes at riders from the tall grass. Urmd Avdul takes a bullet in the shoulder.
-✝ Hester Okafor snipes at riders from the tall grass until Virgil Pike circles around and ends it.
-  Harper Blackwell tries to rob Gyro Zeppeli at gunpoint. Gyro Zeppeli knocks the gun away and lets them walk.
-✝ Imogen Gallagher challenges Amos Ketchum to a duel over a water hole. Amos Ketchum draws first, and Imogen Gallagher drops into the dust.
+  Ada Lowry follows the riverbed and gains hours on the field.
+  Andre Boom Boom strings wire across the trail. Virgil Garrett's horse goes down hard.
+✝ Temperance Voss challenges L.A. Boom Boom to a duel over a water hole. L.A. Boom Boom draws first, and Temperance Voss drops into the dust.
+  Hot Pants draws on Rowan Whitlock and misses. Rowan Whitlock has her dead to rights, then lowers the gun.
+  Cyrus Ashby follows a trapper's map down a shortcut and gains half a day.
+  Reese Redding cuts Norisuke Higashikata IV's cinch strap at a water stop. Norisuke Higashikata IV loses an hour fixing it.
+  Dakota Castellanos fires on Della Quarles from a ridge. The bullet grazes her side.
   -- Side stories --
     Meanwhile on the trail...
-      · Marlow Doyle stops to splint the arm of Augustus Nightingale, who was thrown from his horse.
-      · Diego Brando, out of the race, watches the leaders pass from a saloon porch.
-      · Rufus McCrae stops at a lonely grave on the prairie to pay his respects.
-      · Morgan Holloway stops to splint the arm of Henrietta Barlow, who was thrown from her horse.
-      · Annie Doyle finds a shallow ford and crosses the river dry.
-      · Clementine Calloway gallops flat out across the open grass.
-      · A whole town turns out to cheer Wren Ridley through.
-      · Della Harlan finds a shallow ford and crosses the river dry.
-      · Emery Hale takes the wrong fork and has to double back.
-      · Quinn Finch and Mrs. Robinson ride together for an afternoon, trading stories.
-      · Lightning strikes the prairie beside Hot Pants. Hickory bolts for an hour.
-  [Field] 16 racers retired and 3 died. 310 remain.
+      · A whole town turns out to cheer Ivy Mercer through.
+      · Clover throws a shoe, and Avery Shaw loses an hour at a roadside smithy.
+      · Midnight throws a shoe, and Marlow Pike loses an hour at a roadside smithy.
+      · Jedediah Calloway rides ahead as a scout, warning anyone who will listen about the trail ahead.
+      · Iris Doyle takes the wrong fork and has to double back.
+      · Ruby Blackwood stops to splint the arm of Ines Lockhart, who was thrown from her horse.
+      · Rufus Thorne and Mrs. Robinson ride together for an afternoon, trading stories.
+      · Ellis Booker gallops flat out across the open grass.
+      · Ada Sutter's feet are raw and bleeding.
+      · Diego Brando finds a shallow ford and crosses the river dry.
+  [Field] 21 racers retired and 1 died. 320 remain.
 
 --- Finish Line ---
-  Quinn Finch passes Rupert Underhill, who has collapsed a mile short of the finish.
-✝ A bison stampede thunders across the prairie. Annie Doyle gets clear, but Hester Oakes goes under.
-✝ Remy Coburn snipes at riders from the tall grass until Wren Ridley circles around and ends it.
-  Hot Pants's foot catches in the stirrup and she is dragged until Morgan Holloway cuts the strap.
+  Rufus Thorne finds a doctor in town and loses a day getting patched up.
+  Ellis Booker races the stampede across the trail and makes it.
+  Ruby Blackwood walks Starlight for an afternoon and lets the horse recover.
+  Virgil Garrett is swept against the rocks while fording the river.
+  Della Quarles grits her teeth and keeps going.
+  Cyrus Ashby walks Buckshot for an afternoon and lets the horse recover.
+✝ A bison stampede thunders across the prairie. Reese Redding gets clear, but Aiyana Hawthorne goes under.
+✝ Henrietta Kincaid ambushes Ada Lowry from behind a rock. Ada Lowry never sees the shot coming.
+✝ Johnny Joestar watches Marguerite Coburn pick a fight with the wrong stranger and fall in the dust.
+  Diego Brando follows a trapper's map down a shortcut and gains half a day.
+✝ Avery Shaw catches Wekapipo alone on the trail and kills him for his supplies.
+  Riders laugh as they pass Ivy Mercer. By evening, Ivy Mercer has caught every one of them.
+✝ Oyecomova plants a bomb under a bridge. Jordan Jessup rides over it.
   -- Side stories --
     Meanwhile on the trail...
-      · Benjamin Boom Boom, out of the race, watches the leaders pass from a saloon porch.
-      · Rufus McCrae finds a steady rhythm and makes good time.
-      · Dakota Coburn waves for help by the trail. Emery Hale rides straight past.
-      · Lightning strikes the prairie beside Nell Ridley. Bandit bolts for an hour.
-      · Della Harlan finds a steady rhythm and makes good time.
-      · Amos Ketchum takes the wrong fork and has to double back.
-      · Marlow Doyle stops to splint the arm of Ezekiel Oakes, who was thrown from his horse.
-      · Virgil Pike spurs Rosie into a final gallop toward the line.
-      · Lightning strikes the prairie beside Clementine Calloway. Tumbleweed bolts for an hour.
-  [Field] 12 racers retired and 3 died. 295 remain.
-  [The Fallen] Wekapipo (killed for supplies, by Nell Ridley) And 6 from the field.
+      · Gyro Zeppeli is so saddle-sore he can barely sit.
+      · Sandman finds one last burst in his legs for the finish.
+      · Rowan Whitlock takes the wrong fork and has to double back.
+      · Ada Sutter takes the wrong fork and has to double back.
+      · Jedediah Calloway trails the race, following the field's dust toward New York.
+      · Andre Boom Boom rides with the rest of the Boom Boom family, eyeing the other racers.
+      · Pocoloco gallops flat out across the open grass.
+      · Lightning strikes the prairie beside Marlow Pike. Midnight bolts for an hour.
+      · Iris Doyle spurs Dixie into a final gallop toward the line.
+  [Field] Nothing but grass to the horizon. 16 racers retired and 10 died. 294 remain.
+  [The Fallen] Ada Lowry (shot from ambush, by Henrietta Kincaid); Wekapipo (killed for supplies, by Avery Shaw) And 11 from the field.
 
   STAGE 4 RESULTS
-     1. Quinn Finch  +100
-     2. Della Harlan  +90
-     3. Cornelius McAllister [pack]  +80
-     4. Mountain Tim  +70
-     5. Sawyer Kincaid [pack]  +60
-     6. L.A. Boom Boom  +50
-     7. Rufus McCrae  +40
-     8. Wren Ridley  +30
-     9. Obadiah Delacroix [pack]  +20
-    10. Nell Ridley  +10
+     1. Ellis Booker  +100
+     2. Mountain Tim  +90
+     3. Pocoloco  +80
+     4. Rowan Whitlock  +70
+     5. Diego Brando  +60
+     6. Cyrus Ashby  +50
+     7. Urmd Avdul  +40
+     8. Horace Ingram [pack]  +30
+     9. Benjamin Boom Boom  +20
+    10. Iris Doyle  +10
   STANDINGS
-    Mrs. Robinson  200
-    Wekapipo (dead)  180
-    Diego Brando (retired)  175
-    Emery Hale  165
-    Mountain Tim  160
-    Oyecomova  125
+    Diego Brando  205
+    Ellis Booker  195
+    Rowan Whitlock  190
+    Virgil Garrett  140
+    Avery Shaw  130
+    Rufus Thorne  120
 
 ======================================================================
 STAGE 5: ILLINOIS SKYLINE
@@ -484,95 +475,116 @@ Kansas City → Chicago
 ======================================================================
 
 --- Day 1 ---
-✝ Winifred Voss challenges Nell Ridley to a duel over a water hole. Nell Ridley draws first, and Winifred Voss drops into the dust.
-  Mrs. Robinson's foot catches in the stirrup and he is dragged until Gyro Zeppeli cuts the strap.
-  Cornelius McAllister fires on Virgil Pike from a ridge. The bullet grazes his side.
-✝ Tatum Kincaid corners Pocoloco in an alley. Only Pocoloco walks out.
-  Annie Doyle follows a trapper's map down a shortcut and gains half a day.
-  Clementine Calloway wins a mid-stage sprint and pockets the bonus.
+  Ivy Mercer stops to splint the leg of Josephine Voss and gets her onto the road to town.
+  Iris Doyle walks Dixie for an afternoon and lets the horse recover.
+  Ellis Booker stops to splint the leg of Wilhelmina Castellanos and gets her onto the road to town.
+  Pocoloco's foot catches in the stirrup and he is dragged until Hot Pants cuts the strap.
+  Augustus Castellanos fires on Marlow Pike from a ridge. The bullet grazes their side.
   -- Side stories --
     Meanwhile on the trail...
-      · Morgan Holloway takes the wrong fork and has to double back.
-      · Chicago's crowds slow Della Harlan to a walk.
-      · L.A. Boom Boom rides with the rest of the Boom Boom family, eyeing the other racers.
-      · Wren Ridley is so saddle-sore they can barely sit.
-      · Diego Brando, out of the race, watches the leaders pass from a saloon porch.
-      · Johnny Joestar finds a steady rhythm and makes good time.
-      · Marlow Doyle finds a steady rhythm and makes good time.
-      · Chicago's crowds slow Quinn Finch to a walk.
-      · Oyecomova and Rufus McCrae ride together for an afternoon, trading stories.
-      · Ash McAllister waves for help by the trail. Emery Hale rides straight past.
-      · Amos Ketchum and Hot Pants ride together for an afternoon, trading stories.
-  [Field] 18 racers retired and 3 died. 274 remain.
+      · Avery Shaw finds a steady rhythm and makes good time.
+      · Chicago's crowds slow Rowan Whitlock to a walk.
+      · Chicago's crowds slow Rufus Thorne to a walk.
+      · On the open flats, Ada Sutter watches rider after rider gallop away.
+      · Virgil Garrett stops to splint the arm of Kofi Nightingale, who was thrown from his horse.
+      · Cyrus Ashby finds a steady rhythm and makes good time.
+      · Diego Brando's name is in the Chicago papers. The crowds want to see him win.
+      · Della Quarles finds a shallow ford and crosses the river dry.
+      · A whole town turns out to cheer Reese Redding through.
+      · A whole town turns out to cheer Ruby Blackwood through.
+      · Urmd Avdul and Andre Boom Boom race neck and neck for miles until Urmd Avdul edges ahead.
+      · Johnny Joestar and Gyro Zeppeli ride together, bickering the whole way.
+  [Field] 16 racers retired and 2 died. 276 remain.
 
 --- Night 1 ---
-  Obadiah Thibodeaux robs Della Harlan's camp in the night, taking food and water.
-  Johnny Joestar keeps watch so Amos Ketchum can sleep. Nobody bothers them.
-  Virgil Pike catches Rosalind Gallagher going through his saddlebags and sends her off with a warning.
-✝ Hot Pants watches Henrietta Jessup pick a fight with the wrong stranger and fall in the dust.
-  Casimir Voss tries to rob Wren Ridley at gunpoint. Wren Ridley knocks the gun away and lets him walk.
-  Obadiah Delacroix fires on Quinn Finch from a ridge. The bullet grazes their side.
-✝ Ingrid Hartley corners Nell Ridley in an alley. Only Nell Ridley walks out.
+  Ruby Blackwood gallops through the smoke and past the fire.
+  Ellis Booker pushes Quicksilver too hard, and the horse drops dead under them. Ellis Booker is on foot.
+  Ada Sutter keeps running until her leg gives out.
+  Iris Doyle is jumped in a back alley and gets away with a cracked rib.
+✝ Prudence Ingram creeps up to Della Quarles's camp to steal her water. Della Quarles wakes and shoots her dead.
+✝ Hiroshi Holloway and Matilda Fairweather jump Virgil Garrett in the dark. Virgil Garrett kills Hiroshi Holloway, and Matilda Fairweather flees into the night.
+  Avery Shaw is clipped by a streetcar and limps away bruised.
+✝ Wolves circle Rufus Thorne's campfire all night. Rufus Thorne survives, but Dmitri Goodnight, camped nearby, does not.
+  Henrietta Fairweather tries to rob Cyrus Ashby at gunpoint. Cyrus Ashby knocks the gun away and lets her walk.
+  L.A. Boom Boom keeps watch so Rowan Whitlock can sleep. Nobody bothers them.
+  Pocoloco follows a trapper's map down a shortcut and gains half a day.
   -- Side stories --
     Meanwhile on the trail...
-      · Marlow Doyle finds a steady rhythm and makes good time.
-      · Annie Doyle finds a steady rhythm and makes good time.
-      · Lucius Vandermeer waves for help by the trail. Pocoloco rides straight past.
-      · Clementine Calloway sleeps under the stars.
-      · Chicago's crowds slow Rufus McCrae to a walk.
-      · Mrs. Robinson sleeps under the stars.
-      · Nugget throws a shoe, and Mountain Tim loses an hour at a roadside smithy.
-      · Chicago's crowds slow Gyro Zeppeli to a walk.
-      · Lady Luck throws a shoe, and Morgan Holloway loses an hour at a roadside smithy.
-      · Oyecomova's name is in the Chicago papers. The crowds want to see him win.
-      · Iris Pike, out of the race, watches the leaders pass from a saloon porch.
-      · Urmd Avdul and Sandman share a campfire and agree not to shoot each other tonight.
-      · Emery Hale sleeps in a real bed for once and rides out refreshed.
-  [Field] 9 racers retired and 5 died. 260 remain.
-  [The Fallen] No named racers. And 8 from the field.
+      · Ivy Mercer and Mountain Tim share a campfire and agree not to shoot each other tonight.
+      · Reese Redding's name is in the Chicago papers. The crowds want to see them win.
+      · Jedediah Calloway trails the race, following the field's dust toward New York.
+      · Chicago's crowds slow Johnny Joestar to a walk.
+      · Chicago's crowds slow Mrs. Robinson to a walk.
+      · Silver Bullet throws a shoe, and Diego Brando loses an hour at a roadside smithy.
+      · Beatrix Holloway waves for help by the trail. Benjamin Boom Boom rides straight past.
+      · Midnight throws a shoe, and Marlow Pike loses an hour at a roadside smithy.
+  [Field] 18 racers retired and 4 died. 254 remain.
+  [The Fallen] No named racers. And 6 from the field.
+
+--- Day 2 ---
+  Ada Sutter hunts down Rufus Thorne and beats him in a sprint showdown. Rufus Thorne pushes too hard and gets hurt.
+  Ellis Booker hunts down Iris Doyle and beats her in a sprint showdown.
+  Rowan Whitlock hunts down Andre Boom Boom and beats him in a sprint showdown.
+✝ Elias Zamora corners Ruby Blackwood in an alley. Only Ruby Blackwood walks out.
+  Cyrus Ashby wins a mid-stage sprint and pockets the bonus.
+  -- Side stories --
+    Meanwhile on the trail...
+      · Della Quarles and Avery Shaw ride together for an afternoon, trading stories.
+      · On the open flats, Ivy Mercer watches rider after rider gallop away.
+      · Silver Bullet throws a shoe, and Diego Brando loses an hour at a roadside smithy.
+      · Chicago's crowds slow Oyecomova to a walk.
+      · Marlow Pike finds a steady rhythm and makes good time.
+      · Johnny Joestar and Mrs. Robinson race neck and neck for miles until Johnny Joestar edges ahead.
+      · Reese Redding finds a steady rhythm and makes good time.
+      · Virgil Garrett's name is in the Chicago papers. The crowds want to see him win.
+      · Matteo Lockhart waves for help by the trail. L.A. Boom Boom rides straight past.
+  [Field] 13 racers retired and 1 died. 240 remain.
 
 --- Finish Line ---
-  Urmd Avdul follows a trapper's map down a shortcut and gains half a day.
-  Clementine Calloway passes Wilhelmina Thibodeaux, who has collapsed a mile short of the finish.
-  Johnny Joestar is clipped by a streetcar and limps away bruised.
-✝ Sawyer Castellanos corners Wren Ridley in an alley. Only Wren Ridley walks out.
-  Annie Doyle takes the time bonus for leading the final mile.
+  Marlow Pike catches up with Ivy Mercer, but Ivy Mercer refuses to race. Marlow Pike rides on ahead.
+  Lars Prentiss beats Reese Redding to the checkpoint, and Reese Redding has burned their legs for nothing.
+  Della Quarles follows a trapper's map down a shortcut and gains half a day.
+  Gyro Zeppeli is clipped by a streetcar and limps away bruised.
+  A rattlesnake spooks Sorrel, and the horse goes down with a broken leg. Virgil Garrett has to go on foot.
+✝ Oyecomova plants a bomb under a bridge. Kit Lockhart rides over it.
+  Hester Thibodeaux tries to rob Avery Shaw at gunpoint. Avery Shaw knocks the gun away and lets her walk.
+  Ruby Blackwood is pinned against a fence when the crowd surges onto the track at the finish.
   -- Side stories --
     Meanwhile on the trail...
-      · Augustus Fairweather lifts Rufus McCrae's wallet on a crowded street.
-      · Amos Ketchum spurs Tornado into a final gallop toward the line.
-      · Chicago's crowds slow Quinn Finch to a walk.
-      · Della Harlan fades badly in the final miles.
-      · Nell Ridley finds a steady rhythm and makes good time.
+      · Henrietta McAllister waves for help by the trail. Urmd Avdul rides straight past.
+      · Andre Boom Boom spurs Ghost into a final gallop toward the line.
+      · Matilda Whitaker waves for help by the trail. Benjamin Boom Boom rides straight past.
+      · Rowan Whitlock takes the wrong fork and has to double back.
+      · Ada Sutter settles into a long-distance stride.
+      · L.A. Boom Boom's name is in the Chicago papers. The crowds want to see him win.
       · Mountain Tim takes the wrong fork and has to double back.
-      · Oyecomova finds a steady rhythm and makes good time.
-      · Chicago's crowds slow Sandman to a walk.
-      · Ingrid Rourke lifts Virgil Pike's wallet on a crowded street.
-      · Marlow Doyle spurs Blaze into a final gallop toward the line.
-      · Mrs. Robinson takes the wrong fork and has to double back.
-      · Biscuit throws a shoe, and Emery Hale loses an hour at a roadside smithy.
-      · Morgan Holloway's name is in the Chicago papers. The crowds want to see them win.
-  [Field] 10 racers retired and 2 died. 248 remain.
-  [The Fallen] No named racers. And 2 from the field.
+      · Sagebrush throws a shoe, and Hot Pants loses an hour at a roadside smithy.
+      · Diego Brando and Mrs. Robinson cross the line almost together, both claiming the better time.
+      · Ellis Booker's name is in the Chicago papers. The crowds want to see them win.
+      · Cyrus Ashby fades badly in the final miles.
+      · Iris Doyle spurs Dixie into a final gallop toward the line.
+      · Rufus Thorne fades badly in the final miles.
+  [Field] 9 racers retired and 2 died. 229 remain.
+  [The Fallen] No named racers. And 3 from the field.
 
   STAGE 5 RESULTS
-     1. Marlow Doyle  +100
-     2. Amos Ketchum  +90
-     3. Obadiah Delacroix [pack]  +80
-     4. Matteo Nightingale [pack]  +70
-     5. Virgil Pike  +60
-     6. Johnny Joestar  +50
-     7. Sawyer Kincaid [pack]  +40
-     8. Nell Ridley  +30
-     9. Wendell Ashcroft [pack]  +20
-    10. Della Harlan  +10
+     1. Hot Pants  +100
+     2. Della Quarles  +90
+     3. Ruby Blackwood  +80
+     4. Rowan Whitlock  +70
+     5. Reese Redding  +60
+     6. Diego Brando  +50
+     7. Urmd Avdul  +40
+     8. Pocoloco  +30
+     9. Thaddeus Blackwell [pack]  +20
+    10. Barnabas Oakes [pack]  +10
   STANDINGS
-    Mrs. Robinson  200
-    Wekapipo (dead)  180
-    Diego Brando (retired)  175
-    Emery Hale  165
-    Mountain Tim  165
-    Marlow Doyle  155
+    Rowan Whitlock  265
+    Diego Brando  255
+    Ellis Booker  205
+    Hot Pants  205
+    Ruby Blackwood  155
+    Pocoloco  155
 
 ======================================================================
 STAGE 6: MICHIGAN LAKELINE
@@ -580,87 +592,110 @@ Chicago → Mackinaw City
 ======================================================================
 
 --- Day 1 ---
-  Mountain Tim lassoes Clementine Calloway out of a flash flood.
-✝ Amos Ketchum watches Matilda Barlow pick a fight with the wrong stranger and fall in the dust.
-✝ Percival Pemberton challenges Annie Doyle to a duel over a water hole. Annie Doyle draws first, and Percival Pemberton drops into the dust.
-  Oyecomova wins a mid-stage sprint and pockets the bonus.
-  L.A. Boom Boom falls through the ice, and Wren Ridley hauls him out by the collar.
-  Matilda Tanaka tries to rob Gyro Zeppeli at gunpoint. Gyro Zeppeli knocks the gun away and lets her walk.
+  Virgil Garrett crosses the ice in one nervous dash and saves hours.
+  Rufus Thorne wins a mid-stage sprint and pockets the bonus.
+  Ada Sutter cuts L.A. Boom Boom's cinch strap at a water stop. L.A. Boom Boom loses an hour fixing it.
   -- Side stories --
     Meanwhile on the trail...
-      · Virgil Pike and Hot Pants ride together for an afternoon, trading stories.
-      · Della Harlan finds a shallow ford and crosses the river dry.
-      · Shiloh throws a shoe, and Rufus McCrae loses an hour at a roadside smithy.
-      · Nell Ridley takes the wrong fork and has to double back.
-      · Lady Luck throws a shoe, and Morgan Holloway loses an hour at a roadside smithy.
-      · Marlow Doyle stops to splint the arm of Leopold Ingram, who was thrown from his horse.
-      · Diego Brando rides ahead as a scout, warning anyone who will listen about the trail ahead.
-      · Fog rolls off the lake and Emery Hale loses the trail for hours.
-      · Quinn Finch finds a steady rhythm and makes good time.
-      · Iris Pike trails the race, following the field's dust toward New York.
-      · A whole town turns out to cheer Mrs. Robinson through.
-  [Field] 11 racers retired and 3 died. 234 remain.
+      · Gyro Zeppeli stops to splint the arm of Matilda Faraday, who was thrown from her horse.
+      · Reese Redding takes the wrong fork and has to double back.
+      · Rowan Whitlock and Diego Brando ride together for an afternoon, trading stories.
+      · Hot Pants follows the lakeshore at a steady clip.
+      · Dixie throws a shoe, and Iris Doyle loses an hour at a roadside smithy.
+      · Cyrus Ashby and Ivy Mercer ride together for an afternoon, trading stories.
+      · Fog rolls off the lake and Norisuke Higashikata IV loses the trail for hours.
+      · Urmd Avdul finds a shallow ford and crosses the river dry.
+      · Lady Luck throws a shoe, and Della Quarles loses an hour at a roadside smithy.
+      · Fog rolls off the lake and Avery Shaw loses the trail for hours.
+      · Sandman finds a steady rhythm and makes good time.
+      · Ellis Booker finds a steady rhythm and makes good time.
+      · A whole town turns out to cheer Marlow Pike through.
+      · Ruby Blackwood and Mrs. Robinson race neck and neck for miles until Ruby Blackwood edges ahead.
+  [Field] 7 racers retired and 4 died. 218 remain.
 
 --- Night 1 ---
-  Marlow Doyle keeps watch so Mrs. Robinson can sleep. Nobody bothers them.
-  Della Harlan falls through the ice, and Hot Pants hauls her out by the collar.
-  Mountain Tim catches Ingrid Castellanos going through his saddlebags and sends her off with a warning.
-✝ Aiyana Gallagher creeps up to Clementine Calloway's camp to steal her water. Clementine Calloway wakes and shoots her dead.
-✝ Annie Doyle watches Philippa Thibodeaux pick a fight with the wrong stranger and fall in the dust.
+  Rowan Whitlock hunts down Gyro Zeppeli and beats him in a sprint showdown.
+  Benjamin Boom Boom's foot catches in the stirrup and he is dragged until Reese Redding cuts the strap.
+  Rufus Thorne follows a trapper's map down a shortcut and gains half a day.
+✝ Wolves circle Avery Shaw's campfire all night. Avery Shaw survives, but Ingrid Voss, camped nearby, does not.
+  Ivy Mercer runs until her legs give out and has to rest for hours.
   -- Side stories --
     Meanwhile on the trail...
-      · Diego Brando trails the race, following the field's dust toward New York.
-      · Morgan Holloway and L.A. Boom Boom share a campfire and agree not to shoot each other tonight.
-      · Quinn Finch finds a steady rhythm and makes good time.
-      · Tornado throws a shoe, and Amos Ketchum loses an hour at a roadside smithy.
-      · Rufus McCrae and Pocoloco share a campfire and agree not to shoot each other tonight.
-      · Fog rolls off the lake and Johnny Joestar loses the trail for hours.
-      · Wren Ridley takes the wrong fork and has to double back.
-      · Rosie throws a shoe, and Virgil Pike loses an hour at a roadside smithy.
-      · Benjamin Boom Boom trails the race, following the field's dust toward New York.
-      · Emery Hale takes the wrong fork and has to double back.
-      · Nell Ridley finds a steady rhythm and makes good time.
-      · Gyro Zeppeli sleeps under the stars.
-  [Field] The ice on the Straits groans under the field. 8 racers retired and 5 died. 221 remain.
-  [The Fallen] No named racers. And 8 from the field.
+      · Iris Doyle and Pocoloco share a campfire and agree not to shoot each other tonight.
+      · Ruby Blackwood and Mountain Tim share a campfire and agree not to shoot each other tonight.
+      · Ada Sutter finds a steady rhythm and makes good time.
+      · Fog rolls off the lake and Cyrus Ashby loses the trail for hours.
+      · Hot Pants finds a steady rhythm and makes good time.
+      · Della Quarles follows the lakeshore at a steady clip.
+      · Virgil Garrett takes the wrong fork and has to double back.
+      · Andre Boom Boom takes the wrong fork and has to double back.
+      · Ellis Booker rides through the night while the others sleep.
+      · Silver Bullet throws a shoe, and Diego Brando loses an hour at a roadside smithy.
+      · Marlow Pike is so saddle-sore they can barely sit.
+  [Field] The ice on the Straits groans under the field. 12 racers retired and 3 died. 203 remain.
+  [The Fallen] No named racers. And 7 from the field.
+
+--- Day 2 ---
+  Ellis Booker hunts down Gyro Zeppeli and beats him in a sprint showdown.
+  Marlow Pike rides past Henrietta Underhill, who is still calling out.
+✝ Virgil Garrett rides past Ash Hartley. By morning, the snow has covered them.
+  Della Quarles's foot catches in the stirrup and she is dragged until Iris Doyle cuts the strap.
+✝ Ruby Blackwood watches Imogen Zamora pick a fight with the wrong stranger and fall in the dust.
+✝ Diego Brando hears the ice crack behind him and turns to see Harper Blackwell disappear.
+  Oyecomova follows a trapper's map down a shortcut and gains half a day.
+  Ines Lockhart tries to rob Reese Redding at gunpoint. Reese Redding knocks the gun away and lets her walk.
+  -- Side stories --
+    Meanwhile on the trail...
+      · Avery Shaw and Ada Sutter race neck and neck for miles until Avery Shaw edges ahead.
+      · Sandman finds a shallow ford and crosses the river dry.
+      · Cyrus Ashby finds a steady rhythm and makes good time.
+      · Urmd Avdul takes the wrong fork and has to double back.
+      · Rufus Thorne finds a steady rhythm and makes good time.
+      · A whole town turns out to cheer Rowan Whitlock through.
+      · Ivy Mercer finds a shallow ford and crosses the river dry.
+      · Norisuke Higashikata IV takes the wrong fork and has to double back.
+      · A whole town turns out to cheer Hot Pants through.
+  [Field] The ice on the Straits groans under the field. 13 racers retired and 4 died. 186 remain.
 
 --- Finish Line ---
-  Mrs. Robinson takes the time bonus for leading the final mile.
-  Sawyer Lindqvist fires on Emery Hale from a ridge. The bullet grazes their side.
-  Morgan Holloway is thrown hard from the saddle and can't go on. Their race is over.
-  Quinn Finch passes Obadiah Okafor, who has collapsed a mile short of the finish.
-  Amos Ketchum crowds Urmd Avdul into the rail on the final turn.
+  Marlow Pike hunts down Virgil Garrett and beats him in a sprint showdown.
+  Reese Redding hunts down Johnny Joestar, but Johnny Joestar wins the sprint showdown. Johnny Joestar pushes too hard and gets hurt.
+  Rufus Thorne follows a trapper's map down a shortcut and gains half a day.
+  L.A. Boom Boom crowds Norisuke Higashikata IV into the rail on the final turn.
+  Mountain Tim falls through the ice, and Iris Doyle hauls him out by the collar.
+  Ruby Blackwood draws on Cyrus Ashby and misses. Cyrus Ashby has her dead to rights, then lowers the gun.
+  Lady Luck's heart gives out within sight of the finish line. Della Quarles walks the rest.
   -- Side stories --
     Meanwhile on the trail...
-      · Pocoloco finds a steady rhythm and makes good time.
-      · Clementine Calloway spurs Tumbleweed into a final gallop toward the line.
-      · Hickory throws a shoe, and Hot Pants loses an hour at a roadside smithy.
-      · Nell Ridley and Della Harlan cross the line almost together, both claiming the better time.
-      · Wren Ridley stops to splint the arm of Prudence Holloway, who was thrown from her horse.
-      · Marlow Doyle finds a steady rhythm and makes good time.
-      · Virgil Pike follows the lakeshore at a steady clip.
-      · Annie Doyle and Rufus McCrae cross the line almost together, both claiming the better time.
-  [Field] 14 racers retired and 3 died. 204 remain.
-  [The Fallen] No named racers. And 3 from the field.
+      · Sandman settles into a long-distance stride.
+      · Ellis Booker takes the wrong fork and has to double back.
+      · Jedediah Calloway, out of the race, watches the leaders pass from a saloon porch.
+      · Clover throws a shoe, and Avery Shaw loses an hour at a roadside smithy.
+      · Ada Sutter finds one last burst in her legs for the finish.
+      · Ivy Mercer settles into a long-distance stride.
+      · Rowan Whitlock finds a steady rhythm and makes good time.
+      · Paloma throws a shoe, and Benjamin Boom Boom loses an hour at a roadside smithy.
+  [Field] 10 racers retired. No one in the field died. 176 remain.
+  [The Fallen] No named racers. And 4 from the field.
 
   STAGE 6 RESULTS
-     1. Quinn Finch  +100
-     2. Mountain Tim  +90
-     3. Rufus McCrae  +80
-     4. Amos Ketchum  +70
-     5. Mrs. Robinson  +60
-     6. Clementine Calloway  +50
-     7. Gyro Zeppeli  +40
-     8. Marlow Doyle  +30
-     9. Urmd Avdul  +20
-    10. Cornelius McAllister [pack]  +10
+     1. Ada Sutter  +100
+     2. Rufus Thorne  +90
+     3. Rowan Whitlock  +80
+     4. Ivy Mercer  +70
+     5. Hot Pants  +60
+     6. Cyrus Ashby  +50
+     7. Sandman  +40
+     8. Ruby Blackwood  +30
+     9. Marlow Pike  +20
+    10. Iris Doyle  +10
   STANDINGS
-    Mrs. Robinson  270
-    Mountain Tim  265
-    Quinn Finch  200
-    Marlow Doyle  190
-    Wekapipo (dead)  180
-    Diego Brando (retired)  175
+    Rowan Whitlock  350
+    Hot Pants  265
+    Diego Brando  255
+    Rufus Thorne  230
+    Ellis Booker  210
+    Ada Sutter  205
 
 ======================================================================
 STAGE 7: PHILADELPHIA TRIANGLE
@@ -668,96 +703,114 @@ Mackinaw City → Philadelphia
 ======================================================================
 
 --- Day 1 ---
-  Quinn Finch wins a mid-stage sprint and pockets the bonus.
+  Rufus Thorne hunts down Avery Shaw and beats them in a sprint showdown. Rufus Thorne pushes too hard and gets hurt.
+  Della Quarles rides past Leopold Underhill, who is still calling out.
+  Reese Redding follows the riverbed and gains hours on the field.
+  Ruby Blackwood stops to splint the leg of Adelaide Ashcroft and gets her onto the road to town.
+  Marlow Pike pushes Midnight too hard, and the horse drops dead under them. Marlow Pike is on foot.
+✝ Elias Ashcroft challenges Ada Sutter to a duel over a water hole. Ada Sutter draws first, and Elias Ashcroft drops into the dust.
+✝ L.A. Boom Boom finds Hiroshi Castellanos shot dead on the road, saddlebags slashed open.
+  Virgil Garrett follows a trapper's map down a shortcut and gains half a day.
+  A rider in a dark hat ambushes Diego Brando on a forest road. Diego Brando barely escapes.
+  Norisuke Higashikata IV wins a mid-stage sprint and pockets the bonus.
   -- Side stories --
     Meanwhile on the trail...
-      · Amos Ketchum is so saddle-sore he can barely sit.
-      · Johnny Joestar and Pocoloco race neck and neck for miles until Johnny Joestar edges ahead.
-      · Nell Ridley finds a shallow ford and crosses the river dry.
-      · Benjamin Boom Boom, out of the race, watches the leaders pass from a saloon porch.
-      · Clementine Calloway finds a steady rhythm and makes good time.
-      · Gyro Zeppeli hums a made-up song about cheese to pass the miles.
-      · Outlaw throws a shoe, and Oyecomova loses an hour at a roadside smithy.
-      · L.A. Boom Boom and Rufus McCrae ride together for an afternoon, trading stories.
-      · Marlow Doyle is so saddle-sore they can barely sit.
-      · Hot Pants finds a shallow ford and crosses the river dry.
-      · Della Harlan rides through dense forest toward Philadelphia.
-      · Urmd Avdul finds a steady rhythm and makes good time.
-      · Virgil Pike takes the wrong fork and has to double back.
-      · Wren Ridley and Emery Hale ride together for an afternoon, trading stories.
-      · A whole town turns out to cheer Annie Doyle through.
-  [Field] 9 racers retired and 1 died. 194 remain.
+      · Cyrus Ashby takes the wrong fork and has to double back.
+      · Hot Pants is so saddle-sore she can barely sit.
+      · Oyecomova and Urmd Avdul ride together for an afternoon, trading stories.
+      · Ivy Mercer finds a steady rhythm and makes good time.
+      · A whole town turns out to cheer Rowan Whitlock through.
+      · Dixie throws a shoe, and Iris Doyle loses an hour at a roadside smithy.
+      · A whole town turns out to cheer Ellis Booker through.
+      · Johnny Joestar takes the wrong fork and has to double back.
+  [Field] 15 racers retired and 5 died. 156 remain.
 
 --- Night 1 ---
-  Ignatius Gallagher robs Rufus McCrae's camp in the night, taking food and water.
-  A rattlesnake spooks Slow Dancer, and the horse goes down with a broken leg. Johnny Joestar has to go on foot.
-  Wren Ridley is thrown hard from the saddle and can't go on. Their race is over.
-✝ Annie Doyle finds Ignatius Castellanos shot dead on the road, saddlebags slashed open.
-✝ Emery Hale catches Amos Ketchum alone on the trail and kills him for his supplies.
-  Clementine Calloway keeps watch so Mrs. Robinson can sleep. Nobody bothers them.
+  Reese Redding rides past Fitzgerald Grimsby, who is still calling out.
+  Avery Shaw keeps to the trail.
+✝ Ash Whitaker creeps up to Urmd Avdul's camp to steal his water. Urmd Avdul wakes and shoots them dead.
+✝ Wolves circle Cyrus Ashby's campfire all night. Cyrus Ashby survives, but Bellamy Delacroix, camped nearby, does not.
+  Oyecomova keeps watch so Andre Boom Boom can sleep. Nobody bothers them.
+  Mountain Tim lassoes Norisuke Higashikata IV out of a flash flood.
+✝ Virgil Garrett comes down with a fever in the night and never wakes up.
+  Della Quarles follows a trapper's map down a shortcut and gains half a day.
+  Henrietta Underhill tries to rob Rowan Whitlock at gunpoint. Rowan Whitlock knocks the gun away and lets her walk.
+  Rufus Thorne catches Fitzgerald Coburn going through his saddlebags and sends him off with a warning.
   -- Side stories --
+    Jedediah Calloway may be out of the race, but he still points a lost Adelaide Ashcroft back to the trail.
     Meanwhile on the trail...
-      · Clover throws a shoe, and Quinn Finch loses an hour at a roadside smithy.
-      · Sandman rides through dense forest toward Philadelphia.
-      · Nell Ridley loses the trail in the woods and wanders until dawn.
-      · Della Harlan loses the trail in the woods and wanders until dawn.
-      · Virgil Pike is so saddle-sore he can barely sit.
-      · Marlow Doyle rides through dense forest toward Philadelphia.
-  [Field] 4 racers retired and 6 died. 184 remain.
-  [The Fallen] Amos Ketchum (killed for supplies, by Emery Hale) And 7 from the field.
+      · Ada Sutter rides through dense forest toward Philadelphia.
+      · Gyro Zeppeli stops to splint the arm of Jebediah Faraday, who was thrown from his horse.
+      · Ellis Booker stops to splint the arm of Rupert Castellanos, who was thrown from his horse.
+      · Pocoloco's luck holds again: a full canteen lying in the dirt, right where he needs it.
+      · Starlight throws a shoe, and Ruby Blackwood loses an hour at a roadside smithy.
+      · Beatrix Lindqvist waves for help by the trail. Marlow Pike rides straight past.
+      · Iris Doyle loses the trail in the woods and wanders until dawn.
+      · Ivy Mercer sleeps under the stars.
+  [Field] 6 racers retired and 4 died. 146 remain.
+  [The Fallen] Virgil Garrett (fever) And 9 from the field.
 
 --- Day 2 ---
-  Imogen Lindqvist tries to rob Nell Ridley at gunpoint. Nell Ridley knocks the gun away and lets her walk.
-✝ Delphine Gallagher challenges Della Harlan to a duel over a water hole. Della Harlan draws first, and Delphine Gallagher drops into the dust.
-  Marlow Doyle's foot catches in the stirrup and they are dragged until L.A. Boom Boom cuts the strap.
-  Sandman lands badly on loose rock and tears a muscle in his leg.
+  Reese Redding catches up with Avery Shaw, but Avery Shaw refuses to race. Reese Redding rides on ahead.
+✝ Rowan Whitlock finds Dmitri Oakes shot dead on the road, saddlebags slashed open.
+  Hiroshi Ingram tries to rob Ivy Mercer at gunpoint. Ivy Mercer knocks the gun away and lets him walk.
+  Ruby Blackwood draws on Ellis Booker and misses. Ellis Booker has her dead to rights, then lowers the gun.
+  Temperance Prentiss fires on Johnny Joestar from a ridge. The bullet grazes his side.
   -- Side stories --
-    Iris Pike may be out of the race, but she still points a lost Augustus Castellanos back to the trail.
     Meanwhile on the trail...
-      · Quinn Finch finds a shallow ford and crosses the river dry.
-      · A whole town turns out to cheer Clementine Calloway through.
-      · Emery Hale finds a steady rhythm and makes good time.
-      · Annie Doyle and Gyro Zeppeli race neck and neck for miles until Annie Doyle edges ahead.
-      · Rufus McCrae and Hot Pants ride together for an afternoon, trading stories.
-      · Mountain Tim rides through dense forest toward Philadelphia.
-      · Virgil Pike stops to splint the arm of Prudence Nightingale, who was thrown from her horse.
-  [Field] 9 racers retired and 1 died. 174 remain.
+      · Cyrus Ashby finds a steady rhythm and makes good time.
+      · Mrs. Robinson and Rufus Thorne race neck and neck for miles until Mrs. Robinson edges ahead.
+      · Pocoloco's luck holds again: a full canteen lying in the dirt, right where he needs it.
+      · Marlow Pike rides through dense forest toward Philadelphia.
+      · Ada Sutter and Gyro Zeppeli race neck and neck for miles until Ada Sutter edges ahead.
+      · Della Quarles rides through dense forest toward Philadelphia.
+      · Norisuke Higashikata IV finds a steady rhythm and makes good time.
+      · Ignatius Ingram waves for help by the trail. Iris Doyle rides straight past.
+      · Jedediah Calloway trails the race, following the field's dust toward New York.
+      · Andre Boom Boom rides with the rest of the Boom Boom family, eyeing the other racers.
+  [Field] 10 racers retired and 5 died. 131 remain.
 
 --- Finish Line ---
-  A rider in a dark hat ambushes Emery Hale on a forest road. Emery Hale barely escapes.
-  Urmd Avdul's foot catches in the stirrup and he is dragged until Rufus McCrae cuts the strap.
-  Nell Ridley is pinned against a fence when the crowd surges onto the track at the finish.
+  Rowan Whitlock never catches up with Ellis Booker this stage.
+  Della Quarles hits a hidden rut in the riverbed and goes down hard.
+  Marlow Pike hunts down Ellis Booker and beats them in a sprint showdown.
+  Iris Doyle walks Dixie for an afternoon and lets the horse recover.
+  Ivy Mercer passes Rosalind Yardley, who has collapsed a mile short of the finish.
+  Johnny Joestar grips the reins with his legs useless beneath him and refuses to fall behind.
+  Sandman is pinned against a fence when the crowd surges onto the track at the finish.
+  Tatum Castellanos fires on Rowan Whitlock from a ridge. The bullet grazes their side.
+  Ada Sutter runs until her legs give out and has to rest for hours.
+  Andre Boom Boom strings wire across the trail. Avery Shaw's horse goes down hard.
+  Reese Redding cuts Cyrus Ashby's cinch strap at a water stop. Cyrus Ashby loses an hour fixing it.
   -- Side stories --
     Meanwhile on the trail...
-      · Hot Pants finds a steady rhythm and makes good time.
-      · Gyro Zeppeli and Annie Doyle cross the line almost together, both claiming the better time.
-      · Virgil Pike finds a steady rhythm and makes good time.
-      · Marlow Doyle spurs Blaze into a final gallop toward the line.
-      · Dmitri Tanaka waves for help by the trail. Oyecomova rides straight past.
-      · Lucius Okafor waves for help by the trail. Clementine Calloway rides straight past.
-      · Quinn Finch spurs Clover into a final gallop toward the line.
-      · Pinto throws a shoe, and Della Harlan loses an hour at a roadside smithy.
-  [Field] 6 racers retired. No one in the field died. 168 remain.
-  [The Fallen] No named racers. And 1 from the field.
+      · Bellamy Okafor waves for help by the trail. Ruby Blackwood rides straight past.
+      · Gyro Zeppeli rides through dense forest toward Philadelphia.
+      · Rufus Thorne fades badly in the final miles.
+      · Shiloh throws a shoe, and Mrs. Robinson loses an hour at a roadside smithy.
+      · Clara Jessup waves for help by the trail. Diego Brando rides straight past.
+      · Maverick throws a shoe, and Pocoloco loses an hour at a roadside smithy.
+  [Field] 5 racers retired and 2 died. 124 remain.
+  [The Fallen] No named racers. And 7 from the field.
 
   STAGE 7 RESULTS
-     1. Quinn Finch  +100
-     2. Mountain Tim  +90
-     3. Obadiah Delacroix [pack]  +80
-     4. Mrs. Robinson  +70
-     5. Hot Pants  +60
-     6. Emery Hale  +50
-     7. Clementine Calloway  +40
-     8. Cornelius McAllister [pack]  +30
-     9. Virgil Pike  +20
-    10. Oyecomova  +10
+     1. Barnabas Oakes [pack]  +100
+     2. Norisuke Higashikata IV  +90
+     3. Urmd Avdul  +80
+     4. Horace Ingram [pack]  +70
+     5. Pocoloco  +60
+     6. Ada Sutter  +50
+     7. Jebediah Everhart [pack]  +40
+     8. Sandman  +30
+     9. Mrs. Robinson  +20
+    10. Benjamin Boom Boom  +10
   STANDINGS
-    Mountain Tim  355
-    Mrs. Robinson  340
-    Quinn Finch  310
-    Emery Hale  215
-    Marlow Doyle  195
-    Obadiah Delacroix  190
+    Rowan Whitlock  355
+    Hot Pants  270
+    Ada Sutter  255
+    Diego Brando  255
+    Rufus Thorne  235
+    Pocoloco  220
 
 ======================================================================
 STAGE 8: BOTH SIDES NOW
@@ -765,98 +818,107 @@ Philadelphia → Union Beach
 ======================================================================
 
 --- Day 1 ---
-  Urmd Avdul follows a trapper's map down a shortcut and gains half a day.
-  Oyecomova's foot catches in the stirrup and he is dragged until Johnny Joestar cuts the strap.
-  Gyro Zeppeli shares his cheese and dried meat with Mountain Tim.
+  Reese Redding catches up with Diego Brando, but Diego Brando refuses to race. Reese Redding rides on ahead.
+  Sandman draws on Mountain Tim and misses. Mountain Tim has him dead to rights, then lowers the gun.
+  Cyrus Ashby's foot catches in the stirrup and he is dragged until Ellis Booker cuts the strap.
+  Hester Yardley fires on Johnny Joestar from a ridge. The bullet grazes his side.
   -- Side stories --
     Meanwhile on the trail...
-      · Rufus McCrae stops to splint the arm of Kit Whitaker, who was thrown from their horse.
-      · Bellamy Barlow waves for help by the trail. Nell Ridley rides straight past.
-      · Della Harlan and Quinn Finch ride together for an afternoon, trading stories.
-      · Clementine Calloway races along the coast road at full speed.
-      · Blaze throws a shoe, and Marlow Doyle loses an hour at a roadside smithy.
-      · Biscuit throws a shoe, and Emery Hale loses an hour at a roadside smithy.
-      · Virgil Pike stops to splint the arm of Rupert Fairweather, who was thrown from his horse.
-      · Benjamin Boom Boom trails the race, following the field's dust toward New York.
-      · Ines Dunmore waves for help by the trail. Annie Doyle rides straight past.
-  [Field] 5 racers retired and 1 died. 162 remain.
+      · Iris Doyle takes the wrong fork and has to double back.
+      · Oyecomova finds a steady rhythm and makes good time.
+      · Avery Shaw stops to splint the arm of Ignatius Castellanos, who was thrown from his horse.
+      · Starlight throws a shoe, and Ruby Blackwood loses an hour at a roadside smithy.
+      · Pocoloco takes the wrong fork and has to double back.
+      · Ivy Mercer's feet are raw and bleeding.
+      · A whole town turns out to cheer Rowan Whitlock through.
+      · Ada Sutter and Hot Pants race neck and neck for miles until Ada Sutter edges ahead.
+      · Rufus Thorne and Della Quarles race neck and neck for miles until Rufus Thorne edges ahead.
+      · A whole town turns out to cheer Marlow Pike through.
+  [Field] 8 racers retired and 1 died. 115 remain.
 
 --- Night 1 ---
-✝ Wolves circle Gyro Zeppeli's campfire all night. Gyro Zeppeli survives, but Casimir Kincaid, camped nearby, does not.
-  Wilhelmina Coburn fires on Sandman from a ridge. The bullet grazes his side.
-  Prudence Nightingale tries to rob Mountain Tim at gunpoint. Mountain Tim knocks the gun away and lets her walk.
-  Pocoloco catches Ezekiel Zamora going through his saddlebags and sends him off with a warning.
+  Ellis Booker rides past Rupert Whitaker, who is still calling out.
+  Marlow Pike catches up with Ruby Blackwood, but Ruby Blackwood refuses to race. Marlow Pike rides on ahead.
+✝ Wolves circle Iris Doyle's campfire all night. Iris Doyle survives, but Marguerite Rourke, camped nearby, does not.
+  A rattlesnake spooks Paloma, and the horse goes down with a broken leg. Benjamin Boom Boom has to go on foot.
+  Cyrus Ashby catches Lars Crane going through his saddlebags and sends him off with a warning.
+✝ Oyecomova plants a bomb under a bridge. Rosalind Kincaid rides over it.
+  Bartholomew Castellanos tries to rob Della Quarles at gunpoint. Della Quarles knocks the gun away and lets him walk.
   -- Side stories --
     Meanwhile on the trail...
-      · Emery Hale is so saddle-sore they can barely sit.
-      · Quinn Finch and Marlow Doyle share a campfire and agree not to shoot each other tonight.
-      · Bandit throws a shoe, and Nell Ridley loses an hour at a roadside smithy.
-      · Rufus McCrae races along the coast road at full speed.
-      · Wren Ridley, out of the race, watches the leaders pass from a saloon porch.
-      · Annie Doyle finds a steady rhythm and makes good time.
-      · Oyecomova fords a river mouth near Union Beach as the tide comes in.
-      · Della Harlan and Urmd Avdul share a campfire and agree not to shoot each other tonight.
-      · Rosie throws a shoe, and Virgil Pike loses an hour at a roadside smithy.
-      · Rupert Hartley waves for help by the trail. Clementine Calloway rides straight past.
-  [Field] 4 racers retired and 2 died. 156 remain.
+      · Ada Sutter takes the wrong fork and has to double back.
+      · Reese Redding and Diego Brando share a campfire and agree not to shoot each other tonight.
+      · Ivy Mercer sleeps under the stars.
+      · Jedediah Calloway trails the race, following the field's dust toward New York.
+      · Rupert Whitaker waves for help by the trail. Sandman rides straight past.
+      · Avery Shaw sleeps under the stars.
+      · Rowan Whitlock finds a steady rhythm and makes good time.
+      · Mrs. Robinson finds a steady rhythm and makes good time.
+      · Rufus Thorne and Urmd Avdul share a campfire and agree not to shoot each other tonight.
+  [Field] 4 racers retired and 2 died. 109 remain.
   [The Fallen] No named racers. And 3 from the field.
 
 --- Day 2 ---
-✝ Wilhelmina Lockhart challenges Pocoloco to a duel over a water hole. Pocoloco draws first, and Wilhelmina Lockhart drops into the dust.
-✝ Ignatius Ingram offers to ride with Della Harlan, then tries to push her off a bridge. Della Harlan kills him instead.
+  Ada Sutter catches up with Cyrus Ashby, but Cyrus Ashby refuses to race. Ada Sutter rides on ahead.
+  Rufus Thorne follows the riverbed and gains hours on the field.
+  Marlow Pike waits for the fog to lift.
+  Rowan Whitlock hunts down Hot Pants and beats her in a sprint showdown.
+  Mrs. Robinson's foot catches in the stirrup and he is dragged until Urmd Avdul cuts the strap.
+  Diego Brando rides in Andre Boom Boom's slipstream all afternoon, then overtakes him at the last moment.
   -- Side stories --
     Meanwhile on the trail...
-      · Oyecomova finds a steady rhythm and makes good time.
-      · Annie Doyle finds a steady rhythm and makes good time.
-      · Sandman takes the wrong fork and has to double back.
-      · A whole town turns out to cheer Mrs. Robinson through.
-      · Virgil Pike fords a river mouth near Union Beach as the tide comes in.
-      · Marlow Doyle races along the coast road at full speed.
-      · Rufus McCrae finds a shallow ford and crosses the river dry.
-      · Tumbleweed throws a shoe, and Clementine Calloway loses an hour at a roadside smithy.
-      · Bandit throws a shoe, and Nell Ridley loses an hour at a roadside smithy.
-      · Seraphina Thibodeaux waves for help by the trail. Quinn Finch rides straight past.
-      · Emery Hale is so saddle-sore they can barely sit.
-  [Field] 10 racers retired and 2 died. 144 remain.
+      · Della Quarles finds a steady rhythm and makes good time.
+      · Sandman races along the coast road at full speed.
+      · L.A. Boom Boom races along the coast road at full speed.
+      · Ivy Mercer settles into a long-distance stride.
+      · Starlight throws a shoe, and Ruby Blackwood loses an hour at a roadside smithy.
+      · Norisuke Higashikata IV and Benjamin Boom Boom ride together for an afternoon, trading stories.
+      · Avery Shaw takes the wrong fork and has to double back.
+      · Johnny Joestar takes the wrong fork and has to double back.
+      · Iris Doyle and Reese Redding ride together for an afternoon, trading stories.
+      · Ellis Booker stops to splint the arm of Imogen Castellanos, who was thrown from her horse.
+      · Jedediah Calloway trails the race, following the field's dust toward New York.
+  [Field] 2 racers retired. No one in the field died. 107 remain.
 
 --- Finish Line ---
-  Sandman takes the time bonus for leading the final mile.
-✝ Dakota Nightingale offers to ride with Annie Doyle, then tries to push her off a bridge. Annie Doyle kills them instead.
-✝ Clementine Calloway watches Winifred Zamora pick a fight with the wrong stranger and fall in the dust.
-  Quinn Finch cuts Mrs. Robinson's cinch strap at a water stop. Mrs. Robinson loses an hour fixing it.
-  Nell Ridley passes Aiyana Castellanos, who has collapsed a mile short of the finish.
+  Iris Doyle walks Dixie for an afternoon and lets the horse recover.
+  Seraphina Crane fires on Mrs. Robinson from a ridge. The bullet grazes his side.
+  Hot Pants's foot catches in the stirrup and she is dragged until Rowan Whitlock cuts the strap.
+✝ Barnabas Okafor offers to ride with Della Quarles, then tries to push her off a bridge. Della Quarles kills him instead.
+  L.A. Boom Boom draws on Urmd Avdul and misses. Urmd Avdul has him dead to rights, then lowers the gun.
+  Marlow Pike is pinned against a fence when the crowd surges onto the track at the finish.
+  Riders laugh as they pass Ada Sutter. By evening, Ada Sutter has caught every one of them.
+  Imogen Voss tries to rob Cyrus Ashby at gunpoint. Cyrus Ashby knocks the gun away and lets her walk.
   -- Side stories --
     Meanwhile on the trail...
-      · Shiloh throws a shoe, and Rufus McCrae loses an hour at a roadside smithy.
-      · Oyecomova spurs Outlaw into a final gallop toward the line.
-      · Virgil Pike fades badly in the final miles.
-      · Benjamin Boom Boom trails the race, following the field's dust toward New York.
-      · Emery Hale spurs Biscuit into a final gallop toward the line.
-      · Della Harlan finds a steady rhythm and makes good time.
-      · Gyro Zeppeli fades badly in the final miles.
-      · Urmd Avdul fords a river mouth near Union Beach as the tide comes in.
-      · Marlow Doyle finds a steady rhythm and makes good time.
-  [Field] 8 racers retired and 6 died. 130 remain.
-  [The Fallen] No named racers. And 8 from the field.
+      · Rufus Thorne takes the wrong fork and has to double back.
+      · Ellis Booker finds a steady rhythm and makes good time.
+      · Reese Redding fords a river mouth near Union Beach as the tide comes in.
+      · Avery Shaw fords a river mouth near Union Beach as the tide comes in.
+      · Oyecomova takes the wrong fork and has to double back.
+      · Ruby Blackwood races along the coast road at full speed.
+      · Ivy Mercer finds one last burst in her legs for the finish.
+  [Field] 3 racers retired and 1 died. 103 remain.
+  [The Fallen] No named racers. And 1 from the field.
 
   STAGE 8 RESULTS
-     1. Quinn Finch  +100
-     2. Urmd Avdul  +90
-     3. Thaddeus Dunmore [pack]  +80
-     4. Hot Pants  +70
-     5. Sandman  +60
-     6. Nell Ridley  +50
-     7. Matteo Nightingale [pack]  +40
-     8. Mountain Tim  +30
-     9. Kit Castellanos [pack]  +20
-    10. Kofi Everhart [pack]  +10
+     1. Diego Brando  +100
+     2. Mountain Tim  +90
+     3. Gyro Zeppeli  +80
+     4. Henrietta Hawthorne [pack]  +70
+     5. Andre Boom Boom  +60
+     6. Ivy Mercer  +50
+     7. Ada Sutter  +40
+     8. Ambrose Thibodeaux [pack]  +30
+     9. Rowan Whitlock  +20
+    10. Henrietta Oakes [pack]  +10
   STANDINGS
-    Quinn Finch  400
-    Mountain Tim  385
-    Mrs. Robinson  340
-    Emery Hale  220
-    Marlow Doyle  200
-    Nell Ridley  195
+    Rowan Whitlock  390
+    Diego Brando  355
+    Ada Sutter  295
+    Hot Pants  270
+    Rufus Thorne  240
+    Ellis Booker  230
 
 ======================================================================
 STAGE 9: MANHATTAN RHAPSODY
@@ -864,118 +926,130 @@ Union Beach → Trinity Church
 ======================================================================
 
 --- Day 1 ---
-  Marlow Doyle wins a mid-stage sprint and pockets the bonus.
-  Paloma Delacroix tries to rob Mrs. Robinson at gunpoint. Mrs. Robinson knocks the gun away and lets her walk.
-✝ Adelaide Everhart challenges Clementine Calloway to a duel over a water hole. Clementine Calloway draws first, and Adelaide Everhart drops into the dust.
+  Rowan Whitlock sticks to the main avenue.
+  Reese Redding catches up with Avery Shaw, but Avery Shaw refuses to race. Reese Redding rides on ahead.
+✝ Ada Sutter catches Marlow Pike alone on the trail and kills them for their supplies.
+  Mountain Tim lassoes Oyecomova out of a flash flood.
+  L.A. Boom Boom strings wire across the trail. Iris Doyle's horse goes down hard.
+  Ruby Blackwood cuts Diego Brando's cinch strap at a water stop. Diego Brando loses an hour fixing it.
   -- Side stories --
     Meanwhile on the trail...
-      · Nell Ridley finds a steady rhythm and makes good time.
-      · Rufus McCrae finds a steady rhythm and makes good time.
-      · Morgan Holloway trails the race, following the field's dust toward New York.
-      · Pinto throws a shoe, and Della Harlan loses an hour at a roadside smithy.
-      · Quinn Finch catches the ferry across to Manhattan just as it pulls away.
-      · Emery Hale and Urmd Avdul race neck and neck for miles until Emery Hale edges ahead.
-      · Diego Brando trails the race, following the field's dust toward New York.
-      · Annie Doyle stops to splint the arm of Obadiah Sinclair, who was thrown from his horse.
-      · Virgil Pike stops to splint the arm of Delphine Lindqvist, who was thrown from her horse.
-  [Field] 6 racers retired and 1 died. 123 remain.
+      · Rufus Thorne and Andre Boom Boom race neck and neck for miles until Rufus Thorne edges ahead.
+      · Benjamin Boom Boom stops to splint the arm of Lucinda Whitaker, who was thrown from her horse.
+      · Wildfire throws a shoe, and Norisuke Higashikata IV loses an hour at a roadside smithy.
+      · Gyro Zeppeli hums a made-up song about cheese to pass the miles.
+      · Delphine Everhart waves for help by the trail. Della Quarles rides straight past.
+      · Buckshot throws a shoe, and Cyrus Ashby loses an hour at a roadside smithy.
+      · Mrs. Robinson and Pocoloco ride together for an afternoon, trading stories.
+      · Ivy Mercer finds a steady rhythm and makes good time.
+      · Ingrid Tanaka waves for help by the trail. Ellis Booker rides straight past.
+  [Field] 4 racers retired and 2 died. 97 remain.
 
 --- Night 1 ---
-  Quinn Finch cuts Nell Ridley's cinch strap at a water stop. Nell Ridley loses an hour fixing it.
-✝ Shots ring out near Trinity Church. Barnabas Blackwell is killed in the crossfire as Rufus McCrae rides past.
+  Ada Sutter sticks to the main avenue.
+  Rufus Thorne is jumped in a back alley and gets away with a cracked rib.
+  Andre Boom Boom and Reese Redding trade blows on a crowded avenue, neither willing to yield.
+  Hot Pants sprays Cream Starter over Iris Doyle's wounds, and the flesh knits shut. Iris Doyle can ride again.
+  Dmitri Dunmore fires on Sandman from a ridge. The bullet grazes his side.
+✝ Obadiah Ingram and Ash Grimsby jump Ruby Blackwood in the dark. Ruby Blackwood kills Obadiah Ingram, and Ash Grimsby flees into the night.
+✝ Ash Prentiss creeps up to Cyrus Ashby's camp to steal his water. Cyrus Ashby wakes and shoots them dead.
   -- Side stories --
     Meanwhile on the trail...
-      · Marlow Doyle takes the wrong fork and has to double back.
-      · Oyecomova takes the wrong fork and has to double back.
-      · Wren Ridley trails the race, following the field's dust toward New York.
-      · Urmd Avdul finds a steady rhythm and makes good time.
-      · Annie Doyle catches the ferry across to Manhattan just as it pulls away.
-      · Clementine Calloway finds a steady rhythm and makes good time.
-      · Emery Hale and Della Harlan share a campfire and agree not to shoot each other tonight.
-      · Virgil Pike stops to splint the arm of Finley Delacroix, who was thrown from their horse.
-  [Field] 5 racers retired and 2 died. 116 remain.
-  [The Fallen] No named racers. And 3 from the field.
+      · Avery Shaw sleeps under the stars.
+      · Oyecomova catches the ferry across to Manhattan just as it pulls away.
+      · Della Quarles finds a steady rhythm and makes good time.
+      · Rowan Whitlock finds a steady rhythm and makes good time.
+      · Maverick throws a shoe, and Pocoloco loses an hour at a roadside smithy.
+      · Ivy Mercer's feet are raw and bleeding.
+      · Gyro Zeppeli stops to splint the arm of Seraphina Zamora, who was thrown from her horse.
+      · Benjamin Boom Boom rides through the night while the others sleep.
+      · Jedediah Calloway, out of the race, watches the leaders pass from a saloon porch.
+      · Ellis Booker rides through the night while the others sleep.
+      · Sable throws a shoe, and Mountain Tim loses an hour at a roadside smithy.
+  [Field] 5 racers retired and 3 died. 89 remain.
+  [The Fallen] Marlow Pike (killed for supplies, by Ada Sutter) And 5 from the field.
 
 --- Day 2 ---
-✝ Marlow Doyle watches Dmitri Blackwell pick a fight with the wrong stranger and fall in the dust.
-✝ Shots ring out near Trinity Church. Lucinda Nightingale is killed in the crossfire as Rufus McCrae rides past.
-  Emery Hale cuts Oyecomova's cinch strap at a water stop. Oyecomova loses an hour fixing it.
+  Rowan Whitlock cuts through the back alleys and comes out three blocks ahead.
+  Ines Everhart tries to rob Rufus Thorne at gunpoint. Rufus Thorne knocks the gun away and lets her walk.
+✝ Mortimer Grimsby challenges Reese Redding to a duel over a water hole. Reese Redding draws first, and Mortimer Grimsby drops into the dust.
+✝ Shots ring out near Trinity Church. Ingrid Zamora is killed in the crossfire as Iris Doyle rides past.
+  Urmd Avdul follows a trapper's map down a shortcut and gains half a day.
+  A rattlesnake spooks Clover, and the horse goes down with a broken leg. Avery Shaw has to go on foot.
+  Johnny Joestar and Hot Pants trade blows on a crowded avenue, neither willing to yield.
+  Ellis Booker wins a mid-stage sprint and pockets the bonus.
   -- Side stories --
-    Iris Pike may be out of the race, but she still points a lost Percival Whitaker back to the trail.
     Meanwhile on the trail...
-      · Clementine Calloway catches the ferry across to Manhattan just as it pulls away.
-      · Morgan Holloway trails the race, following the field's dust toward New York.
-      · Annie Doyle and Hot Pants race neck and neck for miles until Annie Doyle edges ahead.
-      · Mountain Tim finds a steady rhythm and makes good time.
-      · Della Harlan stops to splint the arm of Barnabas Fairweather, who was thrown from his horse.
-      · Bandit throws a shoe, and Nell Ridley loses an hour at a roadside smithy.
-      · Rosie throws a shoe, and Virgil Pike loses an hour at a roadside smithy.
-      · Quinn Finch and Sandman ride together for an afternoon, trading stories.
-  [Field] New York is in sight. 6 racers retired and 3 died. 107 remain.
+      · Cyrus Ashby and Sandman ride together for an afternoon, trading stories.
+      · Della Quarles and Mountain Tim ride together for an afternoon, trading stories.
+      · Ash Yardley waves for help by the trail. Ada Sutter rides straight past.
+      · Ivy Mercer catches the ferry across to Manhattan just as it pulls away.
+      · Ghost throws a shoe, and Andre Boom Boom loses an hour at a roadside smithy.
+      · Ruby Blackwood takes the wrong fork and has to double back.
+      · Norisuke Higashikata IV takes the wrong fork and has to double back.
+  [Field] New York is in sight. 3 racers retired and 2 died. 84 remain.
 
 --- Finish Line ---
-  Pocoloco follows a trapper's map down a shortcut and gains half a day.
-  Oyecomova's foot catches in the stirrup and he is dragged until Quinn Finch cuts the strap.
-  Emery Hale takes the time bonus for leading the final mile.
-  Clementine Calloway is pinned against a fence when the crowd surges onto the track at the finish.
+  Avery Shaw waves Sandman on and keeps their own pace.
+  Ellis Booker cuts through the back alleys and comes out three blocks ahead.
+  Reese Redding draws on Rufus Thorne and misses. Rufus Thorne has them dead to rights, then lowers the gun.
+✝ Shots ring out near Trinity Church. Ignatius Castellanos is killed in the crossfire as Ada Sutter rides past.
+  Iris Doyle is thrown hard from the saddle and can't go on. Her race is over.
+  Diego Brando's foot catches in the stirrup and he is dragged until Rowan Whitlock cuts the strap.
+  Della Quarles is pinned against a fence when the crowd surges onto the track at the finish.
+  Ivy Mercer cuts Norisuke Higashikata IV's cinch strap at a water stop. Norisuke Higashikata IV loses an hour fixing it.
   -- Side stories --
     Meanwhile on the trail...
-      · Della Harlan takes the wrong fork and has to double back.
-      · Rufus McCrae spurs Shiloh into a final gallop toward the line.
-      · Casimir Lindqvist waves for help by the trail. Annie Doyle rides straight past.
-      · Johnny Joestar finds a steady rhythm and makes good time.
-      · Virgil Pike is so saddle-sore he can barely sit.
-      · Nugget throws a shoe, and Mountain Tim loses an hour at a roadside smithy.
-      · Nell Ridley catches the ferry across to Manhattan just as it pulls away.
-      · Marlow Doyle catches the ferry across to Manhattan just as it pulls away.
-      · Gyro Zeppeli stops to splint the arm of Ignatius Grimsby, who was thrown from his horse.
-  [Field] New York is in sight. 4 racers retired. No one in the field died. 103 remain.
+      · Gyro Zeppeli stops to splint the arm of Delphine Blackwell, who was thrown from her horse.
+      · Ruby Blackwood spurs Starlight into a final gallop toward the line.
+      · Mrs. Robinson fades badly in the final miles.
+      · Cyrus Ashby spurs Buckshot into a final gallop toward the line.
+      · Urmd Avdul takes the wrong fork and has to double back.
+  [Field] 4 racers retired and 1 died. 79 remain.
   [The Fallen] No named racers. And 3 from the field.
 
   STAGE 9 RESULTS
-     1. Philippa Blackwell [pack]  +100
-     2. Marlow Doyle  +90
-     3. Emery Hale  +80
-     4. Nell Ridley  +70
-     5. L.A. Boom Boom  +60
-     6. Sandman  +50
-     7. Urmd Avdul  +40
-     8. Clementine Calloway  +30
-     9. Mountain Tim  +20
-    10. Quinn Finch  +10
+     1. Ada Sutter  +100
+     2. Gyro Zeppeli  +90
+     3. Urmd Avdul  +80
+     4. Cyrus Ashby  +70
+     5. Johnny Joestar  +60
+     6. Rowan Whitlock  +50
+     7. Philippa McAllister [pack]  +40
+     8. Barnabas Oakes [pack]  +30
+     9. Avery Shaw  +20
+    10. Ivy Mercer  +10
   STANDINGS
-    Quinn Finch  410
-    Mountain Tim  405
-    Mrs. Robinson  345
-    Emery Hale  300
-    Marlow Doyle  300
-    Nell Ridley  265
+    Rowan Whitlock  455
+    Ada Sutter  395
+    Diego Brando  360
+    Gyro Zeppeli  300
+    Hot Pants  280
+    Urmd Avdul  260
 
 ======================================================================
 NEW YORK · TRINITY CHURCH
 ======================================================================
-  3rd: Mrs. Robinson  345 points
-  2nd: Mountain Tim  405 points
-  1st: Quinn Finch  410 points   <-- WINNER
+  3rd: Diego Brando  360 points
+  2nd: Ada Sutter  395 points
+  1st: Rowan Whitlock  455 points   <-- WINNER
 
   AWARDS
-    Most Kills: Wren Ridley & Nell Ridley (3 kills)
-    Most Merciful: Mountain Tim (spared 4 riders)
-    Best Runner: Sandman (235 points on foot)
-    Biggest Comeback: Quinn Finch (from 36th to 1st)
+    Most Kills: Oyecomova (5 kills)
+    Most Merciful: Cyrus Ashby & Avery Shaw (spared 4 riders)
+    Best Runner: Ada Sutter (395 points on foot)
+    Biggest Comeback: Urmd Avdul (from 34th to 6th)
 
-  REACHED NEW YORK (19 named, plus 103 from the field)
-    Quinn Finch, Mountain Tim, Mrs. Robinson, Emery Hale, Marlow Doyle, Nell Ridley, Sandman, Hot Pants, Gyro Zeppeli, Urmd Avdul, Rufus McCrae, Clementine Calloway, Virgil Pike, Oyecomova, L.A. Boom Boom, Della Harlan, Johnny Joestar, Pocoloco, Annie Doyle
+  REACHED NEW YORK (24 named, plus 79 from the field)
+    Rowan Whitlock, Ada Sutter, Diego Brando, Gyro Zeppeli, Hot Pants, Urmd Avdul, Ellis Booker, Rufus Thorne, Mountain Tim, Pocoloco, Cyrus Ashby, Ruby Blackwood, Avery Shaw, Sandman, Ivy Mercer, Reese Redding, Johnny Joestar, Della Quarles, Norisuke Higashikata IV, Andre Boom Boom, Benjamin Boom Boom, Mrs. Robinson, Oyecomova, L.A. Boom Boom
 
-  THE FALLEN (9)
-    ✝ Florence Ketchum: shot from ambush, by Harper Voss (Stage 1, Day 1)
-    ✝ Andre Boom Boom: shot from ambush, by Ines Vandermeer (Stage 2, Day 2)
-    ✝ Boone Booker: shot from ambush, by Josephine Oakes (Stage 2, Finish Line)
-    ✝ Morgan Vance: buried by an avalanche (Stage 3, Night 1)
-    ✝ Marlow Ashby: killed for supplies, by Mrs. Robinson (Stage 3, Finish Line)
-    ✝ Cora Pike: shot from ambush, by Ingrid Rourke (Stage 3, Finish Line)
-    ✝ Norisuke Higashikata IV: murdered in camp, by Morgan Holloway (Stage 4, Night 1)
-    ✝ Wekapipo: killed for supplies, by Nell Ridley (Stage 4, Day 2)
-    ✝ Amos Ketchum: killed for supplies, by Emery Hale (Stage 7, Night 1)
+  THE FALLEN (7)
+    ✝ Florence Whitlock: killed for supplies, by Oyecomova (Stage 1, Day 1)
+    ✝ Rowan Vance: shot from ambush, by Horace Okafor (Stage 2, Day 1)
+    ✝ Pearl Blackwood: killed for supplies, by Virgil Garrett (Stage 2, Day 2)
+    ✝ Ada Lowry: shot from ambush, by Henrietta Kincaid (Stage 4, Finish Line)
+    ✝ Wekapipo: killed for supplies, by Avery Shaw (Stage 4, Finish Line)
+    ✝ Virgil Garrett: fever (Stage 7, Night 1)
+    ✝ Marlow Pike: killed for supplies, by Ada Sutter (Stage 9, Day 1)
 
-(32 rounds · reveals at Normal speed: ~39 min, or ~27 min skipping side stories)
+(34 rounds · reveals at Normal speed: ~49 min, or ~37 min skipping side stories)

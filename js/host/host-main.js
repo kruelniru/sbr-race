@@ -8,7 +8,7 @@ import { HostLobby } from './lobby.js';
 import { loadSavedGame, saveGame, clearSavedGame } from './persist.js';
 import { addBots, removeBots } from './debug.js';
 import { RaceHost } from './race-host.js';
-import { raceView, sceneFor } from './race-view.js';
+import { raceView, sceneFor, countdownText, barPct } from './race-view.js';
 import { Backdrop } from './backdrop.js';
 import CANON from '../../data/canon-racers.js';
 import { h, $, mount, avatar } from '../ui/dom.js';
@@ -98,7 +98,7 @@ async function openRoom(saved) {
     },
   });
   if (state.phase === PHASE.RACING && state.race) {
-    raceHost = new RaceHost({ lobby, onChange: lobby.onChange });
+    raceHost = makeRaceHost();
     raceHost.resume();
   }
   saveGame(code, state, sessions);
@@ -108,8 +108,31 @@ async function openRoom(saved) {
 function startRace() {
   if (!confirm(`Lock the lobby and start with ${riders(hostScreenView(lobby.state).players.length)}? New players won't be able to join.`)) return;
   lobby.lock();
-  raceHost = new RaceHost({ lobby, onChange: lobby.onChange });
+  raceHost = makeRaceHost();
   raceHost.start();
+}
+
+function makeRaceHost() {
+  const rh = new RaceHost({ lobby, onChange: lobby.onChange });
+  // The choice countdown ticks without re-rendering (or re-saving) the screen.
+  rh.onTick = () => {
+    const t = rh.timerView();
+    for (const el of document.querySelectorAll('[data-countdown]')) el.textContent = countdownText(t);
+    for (const el of document.querySelectorAll('[data-countdown-bar]')) el.style.width = `${barPct(t)}%`;
+  };
+  return rh;
+}
+
+/** Download every choice window's timing (for: node sim/simulate.js --choice-times file.json). */
+function exportChoiceTimes() {
+  const data = raceHost?.timingExport();
+  if (!data) return;
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = h('a', { href: URL.createObjectURL(blob), download: `sbr-choice-times-${code}.json` });
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
 function riders(n) {
@@ -157,7 +180,7 @@ function render() {
         : h('section', { class: 'join-panel locked' },
             h('div', { class: 'label' }, `Room ${code} · lobby locked`),
             h('div', { class: 'big-line' }, 'The race begins!'),
-            h('p', { class: 'hint' }, 'Stages arrive in milestone 2. Riders who drop out can still rejoin.'),
+            h('p', { class: 'hint' }, 'Riders who drop out can still rejoin.'),
           ),
 
       h('section', { class: 'roster' },
@@ -200,6 +223,10 @@ function renderRace(view) {
       h('footer', { class: 'host-footer race-footer' },
         disconnectedNote(view),
         DEBUG && h('span', { class: 'seed' }, `seed ${view.seed}`),
+        (DEBUG || lobby.state.race?.over) && h('button', {
+          class: 'btn btn-small', onclick: exportChoiceTimes,
+          title: 'Save how long every choice took, for the balance sim',
+        }, `Export choice times (${raceHost?.timingExport().windows.length ?? 0})`),
         h('button', { class: 'btn btn-quiet', onclick: endRoom }, 'Close room'),
       ),
     ),
@@ -278,6 +305,13 @@ function lobbySettings(view) {
     h('label', { class: 'setting' },
       h('input', { type: 'checkbox', checked: view.settings.effects, onchange: (e) => lobby.setHostSetting('effects', e.target.checked) }),
       h('span', {}, 'Background effects')),
+    h('label', { class: 'setting' }, h('span', {}, 'Sub events'),
+      h('select', { onchange: (e) => lobby.setHostSetting('subEventFreq', e.target.value) },
+        [['low', 'Low (~1 a round)'], ['normal', 'Normal (~2–3)'], ['high', 'High (~4–5)']].map(([v, label]) =>
+          h('option', { value: v, selected: (view.settings.subEventFreq ?? 'normal') === v }, label)))),
+    h('label', { class: 'setting' }, h('span', {}, 'Choice timer'),
+      h('select', { onchange: (e) => lobby.setHostSetting('choiceTimer', e.target.value) },
+        [15, 20, 30, 45, 60].map((v) => h('option', { value: v, selected: Number(view.settings.choiceTimer ?? 30) === v }, `${v} seconds`)))),
     h('div', { class: 'setting canon-toggles' },
       h('span', {}, 'Canon racers'),
       h('div', { class: 'chips' }, CANON.map((c) => {

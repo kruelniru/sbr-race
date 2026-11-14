@@ -70,3 +70,34 @@ legend { margin-bottom: 8px; }
 .st-warn { color: var(--gold-2); }
 .st-bad { color: #ff9a8f; }
 .waiting.fallen { color: var(--muted); }
+
+/* ---------------------------------------------------------------- choices */
+.choice { background: var(--panel); border: 2px solid var(--gold); border-radius: var(--radius); padding: 14px; margin: 4px 0 14px;
+  box-shadow: 0 0 24px #e3a83b33; animation: choice-in .3s ease-out; }
+.choice.paused { border-color: var(--line); box-shadow: none; }
+.choice-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.choice-head h2 { margin: 0; font-size: 1.3rem; color: var(--gold-2); }
+.choice-clock { font-family: var(--display); font-size: 1.6rem; color: var(--gold-2); min-width: 3ch; text-align: right; }
+.choice-clock.urgent { color: #ff9a8f; }
+.choice .countdown-bar { height: 8px; border-radius: 999px; background: #0008; overflow: hidden; margin: 8px 0 4px; }
+.choice .countdown-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #c98a22, #f2c66d); transition: width .25s linear; }
+.paused-note { margin: 6px 0 0; text-align: center; color: var(--muted); font-weight: 700; letter-spacing: .05em; }
+.choice-text { margin: 10px 0 12px; line-height: 1.4; }
+.choice-options { display: grid; gap: 8px; }
+.choice-opt { display: grid; gap: 3px; text-align: left; font: inherit; color: var(--text); background: var(--bg-2);
+  border: 1px solid var(--line); border-radius: 12px; padding: .85em 1em; min-height: 56px; cursor: pointer; }
+.choice-opt:active { transform: scale(.99); }
+.choice-opt.chosen { border-color: var(--gold); background: #4a3418; }
+.choice-opt.picking { border-style: dashed; border-color: var(--gold); }
+.opt-label { font-weight: 700; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.opt-hint { color: var(--muted); font-size: .9rem; }
+.opt-target { color: var(--gold-2); font-size: .9rem; }
+.star { font-size: .75rem; font-weight: 700; color: #24170c; background: var(--gold-2); border-radius: 999px; padding: 1px 8px; }
+.target-pick { margin-top: 12px; }
+.target-pick h3 { margin: 0 0 8px; font-size: 1rem; }
+.target-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; max-height: 40vh; overflow-y: auto; }
+.target-btn { width: 100%; font-size: .9rem; padding: .6em .5em; overflow-wrap: anywhere; }
+.choice-status { margin: 10px 0 0; text-align: center; color: var(--muted); font-size: .9rem; }
+.choice-status.ok { color: var(--green); }
+@keyframes choice-in { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .choice { animation: none; } .choice .countdown-fill { transition: none; } }

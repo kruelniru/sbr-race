@@ -33,6 +33,8 @@ export class HostLobby {
     this.connToPlayer = new Map(); // connId -> playerId
     this.playerToConn = new Map(); // playerId -> connId
     this.lastSeen = new Map();     // playerId -> ms timestamp
+    this.onChoice = null;          // RaceHost: (player, CHOICE message) => void
+    this.timerView = null;         // RaceHost: () => { remainingMs, durationMs, paused } | null
 
     // After a host reload nobody is connected until their phone says hello.
     for (const p of state.players) if (!p.isAI) p.connected = false;
@@ -59,8 +61,13 @@ export class HostLobby {
       case TO_HOST.CHARACTER:
         this.#character(player, m);
         break;
+      case TO_HOST.CHOICE:
+        if (typeof m.promptId === 'string' && typeof m.optionId === 'string') {
+          this.onChoice?.(player, { promptId: m.promptId, optionId: m.optionId, targetId: typeof m.targetId === 'string' ? m.targetId : undefined });
+        }
+        break;
       default:
-        // CHOICE / VOTE arrive in later milestones.
+        // VOTE arrives in milestone 6.
         console.debug('[lobby] ignoring', m.t, 'from', playerId);
     }
   }
@@ -127,7 +134,7 @@ export class HostLobby {
       playerId: player.id,
       needsCharacter: !player.hasCharacter,
     }));
-    this.net.send(connId, msg(TO_PHONE.YOU, { you: privateView(this.state, player.id) }));
+    this.net.send(connId, this.#youMsg(player.id));
     this.net.send(connId, msg(TO_PHONE.PUBLIC, publicView(this.state)));
     this.net.send(connId, msg(TO_PHONE.FEED, { items: recentFeed(this.state), reset: true }));
     this.#setConnected(player, true);
@@ -146,7 +153,7 @@ export class HostLobby {
     const isNew = !player.hasCharacter;
     applyCharacter(player, result.value);
     if (isNew) this.#feed(`${player.name} joined the race.`, 'join');
-    this.#sendTo(player.id, msg(TO_PHONE.YOU, { you: privateView(this.state, player.id) }));
+    this.#sendTo(player.id, this.#youMsg(player.id));
     this.broadcastPublic();
     this.onChange();
   }
@@ -232,9 +239,11 @@ export class HostLobby {
     this.onChange();
   }
 
-  /** Host display preferences (speed, side stories, effects). Allowed any time. */
+  /** Host preferences (speed, side stories, effects, sub event frequency, choice timer). Allowed any time. */
   setHostSetting(key, value) {
-    if (!['revealSpeed', 'autoSkipSide', 'effects'].includes(key)) return;
+    if (!['revealSpeed', 'autoSkipSide', 'effects', 'subEventFreq', 'choiceTimer'].includes(key)) return;
+    if (key === 'subEventFreq' && !['low', 'normal', 'high'].includes(value)) return;
+    if (key === 'choiceTimer') value = Math.max(10, Math.min(90, Math.round(Number(value)) || 30));
     this.state.settings[key] = value;
     this.onChange();
   }
@@ -244,11 +253,20 @@ export class HostLobby {
     this.#feed(text, kind, ids);
   }
 
-  /** Send every phone its private view (after a round's reveal finishes). */
+  /** Send every phone its private view (round revealed, choice opened/closed, timer paused). */
   sendPrivateAll() {
-    for (const [playerId, connId] of this.playerToConn) {
-      this.net.send(connId, msg(TO_PHONE.YOU, { you: privateView(this.state, playerId) }));
-    }
+    for (const [playerId, connId] of this.playerToConn) this.net.send(connId, this.#youMsg(playerId));
+  }
+
+  sendPrivate(playerId) {
+    this.#sendTo(playerId, this.#youMsg(playerId));
+  }
+
+  /** YOU: the player's private view, plus the choice timer if their prompt is open. */
+  #youMsg(playerId) {
+    const you = privateView(this.state, playerId);
+    const timer = you?.prompt ? this.timerView?.() ?? null : null;
+    return msg(TO_PHONE.YOU, { you, timer });
   }
 
   setMinPlayers(n) {

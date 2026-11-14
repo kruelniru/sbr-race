@@ -7,6 +7,8 @@ import STAGES from '../../data/stages.js';
 import { h, avatar } from '../ui/dom.js';
 import { findRacer } from '../engine/racers.js';
 import { ordinal } from '../engine/finale.js';
+import { choiceWaitingView } from '../engine/state.js';
+import { nextRoundHeader } from '../engine/race.js';
 
 /**
  * Renderers for extra finale sections registered in js/engine/finale.js
@@ -21,6 +23,10 @@ export const FINALE_RENDERERS = {};
 let lastCard = null;
 
 export function raceView(state, rh) {
+  if (rh.choosing && !rh.viewing) {
+    lastCard = null;
+    return [raceHeader(state, rh), h('section', { class: 'race-stage' }, waitingCard(state, rh)), raceControls(state, rh)];
+  }
   const card = rh.card;
   // The whole screen re-renders on any change (a phone reconnecting, a
   // setting...). Only animate a card the first time it appears, so it
@@ -71,8 +77,6 @@ function raceHeader(state, rh) {
 }
 
 function raceControls(state, rh) {
-  const r = rh.reveal;
-  const s = state.settings;
   const nextLabel = rh.nextLabel();
   const atLiveEnd = !rh.viewing && rh.waiting;
   // Every control has a fixed slot, so nothing moves when a button appears or
@@ -85,6 +89,20 @@ function raceControls(state, rh) {
     tabindex: show ? null : '-1',
   }, label);
   const showNextRound = atLiveEnd && !!nextLabel;
+  const timer = rh.timerView();
+  // Waiting on a choice window: the same slots, holding the timer controls.
+  if (rh.choosing && !rh.viewing) {
+    return h('footer', { class: 'race-controls' },
+      h('div', { class: 'control-slots' },
+        slot(false, {}, '◂ Back'),
+        slot(true, { onclick: () => rh.togglePause() }, timer?.paused ? '▶ Resume timer' : '❚❚ Pause timer'),
+        h('div', { class: 'slot-main' }, slot(true, { class: 'btn btn-primary', onclick: () => rh.endWindow() }, 'End now ⏭')),
+        slot(false, {}, 'Back to live ⏭'),
+        slot(false, {}, 'Skip side stories ⏭'),
+      ),
+      settingsRow(state, rh),
+    );
+  }
   return h('footer', { class: 'race-controls' },
     h('div', { class: 'control-slots' },
       slot(true, { onclick: () => rh.back(), title: 'Step back (view only)' }, '◂ Back'),
@@ -97,7 +115,15 @@ function raceControls(state, rh) {
       slot(rh.viewing, { onclick: () => rh.backToLive() }, 'Back to live ⏭'),
       slot(rh.onSideStory, { onclick: () => rh.skipSide() }, 'Skip side stories ⏭'),
     ),
-    h('div', { class: 'control-group' },
+    settingsRow(state, rh),
+  );
+}
+
+function settingsRow(state, rh) {
+  const r = rh.reveal;
+  const s = state.settings;
+  return h('div', { class: 'control-group' },
+      overlapHint(state, rh),
       h('label', { class: 'mini-setting' }, 'Speed',
         h('select', { onchange: (e) => rh.lobby.setHostSetting('revealSpeed', e.target.value) },
           ['slow', 'normal', 'fast'].map((v) => h('option', { value: v, selected: s.revealSpeed === v }, v[0].toUpperCase() + v.slice(1))))),
@@ -107,9 +133,76 @@ function raceControls(state, rh) {
       h('label', { class: 'mini-setting' },
         h('input', { type: 'checkbox', checked: s.effects, onchange: (e) => rh.lobby.setHostSetting('effects', e.target.checked) }),
         'Effects'),
-      r && h('span', { class: 'hint' }, `Round ${r.meta?.roundNo ?? ''} · card ${r.index + 1}/${r.cards.length}`),
-    ),
+      h('label', { class: 'mini-setting' }, 'Sub events',
+        h('select', { onchange: (e) => rh.lobby.setHostSetting('subEventFreq', e.target.value) },
+          ['low', 'normal', 'high'].map((v) => h('option', { value: v, selected: (s.subEventFreq ?? 'normal') === v }, v[0].toUpperCase() + v.slice(1))))),
+      h('label', { class: 'mini-setting' }, 'Timer',
+        h('select', { onchange: (e) => rh.lobby.setHostSetting('choiceTimer', e.target.value) },
+          [15, 20, 30, 45, 60].map((v) => h('option', { value: v, selected: Number(s.choiceTimer ?? 30) === v }, `${v}s`)))),
+      r && !rh.choosing && h('span', { class: 'hint' }, `Round ${r.meta?.roundNo ?? ''} · card ${r.index + 1}/${r.cards.length}`),
   );
+}
+
+// ---------------------------------------------------------------- choices
+
+/** "0:23", or "Paused" */
+export function countdownText(timer) {
+  if (!timer) return '';
+  if (timer.paused) return 'Paused';
+  const s = Math.ceil(timer.remainingMs / 1000);
+  return `0:${String(s).padStart(2, '0')}`;
+}
+
+/** While Stage Plans are open during the results: a small progress line. */
+function overlapHint(state, rh) {
+  if (rh.choosing || rh.windowKind !== 'plan') return null;
+  const v = choiceWaitingView(state);
+  return h('span', { class: 'overlap-hint' },
+    `Stage Plans on phones: ${v.answered} of ${v.total} decided · `,
+    h('span', { 'data-countdown': '' }, countdownText(rh.timerView())));
+}
+
+function decisionLine(deciders) {
+  const names = deciders.map((d) => d.name);
+  if (names.length === 1) return `${names[0]} has a decision to make…`;
+  if (names.length <= 4) return `${names.slice(0, -1).join(', ')} and ${names.at(-1)} have decisions to make…`;
+  return `${names.length} racers have decisions to make…`;
+}
+
+/** The host's waiting screen. Built only from choiceWaitingView (no secrets, no answers). */
+function waitingCard(state, rh) {
+  const v = choiceWaitingView(state);
+  const timer = rh.timerView();
+  const head = nextRoundHeader(state);
+  const plan = v.kind === 'plan';
+  const where = head ? `Stage ${head.stageId} · ${head.stageName}${plan ? '' : ` · ${head.label}`}` : '';
+  const countdown = h('div', { class: 'countdown' + (timer?.paused ? ' paused' : '') },
+    h('div', { class: 'countdown-num', 'data-countdown': '' }, countdownText(timer)),
+    h('div', { class: 'countdown-bar' }, h('div', { class: 'countdown-fill', 'data-countdown-bar': '', style: `width:${barPct(timer)}%` })));
+  if (v.allSecret) {
+    return h('div', { class: 'card card-choice' },
+      h('div', { class: 'label' }, where),
+      h('h2', { class: 'card-big' }, 'Decisions are being made…'),
+      countdown);
+  }
+  return h('div', { class: 'card card-choice' },
+    h('div', { class: 'label' }, where),
+    h('h2', { class: 'card-big' }, plan ? 'Choose your Stage Plan' : 'Sub event!'),
+    !plan && h('p', { class: 'choice-who' }, decisionLine(v.deciders)),
+    h('ul', { class: 'deciders' }, v.deciders.map((d) =>
+      h('li', { class: (d.answered ? 'done' : '') + (d.connected ? '' : ' offline') },
+        face(state, d.id, 'lg'),
+        h('span', { class: 'decider-name' }, d.name),
+        h('span', { class: 'decider-mark' }, d.answered ? '✓' : d.connected ? '…' : 'away')))),
+    h('p', { class: 'hint' }, plan
+      ? `${v.answered} of ${v.total} decided. Check your phone!`
+      : 'Check your phone! Everyone else: hold on…'),
+    countdown);
+}
+
+export function barPct(timer) {
+  if (!timer || !timer.durationMs) return 0;
+  return Math.max(0, Math.min(100, (100 * timer.remainingMs) / timer.durationMs));
 }
 
 // ---------------------------------------------------------------- cards

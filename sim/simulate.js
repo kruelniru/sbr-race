@@ -11,6 +11,7 @@
 //   node sim/simulate.js --plans star            every PC always picks its star option (plans and sub events)
 //   node sim/simulate.js --choice-times log.json replay answer times from a real game
 //   node sim/simulate.js --freq high             sub event frequency (low/normal/high)
+//   node sim/simulate.js --humans 12             how many PCs are people (default: all)
 //
 // Tune numbers in data/rules.js, data/stages.js and event weights in data/events.
 
@@ -26,7 +27,7 @@ import PERSONALITIES from '../data/personalities.js';
 import { readFileSync } from 'node:fs';
 import { namedRacers } from '../js/engine/racers.js';
 import { EVENTS, lintEvents } from '../js/engine/events.js';
-import { buildCards, cardsSeconds } from '../js/engine/reveal.js';
+import { buildCards, cardsSeconds, cardSeconds } from '../js/engine/reveal.js';
 
 // ---------------------------------------------------------------- args
 const args = parseArgs(process.argv.slice(2));
@@ -36,6 +37,7 @@ const RUNNERS = args.runners != null ? Number(args.runners) : null;
 const SEED = args.seed ?? 'sim';
 const PLAN_MODE = args.plans ?? 'ai'; // ai | random | star | <plan id>
 const FREQ = args.freq ?? 'normal';
+const HUMANS = args.humans != null ? Number(args.humans) : PLAYERS; // PCs played by people (timing, Main Story lines)
 const CHOICE_TIMES = args['choice-times'] ? loadChoiceTimes(args['choice-times']) : null;
 
 const problems = lintEvents();
@@ -66,7 +68,14 @@ function playGame(seed) {
     if (needsStagePlans(state)) {
       const w = openStagePlans(state);
       for (const pr of w.prompts) overrideAnswer(pr, timeRng);
-      windows.push({ kind: 'plan', humans: w.prompts.length });
+      const humanIds = new Set(state.players.slice(0, HUMANS).map((x) => x.id));
+      // Stage Plans open on the stage results card, so the results and
+      // standings cards cover part of the window (none before Stage 1).
+      const prev = results.at(-1);
+      const overlap = prev?.placements
+        ? buildCards(prev).filter((c) => c.kind === 'stage' || c.kind === 'standings').reduce((t, c) => t + cardSeconds(c), 0)
+        : 0;
+      windows.push({ kind: 'plan', humans: w.prompts.filter((x) => humanIds.has(x.playerId)).length, overlap });
       const pcs = Object.fromEntries(state.players.map((x) => [x.id, x]));
       for (const pr of w.prompts) {
         const pc = pcs[pr.playerId];
@@ -75,8 +84,13 @@ function playGame(seed) {
       closeChoices(state);
     }
     const w = openSubEvents(state);
-    for (const pr of w.prompts) if (PLAN_MODE === 'star') pr.answer = { optionId: pr.star, by: 'ai' };
-    windows.push({ kind: 'sub', humans: w.prompts.filter((x) => state.players.some((pl) => pl.id === x.playerId)).length });
+    const humanIds = new Set(state.players.slice(0, HUMANS).map((x) => x.id));
+    for (const pr of w.prompts) {
+      if (PLAN_MODE === 'star') pr.answer = { optionId: pr.star, by: 'ai' };
+      // People's results always land in the Main Story (AI quiet results don't).
+      if (humanIds.has(pr.playerId)) pr.answer.by = 'player';
+    }
+    windows.push({ kind: 'sub', humans: w.prompts.filter((x) => humanIds.has(x.playerId)).length });
     closeChoices(state);
     results.push(runRound(state));
   }
@@ -100,13 +114,19 @@ function choiceSeconds(windows, rng) {
   const M = RULES.timing.choiceModel;
   const timer = RULES.choices.timerSeconds;
   let total = 0;
+  const byKind = { plan: 0, sub: 0 };
   for (const w of windows) {
     if (!w.humans) continue;
     let slowest = 0;
     for (let i = 0; i < w.humans; i++) slowest = Math.max(slowest, answerSeconds(w.kind, rng, M));
-    total += M.overhead[w.kind] + Math.min(timer, slowest);
+    // Only the time beyond the results cards keeps the stream waiting.
+    const wait = Math.max(0, Math.min(timer, slowest) - (w.overlap ?? 0));
+    if (wait > 0) {
+      total += M.overhead[w.kind] + wait;
+      byKind[w.kind] += M.overhead[w.kind] + wait;
+    }
   }
-  return total;
+  return { total, byKind };
 }
 
 function answerSeconds(kind, rng, M) {
@@ -121,6 +141,7 @@ function loadChoiceTimes(path) {
   const out = { plan: [], sub: [] };
   for (const w of log.windows ?? []) {
     const kind = w.kind === 'plan' ? 'plan' : 'sub';
+    // Timed-out answers count as the full timer.
     // Timed-out answers count as the full timer.
     for (const a of w.answers ?? []) out[kind].push(a.ms ?? (w.timerSeconds ?? RULES.choices.timerSeconds) * 1000);
   }
@@ -153,7 +174,7 @@ function newStats() {
     canonStage1Deaths: 0,
     fieldMismatch: 0,
     stands: 0, // milestone 4
-    choiceMin: [], subPerRound: [], byPlan: {}, byPers: {},
+    choiceMin: [], planMin: [], subMin: [], subPerRound: [], byPlan: {}, byPers: {},
   };
 }
 
@@ -200,8 +221,10 @@ function collect(S, { state, results, stageLog, windows, timeRng }) {
     }
     for (const [id, n] of Object.entries(res.eventCounts)) S.eventCounts[id] = (S.eventCounts[id] ?? 0) + n;
   }
-  const choices = choiceSeconds(windows, timeRng);
+  const { total: choices, byKind } = choiceSeconds(windows, timeRng);
   S.choiceMin.push(choices / 60);
+  S.planMin.push(byKind.plan / 60);
+  S.subMin.push(byKind.sub / 60);
   S.subPerRound.push(windows.filter((w) => w.kind === 'sub').reduce((n, w) => n + w.humans, 0) / results.length);
 
   // Stage Plans: what each PC earned in each stage under its plan.
@@ -294,7 +317,7 @@ function printStats(S) {
   console.log('\nLength');
   console.log(`  rounds ${f1(avg(S.rounds))} · Main Story lines ${f1(avg(S.mainLines))} · side lines ${f1(avg(S.sideLines))} · minor lines ${f1(avg(S.minorLines))}`);
   console.log(`  reveal at Normal speed:   everything ${f1(avg(S.minutes))} min · side stories skipped ${f1(avg(S.minutesNoSide))} min`);
-  console.log(`  choice windows: ${f1(avg(S.choiceMin))} min (${f1(avg(S.subPerRound))} sub events per round, every PC timed as a person)`);
+  console.log(`  choice windows: ${f1(avg(S.choiceMin))} min = Stage Plans ${f1(avg(S.planMin))} (beyond the results cards) + sub events ${f1(avg(S.subMin))} (${f1(avg(S.subPerRound))} sub events per round, ${HUMANS} of ${PLAYERS} PCs are people)`);
   console.log(`  total with choices:       everything ${f1(avg(S.projected))} min · side stories skipped ${f1(avg(S.projectedNoSide))} min  [target 30–40]`);
 
   console.log(`\nStage Plans (per PC per stage, mode: ${PLAN_MODE})`);

@@ -8,11 +8,23 @@
 // - Side Stories can be skipped (button) or skipped automatically (setting).
 //   Skipped cards still go to the phone feed.
 //
-// Reveal state lives in state.race (reveal + history) so a host reload
-// resumes mid-round.
+// - Choices (milestone 3): before each round the host opens a choice window
+//   (sub events), and phones answer while the host shows "X has a decision
+//   to make...". Stage Plans open when the stage results card appears, so
+//   players choose while the results and standings are up; "Start Stage N"
+//   then waits only for whatever time is left. A window closes when its timer
+//   runs out, the host ends it, or every connected player has answered.
+//   Unanswered players get their ★ option.
+// - Every closed window is logged (state.race.timingLog) so real choice
+//   times can be exported and replayed in the sim (--choice-times).
+//
+// Reveal state lives in state.race (reveal + history + choice timer) so a
+// host reload resumes mid-round, even mid-choice.
 
 import { startRace, runRound, syncShown, nextRoundHeader } from '../engine/race.js';
 import { buildCards, cardSeconds } from '../engine/reveal.js';
+import { needsStagePlans, openStagePlans, openSubEvents, closeChoices, answerPrompt } from '../engine/choices.js';
+import { getPlayer } from '../engine/state.js';
 
 export class RaceHost {
   /**
@@ -27,6 +39,10 @@ export class RaceHost {
     this.auto = false; // paused by default: the host clicks Next (Auto is a toggle)
     this.timer = null;
     this.cursor = null; // { r, i } while looking back; null = live
+    this.onTick = null; // host-main: refresh countdowns without a full re-render
+    this.ticker = setInterval(() => this.#tick(), 250);
+    lobby.onChoice = (player, m) => this.answer(player, m);
+    lobby.timerView = () => this.timerView();
   }
 
   get race() { return this.state.race; }
@@ -64,6 +80,11 @@ export class RaceHost {
     return !r || r.index >= r.cards.length - 1;
   }
 
+  /** The host is waiting on a choice window (shows the waiting screen). */
+  get choosing() {
+    return !!this.race?.choosing && this.#windowOpen();
+  }
+
   /** Is the live card a Side Story (shows the Skip button)? */
   get onSideStory() {
     return !this.viewing && !!this.card?.side;
@@ -76,19 +97,40 @@ export class RaceHost {
     syncShown(this.state);
     this.lobby.broadcastPublic();
     this.lobby.sendPrivateAll();
-    this.nextRound();
+    this.nextRound(); // Stage 1's plan opens right away
   }
 
   /** After a host reload: pick up where the reveal left off. */
   resume() {
     if (!this.race) return;
+    this.lobby.sendPrivateAll();
     this.schedule();
   }
 
+  /**
+   * The host's "go on" (and auto-advance): finish any open choice window,
+   * open this round's sub events, wait for answers, then run the round.
+   */
   nextRound() {
     if (this.race.over) return;
     clearTimeout(this.timer);
     this.cursor = null;
+    const race = this.race;
+    if (!race.choice && needsStagePlans(this.state)) this.#openWindow('plan');
+    if (race.choice?.kind === 'plan') {
+      if (!this.#windowDone()) return this.#wait();
+      this.#closeWindow();
+    }
+    if (!race.choice) this.#openWindow('sub');
+    if (race.choice && !race.choice.closed) {
+      if (!this.#windowDone()) return this.#wait();
+      this.#closeWindow();
+    }
+    race.choosing = false;
+    this.#runRound();
+  }
+
+  #runRound() {
     if (this.reveal) (this.race.history ??= []).push(this.reveal);
     const result = runRound(this.state);
     this.race.reveal = {
@@ -208,12 +250,173 @@ export class RaceHost {
 
   stop() {
     clearTimeout(this.timer);
+    clearInterval(this.ticker);
+  }
+
+  // ------------------------------------------------------------ choices
+
+  /** Timer for phones and the host: { remainingMs, durationMs, paused } or null. */
+  timerView() {
+    const t = this.race?.choiceTimer;
+    if (!t || !this.#windowOpen()) return null;
+    return { remainingMs: this.#remaining(), durationMs: t.durationMs, paused: t.paused };
+  }
+
+  /** Waiting-screen / overlap progress, from the host-safe view. */
+  get windowKind() {
+    return this.#windowOpen() ? this.race.choice.kind : null;
+  }
+
+  /** A phone's answer (untrusted). Answers can change until the window closes. */
+  answer(player, m) {
+    if (!this.#windowOpen()) return;
+    const ms = this.#elapsed();
+    const res = answerPrompt(this.state, player.id, m, ms);
+    if (!res.ok) return;
+    this.lobby.sendPrivate(player.id);
+    if (this.#windowDone()) return this.#finishWindow();
+    this.onChange();
+  }
+
+  /** Pause / resume the timer (the host is talking over the stream). */
+  togglePause() {
+    const t = this.race?.choiceTimer;
+    if (!t || !this.#windowOpen()) return;
+    const now = Date.now();
+    if (t.paused) {
+      t.endsAt = now + t.remainingMs;
+      t.paused = false;
+      if (this.race.timingLogOpen) this.race.timingLogOpen.pausedMs += now - t.pausedAt;
+    } else {
+      t.remainingMs = Math.max(0, t.endsAt - now);
+      t.paused = true;
+      t.pausedAt = now;
+    }
+    this.lobby.sendPrivateAll();
+    this.onChange();
+  }
+
+  /** "End now": close the window; everyone unanswered gets their ★ option. */
+  endWindow() {
+    if (!this.#windowOpen()) return;
+    this.race.choiceTimer.ended = true;
+    this.#finishWindow();
+  }
+
+  /** Everything logged so far, as an exportable object (sim --choice-times). */
+  timingExport() {
+    return {
+      version: 1,
+      seed: this.state.seed,
+      exportedAt: new Date().toISOString(),
+      players: this.state.players.filter((p) => p.hasCharacter && !p.isAI).length,
+      settings: { choiceTimer: this.settings.choiceTimer, subEventFreq: this.settings.subEventFreq },
+      windows: this.race?.timingLog ?? [],
+    };
+  }
+
+  #windowOpen() {
+    const c = this.race?.choice;
+    return !!c && !c.closed;
+  }
+
+  #remaining() {
+    const t = this.race.choiceTimer;
+    if (!t) return 0;
+    if (t.ended) return 0;
+    return t.paused ? t.remainingMs : Math.max(0, t.endsAt - Date.now());
+  }
+
+  #elapsed() {
+    const t = this.race.choiceTimer;
+    return t ? Math.max(0, t.durationMs - this.#remaining()) : 0;
+  }
+
+  /** Prompts still waiting on a connected person. */
+  #waitingOn() {
+    const c = this.race.choice;
+    if (!c) return [];
+    return c.prompts.filter((x) => !x.answer && getPlayer(this.state, x.playerId)?.connected);
+  }
+
+  #windowDone() {
+    if (!this.#windowOpen()) return true;
+    return this.#remaining() <= 0 || this.#waitingOn().length === 0;
+  }
+
+  #openWindow(kind) {
+    const choice = kind === 'plan' ? openStagePlans(this.state) : openSubEvents(this.state);
+    const now = Date.now();
+    const durationMs = (Number(this.settings.choiceTimer) || 30) * 1000;
+    this.race.choiceTimer = { durationMs, endsAt: now + durationMs, paused: false, remainingMs: durationMs, openedAt: now };
+    const humans = choice.prompts.filter((x) => !getPlayer(this.state, x.playerId)?.isAI);
+    this.race.timingLogOpen = {
+      kind, stageId: choice.stageId, roundNo: choice.roundNo,
+      timerSeconds: durationMs / 1000, prompts: choice.prompts.length, humans: humans.length,
+      overlapMs: null, pausedMs: 0,
+    };
+    this.lobby.sendPrivateAll();
+    this.onChange();
+  }
+
+  /** The host is now waiting on the window (no results card to cover it). */
+  #wait() {
+    const log = this.race.timingLogOpen;
+    // Stage Plans: the time spent before this point overlapped the results.
+    if (log && log.overlapMs == null) log.overlapMs = this.race.choice.kind === 'plan' && this.race.choice.overlap ? this.#elapsed() : 0;
+    this.race.choosing = true;
+    this.onChange();
+  }
+
+  /** Close the open window, then carry on if the host was waiting on it. */
+  #finishWindow() {
+    const waiting = this.race.choosing;
+    this.#closeWindow();
+    if (waiting) this.nextRound();
+    else this.onChange();
+  }
+
+  #closeWindow() {
+    const choice = this.race.choice;
+    if (!choice || choice.closed) return;
+    const log = this.race.timingLogOpen;
+    const elapsed = this.#elapsed();
+    const human = choice.prompts.filter((x) => !getPlayer(this.state, x.playerId)?.isAI);
+    closeChoices(this.state);
+    if (log) {
+      if (log.overlapMs == null) log.overlapMs = choice.overlap ? elapsed : 0;
+      Object.assign(log, {
+        openMs: elapsed,
+        waitMs: Math.max(0, elapsed - log.overlapMs),
+        endedBy: this.race.choiceTimer?.ended ? 'host' : this.#remaining() <= 0 ? 'timer' : 'answers',
+        answers: human.map((x) => ({ ms: x.answer.by === 'player' ? x.answer.ms : null, by: x.answer.by })),
+      });
+      (this.race.timingLog ??= []).push(log);
+    }
+    this.race.timingLogOpen = null;
+    this.race.choiceTimer = null;
+    this.lobby.sendPrivateAll();
+  }
+
+  #tick() {
+    if (!this.#windowOpen()) return;
+    if (this.race.choiceTimer && !this.race.choiceTimer.paused && this.#windowDone()) {
+      this.#finishWindow();
+      return;
+    }
+    this.onTick?.();
   }
 
   // ------------------------------------------------------------ internals
 
   /** First time a card goes live: header for phones + feed lines. */
   #reveal(card) {
+    // Stage results: the next stage's plans open now, so players choose while
+    // the results and standings are up.
+    if (card.kind === 'stage' && !this.race.choice && needsStagePlans(this.state)) {
+      this.#openWindow('plan');
+      this.race.choice.overlap = true;
+    }
     if (card.kind === 'title') {
       this.race.shownHeader = {
         stageId: card.stage.id, stageName: card.stage.name,

@@ -6,6 +6,7 @@ import { PhoneNet } from '../net/phone-net.js';
 import { PROTOCOL_VERSION, TO_HOST, TO_PHONE, REJECT, msg } from '../net/protocol.js';
 import PERSONALITIES from '../../data/personalities.js';
 import PRONOUNS from '../../data/pronouns.js';
+import PLANS from '../../data/plans.js';
 import { h, $, mount, avatar, store } from '../ui/dom.js';
 import { characterForm } from './character-form.js';
 import { MiniFeed } from './feed.js';
@@ -38,6 +39,14 @@ let screen = 'join';
 let netStatus = null;
 let form = null;    // active character form, if any
 let saving = false; // a CHARACTER message is waiting for an answer
+
+// Choices: the open prompt comes inside `you`; the timer comes beside it.
+let timer = null;      // { remainingMs, durationMs, paused, at } (at = performance.now() when received)
+let picking = null;    // { promptId, optionId } while choosing a Hunt a rival target
+let sent = null;       // { promptId, optionId, targetId } last answer we sent
+let lastPromptId = null;
+let choiceError = '';
+setInterval(tickCountdown, 250);
 
 const net = new PhoneNet({
   onOpen: () => net.send(msg(TO_HOST.HELLO, { v: PROTOCOL_VERSION, token })),
@@ -115,6 +124,14 @@ function handle(m) {
 
     case TO_PHONE.YOU:
       you = m.you;
+      timer = m.timer ? { ...m.timer, at: performance.now() } : null;
+      if (you?.prompt?.id !== lastPromptId) {
+        lastPromptId = you?.prompt?.id ?? null;
+        picking = null;
+        sent = null;
+        choiceError = '';
+        if (lastPromptId) navigator.vibrate?.(150);
+      }
       feed.setMine(you?.id);
       if (saving && you.hasCharacter) {
         saving = false;
@@ -327,13 +344,102 @@ function renderRacing() {
       head && (head.over
         ? h('div', { class: 'race-where' }, 'The race is over: New York!')
         : h('div', { class: 'race-where' }, `Stage ${head.stageId} · ${head.stageName}`, h('span', { class: 'race-round' }, head.label))),
+      you?.prompt ? choiceCard(you.prompt) : null,
       youCard(),
       r ? statusCard(r) : null,
       r?.status === 'dead'
         ? h('p', { class: 'waiting fallen' }, 'You can still follow the race below. Dead riders get to vote on the living in a later update.')
-        : h('p', { class: 'waiting' }, 'Watch the stream. Choices will appear here in a later update.'),
+        : !you?.prompt && h('p', { class: 'waiting' }, 'Watch the stream. When you have a decision to make, it appears here.'),
     ),
   );
+}
+
+// ---------------------------------------------------------------- choices
+
+function timeLeft() {
+  if (!timer) return null;
+  if (timer.paused) return timer.remainingMs;
+  return Math.max(0, timer.remainingMs - (performance.now() - timer.at));
+}
+
+function tickCountdown() {
+  const ms = timeLeft();
+  if (ms == null) return;
+  const s = Math.ceil(ms / 1000);
+  for (const el of document.querySelectorAll('[data-countdown]')) {
+    el.textContent = timer.paused ? 'Paused' : `${s}s`;
+    el.classList.toggle('urgent', !timer.paused && s <= 5);
+  }
+  for (const el of document.querySelectorAll('[data-countdown-bar]')) {
+    el.style.width = `${timer.durationMs ? Math.max(0, Math.min(100, (100 * ms) / timer.durationMs)) : 0}%`;
+  }
+}
+
+function sendChoice(prompt, optionId, targetId) {
+  const answer = { promptId: prompt.id, optionId, targetId };
+  if (!net.send(msg(TO_HOST.CHOICE, answer))) {
+    choiceError = 'Not connected. Your pick was not sent; try again in a moment.';
+  } else {
+    choiceError = '';
+    sent = answer;
+  }
+  picking = null;
+  renderScreen();
+}
+
+/** The decision card: title, situation, options with ★ In character, timer. */
+function choiceCard(prompt) {
+  const chosen = prompt.answer ?? (sent?.promptId === prompt.id ? sent : null);
+  const confirmed = !!prompt.answer;
+  const paused = timer?.paused;
+  const targetName = (id) => prompt.targets?.find((t) => t.id === id)?.name;
+
+  const options = h('div', { class: 'choice-options' }, prompt.options.map((o) => {
+    const isChosen = chosen?.optionId === o.id;
+    return h('button', {
+      type: 'button',
+      class: 'choice-opt' + (isChosen ? ' chosen' : '') + (picking?.optionId === o.id ? ' picking' : ''),
+      'aria-pressed': String(isChosen),
+      onclick: () => {
+        if (o.needsTarget) { picking = { promptId: prompt.id, optionId: o.id }; renderScreen(); return; }
+        sendChoice(prompt, o.id);
+      },
+    },
+    h('span', { class: 'opt-label' }, o.label,
+      prompt.star === o.id ? h('span', { class: 'star' }, '★ In character') : null),
+    o.hint && h('span', { class: 'opt-hint' }, o.hint),
+    isChosen && o.needsTarget && targetName(chosen.targetId) ? h('span', { class: 'opt-target' }, `Hunting ${targetName(chosen.targetId)}`) : null);
+  }));
+
+  const targets = picking?.promptId === prompt.id && h('div', { class: 'target-pick' },
+    h('h3', {}, 'Who are you hunting?'),
+    h('div', { class: 'target-list' }, (prompt.targets ?? []).map((t) =>
+      h('button', { type: 'button', class: 'btn target-btn', onclick: () => sendChoice(prompt, picking.optionId, t.id) },
+        t.name, t.tier !== 'pc' ? h('span', { class: 'ai-tag' }, t.tier === 'canon' ? 'canon' : 'NPC') : null))),
+    h('button', { type: 'button', class: 'btn btn-quiet', onclick: () => { picking = null; renderScreen(); } }, 'Cancel'));
+
+  const status = choiceError
+    ? h('p', { class: 'form-error' }, choiceError)
+    : confirmed
+      ? h('p', { class: 'choice-status ok' }, 'Locked in. You can change it until time runs out.')
+      : chosen
+        ? h('p', { class: 'choice-status' }, 'Sending…')
+        : h('p', { class: 'choice-status' }, "If time runs out, you'll go with ★ In character.");
+
+  const card = h('section', { class: 'choice' + (paused ? ' paused' : '') },
+    h('div', { class: 'choice-head' },
+      h('h2', {}, prompt.title),
+      h('span', { class: 'choice-clock', 'data-countdown': '' }, ''),
+    ),
+    h('div', { class: 'countdown-bar' }, h('div', { class: 'countdown-fill', 'data-countdown-bar': '' })),
+    paused && h('p', { class: 'paused-note' }, 'Paused by the host'),
+    h('p', { class: 'choice-text' }, prompt.text),
+    options,
+    targets,
+    status,
+  );
+  queueMicrotask(tickCountdown);
+  return card;
 }
 
 function statusCard(r) {
@@ -351,6 +457,7 @@ function statusCard(r) {
     h('dt', {}, 'Points'), h('dd', {}, String(r.points)),
     r.lastPlacement && [h('dt', {}, 'Last stage'), h('dd', {}, `${ordinal(r.lastPlacement.rank)} in Stage ${r.lastPlacement.stage}`)],
     r.kills ? [h('dt', {}, 'Kills'), h('dd', {}, String(r.kills))] : null,
+    you?.plan && r.status === 'racing' ? [h('dt', {}, 'Stage plan'), h('dd', {}, PLANS.find((x) => x.id === you.plan)?.label ?? you.plan)] : null,
   );
 }
 
