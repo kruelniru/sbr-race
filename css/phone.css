@@ -1,0 +1,61 @@
+/* Phone controller: one column, big tap targets, safe-area aware. */
+.phone-page {
+  padding: env(safe-area-inset-top) max(16px, env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  max-width: 560px; margin: 0 auto;
+}
+.phone-top { display: flex; justify-content: space-between; align-items: center; min-height: 44px; }
+.room-label { font-family: var(--display); color: var(--muted); letter-spacing: .1em; }
+.conn-bar { display: grid; gap: 8px; justify-items: center; text-align: center; background: #4a3418; border: 1px solid var(--gold);
+  border-radius: 12px; padding: 10px 12px; margin: 0 0 10px; color: var(--gold-2); font-size: .9rem; }
+.notice { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; color: var(--gold-2); }
+.wake-hint { font-size: .8rem; color: var(--muted); background: var(--panel); border-radius: 10px; padding: 6px 10px; margin: 0 0 8px; }
+
+#main { padding-bottom: 16px; }
+#main h2 { font-size: 1.5rem; margin-top: 8px; }
+.center { text-align: center; padding: 18vh 0 24px; display: grid; gap: 20px; justify-items: center; }
+.center .btn { width: auto; }
+
+.join { text-align: center; padding-top: 10vh; display: grid; gap: 12px; }
+.code-input { font-family: var(--display); font-size: 2.6rem; text-align: center; letter-spacing: .3em; text-transform: uppercase; }
+
+input[type="text"] {
+  width: 100%; font: inherit; font-size: 16px; /* 16px stops iOS from zooming in */
+  color: var(--text); background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px; padding: .75em .9em;
+}
+.code-input { font-size: 2.6rem; }
+input[type="text"]:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+.field { display: grid; gap: 6px; margin: 14px 0; text-align: left; }
+.field-label, legend { font-weight: 600; color: var(--muted); font-size: .9rem; text-transform: uppercase; letter-spacing: .08em; }
+fieldset { border: 0; padding: 0; margin: 18px 0; }
+legend { margin-bottom: 8px; }
+.form-error { color: #ff9a8f; min-height: 1.2em; margin: 8px 0; }
+
+.char-form .btn-quiet { width: 100%; margin-top: 8px; }
+.pic-row { display: flex; gap: 16px; align-items: center; }
+.pic-actions { display: grid; gap: 6px; justify-items: start; }
+.pic-preview.loading { opacity: .4; }
+
+.segmented { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.seg input, .choice-card input { position: absolute; opacity: 0; pointer-events: none; }
+.seg-body { display: block; text-align: center; padding: .75em .3em; border: 1px solid var(--line); border-radius: 10px; background: var(--bg-2); cursor: pointer; }
+.seg input:checked + .seg-body { border-color: var(--gold); background: #4a3418; color: var(--gold-2); font-weight: 700; }
+.seg input:focus-visible + .seg-body, .choice-card input:focus-visible + .choice-card-body { outline: 2px solid var(--gold); }
+
+.choice-list { display: grid; gap: 8px; }
+.choice-card-body { display: grid; gap: 2px; padding: .8em 1em; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); cursor: pointer; }
+.choice-card input:checked + .choice-card-body { border-color: var(--gold); background: #4a3418; }
+.choice-blurb { color: var(--muted); font-size: .9rem; }
+
+.you-card { display: flex; gap: 14px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; margin: 8px 0 12px; }
+.waiting { color: var(--gold-2); text-align: center; margin: 20px 0; }
+.rider-list { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 16px; }
+.rider-list li { padding: 4px 0; break-inside: avoid; overflow-wrap: anywhere; }
+.rider-list li.offline { color: var(--muted); }
+.ai-tag { margin-left: .4em; font-size: .7rem; color: var(--gold-2); border: 1px solid var(--gold); border-radius: 5px; padding: 0 4px; vertical-align: middle; }
+
+.phone-feed { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; max-height: 40vh; overflow-y: auto; }
+.feed-title { font-family: var(--display); color: var(--muted); text-transform: uppercase; letter-spacing: .15em; font-size: .75rem; margin-bottom: 4px; }
+
+.spinner { width: 44px; height: 44px; border-radius: 50%; border: 4px solid var(--line); border-top-color: var(--gold); animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

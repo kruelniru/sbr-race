@@ -1,0 +1,375 @@
+// Phone entry point: join a room, create a character, wait in the lobby,
+// show your private status and the mini feed. The phone is a thin client:
+// it only renders what the host sends it (privateView + publicView + feed).
+import { ROOM_CODE_LENGTH, ROOM_CODE_ALPHABET } from '../config.js';
+import { PhoneNet } from '../net/phone-net.js';
+import { PROTOCOL_VERSION, TO_HOST, TO_PHONE, REJECT, msg } from '../net/protocol.js';
+import PERSONALITIES from '../../data/personalities.js';
+import PRONOUNS from '../../data/pronouns.js';
+import { h, $, mount, avatar, store } from '../ui/dom.js';
+import { characterForm } from './character-form.js';
+import { MiniFeed } from './feed.js';
+import { keepAwake } from './wake-lock.js';
+
+// Storage keys. Tabs in one browser share localStorage, so to test several
+// "phones" on one computer give each tab its own slot: phone.html?room=ABCD&slot=2
+const SLOT = (new URLSearchParams(location.search).get('slot') ?? '').replace(/\W/g, '').slice(0, 8);
+const ns = SLOT ? `sbr[${SLOT}]` : 'sbr';
+const sessionKey = (code) => `${ns}:session:${code}`;
+const LAST_ROOM = `${ns}:lastRoom`;
+const DRAFT = `${ns}:draft`;
+
+const ui = {
+  status: $('#status'),
+  room: $('#room-label'),
+  connBar: $('#conn-bar'),
+  connText: $('#conn-text'),
+  wakeHint: $('#wake-hint'),
+  main: $('#main'),
+  feed: $('#feed'),
+};
+const feed = new MiniFeed(ui.feed);
+
+let code = null;
+let token = null;
+let you = null;     // privateView from the host
+let pub = null;     // publicView from the host
+let screen = 'join';
+let netStatus = null;
+let form = null;    // active character form, if any
+let saving = false; // a CHARACTER message is waiting for an answer
+
+const net = new PhoneNet({
+  onOpen: () => net.send(msg(TO_HOST.HELLO, { v: PROTOCOL_VERSION, token })),
+  onMessage: handle,
+  onStatus: renderStatus,
+  onGiveUp: () => {
+    // Keep the session token so "Try again" (or the same code) resumes the
+    // racer, but stop auto-joining this room on the next page load.
+    const lost = code;
+    store.remove(LAST_ROOM);
+    leaveScreens();
+    showJoin('', `Couldn't reach room ${lost}. The host may have closed it.`, lost);
+  },
+});
+
+$('#leave-btn').addEventListener('click', () => {
+  if (!confirm(`Leave room ${code}? You'll need a new code to join a game.`)) return;
+  net.stop();
+  forgetSession();
+  leaveScreens();
+  showJoin('');
+});
+
+keepAwake((mode) => {
+  ui.wakeHint.hidden = mode !== 'none';
+});
+
+init();
+
+function init() {
+  const fromUrl = normalizeCode(new URLSearchParams(location.search).get('room'));
+  const last = normalizeCode(store.get(LAST_ROOM));
+  if (fromUrl) {
+    // A code in the link always wins over a saved session for another room.
+    connect(fromUrl);
+  } else if (last && store.get(sessionKey(last))) {
+    connect(last);
+  } else {
+    showJoin('');
+  }
+}
+
+function connect(c) {
+  code = c;
+  token = store.get(sessionKey(code));
+  you = null;
+  pub = null;
+  feed.add([], true);
+  setUrlRoom(code);
+  ui.room.textContent = `Room ${code}`;
+  setScreen('connecting');
+  net.start(code);
+}
+
+// Keep ?room= in the address bar in sync, so reloading never resurrects an
+// old room (the bug where a phone stayed stuck on a closed room's code).
+function setUrlRoom(c) {
+  const url = new URL(location.href);
+  if (c) url.searchParams.set('room', c);
+  else url.searchParams.delete('room');
+  history.replaceState(null, '', url);
+}
+
+// ---------------------------------------------------------------- messages
+
+function handle(m) {
+  switch (m.t) {
+    case TO_PHONE.WELCOME:
+      token = m.token;
+      forgetOtherRooms();
+      store.set(sessionKey(code), token);
+      store.set(LAST_ROOM, code);
+      if (m.needsCharacter && screen !== 'form') showForm();
+      break;
+
+    case TO_PHONE.YOU:
+      you = m.you;
+      if (saving && you.hasCharacter) {
+        saving = false;
+        form = null;
+        setScreen(pub?.phase === 'lobby' ? 'lobby' : 'racing');
+      } else if (screen === 'lobby' || screen === 'racing') {
+        renderScreen();
+      }
+      break;
+
+    case TO_PHONE.PUBLIC: {
+      const phaseChanged = pub && pub.phase !== m.phase;
+      pub = m;
+      if (screen === 'connecting') {
+        if (you?.hasCharacter) setScreen(pub.phase === 'lobby' ? 'lobby' : 'racing');
+        else showForm();
+      } else if (screen === 'form' && pub.phase !== 'lobby' && you?.hasCharacter) {
+        form = null; // editing was cut off by the lobby locking
+        setScreen('racing');
+      } else if (screen === 'lobby' || screen === 'racing') {
+        if (phaseChanged) setScreen(pub.phase === 'lobby' ? 'lobby' : 'racing');
+        else renderScreen();
+      }
+      break;
+    }
+
+    case TO_PHONE.FEED:
+      feed.add(m.items, m.reset);
+      ui.feed.hidden = false;
+      break;
+
+    case TO_PHONE.CHAR_ERROR:
+      saving = false;
+      form?.setBusy(false);
+      form?.showError(m.message);
+      break;
+
+    case TO_PHONE.REJECTED:
+      if (m.reason !== REJECT.BAD_VERSION) forgetSession();
+      end(m.message);
+      break;
+
+    case TO_PHONE.KICKED:
+      forgetSession();
+      end(m.message);
+      break;
+
+    case TO_PHONE.ROOM_CLOSED: {
+      const closed = code;
+      net.stop();
+      forgetSession();
+      leaveScreens();
+      showJoin('', `The host closed room ${closed}. Enter the new code to join.`);
+      break;
+    }
+  }
+}
+
+function forgetSession() {
+  if (code) store.remove(sessionKey(code));
+  store.remove(LAST_ROOM);
+  token = null;
+}
+
+/** Only one room's session matters at a time; drop leftovers from old rooms. */
+function forgetOtherRooms() {
+  try {
+    const prefix = `${ns}:session:`;
+    for (const k of Object.keys(localStorage)) {
+      if (k.startsWith(prefix) && k !== sessionKey(code)) localStorage.removeItem(k);
+    }
+  } catch { /* storage unavailable */ }
+}
+
+function leaveScreens() {
+  you = null;
+  pub = null;
+  form = null;
+  saving = false;
+  code = null;
+  setUrlRoom(null);
+}
+
+function end(message) {
+  net.stop();
+  you = null;
+  pub = null;
+  form = null;
+  saving = false;
+  setUrlRoom(null);
+  setScreen('ended', message);
+}
+
+// ---------------------------------------------------------------- screens
+
+function setScreen(name, detail) {
+  screen = name;
+  renderScreen(detail);
+  renderStatus(netStatus);
+  window.scrollTo(0, 0);
+}
+
+function renderScreen(detail) {
+  switch (screen) {
+    case 'join': return; // rendered by showJoin
+    case 'form': return; // rendered by showForm; never re-render (keeps typing)
+    case 'connecting':
+      mount(ui.main, h('section', { class: 'center' }, h('div', { class: 'spinner' }), h('p', {}, 'Riding to the starting line…')));
+      return;
+    case 'lobby': return renderLobby();
+    case 'racing': return renderRacing();
+    case 'ended':
+      mount(ui.main, h('section', { class: 'center' },
+        h('p', { class: 'big-line' }, detail || 'Disconnected.'),
+        h('button', { class: 'btn btn-primary', onclick: () => showJoin('') }, 'Join a room'),
+      ));
+      ui.feed.hidden = true;
+  }
+}
+
+/**
+ * @param {string} prefill    code to put in the box
+ * @param {string} [notice]   why we're back here (room closed, unreachable)
+ * @param {string} [retryCode] offer a "Try again" button for this room
+ */
+function showJoin(prefill, notice = '', retryCode = null) {
+  screen = 'join';
+  ui.room.textContent = '';
+  ui.feed.hidden = true;
+  const input = h('input', {
+    class: 'code-input', type: 'text', inputmode: 'text', autocomplete: 'off', autocapitalize: 'characters',
+    spellcheck: false, maxlength: ROOM_CODE_LENGTH, value: prefill, placeholder: 'ABCD', 'aria-label': 'Room code',
+    oninput: (e) => { e.target.value = normalizeCode(e.target.value, true); },
+  });
+  const error = h('p', { class: 'form-error', role: 'alert' });
+  mount(ui.main,
+    h('form', {
+      class: 'join',
+      onsubmit: (e) => {
+        e.preventDefault();
+        const c = normalizeCode(input.value);
+        if (!c) {
+          error.textContent = `Enter the ${ROOM_CODE_LENGTH}-letter code from the stream.`;
+          return;
+        }
+        connect(c);
+      },
+    },
+      h('h1', { class: 'title' }, 'Steel Ball Run'),
+      h('p', { class: 'subtitle' }, 'Race Simulator'),
+      notice && h('p', { class: 'notice' }, notice),
+      retryCode && h('button', { type: 'button', class: 'btn', onclick: () => connect(retryCode) }, `Try room ${retryCode} again`),
+      h('label', { class: 'field' }, h('span', { class: 'field-label' }, 'Room code'), input),
+      error,
+      h('button', { class: 'btn btn-primary btn-big', type: 'submit' }, 'Join the race'),
+    ),
+  );
+  renderStatus(null);
+}
+
+function showForm(editing = false) {
+  screen = 'form';
+  saving = false;
+  const initial = editing && you?.hasCharacter ? you : store.get(DRAFT, {});
+  form = characterForm({
+    initial,
+    submitLabel: editing ? 'Save changes' : 'Ride in',
+    onCancel: editing ? () => { form = null; setScreen('lobby'); } : null,
+    onSubmit: (character) => {
+      store.set(DRAFT, character);
+      if (!net.send(msg(TO_HOST.CHARACTER, character))) {
+        form.showError('Not connected right now. Try again in a moment.');
+        return;
+      }
+      saving = true;
+      form.setBusy(true);
+    },
+  });
+  mount(ui.main,
+    h('section', {},
+      h('h2', {}, editing ? 'Edit your racer' : 'Create your racer'),
+      form.el,
+    ),
+  );
+  renderStatus(netStatus);
+  window.scrollTo(0, 0);
+}
+
+function renderLobby() {
+  const riders = pub?.players ?? [];
+  mount(ui.main,
+    h('section', {},
+      youCard(),
+      h('button', { class: 'btn', onclick: () => showForm(true) }, 'Edit racer'),
+      h('p', { class: 'waiting' }, 'Waiting for the host to start the race…'),
+      h('h3', {}, `Riders (${riders.length})`),
+      h('ul', { class: 'rider-list' },
+        riders.map((r) => h('li', { class: r.connected ? '' : 'offline' },
+          r.name, r.id === you?.id ? ' (you)' : '', r.ai ? h('span', { class: 'ai-tag' }, 'AI') : null)),
+      ),
+    ),
+  );
+}
+
+function renderRacing() {
+  mount(ui.main,
+    h('section', {},
+      youCard(),
+      h('p', { class: 'waiting' }, 'The race is on! Watch the stream. Choices will appear here.'),
+    ),
+  );
+}
+
+function youCard() {
+  if (!you?.hasCharacter) return null;
+  const personality = PERSONALITIES.find((p) => p.id === you.personality);
+  return h('div', { class: 'you-card' },
+    avatar(you.name, you.picture, 'lg'),
+    h('div', {},
+      h('div', { class: 'player-name' }, you.name),
+      h('div', { class: 'player-meta' }, [PRONOUNS[you.pronouns]?.label, you.gender].filter(Boolean).join(' · ')),
+      h('div', { class: 'player-personality' }, personality?.label ?? ''),
+    ),
+  );
+}
+
+function renderStatus(status) {
+  netStatus = status;
+  const labels = {
+    connecting: 'Connecting…',
+    connected: 'Connected',
+    reconnecting: 'Reconnecting…',
+    'host-missing': 'Looking for the host…',
+    offline: 'Offline',
+  };
+  const inRoom = screen !== 'join' && screen !== 'ended';
+  ui.status.className = `net-status net-${status ?? 'idle'}`;
+  ui.status.textContent = status ? labels[status] ?? status : '';
+  ui.status.hidden = !status || !inRoom;
+
+  // Whenever we're in a room but not connected, always offer a way out.
+  const trouble = inRoom && status && status !== 'connected';
+  ui.connBar.hidden = !trouble;
+  if (trouble) ui.connText.textContent = `${labels[status] ?? status} Room ${code}`;
+
+  // A save that was in flight when the connection dropped never arrived.
+  if (saving && status !== 'connected') {
+    saving = false;
+    form?.setBusy(false);
+    form?.showError('The connection dropped before your changes were saved. Tap save again once reconnected.');
+  }
+}
+
+function normalizeCode(v, partial = false) {
+  if (typeof v !== 'string') return '';
+  const allowed = new RegExp(`[^${ROOM_CODE_ALPHABET}]`, 'g');
+  const s = v.toUpperCase().replace(allowed, '').slice(0, ROOM_CODE_LENGTH);
+  return partial || s.length === ROOM_CODE_LENGTH ? s : '';
+}

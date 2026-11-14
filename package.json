@@ -1,0 +1,10 @@
+{
+  "name": "sbr-race",
+  "private": true,
+  "description": "Jackbox-style Steel Ball Run party game. Static site; no build step, no dependencies.",
+  "type": "module",
+  "scripts": {
+    "serve": "npx --yes http-server -p 8000 -c-1 .",
+    "test": "node --test tests/"
+  }
+}

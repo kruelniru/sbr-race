@@ -1,0 +1,258 @@
+// Host screen entry point. This page is streamed, so it renders ONLY
+// hostScreenView(state), never raw state, never anyone's secrets.
+import { ROOM_CODE_ALPHABET, ROOM_CODE_LENGTH, MAX_PLAYERS } from '../config.js';
+import { HostNet } from '../net/host-net.js';
+import { createGameState, hostScreenView, PHASE } from '../engine/state.js';
+import { newSeed } from '../engine/rng.js';
+import { HostLobby } from './lobby.js';
+import { loadSavedGame, saveGame, clearSavedGame } from './persist.js';
+import { addBots, removeBots } from './debug.js';
+import { h, $, mount, avatar } from '../ui/dom.js';
+
+const DEBUG = new URLSearchParams(location.search).has('debug');
+const app = $('#app');
+
+let lobby = null;
+let code = null;
+let closing = false;
+let fillTarget = null; // the host's "fill to" number; null = use the minimum
+let netStatus = { status: 'starting', detail: '' };
+
+showSetup();
+
+// ---------------------------------------------------------------- setup
+
+function showSetup() {
+  const saved = loadSavedGame();
+  mount(app,
+    h('main', { class: 'setup' },
+      h('h1', { class: 'title' }, 'Steel Ball Run'),
+      h('p', { class: 'subtitle' }, 'Race Simulator'),
+      h('div', { class: 'setup-actions' },
+        saved && h('button', { class: 'btn btn-primary', onclick: () => openRoom(saved) },
+          `Resume room ${saved.code} (${riders(saved.state.players.filter((p) => p.hasCharacter).length)})`),
+        h('button', { class: saved ? 'btn' : 'btn btn-primary', onclick: () => { clearSavedGame(); openRoom(null); } },
+          saved ? 'Start a new room' : 'Open a room'),
+      ),
+      h('p', { class: 'hint' }, 'Players join on their phones with the room code.'),
+    ),
+  );
+}
+
+async function openRoom(saved) {
+  mount(app, h('main', { class: 'setup' }, h('p', { class: 'subtitle' }, 'Opening the room…')));
+
+  let state = saved?.state ?? createGameState(newSeed());
+  const sessions = saved?.sessions ?? {};
+
+  const net = new HostNet({
+    onMessage: (connId, m) => lobby.handleMessage(connId, m),
+    onClose: (connId) => lobby.handleClose(connId),
+    onStatus: (status, detail = '') => {
+      netStatus = { status, detail };
+      render();
+    },
+  });
+
+  // A resumed room reclaims its old code; a new one tries codes until one is free.
+  try {
+    if (saved) {
+      code = saved.code;
+      await net.start(code, { reclaim: true });
+    } else {
+      for (let tries = 0; ; tries++) {
+        code = randomCode();
+        try {
+          await net.start(code);
+          break;
+        } catch (err) {
+          if (err.type !== 'unavailable-id' || tries > 5) throw err;
+        }
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    mount(app, h('main', { class: 'setup' },
+      h('h2', {}, 'Could not open the room'),
+      h('p', { class: 'hint' }, err.message || String(err)),
+      h('button', { class: 'btn btn-primary', onclick: showSetup }, 'Try again'),
+    ));
+    return;
+  }
+
+  lobby = new HostLobby({
+    state,
+    sessions,
+    net,
+    onChange: () => {
+      if (closing) return; // phones dropping off after "Close room" must not re-save it
+      saveGame(code, state, sessions);
+      render();
+    },
+  });
+  saveGame(code, state, sessions);
+  render();
+}
+
+function riders(n) {
+  return `${n} rider${n === 1 ? '' : 's'}`;
+}
+
+function randomCode() {
+  let s = '';
+  for (let i = 0; i < ROOM_CODE_LENGTH; i++) s += ROOM_CODE_ALPHABET[Math.floor(Math.random() * ROOM_CODE_ALPHABET.length)];
+  return s;
+}
+
+// ---------------------------------------------------------------- render
+
+function render() {
+  if (!lobby) return;
+  const view = hostScreenView(lobby.state);
+  const count = view.players.length;
+  const minPlayers = view.settings.minPlayers;
+  const joinUrl = new URL('phone.html', location.href);
+  joinUrl.search = '';
+  const shortUrl = joinUrl.host + joinUrl.pathname.replace(/phone\.html$/, '');
+
+  mount(app,
+    h('div', { class: 'host' },
+      h('header', { class: 'host-header' },
+        h('div', { class: 'brand' }, h('span', { class: 'title small' }, 'Steel Ball Run'), h('span', { class: 'subtitle small' }, 'Race Simulator')),
+        statusBadge(),
+      ),
+
+      view.phase === PHASE.LOBBY
+        ? h('section', { class: 'join-panel' },
+            h('div', { class: 'join-how' },
+              h('div', { class: 'label' }, 'Join on your phone'),
+              h('div', { class: 'join-url' }, shortUrl),
+            ),
+            h('div', { class: 'room-code-box' },
+              h('div', { class: 'label' }, 'Room code'),
+              h('div', { class: 'room-code' }, code),
+            ),
+          )
+        : h('section', { class: 'join-panel locked' },
+            h('div', { class: 'label' }, `Room ${code} · lobby locked`),
+            h('div', { class: 'big-line' }, 'The race begins!'),
+            h('p', { class: 'hint' }, 'Stages arrive in milestone 2. Riders who drop out can still rejoin.'),
+          ),
+
+      h('section', { class: 'roster' },
+        h('div', { class: 'roster-head' },
+          h('h2', {}, view.phase === PHASE.LOBBY ? 'Riders at the start' : 'Riders'),
+          h('span', { class: 'count' }, `${count} / ${MAX_PLAYERS}`,
+            view.joining ? h('span', { class: 'joining' }, ` · ${view.joining} saddling up…`) : null),
+        ),
+        count === 0
+          ? h('p', { class: 'empty' }, 'Waiting for riders…')
+          : h('ul', { class: 'player-grid' }, view.players.map(playerCard)),
+      ),
+
+      view.phase === PHASE.LOBBY && lobbySettings(view),
+
+      h('footer', { class: 'host-footer' },
+        view.phase === PHASE.LOBBY &&
+          h('button', {
+            class: 'btn btn-primary btn-big',
+            disabled: count < minPlayers,
+            onclick: () => {
+              if (confirm(`Lock the lobby and start with ${riders(count)}? New players won't be able to join.`)) lobby.lock();
+            },
+          }, count < minPlayers ? `Need ${minPlayers - count} more` : 'Start the race'),
+        h('div', { class: 'feed host-feed' }, view.feed.slice(-4).map((f) => h('div', { class: `feed-item feed-${f.kind}` }, f.text))),
+        h('button', { class: 'btn btn-quiet', onclick: endRoom }, 'Close room'),
+      ),
+
+      DEBUG && debugPanel(view),
+    ),
+  );
+}
+
+function playerCard(p) {
+  return h('li', { class: 'player-card' + (p.connected ? '' : ' offline') },
+    avatar(p.name, p.picture, 'lg'),
+    h('div', { class: 'player-info' },
+      h('div', { class: 'player-name' }, p.name),
+      h('div', { class: 'player-meta' }, [p.pronouns, p.gender].filter(Boolean).join(' · ')),
+      h('div', { class: 'player-personality' }, p.personality),
+    ),
+    h('span', { class: 'conn-dot', title: p.connected ? 'Connected' : 'Disconnected: playing on personality' }),
+    p.isAI && h('span', { class: 'tag tag-ai' }, 'AI'),
+    h('button', {
+      class: 'kick', title: 'Remove rider',
+      onclick: () => { if (confirm(`Remove ${p.name} from the race?`)) lobby.kick(p.id); },
+    }, '×'),
+  );
+}
+
+function statusBadge() {
+  const labels = {
+    starting: 'Starting…',
+    online: 'Room open',
+    reclaiming: 'Reclaiming room…',
+    'signaling-lost': 'Reconnecting to server…',
+  };
+  return h('div', { class: `net-status net-${netStatus.status}`, title: netStatus.detail },
+    labels[netStatus.status] ?? netStatus.status);
+}
+
+/** Lobby settings: minimum riders and filling empty slots with AI racers. */
+function lobbySettings(view) {
+  const min = view.settings.minPlayers;
+  const target = fillTarget ?? min;
+  const aiCount = view.players.filter((p) => p.isAI).length;
+  const numberInput = (value, onchange, label) => h('input', {
+    type: 'number', class: 'num-input', min: 1, max: MAX_PLAYERS, value, 'aria-label': label, onchange,
+  });
+
+  return h('section', { class: 'lobby-settings' },
+    h('label', { class: 'setting' },
+      h('span', {}, 'Minimum riders'),
+      numberInput(min, (e) => lobby.setMinPlayers(e.target.value), 'Minimum riders'),
+    ),
+    h('div', { class: 'setting' },
+      h('span', {}, 'Fill to'),
+      numberInput(target, (e) => {
+        fillTarget = Math.max(1, Math.min(MAX_PLAYERS, Number(e.target.value) || min));
+        render();
+      }, 'Fill with AI racers up to'),
+      h('button', {
+        class: 'btn btn-small',
+        disabled: view.players.length + view.joining >= Math.min(target, MAX_PLAYERS),
+        onclick: () => lobby.fillWithAi(target),
+      }, 'Fill with AI racers'),
+    ),
+    aiCount > 0 && h('button', { class: 'btn btn-small btn-quiet', onclick: () => lobby.removeAllAi() }, `Remove all AI (${aiCount})`),
+  );
+}
+
+function debugPanel(view) {
+  return h('aside', { class: 'debug' },
+    h('strong', {}, 'Debug'),
+    h('button', { class: 'btn btn-small', onclick: () => addBots(lobby, 1) }, '+1 bot'),
+    h('button', { class: 'btn btn-small', onclick: () => addBots(lobby, 4) }, '+4 bots'),
+    h('button', { class: 'btn btn-small', onclick: () => addBots(lobby, 16 - view.players.length - view.joining) }, 'Fill to 16'),
+    h('button', { class: 'btn btn-small', onclick: () => removeBots(lobby) }, 'Remove bots'),
+    h('span', { class: 'seed' }, `seed ${view.seed}`),
+  );
+}
+
+function endRoom() {
+  if (!confirm('Close this room? Everyone will be disconnected and the game is deleted.')) return;
+  closing = true;
+  clearSavedGame();
+  lobby.closeRoom();
+  // Give the "room closed" messages a moment to reach the phones.
+  mount(app, h('main', { class: 'setup' }, h('p', { class: 'subtitle' }, 'Closing the room…')));
+  setTimeout(() => {
+    clearSavedGame();
+    location.reload();
+  }, 1000);
+}
+
+// Warn before closing the streaming tab by accident (the game is saved anyway).
+window.addEventListener('beforeunload', (e) => {
+  if (!closing && lobby && lobby.state.players.length) e.preventDefault();
+});

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SBR Race Simulator</title>
+  <link rel="stylesheet" href="css/base.css">
+  <script>
+    // Phones landing here go straight to the controller; a desktop gets the choice.
+    // A ?room=CODE link always goes to the phone page.
+    (function () {
+      var q = location.search;
+      var isTouch = matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) < 820;
+      if (/[?&]room=/.test(q) || isTouch) location.replace('phone.html' + q);
+    })();
+  </script>
+</head>
+<body class="landing">
+  <main class="setup">
+    <h1 class="title">Steel Ball Run</h1>
+    <p class="subtitle">Race Simulator</p>
+    <div class="setup-actions">
+      <a class="btn btn-primary btn-big" href="host.html">Host a game</a>
+      <a class="btn btn-big" href="phone.html">Join on this device</a>
+    </div>
+    <p class="hint">Hosting? Open this on the computer you're streaming from. Players open the same address on their phones.</p>
+  </main>
+</body>
+</html>

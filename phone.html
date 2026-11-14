@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1c1410">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>SBR Race Simulator</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/phone.css">
+</head>
+<body class="phone-page">
+  <header class="phone-top">
+    <span id="room-label" class="room-label"></span>
+    <span id="status" class="net-status" hidden></span>
+  </header>
+  <div id="conn-bar" class="conn-bar" hidden>
+    <span id="conn-text"></span>
+    <button id="leave-btn" type="button" class="btn btn-small">Leave and join a different room</button>
+  </div>
+  <p id="wake-hint" class="wake-hint" hidden>Tip: your screen may dim. Turn up Auto-Lock while you play.</p>
+  <main id="main"></main>
+  <aside id="feed" class="feed phone-feed" hidden></aside>
+  <script type="module" src="js/phone/phone-main.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+/* Host screen: built to be read on a Discord stream, so everything is big. */
+.host { display: grid; grid-template-rows: auto auto 1fr auto auto auto;min-height: 100vh; padding: 24px 40px; gap: 24px; }
+.host-header { display: flex; justify-content: space-between; align-items: center; }
+.brand { display: flex; align-items: baseline; gap: 14px; }
+
+.join-panel { display: flex; justify-content: space-between; align-items: center; gap: 32px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 32px; }
+.join-panel.locked { display: block; text-align: center; }
+.join-url { font-size: clamp(1.4rem, 2.6vw, 2.4rem); font-weight: 700; overflow-wrap: anywhere; }
+.room-code-box { text-align: right; }
+.room-code { font-family: var(--display); font-size: clamp(3.5rem, 8vw, 7rem); line-height: 1; letter-spacing: .12em; color: var(--gold-2); text-shadow: 0 4px 0 #000a; }
+
+.roster-head { display: flex; align-items: baseline; gap: 16px; }
+.roster-head h2 { font-size: 1.6rem; margin: 0; }
+.count { color: var(--muted); font-size: 1.2rem; }
+.joining { color: var(--gold-2); }
+.empty { color: var(--muted); font-size: 1.3rem; text-align: center; padding: 40px; }
+
+.player-grid { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.player-card { position: relative; display: flex; gap: 14px; align-items: center; background: var(--panel);
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; animation: ride-in .4s ease-out; }
+.player-card.offline { opacity: .55; }
+.player-info { min-width: 0; }
+.conn-dot { position: absolute; top: 10px; right: 12px; width: 10px; height: 10px; border-radius: 50%; background: var(--green); }
+.player-card.offline .conn-dot { background: var(--red); }
+.tag { position: absolute; bottom: 8px; right: 12px; font-size: .7rem; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; }
+.tag-ai { color: var(--gold-2); border-color: var(--gold); }
+.lobby-settings { display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center; color: var(--muted); font-size: .95rem; }
+.setting { display: flex; gap: 10px; align-items: center; }
+.num-input { width: 4.5em; font: inherit; color: var(--text); background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: .35em .5em; }
+.kick { position: absolute; top: 2px; right: 26px; border: 0; background: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; opacity: 0; }
+.player-card:hover .kick { opacity: 1; }
+
+.host-footer { display: grid; grid-template-columns: minmax(240px, 360px) 1fr auto; gap: 24px; align-items: center; }
+.host-footer .btn-big { width: auto; }
+.host-feed { color: var(--muted); }
+
+.debug { display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  background: #000c; border: 1px dashed var(--gold); border-radius: 10px; padding: 8px 12px; font-size: .85rem; z-index: 10; }
+.debug .seed { color: var(--muted); font-family: ui-monospace, monospace; }
+
+@keyframes ride-in { from { transform: translateX(-24px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+@media (max-width: 800px) {
+  .host { padding: 16px; }
+  .join-panel { flex-direction: column; text-align: center; }
+  .room-code-box { text-align: center; }
+  .host-footer { grid-template-columns: 1fr; }
+}
