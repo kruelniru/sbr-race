@@ -6,6 +6,11 @@
 //   node sim/simulate.js --games 500 --players 12
 //   node sim/simulate.js --runners 0.3           30% of PCs are Runners
 //   node sim/simulate.js --seed abc --verbose    print one full game as text
+//   node sim/simulate.js --plans random          PCs pick Stage Plans at random
+//   node sim/simulate.js --plans push            every PC always picks one plan
+//   node sim/simulate.js --plans star            every PC always picks its star option (plans and sub events)
+//   node sim/simulate.js --choice-times log.json replay answer times from a real game
+//   node sim/simulate.js --freq high             sub event frequency (low/normal/high)
 //
 // Tune numbers in data/rules.js, data/stages.js and event weights in data/events.
 
@@ -15,6 +20,10 @@ import { createGameState, addPlayer, applyCharacter } from '../js/engine/state.j
 import { Rng } from '../js/engine/rng.js';
 import { makeAiCharacter } from '../js/engine/roster.js';
 import { startRace, runRound } from '../js/engine/race.js';
+import { needsStagePlans, openStagePlans, openSubEvents, closeChoices, starOption } from '../js/engine/choices.js';
+import PLANS from '../data/plans.js';
+import PERSONALITIES from '../data/personalities.js';
+import { readFileSync } from 'node:fs';
 import { namedRacers } from '../js/engine/racers.js';
 import { EVENTS, lintEvents } from '../js/engine/events.js';
 import { buildCards, cardsSeconds } from '../js/engine/reveal.js';
@@ -25,6 +34,9 @@ const GAMES = args.verbose ? 1 : Number(args.games ?? 100);
 const PLAYERS = Number(args.players ?? 18);
 const RUNNERS = args.runners != null ? Number(args.runners) : null;
 const SEED = args.seed ?? 'sim';
+const PLAN_MODE = args.plans ?? 'ai'; // ai | random | star | <plan id>
+const FREQ = args.freq ?? 'normal';
+const CHOICE_TIMES = args['choice-times'] ? loadChoiceTimes(args['choice-times']) : null;
 
 const problems = lintEvents();
 if (problems.length) {
@@ -44,10 +56,75 @@ function playGame(seed) {
     taken.add(c.name.toLowerCase());
     applyCharacter(p, c);
   }
+  state.settings.subEventFreq = FREQ;
   startRace(state);
   const results = [];
-  while (!state.race.over) results.push(runRound(state));
-  return { state, results };
+  const stageLog = []; // per PC per stage: { id, stage, plan, star, personality, start }
+  const windows = [];  // choice windows: { kind, humans }
+  const timeRng = new Rng(seed + ':time');
+  while (!state.race.over) {
+    if (needsStagePlans(state)) {
+      const w = openStagePlans(state);
+      for (const pr of w.prompts) overrideAnswer(pr, timeRng);
+      windows.push({ kind: 'plan', humans: w.prompts.length });
+      const pcs = Object.fromEntries(state.players.map((x) => [x.id, x]));
+      for (const pr of w.prompts) {
+        const pc = pcs[pr.playerId];
+        stageLog.push({ id: pc.id, stage: w.stageId, plan: pr.answer.optionId, star: pr.star, personality: pc.personality, start: pc.points });
+      }
+      closeChoices(state);
+    }
+    const w = openSubEvents(state);
+    for (const pr of w.prompts) if (PLAN_MODE === 'star') pr.answer = { optionId: pr.star, by: 'ai' };
+    windows.push({ kind: 'sub', humans: w.prompts.filter((x) => state.players.some((pl) => pl.id === x.playerId)).length });
+    closeChoices(state);
+    results.push(runRound(state));
+  }
+  return { state, results, stageLog, windows, timeRng };
+}
+
+/** Sim plan modes: random, star, or one fixed plan for everyone. */
+function overrideAnswer(pr, rng) {
+  if (PLAN_MODE === 'ai') return;
+  let id;
+  if (PLAN_MODE === 'random') id = rng.pick(pr.options).id;
+  else if (PLAN_MODE === 'star') id = pr.star;
+  else id = pr.options.some((o) => o.id === PLAN_MODE) ? PLAN_MODE : 'pace';
+  const opt = pr.options.find((o) => o.id === id);
+  pr.answer = { optionId: id, by: 'ai' };
+  if (opt.needsTarget) pr.answer.targetId = rng.weighted(pr.targets, (t) => 50 + (t.points ?? 0)).id;
+}
+
+/** How long a game's choice windows take, in seconds (see rules.timing.choiceModel). */
+function choiceSeconds(windows, rng) {
+  const M = RULES.timing.choiceModel;
+  const timer = RULES.choices.timerSeconds;
+  let total = 0;
+  for (const w of windows) {
+    if (!w.humans) continue;
+    let slowest = 0;
+    for (let i = 0; i < w.humans; i++) slowest = Math.max(slowest, answerSeconds(w.kind, rng, M));
+    total += M.overhead[w.kind] + Math.min(timer, slowest);
+  }
+  return total;
+}
+
+function answerSeconds(kind, rng, M) {
+  const samples = CHOICE_TIMES?.[kind];
+  if (samples?.length) return rng.pick(samples) / 1000;
+  return M.medianSeconds[kind] * Math.exp(rng.normal(0, M.spread));
+}
+
+/** A timing log exported from the host (debug bar: Export choice times). */
+function loadChoiceTimes(path) {
+  const log = JSON.parse(readFileSync(path, 'utf8'));
+  const out = { plan: [], sub: [] };
+  for (const w of log.windows ?? []) {
+    const kind = w.kind === 'plan' ? 'plan' : 'sub';
+    // Timed-out answers count as the full timer.
+    for (const a of w.answers ?? []) out[kind].push(a.ms ?? (w.timerSeconds ?? RULES.choices.timerSeconds) * 1000);
+  }
+  return out;
 }
 
 if (args.verbose) {
@@ -76,10 +153,11 @@ function newStats() {
     canonStage1Deaths: 0,
     fieldMismatch: 0,
     stands: 0, // milestone 4
+    choiceMin: [], subPerRound: [], byPlan: {}, byPers: {},
   };
 }
 
-function collect(S, { state, results }) {
+function collect(S, { state, results, stageLog, windows, timeRng }) {
   S.games++;
   const racers = namedRacers(state);
   for (const r of racers) {
@@ -122,8 +200,30 @@ function collect(S, { state, results }) {
     }
     for (const [id, n] of Object.entries(res.eventCounts)) S.eventCounts[id] = (S.eventCounts[id] ?? 0) + n;
   }
-  const T = RULES.timing;
-  const choices = STAGES.length * T.projectedStagePlan + results.length * T.projectedSubEventsPerRound;
+  const choices = choiceSeconds(windows, timeRng);
+  S.choiceMin.push(choices / 60);
+  S.subPerRound.push(windows.filter((w) => w.kind === 'sub').reduce((n, w) => n + w.humans, 0) / results.length);
+
+  // Stage Plans: what each PC earned in each stage under its plan.
+  const byId = Object.fromEntries(state.players.map((x) => [x.id, x]));
+  const fin = Object.fromEntries(results.filter((r) => r.placements).map((r) => [r.stage.id, r.placements]));
+  for (const row of stageLog) {
+    const pc = byId[row.id];
+    const next = stageLog.find((x) => x.id === row.id && x.stage === row.stage + 1);
+    const pts = (next ? next.start : pc.points) - row.start;
+    const diedHere = pc.death?.stage === row.stage;
+    const rank = fin[row.stage]?.find((x) => x.id === row.id)?.rank ?? null;
+    const b = (S.byPlan[row.plan] ??= { n: 0, points: 0, died: 0, top10: 0, placed: 0 });
+    b.n++; b.points += pts; if (diedHere) b.died++;
+    if (rank) { b.placed++; if (rank <= 10) b.top10++; }
+  }
+  // Personalities (whole game).
+  for (const pc of state.players) {
+    const b = (S.byPers[pc.personality] ??= { n: 0, points: 0, ny: 0, top10: 0, placed: 0, plans: {} });
+    b.n++; b.points += pc.points; if (pc.status === 'racing') b.ny++;
+    for (const pl of pc.placements) { b.placed++; if (pl.rank <= 10) b.top10++; }
+    for (const row of stageLog.filter((x) => x.id === pc.id)) b.plans[row.plan] = (b.plans[row.plan] ?? 0) + 1;
+  }
   S.rounds.push(results.length);
   S.minutes.push(seconds / 60);
   S.minutesNoSide.push(secondsNoSide / 60);
@@ -194,7 +294,25 @@ function printStats(S) {
   console.log('\nLength');
   console.log(`  rounds ${f1(avg(S.rounds))} · Main Story lines ${f1(avg(S.mainLines))} · side lines ${f1(avg(S.sideLines))} · minor lines ${f1(avg(S.minorLines))}`);
   console.log(`  reveal at Normal speed:   everything ${f1(avg(S.minutes))} min · side stories skipped ${f1(avg(S.minutesNoSide))} min`);
-  console.log(`  + projected choices (M3): everything ${f1(avg(S.projected))} min · side stories skipped ${f1(avg(S.projectedNoSide))} min  [target 30–40]`);
+  console.log(`  choice windows: ${f1(avg(S.choiceMin))} min (${f1(avg(S.subPerRound))} sub events per round, every PC timed as a person)`);
+  console.log(`  total with choices:       everything ${f1(avg(S.projected))} min · side stories skipped ${f1(avg(S.projectedNoSide))} min  [target 30–40]`);
+
+  console.log(`\nStage Plans (per PC per stage, mode: ${PLAN_MODE})`);
+  const picks = Object.values(S.byPlan).reduce((t, x) => t + x.n, 0);
+  table(['Plan', 'picks', 'pts/stage', 'died in stage', 'top 10'],
+    PLANS.filter((pl) => S.byPlan[pl.id]).map((pl) => {
+      const b = S.byPlan[pl.id];
+      return [pl.label, pct(b.n, picks), f1(b.points / b.n), pct(b.died, b.n), pct(b.top10, b.placed)];
+    }));
+  console.log('\nPersonalities (whole game)');
+  table(['Personality', 'star plan', 'avg points', 'reach NY', 'top 10', 'plans picked'],
+    PERSONALITIES.filter((x) => S.byPers[x.id]).map((x) => {
+      const b = S.byPers[x.id];
+      const star = starOption(PLANS.filter((pl) => pl.enabled), x.id).label;
+      const tot = Object.values(b.plans).reduce((t, n) => t + n, 0);
+      const mix = Object.entries(b.plans).sort((m, n) => n[1] - m[1]).map(([id, n]) => `${id} ${pct(n, tot)}`).join(' ');
+      return [x.label, star, f1(b.points / b.n), pct(b.ny, b.n), pct(b.top10, b.placed), mix];
+    }));
 
   const counts = EVENTS.map((e) => [e.id, S.eventCounts[e.id] ?? 0]).sort((a, b) => b[1] - a[1]);
   console.log('\nMost used events (per game)');

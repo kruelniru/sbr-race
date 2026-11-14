@@ -11,7 +11,7 @@
 // `who` is a named racer (tier 'pc' | 'canon') or an NPC (tier 'npc').
 
 import RULES from '../../data/rules.js';
-import { killRacer, retireRacer } from './racers.js';
+import { killRacer, retireRacer, addWorthiness } from './racers.js';
 import { npcDies, npcRetires } from './field.js';
 
 export const EFFECTS = {
@@ -36,7 +36,10 @@ export const EFFECTS = {
     fits: () => true,
     apply: (ctx, who, role, roles) => {
       const spareer = roles[role];
-      if (spareer) spareer.spares = (spareer.spares ?? 0) + 1;
+      if (spareer) {
+        spareer.spares = (spareer.spares ?? 0) + 1;
+        addWorthiness(spareer, RULES.worthiness.spare);
+      }
     },
   },
 
@@ -68,6 +71,13 @@ export const EFFECTS = {
   points: {
     fits: () => true,
     apply: (ctx, who, n) => { if (who.tier !== 'npc') who.points += n; },
+  },
+
+  // worthiness: +n / -n. Hidden stat (see rules.worthiness). Events tagged
+  // 'help' already give the focus racer +5, so don't add it twice.
+  worthiness: {
+    fits: () => true,
+    apply: (ctx, who, n) => addWorthiness(who, n),
   },
 
   // horse: 'dies'. The horse is lost; the Rider continues on foot.

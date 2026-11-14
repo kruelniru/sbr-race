@@ -5,12 +5,14 @@
 //           - onFootPenalty  (Rider whose horse died)
 //           + runner terrain modifiers (Runners only)
 //           + luck (canon trait)
+//           + Stage Plan placement modifier (data/plans.js)
 //           + noise (normal, sd = noiseSd)
 // Contenders: named racers still racing + the field's pack leaders.
 
 import RULES from '../../data/rules.js';
 import { namedRacers } from './racers.js';
 import { npcName, keepNpc } from './field.js';
+import { planOf } from './plans.js';
 
 export function runnerTerrainBonus(stage) {
   let bonus = RULES.runner.base ?? 0;
@@ -26,7 +28,8 @@ export function placementScore(racer, stage, rng) {
   if (racer.mount === 'horse' && racer.onFoot) score -= P.onFootPenalty;
   if (racer.mount === 'runner') score += runnerTerrainBonus(stage);
   score += racer.luck ?? 0;
-  // Stage Plans (milestone 3) and horse quality (milestone 5) plug in here.
+  score += planOf(racer)?.placement ?? 0; // Stage Plan
+  // Horse quality (milestone 5) plugs in here.
   return score + rng.normal(0, P.noiseSd);
 }
 

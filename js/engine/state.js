@@ -22,7 +22,7 @@ export const PHASE = Object.freeze({
   RACING: 'racing', // lobby is locked from here on; only reconnects get in
 });
 
-export const STATE_VERSION = 4; // bump when the saved shape changes (old host saves are ignored)
+export const STATE_VERSION = 5; // bump when the saved shape changes (old host saves are ignored)
 
 export function createGameState(seed) {
   return {
@@ -37,6 +37,8 @@ export function createGameState(seed) {
       revealSpeed: 'normal', // 'slow' | 'normal' | 'fast' (host auto-advance)
       autoSkipSide: true,    // skip Side Stories automatically (on by default; off for long game nights)
       effects: true,         // stage-themed particle effects on the host
+      subEventFreq: 'normal', // 'low' | 'normal' | 'high'
+      choiceTimer: 30,       // seconds per choice window
     },
     players: [],
     feed: [],
@@ -164,6 +166,49 @@ export function privateView(state, playerId) {
     // Race status as of the last fully revealed round, so a phone never
     // spoils the stream. Secrets (Worthiness, parts...) get added here only.
     race: p.shown ?? null,
+    // An open choice for this player (Stage Plan or sub event), phone-safe.
+    prompt: promptView(state, p.id),
+  };
+}
+
+/**
+ * This player's open prompt, without the engine's internals. The host adds
+ * the timer (remaining time, paused) when it sends it.
+ */
+export function promptView(state, playerId) {
+  const c = state.race?.choice;
+  if (!c || c.closed) return null;
+  const x = c.prompts.find((pr) => pr.playerId === playerId);
+  if (!x) return null;
+  return {
+    id: x.id, kind: x.kind, title: x.title, text: x.text, star: x.star,
+    options: x.options.map((o) => ({ id: o.id, label: o.label, hint: o.hint, needsTarget: !!o.needsTarget })),
+    targets: x.targets?.map((t) => ({ id: t.id, name: t.name, tier: t.tier })) ?? null,
+    answer: x.answer && x.answer.by === 'player' ? { optionId: x.answer.optionId, targetId: x.answer.targetId ?? null } : null,
+  };
+}
+
+/**
+ * The host's waiting screen while a choice window is open. Secret prompts are
+ * never named or counted; if every prompt is secret it just says decisions
+ * are being made. Never shows what anyone picked.
+ */
+export function choiceWaitingView(state) {
+  const c = state.race?.choice;
+  if (!c || c.closed) return null;
+  const visible = c.prompts.filter((x) => !x.secret);
+  const deciders = [];
+  for (const x of visible) {
+    const p = getPlayer(state, x.playerId);
+    if (!p || deciders.some((d) => d.id === p.id)) continue;
+    deciders.push({ id: p.id, name: p.name, picture: p.picture, isAI: p.isAI, connected: p.connected, answered: !!x.answer });
+  }
+  return {
+    kind: c.kind, // 'plan' | 'sub'
+    deciders,
+    answered: deciders.filter((d) => d.answered).length,
+    total: deciders.length,
+    allSecret: c.prompts.length > 0 && visible.length === 0,
   };
 }
 
@@ -186,6 +231,7 @@ export function hostScreenView(state) {
     })),
     joining: state.players.filter((p) => !p.hasCharacter).length,
     feed: recentFeed(state, 12),
+    choice: choiceWaitingView(state),
   };
 }
 

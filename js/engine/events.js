@@ -5,8 +5,9 @@ import RULES from '../../data/rules.js';
 import ALL_EVENTS from '../../data/events/index.js';
 import { EFFECTS, EFFECT_KEYS } from './effects.js';
 import { render, lintTemplate } from './text.js';
-import { namedRacers } from './racers.js';
+import { namedRacers, addWorthiness } from './racers.js';
 import { castNpc, keepNpc } from './field.js';
+import { planOf } from './plans.js';
 
 const ROUND_TYPES = ['day', 'night', 'finish'];
 const ROLE_KINDS = ['focus', 'named', 'npc'];
@@ -14,7 +15,7 @@ const ROLE_KINDS = ['focus', 'named', 'npc'];
 // ------------------------------------------------------------ normalizing
 
 /** Turn shorthand into full form once, at load. */
-function normalize(e) {
+export function normalizeEvent(e) {
   const cast = {};
   for (const [key, spec] of Object.entries(e.cast)) cast[key] = typeof spec === 'string' ? { is: spec } : { ...spec };
   const focusKey = Object.keys(cast).find((k) => cast[k].is === 'focus');
@@ -30,7 +31,7 @@ function normalize(e) {
   };
 }
 
-export const EVENTS = ALL_EVENTS.map(normalize);
+export const EVENTS = ALL_EVENTS.map(normalizeEvent);
 
 /** Content checks; returns a list of problems (empty = good). */
 export function lintEvents(events = EVENTS) {
@@ -61,7 +62,12 @@ export function lintEvents(events = EVENTS) {
 
 // ------------------------------------------------------------ matching
 
-function whenFits(e, ctx) {
+/** How likely a deadly event is to pick this racer: tier odds × Stage Plan. */
+export function deathWeight(racer) {
+  return (RULES.deathOdds[racer.tier] ?? 1) * (planOf(racer)?.deathMult ?? 1);
+}
+
+export function whenFits(e, ctx) {
   const w = e.when;
   if (w.stages && !w.stages.includes(ctx.stage.id)) return false;
   if (w.terrain && !w.terrain.some((t) => ctx.stage.terrain.includes(t))) return false;
@@ -81,7 +87,7 @@ function statusFits(e, spec, racer) {
 const asList = (v) => (Array.isArray(v) ? v : [v]);
 
 /** Does this racer fit this role (filters + every effect on it)? */
-function roleFits(ctx, e, key, racer) {
+export function roleFits(ctx, e, key, racer) {
   const spec = e.cast[key];
   if (!statusFits(e, spec, racer)) return false;
   if (spec.tier && !asList(spec.tier).includes(racer.tier)) return false;
@@ -106,7 +112,13 @@ function eventWeight(e, focus) {
     w *= focus.lean?.[tag] ?? 1;
   }
   if (e.lean) w *= e.lean[focus.personality] ?? 1;
-  if (e.effects[e.focusKey]?.dies) w *= RULES.deathOdds[focus.tier] ?? 1;
+  if (e.effects[e.focusKey]?.dies) w *= deathWeight(focus);
+  // Stage Plan (Push hard, Lay low...): tag, death and horse multipliers.
+  const plan = planOf(focus);
+  if (plan) {
+    for (const tag of e.tags) w *= plan.eventMult[tag] ?? 1;
+    if (e.effects[e.focusKey]?.horse) w *= plan.horseMult;
+  }
   // Rivalries: kill events aimed at the rival side are likelier.
   if (focus.rivals && e.tags.includes('kill')
     && Object.values(e.cast).some((c) => c.side === focus.rivals.side)) {
@@ -118,7 +130,7 @@ function eventWeight(e, focus) {
 // ------------------------------------------------------------ casting
 
 /** Fill every non-focus role, or return null if the event can't be cast. */
-function castRoles(ctx, e, focus) {
+export function castRoles(ctx, e, focus) {
   const roles = { [e.focusKey]: focus };
   const used = new Set([focus.id]);
   for (const [key, spec] of Object.entries(e.cast)) {
@@ -129,7 +141,7 @@ function castRoles(ctx, e, focus) {
         (r) => !used.has(r.id) && !ctx.assigned.has(r.id) && roleFits(ctx, e, key, r),
       );
       const dies = !!e.effects[key]?.dies;
-      who = ctx.rng.weighted(pool, (r) => (dies ? RULES.deathOdds[r.tier] ?? 1 : 1));
+      who = ctx.rng.weighted(pool, (r) => (dies ? deathWeight(r) : 1));
     } else if (spec.is === 'npc') {
       who = castNpc(ctx);
       if (who && !roleFits(ctx, e, key, who)) who = null;
@@ -180,6 +192,8 @@ function resolve(ctx, e, roles) {
       EFFECTS[key].apply(ctx, roles[k], value, roles, effs);
     }
   }
+  // Helping or saving someone: hidden Worthiness (DESIGN.md table).
+  if (e.tags.includes('help')) addWorthiness(roles[e.focusKey], RULES.worthiness.help);
 
   const ids = [];
   for (const who of Object.values(roles)) {

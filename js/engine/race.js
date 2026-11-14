@@ -2,6 +2,8 @@
 // then reveals the result; the headless sim calls it in a loop.
 //
 // Each round:
+//   0. Choices (choices.js): Stage Plans at a stage's start, then sub events.
+//      Their results lead the Main Story.
 //   1. Shuffle every named racer who's alive.
 //   2. Each one without an event yet gets a main event (canon racers ~50% of
 //      rounds, retired racers ~25%). Being cast into someone else's event
@@ -15,11 +17,12 @@ import STAGES from '../../data/stages.js';
 import HORSES from '../../data/horse-names.js';
 import { Rng } from './rng.js';
 import { readyPlayers } from './state.js';
-import { initPcRacer, makeCanonRacer, canonDefs, namedRacers, findRacer } from './racers.js';
+import { initPcRacer, makeCanonRacer, canonDefs, namedRacers, findRacer, startWorthiness } from './racers.js';
 import { buildFinale } from './finale.js';
 import { initField, fieldAttrition, fieldReportText } from './field.js';
 import { runMainEvent } from './events.js';
 import { placeStage, standings } from './placement.js';
+import { prepareRound, resolveSubEvents } from './choices.js';
 
 /** Round types for a stage with n rounds: Day/Night alternate, last is the Finish Line. */
 export function roundTypes(n) {
@@ -48,8 +51,8 @@ export function startRace(state) {
   let h = 0;
   const nextHorse = () => freeHorses[h++ % freeHorses.length];
 
-  for (const p of readyPlayers(state)) initPcRacer(p, p.mount === 'runner' ? null : nextHorse());
-  state.canon = defs.map((d) => makeCanonRacer(d, d.mount === 'runner' ? null : d.horse ?? nextHorse()));
+  for (const p of readyPlayers(state)) initPcRacer(p, p.mount === 'runner' ? null : nextHorse(), startWorthiness(rng, 'pc'));
+  state.canon = defs.map((d) => makeCanonRacer(d, d.mount === 'runner' ? null : d.horse ?? nextHorse(), startWorthiness(rng, 'canon')));
 
   initField(state, rng);
 
@@ -80,6 +83,11 @@ export function totalRounds(state) {
 export function runRound(state) {
   const race = state.race;
   if (race.over) throw new Error('The race is over');
+  // Choices come first: Stage Plans at a stage's start, then this round's sub
+  // events. The host runs these with a timer; without one (sim, tests) they're
+  // answered instantly here.
+  if (!race.choice?.closed || race.choice.kind !== 'sub') prepareRound(state);
+  const choice = race.choice;
   const rng = Rng.fromState(state.rngState);
   const stage = STAGES[race.stageIdx];
   const types = race.plan[race.stageIdx].types;
@@ -108,7 +116,12 @@ export function runRound(state) {
     tally: { retired: 0, died: 0 },
   };
 
-  // 1–2. Main events.
+  // 1. Sub events (and Hunt a rival showdowns) resolve first and lead the
+  //    Main Story. A sub event counts as that racer's event this round.
+  result.events.push(...resolveSubEvents(ctx, choice));
+  race.choice = null;
+
+  // 2. Main events.
   for (const racer of rng.shuffle(namedRacers(state).filter((r) => r.status !== 'dead'))) {
     if (ctx.assigned.has(racer.id) || racer.status === 'dead') continue;
     if (racer.status === 'retired' && !rng.chance(RULES.retiredEventChance)) continue;

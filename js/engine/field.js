@@ -11,6 +11,7 @@
 
 import RULES from '../../data/rules.js';
 import NPC_NAMES from '../../data/npc-names.js';
+import { startWorthiness } from './racers.js';
 
 export function initField(state, rng) {
   state.field = { racing: RULES.fieldSize, retired: 0, dead: 0, packLeaders: [], kept: [], nextId: 1 };
@@ -31,6 +32,7 @@ function makeNpc(state, rng, { named = true, packLeader = false } = {}) {
     pace: 0,
     injured: false,
     packLeader,
+    worthiness: startWorthiness(rng, 'npc'),
   };
 }
 

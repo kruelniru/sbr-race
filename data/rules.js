@@ -8,7 +8,7 @@ export default {
   // ---------------------------------------------------------------- placement
   // score = skill + pace*paceWeight - penalties + terrain + noise
   placement: {
-    pcSkill: 63,          // every PC (canon skills live in canon-racers.js)
+    pcSkill: 65,          // every PC (canon skills live in canon-racers.js)
     paceWeight: 7,        // per point of pace earned in events this stage
     injuredPenalty: 15,
     onFootPenalty: 40,    // a Rider whose horse died
@@ -34,7 +34,7 @@ export default {
   canonEventChance: 0.4,   // a canon racer gets their own event this often
   retiredEventChance: 0.25,// a retired racer gets an event this often
   // How likely an event that would kill this tier is (weight multiplier).
-  deathOdds: { pc: 0.45, canon: 0.35, npc: 1 },
+  deathOdds: { pc: 0.65, canon: 0.35, npc: 1 },
   canonImmuneStages: [1],  // canon racers can't die in these stages
 
   // Personality nudges: multiply an event's weight by tag for the FOCUS racer.
@@ -47,6 +47,26 @@ export default {
   },
   // Canon racers rarely start kills and often help (on top of personality).
   canonLean: { kill: 0.35, help: 1.6, sabotage: 0.4, spare: 1.5 },
+
+  // ---------------------------------------------------------------- worthiness
+  // Hidden 0–100 stat, tracked silently from milestone 3 (no screen shows it
+  // until milestone 4). Starting ranges by tier; changes from the DESIGN.md table.
+  worthiness: {
+    start: { pc: [60, 75], canon: [50, 80], npc: [5, 30] },
+    help: 5,   // help or save a racer (events tagged 'help', help choices)
+    spare: 8,  // spare someone you beat (sparedBy)
+  },
+
+  // ---------------------------------------------------------------- choices
+  choices: {
+    timerSeconds: 30,          // host setting (choiceTimer)
+    // Expected sub events per round by the host's frequency setting.
+    // At least one PC always gets one.
+    subEventsPerRound: { low: 1, normal: 2.5, high: 4.5 },
+    maxChancePerPc: 0.85,
+    aiInCharacter: 0.8,        // AI racers pick the ★ option this often
+    recentPenalty: 0.5,        // weight for the guaranteed pick if they had one last round
+  },
 
   // ---------------------------------------------------------------- pacing
   // How long the host shows each card. Time comes mostly from how many words
@@ -64,8 +84,14 @@ export default {
       title: 3.5, page: 2.5, field: 2.5, fallen: 4, stage: 16, standings: 10,
       podium: 7, drumroll: 4, winner: 14, award: 4,
     },
-    // Projected extra time once choices exist (milestone 3), for the sim.
-    projectedStagePlan: 35,
-    projectedSubEventsPerRound: 12,
+    // Choice windows, for the sim's game-length estimate. A window lasts until
+    // the slowest person answers (capped by the timer), plus the host's
+    // announcement. Answer times are log-normal around these medians until
+    // real games give us data: sim --choice-times <exported log.json>.
+    choiceModel: {
+      overhead: { plan: 4, sub: 3 },        // seconds of announcement per window
+      medianSeconds: { plan: 12, sub: 8 },  // a typical person's answer time
+      spread: 0.5,                          // log-normal sigma
+    },
   },
 };
