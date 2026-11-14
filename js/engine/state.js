@@ -22,7 +22,7 @@ export const PHASE = Object.freeze({
   RACING: 'racing', // lobby is locked from here on; only reconnects get in
 });
 
-export const STATE_VERSION = 3; // bump when the saved shape changes (old host saves are ignored)
+export const STATE_VERSION = 4; // bump when the saved shape changes (old host saves are ignored)
 
 export function createGameState(seed) {
   return {
@@ -34,6 +34,9 @@ export function createGameState(seed) {
     settings: {
       minPlayers: DEFAULT_MIN_PLAYERS, // riders needed before the host can start
       canon: Object.fromEntries(CANON.map((c) => [c.id, true])), // canon racer toggles
+      revealSpeed: 'normal', // 'slow' | 'normal' | 'fast' (host auto-advance)
+      autoSkipSide: false,   // skip Side Stories automatically (shorter games)
+      effects: true,         // stage-themed particle effects on the host
     },
     players: [],
     feed: [],

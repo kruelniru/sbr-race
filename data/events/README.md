@@ -42,6 +42,7 @@ Example: `b: { is: 'named', side: 'valentine' }`.
 | effect | value | notes |
 | --- | --- | --- |
 | `dies` | `'cause of death'` | shown on the Fallen screen; add `by: 'a'` for kill credit |
+| `sparedBy` | `'a'` | this racer was beaten and let go by role `a` (Most Merciful award) |
 | `retires` | `true` | out of the points race, still in the story |
 | `injured` | `true` | placement penalty for the rest of the stage |
 | `heal` | `true` | clears an injury |
@@ -65,7 +66,7 @@ focus racer's personality (`rules.js` → `personalityLean`). Canon racers add
 
 - `minor`: a short pace or flavor line, collected on the "Meanwhile on the
   trail..." card. Keep these to one short sentence, and never put a death in one.
-- `kill` (starting a killing), `defend` (killing in self-defense), `help`,
+- `kill` (starting a killing), `defend` (killing in self-defense), `spare`, `help`,
   `hazard`, `risky`, `pace`, `sprint`, `sabotage`, `cold` (ignoring someone in need)
 
 ## Retired racers

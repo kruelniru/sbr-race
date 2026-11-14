@@ -232,6 +232,13 @@ export class HostLobby {
     this.onChange();
   }
 
+  /** Host display preferences (speed, side stories, effects). Allowed any time. */
+  setHostSetting(key, value) {
+    if (!['revealSpeed', 'autoSkipSide', 'effects'].includes(key)) return;
+    this.state.settings[key] = value;
+    this.onChange();
+  }
+
   /** Public feed line to the host's feed and every phone. */
   feed(text, kind, ids) {
     this.#feed(text, kind, ids);

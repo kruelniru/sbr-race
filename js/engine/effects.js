@@ -30,6 +30,16 @@ export const EFFECTS = {
   // by: '<role>'  kill credit for `dies` (handled there).
   by: { fits: () => true, apply: () => {} },
 
+  // sparedBy: '<role>'. This racer was beaten and let go; credits the spare
+  // (Most Merciful award; fights in milestone 5 use this too).
+  sparedBy: {
+    fits: () => true,
+    apply: (ctx, who, role, roles) => {
+      const spareer = roles[role];
+      if (spareer) spareer.spares = (spareer.spares ?? 0) + 1;
+    },
+  },
+
   // retires: true. Out of the points race, still in the story.
   retires: {
     fits: (ctx, who) => who.status === 'racing',

@@ -23,7 +23,7 @@ export default [
 
   // ============================================================ Gyro
   { id: 'gyro-spare', text: "{b} draws on {a}. A spinning steel ball knocks the gun away, and {a} lets {b.them} go.",
-    cast: { a: focus('gyro'), b: 'npc' }, tags: ['help'], weight: 3 },
+    cast: { a: focus('gyro'), b: 'npc' }, effects: { b: { sparedBy: 'a' } }, tags: ['spare'], weight: 3 },
   { id: 'gyro-shares-food', text: '{a} shares {a.their} cheese and dried meat with {b}.',
     cast: { a: focus('gyro'), b: 'named' }, effects: { b: { pace: 1 } }, tags: ['help'], weight: 3 },
   { id: 'gyro-song', text: '{a} hums a made-up song about cheese to pass the miles.',

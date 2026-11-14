@@ -8,7 +8,7 @@ import { makeAiCharacter } from '../js/engine/roster.js';
 import { startRace, runRound, roundTypes, roundLabel } from '../js/engine/race.js';
 import { namedRacers } from '../js/engine/racers.js';
 import { lintEvents, EVENTS } from '../js/engine/events.js';
-import { buildCards } from '../js/engine/reveal.js';
+import { buildCards, cardSeconds } from '../js/engine/reveal.js';
 
 function game(seed, players = 16, { runners = 0.3 } = {}) {
   const state = createGameState(seed);
@@ -74,7 +74,16 @@ test('game invariants over many seeds', () => {
         const pts = res.placements.map((p) => p.points);
         assert.deepEqual(pts.slice(0, 10), [100, 90, 80, 70, 60, 50, 40, 30, 20, 10]);
       }
-      for (const c of buildCards(res)) assert.ok(c.seconds >= 0);
+      for (const c of buildCards(res)) {
+        const [slow, normal, fast] = ['slow', 'normal', 'fast'].map((sp) => cardSeconds(c, sp));
+        assert.ok(normal > 0, `${c.kind} has a duration`);
+        assert.ok(slow >= normal && normal >= fast, `${c.kind}: slow >= normal >= fast`);
+      }
+      // Side Stories: minor lines always; named deaths never.
+      for (const e of res.events) {
+        if (e.minor) assert.ok(e.side);
+        if (e.death && res.deaths.some((id) => e.ids.includes(id))) assert.ok(!e.side, 'named deaths are Main Story');
+      }
     }
   }
 });
@@ -85,5 +94,21 @@ test('dead racers stay dead and get no more events', () => {
   for (const res of results) {
     for (const e of res.events) for (const id of e.ids) assert.ok(!dead.has(id), `${id} acted after dying`);
     for (const id of res.deaths) dead.add(id);
+  }
+});
+
+test('finale: podium, awards, memorial', () => {
+  for (let g = 0; g < 10; g++) {
+    const { state, results } = game('fin-' + g);
+    const f = results.at(-1).finale;
+    assert.ok(f, 'last round carries the finale');
+    assert.ok(f.podium.length <= 3);
+    for (let i = 1; i < f.podium.length; i++) assert.ok(f.podium[i - 1].points >= f.podium[i].points);
+    const dead = namedRacers(state).filter((r) => r.status === 'dead');
+    assert.equal(f.memorial.length, dead.length, 'memorial lists every named death');
+    for (const a of f.awards) assert.ok(a.winners.length > 0 && a.title && a.detail);
+    const cards = buildCards(results.at(-1)).map((c) => c.kind);
+    const order = ['podium', 'drumroll', 'awards', 'survivors', 'memorial', 'the-end'].filter((k) => cards.includes(k));
+    assert.deepEqual(order.map((k) => cards.indexOf(k)), [...order.map((k) => cards.indexOf(k))].sort((a, b) => a - b));
   }
 });

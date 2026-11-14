@@ -51,6 +51,7 @@ export function lintEvents(events = EVENTS) {
       if (!e.cast[k]) problems.push(`${where}: effects for unknown role ${k}`);
       for (const key of Object.keys(eff)) if (!EFFECT_KEYS.includes(key)) problems.push(`${where}: unknown effect "${key}"`);
       if (eff.by && !e.cast[eff.by]) problems.push(`${where}: by: "${eff.by}" is not a role`);
+      if (eff.sparedBy && !e.cast[eff.sparedBy]) problems.push(`${where}: sparedBy: "${eff.sparedBy}" is not a role`);
     }
     for (const r of e.when.rounds ?? []) if (!ROUND_TYPES.includes(r)) problems.push(`${where}: unknown round type "${r}"`);
     if (!(e.weight > 0)) problems.push(`${where}: weight must be > 0`);
@@ -170,6 +171,9 @@ function resolve(ctx, e, roles) {
     display[k] = { name: who.name ?? 'a rider from the pack', pronouns: who.pronouns, horse: who.horse ?? who.lostHorse };
   }
   const text = render(e.text, display);
+  // Main Story: involves someone still in the race (PC, canon, or a breakout
+  // NPC). Everything else (retired racers, NPC-only) is a Side Story.
+  const inMain = Object.values(roles).some((w) => (w.tier !== 'npc' || w.breakout) && w.status === 'racing');
 
   for (const [k, effs] of Object.entries(e.effects)) {
     for (const [key, value] of Object.entries(effs)) {
@@ -186,8 +190,15 @@ function resolve(ctx, e, roles) {
     }
   }
   ctx.eventCounts[e.id] = (ctx.eventCounts[e.id] ?? 0) + 1;
-  const death = Object.values(e.effects).some((x) => x.dies);
+  const effects = Object.entries(e.effects);
+  const death = effects.some(([, x]) => x.dies);
+  const namedDeath = effects.some(([k, x]) => x.dies && roles[k].tier !== 'npc');
+  const minor = e.minor && !death;
   // Named racers in the line, so screens can highlight them (NPCs stay plain).
   const names = Object.values(roles).filter((w) => w.tier !== 'npc').map((w) => ({ name: w.name, tier: w.tier }));
-  return { eventId: e.id, text, ids, names, minor: e.minor && !death, death, tags: e.tags };
+  return {
+    eventId: e.id, text, ids, names, minor, death, tags: e.tags,
+    // Side Story: minor lines, retired racers, NPC-only. A named death is always Main Story.
+    side: minor || (!inMain && !namedDeath),
+  };
 }

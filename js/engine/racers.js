@@ -18,7 +18,9 @@ function raceFields({ tier, skill, mount, horse }) {
     injured: false, // this stage
     points: 0,
     kills: 0,
+    spares: 0,
     placements: [], // [{ stage, rank }]
+    rankHistory: [], // overall standings rank after each stage (comeback award)
     death: null, // { cause, stage, round, by }
     retiredAt: null,
   };
@@ -68,10 +70,9 @@ export function killRacer(ctx, who, cause, killer) {
     by: killer ? killer.name : null,
   };
   ctx.result.deaths.push(who.id);
-  ctx.state.race.fallenSince.push({
-    id: who.id, name: who.name, tier: who.tier, picture: who.picture ?? null, cause,
-    by: killer?.name ?? null,
-  });
+  const fallen = { id: who.id, name: who.name, tier: who.tier, cause, by: killer?.name ?? null, stage: ctx.stage.id, round: ctx.roundLabel };
+  ctx.state.race.fallenSince.push(fallen);
+  ctx.state.race.memorial.push(fallen);
 }
 
 export function retireRacer(ctx, who) {

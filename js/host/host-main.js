@@ -8,12 +8,15 @@ import { HostLobby } from './lobby.js';
 import { loadSavedGame, saveGame, clearSavedGame } from './persist.js';
 import { addBots, removeBots } from './debug.js';
 import { RaceHost } from './race-host.js';
-import { raceView } from './race-view.js';
+import { raceView, sceneFor } from './race-view.js';
+import { Backdrop } from './backdrop.js';
 import CANON from '../../data/canon-racers.js';
 import { h, $, mount, avatar } from '../ui/dom.js';
 
 const DEBUG = new URLSearchParams(location.search).has('debug');
 const app = $('#app');
+const backdrop = new Backdrop($('#backdrop'));
+backdrop.setScene({ stage: 0, night: false }, true);
 
 let lobby = null;
 let raceHost = null;
@@ -124,7 +127,9 @@ function randomCode() {
 function render() {
   if (!lobby) return;
   const view = hostScreenView(lobby.state);
-  if (view.phase === PHASE.RACING && raceHost) return renderRace(view);
+  const racing = view.phase === PHASE.RACING && raceHost;
+  backdrop.setScene(racing ? sceneFor(lobby.state, raceHost) : { stage: 0, night: false }, view.settings.effects !== false);
+  if (racing) return renderRace(view);
   const count = view.players.length;
   const minPlayers = view.settings.minPlayers;
   const joinUrl = new URL('phone.html', location.href);
@@ -264,6 +269,15 @@ function lobbySettings(view) {
       }, 'Fill with AI racers'),
     ),
     aiCount > 0 && h('button', { class: 'btn btn-small btn-quiet', onclick: () => lobby.removeAllAi() }, `Remove all AI (${aiCount})`),
+    h('label', { class: 'setting' }, h('span', {}, 'Reveal speed'),
+      h('select', { onchange: (e) => lobby.setHostSetting('revealSpeed', e.target.value) },
+        ['slow', 'normal', 'fast'].map((v) => h('option', { value: v, selected: view.settings.revealSpeed === v }, v[0].toUpperCase() + v.slice(1))))),
+    h('label', { class: 'setting' },
+      h('input', { type: 'checkbox', checked: view.settings.autoSkipSide, onchange: (e) => lobby.setHostSetting('autoSkipSide', e.target.checked) }),
+      h('span', {}, 'Skip side stories (shorter game)')),
+    h('label', { class: 'setting' },
+      h('input', { type: 'checkbox', checked: view.settings.effects, onchange: (e) => lobby.setHostSetting('effects', e.target.checked) }),
+      h('span', {}, 'Background effects')),
     h('div', { class: 'setting canon-toggles' },
       h('span', {}, 'Canon racers'),
       h('div', { class: 'chips' }, CANON.map((c) => {

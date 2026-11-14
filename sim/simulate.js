@@ -67,7 +67,8 @@ function newStats() {
     perStage: STAGES.map(() => ({ pcDead: 0, pcRetired: 0, canonDead: 0, canonRetired: 0, npcDied: 0, npcRetired: 0, npcLeft: 0, horsesLost: 0 })),
     pcSurvive: 0, canonSurvive: 0, npcSurvive: 0, pcTotal: 0, canonTotal: 0,
     winnerPoints: [], winnerTier: { pc: 0, canon: 0, npc: 0 },
-    rounds: [], minutes: [], projected: [], fullLines: [], minorLines: [],
+    rounds: [], minutes: [], minutesNoSide: [], projected: [], projectedNoSide: [], mainLines: [], sideLines: [], minorLines: [],
+    spares: 0, awards: {},
     kills: [], maxKills: [], killsPc: 0, killsCanon: 0,
     mount: { horse: { n: 0, points: 0, survive: 0, placements: [] }, runner: { n: 0, points: 0, survive: 0, placements: [] } },
     eventCounts: {},
@@ -93,6 +94,7 @@ function collect(S, { state, results }) {
     if (r.status === 'racing') S[r.tier === 'pc' ? 'pcSurvive' : 'canonSurvive']++;
     if (r.onFoot) S.perStage[0].horsesLost++; // total, shown in summary
     S.kills.push(r.kills);
+    S.spares += r.spares ?? 0;
     if (r.tier === 'pc') {
       S.killsPc += r.kills;
       const m = S.mount[r.mount];
@@ -104,28 +106,40 @@ function collect(S, { state, results }) {
   }
   S.maxKills.push(Math.max(...racers.map((r) => r.kills)));
 
-  let seconds = 0, full = 0, minor = 0;
+  let seconds = 0, secondsNoSide = 0, main = 0, side = 0, minor = 0;
   for (const res of results) {
     const st = S.perStage[res.stage.id - 1];
     st.npcDied += res.fieldReport.died;
     st.npcRetired += res.fieldReport.retired;
     if (res.type === 'finish') st.npcLeft += res.fieldReport.remain;
-    seconds += cardsSeconds(buildCards(res));
-    for (const e of res.events) (e.minor ? minor++ : full++);
+    const cards = buildCards(res);
+    seconds += cardsSeconds(cards);
+    secondsNoSide += cardsSeconds(cards, 'normal', { skipSide: true });
+    for (const e of res.events) {
+      if (e.minor) minor++;
+      else if (e.side) side++;
+      else main++;
+    }
     for (const [id, n] of Object.entries(res.eventCounts)) S.eventCounts[id] = (S.eventCounts[id] ?? 0) + n;
   }
   const T = RULES.timing;
+  const choices = STAGES.length * T.projectedStagePlan + results.length * T.projectedSubEventsPerRound;
   S.rounds.push(results.length);
   S.minutes.push(seconds / 60);
-  S.projected.push((seconds + STAGES.length * T.projectedStagePlan + results.length * T.projectedSubEventsPerRound) / 60);
-  S.fullLines.push(full);
+  S.minutesNoSide.push(secondsNoSide / 60);
+  S.projected.push((seconds + choices) / 60);
+  S.projectedNoSide.push((secondsNoSide + choices) / 60);
+  S.mainLines.push(main);
+  S.sideLines.push(side);
   S.minorLines.push(minor);
 
-  const final = results.at(-1).final;
-  if (final.winner) {
-    S.winnerPoints.push(final.winner.points);
-    S.winnerTier[final.winner.tier]++;
+  const finale = results.at(-1).finale;
+  const winner = finale.podium[0];
+  if (winner) {
+    S.winnerPoints.push(winner.points);
+    S.winnerTier[winner.tier]++;
   }
+  for (const a of finale.awards) S.awards[a.title] = (S.awards[a.title] ?? 0) + 1;
   S.npcSurvive += state.field.racing;
   S.packNamed += state.field.kept.filter((n) => n.packLeader).length;
   const f = state.field;
@@ -169,12 +183,14 @@ function printStats(S) {
   }
 
   console.log('\nKills');
-  console.log(`  per game: by PCs ${f1(S.killsPc / g)}, by canon ${f1(S.killsCanon / g)}; most by one racer avg ${f1(avg(S.maxKills))}`);
+  console.log(`  per game: by PCs ${f1(S.killsPc / g)}, by canon ${f1(S.killsCanon / g)}; most by one racer avg ${f1(avg(S.maxKills))}; spares ${f1(S.spares / g)}`);
+  console.log(`  awards given: ${Object.entries(S.awards).map(([k, n]) => `${k} ${pct(n, g)}`).join(' · ')}`);
   console.log(`  pack leaders named (placed top 10): ${f1(S.packNamed / g)} per game`);
 
   console.log('\nLength');
-  console.log(`  rounds ${f1(avg(S.rounds))} · full lines ${f1(avg(S.fullLines))} · minor lines ${f1(avg(S.minorLines))}`);
-  console.log(`  reveal time ${f1(avg(S.minutes))} min · projected with choices (milestone 3) ${f1(avg(S.projected))} min  [target 30–40]`);
+  console.log(`  rounds ${f1(avg(S.rounds))} · Main Story lines ${f1(avg(S.mainLines))} · side lines ${f1(avg(S.sideLines))} · minor lines ${f1(avg(S.minorLines))}`);
+  console.log(`  reveal at Normal speed:   everything ${f1(avg(S.minutes))} min · side stories skipped ${f1(avg(S.minutesNoSide))} min`);
+  console.log(`  + projected choices (M3): everything ${f1(avg(S.projected))} min · side stories skipped ${f1(avg(S.projectedNoSide))} min  [target 30–40]`);
 
   const counts = EVENTS.map((e) => [e.id, S.eventCounts[e.id] ?? 0]).sort((a, b) => b[1] - a[1]);
   console.log('\nMost used events (per game)');
@@ -202,11 +218,14 @@ function printGame(state, results) {
       P(`\n${'='.repeat(70)}\nSTAGE ${stage}: ${res.stage.name.toUpperCase()}\n${res.stage.from} → ${res.stage.to}\n${'='.repeat(70)}`);
     }
     P(`\n--- ${res.label} ---`);
-    for (const e of res.events.filter((x) => !x.minor)) P(`${e.death ? '✝ ' : '  '}${e.text}`);
+    for (const e of res.events.filter((x) => !x.side)) P(`${e.death ? '✝ ' : '  '}${e.text}`);
+    const sideFull = res.events.filter((x) => x.side && !x.minor);
     const minor = res.events.filter((x) => x.minor);
+    if (sideFull.length || minor.length) P('  -- Side stories --');
+    for (const e of sideFull) P(`  ${e.death ? '✝ ' : '  '}${e.text}`);
     if (minor.length) {
-      P('  Meanwhile on the trail...');
-      for (const e of minor) P(`    · ${e.text}`);
+      P('    Meanwhile on the trail...');
+      for (const e of minor) P(`      · ${e.text}`);
     }
     P(`  [Field] ${res.fieldReport.text}`);
     if (res.fallen) {
@@ -219,15 +238,23 @@ function printGame(state, results) {
       P('  STANDINGS');
       for (const s of res.standings.slice(0, 6)) P(`    ${s.name}${s.status !== 'racing' ? ` (${s.status})` : ''}  ${s.points}`);
     }
-    if (res.final) {
-      P(`\n${'='.repeat(70)}\nNEW YORK`);
-      P(`Winner: ${res.final.winner ? `${res.final.winner.name} with ${res.final.winner.points} points` : 'nobody'}`);
-      P(`Reached New York (${res.final.survivors.length} named): ${res.final.survivors.map((s) => s.name).join(', ')}`);
-      P(`From the field: ${res.final.fieldFinished} riders.`);
-    }
+    if (res.finale) printFinale(P, res.finale);
   }
-  const seconds = results.reduce((s, r) => s + cardsSeconds(buildCards(r)), 0);
-  P(`\n(${results.length} rounds, ~${(seconds / 60).toFixed(0)} min of reveals)`);
+  const all = results.reduce((s, r) => s + cardsSeconds(buildCards(r)), 0);
+  const noSide = results.reduce((s, r) => s + cardsSeconds(buildCards(r), 'normal', { skipSide: true }), 0);
+  P(`\n(${results.length} rounds · reveals at Normal speed: ~${(all / 60).toFixed(0)} min, or ~${(noSide / 60).toFixed(0)} min skipping side stories)`);
+}
+
+function printFinale(P, f) {
+  P(`\n${'='.repeat(70)}\nNEW YORK · TRINITY CHURCH\n${'='.repeat(70)}`);
+  for (const p of [...f.podium].reverse()) P(`  ${['', '1st', '2nd', '3rd'][p.rank]}: ${p.name}  ${p.points} points${p.rank === 1 ? '   <-- WINNER' : ''}`);
+  if (!f.podium.length) P('  Nobody reached New York.');
+  P('\n  AWARDS');
+  for (const a of f.awards) P(`    ${a.title}: ${a.winners.map((w) => w.name).join(' & ')} (${a.detail})`);
+  P(`\n  REACHED NEW YORK (${f.survivors.length} named, plus ${f.fieldFinished} from the field)`);
+  P(`    ${f.survivors.map((s) => s.name).join(', ')}`);
+  P(`\n  THE FALLEN (${f.memorial.length})`);
+  for (const m of f.memorial) P(`    ✝ ${m.name}: ${m.cause}${m.by ? `, by ${m.by}` : ''} (Stage ${m.stage}, ${m.round})`);
 }
 
 function table(head, rows) {

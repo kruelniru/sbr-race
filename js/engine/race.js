@@ -15,7 +15,8 @@ import STAGES from '../../data/stages.js';
 import HORSES from '../../data/horse-names.js';
 import { Rng } from './rng.js';
 import { readyPlayers } from './state.js';
-import { initPcRacer, makeCanonRacer, canonDefs, namedRacers } from './racers.js';
+import { initPcRacer, makeCanonRacer, canonDefs, namedRacers, findRacer } from './racers.js';
+import { buildFinale } from './finale.js';
 import { initField, fieldAttrition, fieldReportText } from './field.js';
 import { runMainEvent } from './events.js';
 import { placeStage, standings } from './placement.js';
@@ -60,6 +61,8 @@ export function startRace(state) {
     over: false,
     fallenSince: [],
     npcDeadSince: 0,
+    memorial: [], // every named racer who died, in order (finale)
+    history: [], // host-side: earlier rounds' reveals, for the Back button
     reveal: null, // host-side: { cards, index }
   };
   state.rngState = rng.getState();
@@ -128,6 +131,10 @@ export function runRound(state) {
   if (type === 'finish') {
     result.placements = placeStage(state, rng, stage);
     result.standings = standings(state);
+    result.standings.forEach((row, i) => {
+      const r = findRacer(state, row.id);
+      if (r && r.status === 'racing') r.rankHistory.push(i + 1);
+    });
   }
 
   // 5. The Fallen.
@@ -147,23 +154,11 @@ export function runRound(state) {
     if (race.stageIdx >= STAGES.length) {
       race.over = true;
       result.over = true;
-      result.final = finalSummary(state);
+      result.finale = buildFinale(state);
     }
   }
   state.rngState = rng.getState();
   return result;
-}
-
-/** End of race (the full results screen comes in milestone 6). */
-function finalSummary(state) {
-  const finishers = namedRacers(state).filter((r) => r.status === 'racing');
-  const npcFinishers = state.field.packLeaders.filter((n) => n.status === 'racing' && n.name);
-  const ranked = [...finishers, ...npcFinishers].sort((a, b) => b.points - a.points);
-  return {
-    winner: ranked[0] ? { id: ranked[0].id, name: ranked[0].name, points: ranked[0].points, tier: ranked[0].tier } : null,
-    survivors: finishers.map((r) => ({ id: r.id, name: r.name, tier: r.tier, points: r.points })),
-    fieldFinished: state.field.racing,
-  };
 }
 
 /** Header for the current (next) round, for screens. */

@@ -52,9 +52,16 @@ export default [
   { id: 'common-sabotage', text: "{a} cuts {b}'s cinch strap at a water stop. {b} loses an hour fixing it.",
     cast: { a: 'focus', b: { is: 'named', hasHorse: true } }, effects: { a: { points: -10 }, b: { pace: -2 } }, tags: ['sabotage'], weight: 1.2 },
 
+  { id: 'common-spare-robber', text: '{b} tries to rob {a} at gunpoint. {a} knocks the gun away and lets {b.them} walk.',
+    cast: { a: 'focus', b: 'npc' }, effects: { b: { sparedBy: 'a' } }, tags: ['spare'], weight: 2 },
+  { id: 'common-spare-named', text: '{b} draws on {a} and misses. {a} has {b.them} dead to rights, then lowers the gun.',
+    cast: { a: 'focus', b: 'named' }, effects: { b: { sparedBy: 'a' } }, tags: ['spare'], weight: 0.8 },
+
   // ------------------------------------------------------------ night
   { id: 'night-camp-thief', text: "{b} creeps up to {a}'s camp to steal {a.their} water. {a} wakes and shoots {b.them} dead.",
     cast: { a: 'focus', b: 'npc' }, effects: { b: { dies: 'shot stealing water', by: 'a' } }, tags: ['defend'], when: { rounds: ['night'] }, weight: 2.5 },
+  { id: 'night-spare-thief', text: '{a} catches {b} going through {a.their} saddlebags and sends {b.them} off with a warning.',
+    cast: { a: 'focus', b: 'npc' }, effects: { b: { sparedBy: 'a' } }, tags: ['spare'], when: { rounds: ['night'] }, weight: 2 },
   { id: 'night-robbed', text: "{b} robs {a}'s camp in the night, taking food and water.",
     cast: { a: 'focus', b: 'npc' }, effects: { a: { pace: -1 } }, tags: ['hazard'], when: { rounds: ['night'] }, weight: 2.5 },
   { id: 'night-wolves', text: "Wolves circle {a}'s campfire all night. {a} survives, but {b}, camped nearby, does not.",

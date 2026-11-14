@@ -81,8 +81,9 @@ js/engine/           pure game logic, no DOM (Node can import it)
   racers.js          PCs and canon racers share one racer shape
   field.js           the NPC field, pack leaders, named NPCs, field reports
   placement.js       Finish Line scores, points, standings
-  reveal.js          round result -> host cards with timings (shared with the sim)
-js/host/             host-main.js, lobby.js, race-host.js (reveal controller), race-view.js, persist.js, debug.js
+  reveal.js          round result -> host cards + text-based timing (shared with the sim)
+  finale.js          podium, awards, memorial, and the registry for later finale sections
+js/host/             host-main.js, lobby.js, race-host.js (reveal, Back, skipping), race-view.js, backdrop.js, persist.js, debug.js
 js/phone/            phone-main.js, character-form.js, image.js, wake-lock.js, feed.js
 js/ui/dom.js         small DOM helpers
 data/                game content, separate from the engine
@@ -95,20 +96,47 @@ sim/simulate.js      headless balance simulator
 tests/               node --test
 ```
 
-## The race (milestone 2)
+## The race
 
 - Each stage alternates Day and Night rounds, and the last round is the Finish Line.
   Every alive PC gets one main event per round. Canon racers get one in about
-  50% of rounds and retired racers in about 25%; both always appear when another
+  40% of rounds and retired racers in about 25%; both always appear when another
   event casts them.
-- Small `minor` events go on one "Meanwhile on the trail..." card, along with the
-  NPC field report. The Fallen show after Night rounds and Finish Lines.
 - Placements at each Finish Line rank named racers plus 6 "pack leader" NPCs.
   A pack leader gets a name when it places top 10.
 - Riders have a named horse. If it dies, they continue on foot (−40). Runners never
   have a horse: rough terrain helps them, open flats hurt them.
-- The host auto-advances cards and stops at stage results. Phones get each line
-  in the mini feed as it's revealed, and their own status after the round.
+
+### What the host shows each round
+1. **Main Story**: every event with a PC, canon racer or breakout NPC who's still racing.
+2. **Side Stories**: retired racers and NPC-only lines, then "Meanwhile on the
+   trail..." (up to 4 short lines; the rest go to phones only) with the NPC field
+   report. Use the **Skip side stories** button, or the setting that skips them
+   automatically for a shorter game.
+3. **The Fallen** (after Night rounds and Finish Lines), then **stage results**
+   and **standings**. These always show.
+
+**Host controls:** ◂ Back (view-only: steps through earlier cards and earlier
+rounds, changes nothing), Pause/Auto, Next, Back to live, Skip side stories.
+**Speed** (Slow / Normal / Fast) scales how long each card stays up, based on
+how many words are on it (`rules.js` → `timing`). **Effects** toggles the
+stage-themed backgrounds (one canvas, off under reduced motion; night rounds
+use a darker palette).
+
+Phones get each line in the mini feed as it's revealed, including skipped side
+stories, and their own status after the round.
+
+### The finale
+After the last Finish Line: 3rd place, 2nd place, a dramatic pause, the
+winner, then awards (Most Kills, Most Merciful, Best Runner, Biggest Comeback),
+the racers who reached New York, a memorial for the Fallen, and the final
+standings.
+
+Later milestones add sections, such as the **secrets reveal** (Valentine,
+Worthiness, corpse parts). Use `registerFinaleSection()` in
+`js/engine/finale.js` and a renderer in `FINALE_RENDERERS` in
+`js/host/race-view.js`. Sections with `order` ≥ 100 come after the memorial,
+as the last big moment.
 
 ## Balance sim
 
