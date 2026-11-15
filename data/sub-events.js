@@ -297,3 +297,54 @@ export const RIVAL = {
     missed: '{a} never catches up with {b} this stage.',
   },
 };
+
+// ------------------------------------------------------------ milestone 4: Stands
+// These prompts resolve in code (js/engine/choices.js), not from outcome
+// lists: the Devil's Palm uses rules.palm.bands, the Arrow rules.arrows,
+// and Rokakaka removes a Stand. Arrow and Rokakaka prompts are SECRET: never
+// named on the host, and their results never reach the stream (except a death).
+
+// The Edge of the Devil's Palm: random in Stages 2–3 for racers without a
+// Stand, and guaranteed once that stage by the "Seek the Devil's Palm" plan.
+export const PALM = {
+  id: 'sub-palm', title: "The edge of the Devil's Palm", special: 'palm', weight: 1.5,
+  text: "The ground ahead drops away into a Devil's Palm. People say it gives some riders a gift, and swallows the rest.",
+  textHasStand: "You've found a Devil's Palm. You already have a Stand; the Palm has nothing more to give you.",
+  cast: { a: { is: 'focus', hasStand: false } }, when: { stages: [2, 3] },
+  options: [
+    { id: 'in', label: 'Go in', hint: 'A Stand, nothing, lost, or death. Worthiness decides.', lean: L(1.2, 2, 0.3, 3, 2.5) },
+    { id: 'back', label: 'Turn back', hint: 'Safe', lean: L(2, 1, 4, 0.5, 1.2) },
+  ],
+  lines: {
+    out: "{a} walks into the Devil's Palm and walks back out at dusk, silent.",
+    lost: "{a} loses a day walking in circles in the Devil's Palm.",
+    retired: "{a} wanders the Devil's Palm for days, and gives up the race.",
+    dies: "{a} walks into the Devil's Palm and never comes out.",
+    back: "{a} turns back at the edge of the Devil's Palm.",
+    missed: "{a} searches for the Devil's Palm all stage, but never finds it.",
+  },
+};
+
+export const ARROW = {
+  id: 'sub-arrow', title: 'You found a Stand Arrow', special: 'arrow', secret: true,
+  text: 'An old arrowhead glints in the dirt, still sharp. You can feel it humming.',
+  textHasStand: 'An old arrowhead glints in the dirt, still sharp. The Arrow won\'t take: you already have a Stand.',
+  options: [
+    { id: 'pierce', label: 'Pierce yourself now', hint: 'Survive it and awaken a Stand. Worthiness decides.', lean: L(1, 2.5, 0.4, 3, 2), noStandOnly: true },
+    { id: 'keep', label: 'Keep it for later', hint: 'Use it from your phone in any decision', lean: L(2, 1.5, 2, 1, 3) },
+    { id: 'leave', label: 'Leave it', hint: 'Walk away', lean: L(1.2, 0.3, 1.5, 0.3, 0.3) },
+  ],
+  deathLine: '{a} is found at dawn with a strange arrow through {a.their} chest.',
+  deathCause: 'pierced by a strange arrow',
+};
+
+export const ROKAKAKA = {
+  id: 'sub-rokakaka', title: 'You found a Rokakaka fruit', special: 'rokakaka', secret: true,
+  text: 'A strange fruit grows from a dead branch. Eat it, and your Stand is gone: equivalent exchange.',
+  textNoStand: 'A strange fruit grows from a dead branch. They say it takes a Stand away from whoever eats it.',
+  options: [
+    { id: 'eat', label: 'Eat it now', hint: 'Your Stand leaves you, for good', lean: L(0.3, 0.3, 0.5, 0.3, 0.4), standOnly: true },
+    { id: 'keep', label: 'Keep it', hint: 'Use it from your phone in any decision', lean: L(2, 2, 2, 2, 3) },
+    { id: 'leave', label: 'Leave it', hint: 'Walk away', lean: L(1, 1, 1, 1, 1) },
+  ],
+};

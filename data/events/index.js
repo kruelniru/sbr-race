@@ -13,8 +13,11 @@ import stage6 from './stage-6.js';
 import stage7 from './stage-7.js';
 import stage8 from './stage-8.js';
 import stage9 from './stage-9.js';
+import stands from './stands.js';
+import palm from './palm.js';
 
 export default [
   ...common, ...finish, ...runners, ...retired, ...canon,
   ...stage1, ...stage2, ...stage3, ...stage4, ...stage5, ...stage6, ...stage7, ...stage8, ...stage9,
+  ...stands, ...palm,
 ];

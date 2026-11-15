@@ -4,6 +4,8 @@
 import RULES from '../../data/rules.js';
 import CANON from '../../data/canon-racers.js';
 import { readyPlayers } from './state.js';
+import { STAND_BY_ID } from '../../data/stands.js';
+import { standOwnerDied } from './stands.js';
 
 /** Fields every named racer has during a race. */
 function raceFields({ tier, skill, mount, horse, worthiness }) {
@@ -26,6 +28,8 @@ function raceFields({ tier, skill, mount, horse, worthiness }) {
     worthiness, // hidden 0–100 (milestone 4 shows it); never in a public view
     plan: null, // this stage's Stage Plan id (PCs)
     rival: null, // Hunt a rival: { targetId, done }
+    palmQuest: null, // Seek the Devil's Palm: { done }
+    stand: null, // see stands.js; never in a public view until revealed
   };
 }
 
@@ -59,8 +63,21 @@ export function makeCanonRacer(def, horse, worthiness) {
     side: def.side ?? null,
     luck: def.luck ?? 0,
     picture: null,
-    ...raceFields({ tier: 'canon', skill: def.skill, mount: def.mount, horse: def.horse ?? horse, worthiness: def.worthiness ?? worthiness }),
+    animal: def.animal ?? null, // 'camel' (Avdul); text says camel, not horse
+    palm: !!def.palm,           // may walk into a Devil's Palm
+    canonStand: def.stand ?? null,
+    ...raceFields({
+      tier: 'canon', skill: def.skill, mount: def.mount,
+      horse: def.animal ? null : def.horse ?? horse, worthiness: def.worthiness ?? worthiness,
+    }),
   };
+}
+
+/** Canon racers who start with their Stand get it now (Johnny and Diego awaken theirs mid-race). */
+export function canonStartingStand(racer) {
+  const def = STAND_BY_ID[racer.canonStand];
+  if (!def || def.awakens) return null;
+  return def;
 }
 
 export function canonDefs(state) {
@@ -70,6 +87,14 @@ export function canonDefs(state) {
 /** Every named racer: PCs then canon. */
 export function namedRacers(state) {
   return [...readyPlayers(state), ...(state.canon ?? [])];
+}
+
+/** Any racer by id, including tracked NPCs (breakouts, pack leaders). */
+export function findRacerAnywhere(state, id) {
+  return findRacer(state, id)
+    ?? state.field?.packLeaders.find((n) => n.id === id)
+    ?? state.field?.kept.find((n) => n.id === id)
+    ?? null;
 }
 
 export function findRacer(state, id) {
@@ -88,6 +113,7 @@ export function killRacer(ctx, who, cause, killer) {
   const fallen = { id: who.id, name: who.name, tier: who.tier, cause, by: killer?.name ?? null, stage: ctx.stage.id, round: ctx.roundLabel };
   ctx.state.race.fallenSince.push(fallen);
   ctx.state.race.memorial.push(fallen);
+  standOwnerDied(ctx.state, who);
 }
 
 export function retireRacer(ctx, who) {

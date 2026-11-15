@@ -49,12 +49,69 @@ export default {
   canonLean: { kill: 0.35, help: 1.6, sabotage: 0.4, spare: 1.5 },
 
   // ---------------------------------------------------------------- worthiness
-  // Hidden 0–100 stat, tracked silently from milestone 3 (no screen shows it
-  // until milestone 4). Starting ranges by tier; changes from the DESIGN.md table.
+  // Hidden 0–100 stat. The owner's phone shows a bar (no number) from
+  // milestone 4; nobody else sees it until the finale's secrets reveal.
+  // Canon racers have their own value in canon-racers.js (worthiness).
   worthiness: {
-    start: { pc: [60, 75], canon: [50, 80], npc: [5, 30] },
-    help: 5,   // help or save a racer (events tagged 'help', help choices)
-    spare: 8,  // spare someone you beat (sparedBy)
+    start: { pc: [50, 50], canon: [50, 80], npc: [5, 30] },
+    help: 5,        // help or save a racer (events tagged 'help', help choices)
+    spare: 8,       // spare someone you beat (sparedBy)
+    palmSurvive: 5, // walk out of the Devil's Palm alive
+    cruel: -5,      // kill someone helpless or fleeing (events tagged 'cruel')
+    barSteps: 20,   // the phone gets a coarse level (0–20), never the number
+  },
+
+  // ---------------------------------------------------------------- Stands
+  // Tier odds by source, at Worthiness 50: [legendary, rare, common] in %.
+  // Worthiness shifts them: every point above 50 moves 0.2 points into
+  // Legendary, taken from the lowest tier (Common; Rare for corpse parts),
+  // and the reverse below 50. That's ±10 at Worthiness 0 or 100.
+  standOdds: {
+    corpse: [40, 60, 0],   // milestone 5; never Common
+    arrow: [20, 40, 40],
+    palm: [10, 30, 60],
+    shiftPer10: 2,
+  },
+  // What a Stand does for its user, by tier. No Stand ever wins a fight or a
+  // race outright: these shift odds, and randomness stays on top.
+  standTier: {
+    common: { placement: 1, hazardDeath: 0.92, fightBonus: 4 },
+    rare: { placement: 2, hazardDeath: 0.85, fightBonus: 8 },
+    legendary: { placement: 2, hazardDeath: 0.8, fightBonus: 12 }, // fightBonus: hook for milestone 5
+  },
+  standEventWeight: 1.5,     // weight multiplier on Stand events for Stand users
+
+  // ---------------------------------------------------------------- Devil's Palm (Stages 2–3)
+  // Outcome odds (%) for a racer who goes in, by Worthiness band (min is inclusive).
+  palm: {
+    stages: [2, 3],
+    bands: [
+      { min: 75, stand: 65, nothing: 27, lost: 6, dies: 2 },
+      { min: 60, stand: 55, nothing: 30, lost: 10, dies: 5 },
+      { min: 45, stand: 45, nothing: 30, lost: 15, dies: 10 },
+      { min: 25, stand: 30, nothing: 30, lost: 20, dies: 20 },
+      { min: 0, stand: 15, nothing: 25, lost: 25, dies: 35 },
+    ],
+    lostPace: -2,
+    lostRetire: 0.25,       // a lost racer retires instead this often
+    npcEventWeight: 1.2,    // NPCs wandering into the Palm (main event)
+    breakoutCap: 5,         // NPCs promoted to named breakouts per game
+  },
+
+  // ---------------------------------------------------------------- Stand Arrows (our addition)
+  arrows: {
+    perGame: [2, 4],        // surface this many times (seeded)
+    stages: [2, 8],         // between these stages
+    // Survive the piercing (%), by Worthiness band.
+    survive: [{ min: 75, p: 95 }, { min: 60, p: 88 }, { min: 45, p: 78 }, { min: 25, p: 65 }, { min: 0, p: 50 }],
+    aiUseChance: 0.35,      // an AI racer with a kept Arrow uses it in a later window this often
+  },
+
+  // ---------------------------------------------------------------- Rokakaka (our addition)
+  rokakaka: {
+    guaranteed: 2,          // always found by human PCs, by the end of lastStage
+    thirdChance: 0.35,      // a third may drop
+    stages: [2, 6],
   },
 
   // ---------------------------------------------------------------- choices

@@ -10,7 +10,9 @@
 //   {racer.theirs}     possessive pronoun                 -> "hers" / "theirs"
 //   {racer.themself}   reflexive                          -> "herself" / "themself"
 //   Capitalize the first letter to capitalize the word: {racer.They}, {racer.Their}
-//   {racer.horse}      the racer's horse's name            -> "Valkyrie"
+//   {racer.horse}      the racer's horse's name            -> "Valkyrie" (a camel rider: "his camel")
+//   {racer.steed}      the kind of mount                   -> "horse" / "camel"
+//   {racer.stand}      the racer's Stand's name            -> "Star Platinum" (Stand events only)
 //
 //   {racer:is/are}     verb agreement with the PRONOUN    -> "is" (she) / "are" (they)
 //   {racer:s}          shorthand for {racer:s/}           -> "ride{racer:s}" = "rides" / "ride"
@@ -42,7 +44,9 @@ export function render(template, roles) {
     if (!sep) return who.name;
 
     if (sep === '.') {
-      if (rest === 'horse') return who.horse || 'the horse';
+      if (rest === 'horse') return who.horse || (who.steed === 'camel' ? `${p.their} camel` : 'the horse');
+      if (rest === 'steed') return who.steed || 'horse';
+      if (rest === 'stand') return who.stand || unknown(whole, 'this racer has no Stand');
       const lower = rest.charAt(0).toLowerCase() + rest.slice(1);
       if (!FORMS.includes(lower)) return unknown(whole, `unknown pronoun form "${rest}"`);
       const word = p[lower];
@@ -55,7 +59,7 @@ export function render(template, roles) {
     else if (rest === 's' || rest === 'es') [singular, plural] = [rest, ''];
     else return unknown(whole, `verb agreement needs "singular/plural", got "${rest}"`);
     return p.plural ? plural : singular;
-  });
+  }).replace(/(^|[.!?]\s+)([a-z])/g, (m, before, ch) => before + ch.toUpperCase()); // "his camel..." at a sentence start
 }
 
 /** Capitalizes the first letter of a sentence after rendering, if needed. */
@@ -72,7 +76,7 @@ export function lintTemplate(template, allowedRoles) {
   for (const m of template.matchAll(TOKEN)) {
     const [whole, role, sep, rest] = m;
     if (!allowedRoles.includes(role)) problems.push(`${whole}: role "${role}" not in [${allowedRoles.join(', ')}]`);
-    if (sep === '.' && rest !== 'horse' && !FORMS.includes(rest.charAt(0).toLowerCase() + rest.slice(1))) problems.push(`${whole}: unknown pronoun form`);
+    if (sep === '.' && !['horse', 'steed', 'stand'].includes(rest) && !FORMS.includes(rest.charAt(0).toLowerCase() + rest.slice(1))) problems.push(`${whole}: unknown pronoun form`);
     if (sep === ':' && !rest.includes('/') && rest !== 's' && rest !== 'es') problems.push(`${whole}: bad verb agreement`);
   }
   const stray = template.replace(TOKEN, '').match(/[{}]/);

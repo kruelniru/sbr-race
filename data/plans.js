@@ -49,7 +49,7 @@ export default [
     id: 'palm', label: "Seek the Devil's Palm", upside: 'A Stand gamble', downside: 'Low Worthiness can kill you',
     stages: [2, 3], placement: -5, eventMult: {}, deathMult: 1, horseMult: 1, subEventMult: 1,
     lean: { honorable: 0.5, ruthless: 1.5, cautious: 0.2, glory: 2.5, opportunist: 2 },
-    enabled: false, // milestone 4: guarantees the "Edge of the Devil's Palm" sub event
+    enabled: true, // milestone 4: guarantees the "Edge of the Devil's Palm" sub event that stage
   },
   {
     id: 'corpse', label: 'Hunt a corpse part', upside: 'Better odds of finding one', downside: "Valentine's agents notice you",

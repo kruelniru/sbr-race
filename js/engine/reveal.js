@@ -51,9 +51,11 @@ function finaleCards(f) {
     cards.push({ kind: 'no-winner' });
   }
   if (f.awards.length) cards.push({ kind: 'awards', awards: f.awards });
+  // Sections under order 100 (Stands awakened) follow the awards.
+  for (const x of f.extras.filter((e) => (e.order ?? 100) < 100)) cards.push({ kind: 'extra', id: x.id, data: x.data });
   cards.push({ kind: 'survivors', survivors: f.survivors, fieldFinished: f.fieldFinished });
   cards.push({ kind: 'memorial', fallen: f.memorial });
-  for (const x of f.extras) cards.push({ kind: 'extra', id: x.id, data: x.data, hold: true });
+  for (const x of f.extras.filter((e) => (e.order ?? 100) >= 100)) cards.push({ kind: 'extra', id: x.id, data: x.data, hold: true });
   cards.push({ kind: 'the-end', standings: f.standings, hold: true });
   return cards;
 }
@@ -85,6 +87,7 @@ export function cardSeconds(card, speed = 'normal') {
     case 'awards': s = B.page * pause + card.awards.length * B.award * pause; break;
     case 'survivors': s = B.page * pause + card.survivors.length * T.perName * 0.5; break;
     case 'memorial': s = B.page * pause + card.fallen.reduce((t, f) => t + T.perName + read(f.cause), 0); break;
+    case 'extra': s = B.page * pause + (card.data?.users?.length ?? 0) * T.perName; break;
     default: s = B.page * pause;
   }
   return Math.round(s * 10) / 10;

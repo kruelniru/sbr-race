@@ -13,6 +13,7 @@
 import RULES from '../../data/rules.js';
 import { killRacer, retireRacer, addWorthiness } from './racers.js';
 import { npcDies, npcRetires } from './field.js';
+import { palmBand, palmExit, palmLost, logPalm } from './palm.js';
 
 export const EFFECTS = {
   // dies: '<cause shown on the Fallen screen>'. Pair with by: '<role>' for kill credit.
@@ -78,6 +79,19 @@ export const EFFECTS = {
   worthiness: {
     fits: () => true,
     apply: (ctx, who, n) => addWorthiness(who, n),
+  },
+
+  // palm: 'out' | 'lost' | 'dies'. Devil's Palm lines in main events (canon
+  // racers with palm: true, and NPCs). 'out' rolls Stand-or-nothing from the
+  // Worthiness band; 'dies' only logs (pair it with dies).
+  palm: {
+    fits: (ctx, who) => who.status === 'racing',
+    apply: (ctx, who, kind) => {
+      if (kind === 'dies') return logPalm(ctx, who, 'dies');
+      if (kind === 'lost') return palmLost(ctx, who);
+      const b = palmBand(who.worthiness);
+      palmExit(ctx, who, ctx.rng.chance(b.stand / (b.stand + b.nothing)) ? 'stand' : 'nothing');
+    },
   },
 
   // horse: 'dies'. The horse is lost; the Rider continues on foot.

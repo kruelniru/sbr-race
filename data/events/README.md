@@ -31,7 +31,10 @@ A role can be an object with filters:
 | `tier` | `'canon'`, `['pc','canon']` | which kind of racer |
 | `canon` | `'hotpants'` | a specific canon racer |
 | `mount` | `'runner'` / `'horse'` | Runners vs Riders |
-| `hasHorse` | `true` | a Rider who still has a horse |
+| `hasHorse` | `true` | a Rider who still has a horse (never Avdul's camel) |
+| `hasStand` | `true` / `false` | has a Stand (Stand events use `{a.stand}`) |
+| `stand` | `'star-platinum'` | a specific Stand (data/stands.js) |
+| `palm` | `true` | may walk into the Devil's Palm (NPCs, and canon racers with palm: true) |
 | `injured` | `true` | currently injured this stage |
 | `side` / `notSide` | `'valentine'` | the President's people |
 | `status` | `'retired'` | default `'racing'` |
@@ -69,6 +72,8 @@ focus racer's personality (`rules.js` → `personalityLean`). Canon racers add
 
 - `minor`: a short pace or flavor line, collected on the "Meanwhile on the
   trail..." card. Keep these to one short sentence, and never put a death in one.
+- `stand`: a Stand event (weighted up for Stand users; reveals the Stand on stream if the text names it)
+- `cruel`: the killer kills someone helpless or fleeing (Worthiness −5)
 - `kill` (starting a killing), `defend` (killing in self-defense), `spare`, `help`,
   `hazard`, `risky`, `pace`, `sprint`, `sabotage`, `cold` (ignoring someone in need)
 
@@ -78,6 +83,6 @@ or `retiredOnly: true`.
 
 ## Text tokens
 `{a}` is a name. `{a.they}`, `{a.them}`, `{a.their}`, `{a.theirs}` and `{a.themself}`
-are pronouns; capitalize them as `{a.They}`. `{a.horse}` is the horse's name.
+are pronouns; capitalize them as `{a.They}`. `{a.horse}` is the horse's name ("his camel" for Avdul), `{a.steed}` is "horse" or "camel", `{a.stand}` is the racer's Stand.
 Verb agreement after a pronoun: `{a.they} {a:is/are}`, `ride{a:s}`, `push{a:es}`.
 After a name, verbs are always singular: "{a} rides".

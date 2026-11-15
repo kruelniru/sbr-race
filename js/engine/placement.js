@@ -6,6 +6,7 @@
 //           + runner terrain modifiers (Runners only)
 //           + luck (canon trait)
 //           + Stage Plan placement modifier (data/plans.js)
+//           + Stand tier modifier (rules.standTier)
 //           + noise (normal, sd = noiseSd)
 // Contenders: named racers still racing + the field's pack leaders.
 
@@ -13,6 +14,7 @@ import RULES from '../../data/rules.js';
 import { namedRacers } from './racers.js';
 import { npcName, keepNpc } from './field.js';
 import { planOf } from './plans.js';
+import { standMods } from './stands.js';
 
 export function runnerTerrainBonus(stage) {
   let bonus = RULES.runner.base ?? 0;
@@ -29,6 +31,8 @@ export function placementScore(racer, stage, rng) {
   if (racer.mount === 'runner') score += runnerTerrainBonus(stage);
   score += racer.luck ?? 0;
   score += planOf(racer)?.placement ?? 0; // Stage Plan
+  // Stand tier (rules.standTier). Canon racers' own Stands are already in their skill.
+  if (racer.stand && !['canon', 'awaken'].includes(racer.stand.source)) score += standMods(racer).placement;
   // Horse quality (milestone 5) plugs in here.
   return score + rng.normal(0, P.noiseSd);
 }

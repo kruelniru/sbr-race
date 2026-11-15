@@ -8,6 +8,8 @@ import { render, lintTemplate } from './text.js';
 import { namedRacers, addWorthiness } from './racers.js';
 import { castNpc, keepNpc } from './field.js';
 import { planOf } from './plans.js';
+import { standMods } from './stands.js';
+import { palmBand } from './palm.js';
 
 const ROUND_TYPES = ['day', 'night', 'finish'];
 const ROLE_KINDS = ['focus', 'named', 'npc'];
@@ -62,9 +64,31 @@ export function lintEvents(events = EVENTS) {
 
 // ------------------------------------------------------------ matching
 
-/** How likely a deadly event is to pick this racer: tier odds × Stage Plan. */
-export function deathWeight(racer) {
-  return (RULES.deathOdds[racer.tier] ?? 1) * (planOf(racer)?.deathMult ?? 1);
+/**
+ * How likely a deadly event is to pick this racer: tier odds × Stage Plan,
+ * and a Stand helps survive hazards (rules.standTier.hazardDeath).
+ */
+export function deathWeight(racer, hazard = false) {
+  let w = (RULES.deathOdds[racer.tier] ?? 1) * (planOf(racer)?.deathMult ?? 1);
+  if (hazard) w *= standMods(racer)?.hazardDeath ?? 1;
+  return w;
+}
+
+const isHazard = (e) => e.tags.includes('hazard') || e.tags.includes('risky');
+
+/** Role display data for text templates. */
+export function displayOf(who) {
+  return {
+    name: who.name ?? 'a rider from the pack',
+    pronouns: who.pronouns,
+    horse: who.horse ?? who.lostHorse,
+    steed: who.animal ?? 'horse',
+    stand: who.stand?.name,
+  };
+}
+
+export function displayRoles(roles) {
+  return Object.fromEntries(Object.entries(roles).map(([k, w]) => [k, displayOf(w)]));
 }
 
 export function whenFits(e, ctx) {
@@ -96,6 +120,14 @@ export function roleFits(ctx, e, key, racer) {
   if (spec.hasHorse && !(racer.mount === 'horse' && !racer.onFoot)) return false;
   if (spec.injured != null && !!racer.injured !== spec.injured) return false;
   if (spec.side && racer.side !== spec.side) return false;
+  // Stands: hasStand true/false, a specific Stand id (or list), a tier.
+  if (spec.hasStand != null && !!racer.stand !== spec.hasStand) return false;
+  if (spec.stand && !asList(spec.stand).includes(racer.stand?.id)) return false;
+  if (spec.standTier && racer.stand?.tier !== spec.standTier) return false;
+  // Horse lines (shoes, saddles, the horse goes down...) never cast a camel rider.
+  if (spec.hasHorse && racer.animal) return false;
+  // Canon racers who may walk into the Devil's Palm (and NPCs).
+  if (spec.palm && !(racer.tier === 'npc' || racer.palm)) return false;
   if (spec.notSide && racer.side === spec.notSide) return false;
   for (const [effKey, value] of Object.entries(e.effects[key] ?? {})) {
     if (!EFFECTS[effKey].fits(ctx, racer, value)) return false;
@@ -112,7 +144,13 @@ function eventWeight(e, focus) {
     w *= focus.lean?.[tag] ?? 1;
   }
   if (e.lean) w *= e.lean[focus.personality] ?? 1;
-  if (e.effects[e.focusKey]?.dies) w *= deathWeight(focus);
+  if (e.effects[e.focusKey]?.dies) w *= deathWeight(focus, isHazard(e));
+  if (e.tags.includes('stand')) w *= RULES.standEventWeight;
+  // Devil's Palm lines for a canon racer follow the Worthiness band odds.
+  if (e.palmOutcome) {
+    const b = palmBand(focus.worthiness);
+    w *= (e.palmOutcome === 'out' ? b.stand + b.nothing : b[e.palmOutcome] ?? 0) / 100;
+  }
   // Stage Plan (Push hard, Lay low...): tag, death and horse multipliers.
   const plan = planOf(focus);
   if (plan) {
@@ -141,7 +179,7 @@ export function castRoles(ctx, e, focus) {
         (r) => !used.has(r.id) && !ctx.assigned.has(r.id) && roleFits(ctx, e, key, r),
       );
       const dies = !!e.effects[key]?.dies;
-      who = ctx.rng.weighted(pool, (r) => (dies ? deathWeight(r) : 1));
+      who = ctx.rng.weighted(pool, (r) => (dies ? deathWeight(r, isHazard(e)) : 1));
     } else if (spec.is === 'npc') {
       who = castNpc(ctx);
       if (who && !roleFits(ctx, e, key, who)) who = null;
@@ -178,11 +216,9 @@ export function runMainEvent(ctx, focus) {
 
 function resolve(ctx, e, roles) {
   // Render before effects so the text describes the moment it happened.
-  const display = {};
-  for (const [k, who] of Object.entries(roles)) {
-    display[k] = { name: who.name ?? 'a rider from the pack', pronouns: who.pronouns, horse: who.horse ?? who.lostHorse };
-  }
-  const text = render(e.text, display);
+  const text = render(e.text, displayRoles(roles));
+  // A Stand named in a line is revealed on stream when this line is shown.
+  for (const who of Object.values(roles)) if (who.stand && text.includes(who.stand.name)) who.stand.revealed = true;
   // Main Story: involves someone still in the race (PC, canon, or a breakout
   // NPC). Everything else (retired racers, NPC-only) is a Side Story.
   const inMain = Object.values(roles).some((w) => (w.tier !== 'npc' || w.breakout) && w.status === 'racing');
@@ -194,6 +230,8 @@ function resolve(ctx, e, roles) {
   }
   // Helping or saving someone: hidden Worthiness (DESIGN.md table).
   if (e.tags.includes('help')) addWorthiness(roles[e.focusKey], RULES.worthiness.help);
+  // Killing someone helpless or fleeing.
+  if (e.tags.includes('cruel')) addWorthiness(roles[e.focusKey], RULES.worthiness.cruel);
 
   const ids = [];
   for (const who of Object.values(roles)) {

@@ -16,6 +16,7 @@ import PRONOUNS from '../../data/pronouns.js';
 import CANON from '../../data/canon-racers.js';
 import { NAME_MAX, GENDER_MAX, PICTURE_MAX_BYTES, FEED_KEEP, DEFAULT_MIN_PLAYERS } from '../config.js';
 import { Rng } from './rng.js';
+import { ITEM_KINDS } from './items.js';
 
 export const PHASE = Object.freeze({
   LOBBY: 'lobby',
@@ -169,6 +170,13 @@ export function privateView(state, playerId) {
     // An open choice for this player (Stage Plan or sub event), phone-safe.
     prompt: promptView(state, p.id),
     plan: p.plan ?? null, // this stage's Stage Plan (their own choice)
+    // Kept Stand Arrows and Rokakaka. Usable while a choice window is open.
+    items: (state.items ?? []).filter((i) => i.owner === p.id).map((i) => ({
+      id: i.id, kind: i.kind, label: ITEM_KINDS[i.kind]?.label ?? i.kind, blurb: ITEM_KINDS[i.kind]?.blurb ?? '',
+      pending: !!i.pendingUse,
+      usable: p.status === 'racing' && (ITEM_KINDS[i.kind]?.needs === 'noStand' ? !p.stand : !!p.stand),
+      why: p.status !== 'racing' ? '' : ITEM_KINDS[i.kind]?.needs === 'noStand' && p.stand ? 'You already have a Stand.' : ITEM_KINDS[i.kind]?.needs === 'stand' && !p.stand ? 'You have no Stand to give up.' : '',
+    })),
   };
 }
 

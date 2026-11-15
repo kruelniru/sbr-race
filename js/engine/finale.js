@@ -39,7 +39,7 @@ export function buildFinale(state) {
     standings: standings(state).slice(0, 20),
     extras: SECTIONS.map((s) => {
       const data = s.build(state);
-      return data ? { id: s.id, data } : null;
+      return data ? { id: s.id, order: s.order, data } : null;
     }).filter(Boolean),
   };
 }

@@ -21,7 +21,7 @@ import { createGameState, addPlayer, applyCharacter } from '../js/engine/state.j
 import { Rng } from '../js/engine/rng.js';
 import { makeAiCharacter } from '../js/engine/roster.js';
 import { startRace, runRound } from '../js/engine/race.js';
-import { needsStagePlans, openStagePlans, openSubEvents, closeChoices, starOption } from '../js/engine/choices.js';
+import { needsStagePlans, openStagePlans, openSubEvents, closeChoices, starOption, answerLikeAi, useItem } from '../js/engine/choices.js';
 import PLANS from '../data/plans.js';
 import PERSONALITIES from '../data/personalities.js';
 import { readFileSync } from 'node:fs';
@@ -52,7 +52,10 @@ function playGame(seed) {
   const rosterRng = new Rng(seed + ':roster');
   const taken = new Set();
   for (let i = 0; i < PLAYERS; i++) {
-    const p = addPlayer(state, { isAI: true });
+    // The first HUMANS PCs are "people" (they can find Rokakaka); the sim
+    // answers for them the way an AI racer would.
+    const p = addPlayer(state, { isAI: i >= HUMANS });
+    p.connected = true;
     const c = makeAiCharacter(rosterRng, taken);
     if (RUNNERS != null) c.mount = rosterRng.chance(RUNNERS) ? 'runner' : 'horse';
     taken.add(c.name.toLowerCase());
@@ -64,9 +67,12 @@ function playGame(seed) {
   const stageLog = []; // per PC per stage: { id, stage, plan, star, personality, start }
   const windows = [];  // choice windows: { kind, humans }
   const timeRng = new Rng(seed + ':time');
+  const palm = { offers: 0, in: 0 };
   while (!state.race.over) {
     if (needsStagePlans(state)) {
       const w = openStagePlans(state);
+      const pcsById = Object.fromEntries(state.players.map((x) => [x.id, x]));
+      for (const pr of w.prompts) if (!pr.answer) answerLikeAi(timeRng, pr, pcsById[pr.playerId].personality, 'player');
       for (const pr of w.prompts) overrideAnswer(pr, timeRng);
       const humanIds = new Set(state.players.slice(0, HUMANS).map((x) => x.id));
       // Stage Plans open on the stage results card, so the results and
@@ -84,9 +90,13 @@ function playGame(seed) {
       closeChoices(state);
     }
     const w = openSubEvents(state);
+    simPeopleUseItems(state, timeRng);
     const humanIds = new Set(state.players.slice(0, HUMANS).map((x) => x.id));
+    const pcsById = Object.fromEntries(state.players.map((x) => [x.id, x]));
     for (const pr of w.prompts) {
+      if (!pr.answer) answerLikeAi(timeRng, pr, pcsById[pr.playerId].personality, 'player');
       if (PLAN_MODE === 'star') pr.answer = { optionId: pr.star, by: 'ai' };
+      if (pr.subId === 'sub-palm') { palm.offers++; if (pr.answer.optionId === 'in') palm.in++; }
       // People's results always land in the Main Story (AI quiet results don't).
       if (humanIds.has(pr.playerId)) pr.answer.by = 'player';
     }
@@ -94,11 +104,12 @@ function playGame(seed) {
     closeChoices(state);
     results.push(runRound(state));
   }
-  return { state, results, stageLog, windows, timeRng };
+  return { state, results, stageLog, windows, timeRng, palm };
 }
 
 /** Sim plan modes: random, star, or one fixed plan for everyone. */
 function overrideAnswer(pr, rng) {
+  if (PLAN_MODE === 'ai') return;
   if (PLAN_MODE === 'ai') return;
   let id;
   if (PLAN_MODE === 'random') id = rng.pick(pr.options).id;
@@ -174,11 +185,13 @@ function newStats() {
     canonStage1Deaths: 0,
     fieldMismatch: 0,
     stands: 0, // milestone 4
-    choiceMin: [], planMin: [], subMin: [], subPerRound: [], byPlan: {}, byPers: {},
+    choiceMin: [], planMin: [], subMin: [], subPerRound: [],
+    st: newStandStats(), byPlan: {}, byPers: {},
   };
 }
 
-function collect(S, { state, results, stageLog, windows, timeRng }) {
+function collect(S, { state, results, stageLog, windows, timeRng, palm }) {
+  collectStands(S, state, results, palm);
   S.games++;
   const racers = namedRacers(state);
   for (const r of racers) {
@@ -343,6 +356,8 @@ function printStats(S) {
   const never = counts.filter(([, n]) => n === 0).map(([id]) => id);
   console.log(`Never used: ${never.length ? never.join(', ') : 'none'}`);
 
+  printStands(S);
+
   console.log('\nChecks');
   console.log(`  canon deaths in Stage 1: ${S.canonStage1Deaths} ${S.canonStage1Deaths ? 'FAIL' : 'ok'}`);
   console.log(`  NPC counts add up: ${S.fieldMismatch ? `FAIL in ${S.fieldMismatch} games` : 'ok'}`);
@@ -354,7 +369,7 @@ function printGame(state, results) {
   P(`STEEL BALL RUN · seed "${state.seed}" · ${PLAYERS} PCs, ${state.canon.length} canon, ${RULES.fieldSize} in the field\n`);
   P('The racers:');
   for (const r of namedRacers(state)) {
-    P(`  ${r.name} (${r.tier === 'pc' ? 'PC' : 'canon'}, ${r.pronouns}, ${r.personality}, ${r.mount === 'runner' ? 'Runner' : `horse ${r.horse}`})`);
+    P(`  ${r.name} (${r.tier === 'pc' ? 'PC' : 'canon'}, ${r.pronouns}, ${r.personality}, ${r.mount === 'runner' ? 'Runner' : r.animal ? 'camel' : `horse ${r.horse}`})`);
   }
   let stage = null;
   for (const res of results) {
@@ -420,4 +435,138 @@ function parseArgs(argv) {
     else { out[key] = next; i++; }
   }
   return out;
+}
+
+// ---------------------------------------------------------------- milestone 4: Stands
+function newStandStats() {
+  return {
+    palmOffers: 0, palmIn: 0, palmLog: {}, // band -> outcome -> n (PCs); plus 'canon', 'npc'
+    gained: {}, // source -> tier -> n
+    arrows: { found: 0, pierce: 0, keep: 0, leave: 0, used: 0, stand: 0, died: 0, already: 0, tiers: {} },
+    roka: { found: 0, foundHuman: 0, gamesUnder2: 0, eaten: 0, kept: 0, left: 0, before: {}, after: {} },
+    worth: {}, // personality -> [end worthiness]
+    holders: {}, // tier|none -> { n, points, ny, pc }
+    winTier: {}, fieldTier: {}, pcWinTier: {}, pcFieldTier: {}, games: 0, breakouts: 0,
+  };
+}
+
+function bump(o, k, n = 1) { o[k] = (o[k] ?? 0) + n; }
+
+function collectStands(S, state, results, palm) {
+  const T = S.st;
+  T.games++;
+  T.palmOffers += palm.offers; T.palmIn += palm.in;
+  for (const e of state.race.palmLog ?? []) {
+    const key = e.tier === 'pc' ? `PCs, Worthiness ${e.band}+` : e.tier === 'canon' ? 'canon' : 'NPCs';
+    bump((T.palmLog[key] ??= {}), e.outcome);
+  }
+  for (const e of state.stands.log) if (e.source !== 'canon') bump((T.gained[e.source] ??= {}), e.tier);
+  T.breakouts += state.field.breakouts ?? 0;
+  for (const e of state.race.arrowLog ?? []) {
+    if (e.event === 'found') { T.arrows.found++; bump(T.arrows, e.choice); }
+    else if (e.event === 'used') T.arrows.used++;
+    else if (e.outcome) { bump(T.arrows, e.outcome); if (e.tier) bump(T.arrows.tiers, e.tier); }
+  }
+  let human = 0;
+  for (const e of state.race.rokakakaLog ?? []) {
+    if (e.event === 'found') {
+      T.roka.found++; if (e.human) { T.roka.foundHuman++; human++; }
+      if (e.choice === 'keep') T.roka.kept++; else if (e.choice === 'leave') T.roka.left++;
+    } else if (e.event === 'eaten') {
+      T.roka.eaten++;
+      bump(T.roka.before, e.tierBefore ?? 'none');
+      const later = state.stands.log.slice(e.logIndex ?? 0).find((x) => x.racerId === e.racerId);
+      bump(T.roka.after, later ? later.tier : 'none (stayed Standless)');
+    }
+  }
+  if (human < 2) {
+    // Allowed only when no human PC was left racing to find one.
+    const drops = (state.race.rokakakaLog ?? []).filter((e) => e.event === 'dropped');
+    if (drops.some((e) => e.humansRacing > 0)) T.roka.gamesUnder2++;
+    else T.roka.noHumansLeft = (T.roka.noHumansLeft ?? 0) + 1;
+    (T.roka.why ??= []).push(drops);
+  }
+  for (const p of state.players) (T.worth[p.personality] ??= []).push(p.worthiness);
+  // Stand holders (the Stand they held at the end, or when they died) vs non-holders.
+  const named = [...state.players, ...state.canon];
+  for (const r of named) {
+    const k = r.stand?.tier ?? 'none';
+    const h = (T.holders[k] ??= { n: 0, points: 0, ny: 0, pcN: 0, pcPoints: 0, pcNy: 0 });
+    h.n++; h.points += r.points; if (r.status === 'racing') h.ny++;
+    if (r.tier === 'pc') { h.pcN++; h.pcPoints += r.points; if (r.status === 'racing') h.pcNy++; }
+    bump(T.fieldTier, k);
+    if (r.tier === 'pc') bump(T.pcFieldTier, k);
+  }
+  const winner = results.at(-1).finale.podium[0];
+  if (winner) {
+    const r = named.find((x) => x.id === winner.id);
+    bump(T.winTier, r?.stand?.tier ?? (r ? 'none' : 'pack leader'));
+    if (r?.tier === 'pc') bump(T.pcWinTier, r.stand?.tier ?? 'none');
+  }
+}
+
+function printStands(S) {
+  const T = S.st, g = T.games;
+  const f1 = (n) => n.toFixed(1);
+  const pct = (n, d) => `${((100 * n) / (d || 1)).toFixed(0)}%`;
+  const avg = (a) => a.reduce((x, y) => x + y, 0) / (a.length || 1);
+
+  console.log("\nDevil's Palm");
+  console.log(`  PC offers ${f1(T.palmOffers / g)} per game, went in ${pct(T.palmIn, T.palmOffers)}`);
+  table(['Who (band)', 'entries/game', 'Stand', 'nothing', 'lost', 'died'],
+    Object.entries(T.palmLog).sort().map(([k, o]) => {
+      const n = Object.values(o).reduce((a, b) => a + b, 0);
+      return [k, f1(n / g), pct(o.stand ?? 0, n), pct(o.nothing ?? 0, n), pct((o.lost ?? 0) + (o.retired ?? 0), n), pct(o.dies ?? 0, n)];
+    }));
+  console.log(`  NPC breakouts: ${f1(T.breakouts / g)} per game`);
+
+  console.log('\nStands gained during the race (per game)');
+  const tiers = ['legendary', 'rare', 'common'];
+  table(['Source', 'Legendary', 'Rare', 'Common', 'total'],
+    Object.entries(T.gained).map(([src, o]) => [src, ...tiers.map((t) => f1((o[t] ?? 0) / g)), f1(tiers.reduce((n, t) => n + (o[t] ?? 0), 0) / g)]));
+
+  const A = T.arrows;
+  console.log('\nStand Arrows');
+  console.log(`  found ${f1(A.found / g)} per game: pierce now ${pct(A.pierce ?? 0, A.found)}, keep ${pct(A.keep ?? 0, A.found)}, leave ${pct(A.leave ?? 0, A.found)}; kept ones used later ${f1(A.used / g)} per game`);
+  const tries = (A.stand ?? 0) + (A.died ?? 0);
+  console.log(`  piercings: ${f1(tries / g)} per game, survived ${pct(A.stand ?? 0, tries)} (${tiers.map((t) => `${t} ${A.tiers[t] ?? 0}`).join(', ')}), died ${pct(A.died ?? 0, tries)}; "won't take" ${A.already ?? 0}`);
+
+  const R = T.roka;
+  console.log('\nRokakaka');
+  console.log(`  found ${f1(R.found / g)} per game (${f1(R.foundHuman / g)} by human PCs, ${R.found - R.foundHuman} by anyone else); games with fewer than 2 while a human was still racing: ${R.gamesUnder2} ${R.gamesUnder2 ? 'FAIL' : 'ok'} (fewer because every human was out: ${R.noHumansLeft ?? 0})`);
+  if (R.why) console.log('  short games: ' + JSON.stringify(R.why));
+  console.log(`  eaten ${pct(R.eaten, R.found)} · kept ${pct(R.kept, R.found)} · left ${pct(R.left, R.found)}`);
+  console.log(`  tier before eating: ${JSON.stringify(R.before)} · next Stand after: ${JSON.stringify(R.after)}`);
+
+  console.log('\nWorthiness at the end of the race (PCs, start 50)');
+  console.log('  ' + Object.entries(T.worth).map(([k, a]) => `${k} ${f1(avg(a))}`).join(' · '));
+
+  console.log('\nStand holders vs non-holders (Stand at the end of the race; PCs + canon)');
+  const order = ['legendary', 'rare', 'common', 'none'];
+  table(['Stand tier', 'racers/game', 'avg points', 'reach NY', 'PC avg points', 'PC reach NY', 'win share', 'field share', 'win/field'],
+    order.filter((k) => T.holders[k]).map((k) => {
+      const h = T.holders[k];
+      const win = (T.winTier[k] ?? 0) / g;
+      const field = (T.fieldTier[k] ?? 0) / Object.values(T.fieldTier).reduce((a, b) => a + b, 0);
+      return [k, f1(h.n / g), f1(h.points / h.n), pct(h.ny, h.n), h.pcN ? f1(h.pcPoints / h.pcN) : '-', h.pcN ? pct(h.pcNy, h.pcN) : '-',
+        pct(win, 1), pct(field, 1), `${(win / (field || 1)).toFixed(2)}`];
+    }));
+  // The check: among PCs (where Stands come from the Palm and Arrows), a tier's
+  // share of wins vs its share of PCs. Over 2x means that tier is too strong.
+  const pcWins = Object.values(T.pcWinTier).reduce((a, b) => a + b, 0);
+  const pcField = Object.values(T.pcFieldTier).reduce((a, b) => a + b, 0);
+  console.log('  PCs only: ' + order.filter((k) => T.pcFieldTier[k]).map((k) => {
+    const r = ((T.pcWinTier[k] ?? 0) / (pcWins || 1)) / ((T.pcFieldTier[k] ?? 0) / pcField);
+    return `${k} wins ${pct(T.pcWinTier[k] ?? 0, pcWins)} of PC wins vs ${pct(T.pcFieldTier[k], pcField)} of PCs = ${r.toFixed(2)}x${k !== 'none' && r > 2 ? ' FAIL' : ''}`;
+  }).join('\n            '));
+}
+
+/** Sim assumption for people: use a kept Arrow when Standless (35% a window), eat a kept Rokakaka when holding a Common Stand (25%). */
+function simPeopleUseItems(state, rng) {
+  for (const it of state.items ?? []) {
+    const p = state.players.find((x) => x.id === it.owner);
+    if (!p || p.isAI || it.pendingUse || p.status !== 'racing') continue;
+    if (it.kind === 'arrow' && !p.stand && rng.chance(0.35)) useItem(state, p.id, it.id);
+    if (it.kind === 'rokakaka' && p.stand?.tier === 'common' && rng.chance(0.25)) useItem(state, p.id, it.id);
+  }
 }

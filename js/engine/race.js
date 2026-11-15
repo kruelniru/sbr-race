@@ -17,8 +17,13 @@ import STAGES from '../../data/stages.js';
 import HORSES from '../../data/horse-names.js';
 import { Rng } from './rng.js';
 import { readyPlayers } from './state.js';
-import { initPcRacer, makeCanonRacer, canonDefs, namedRacers, findRacer, startWorthiness } from './racers.js';
+import { initPcRacer, makeCanonRacer, canonDefs, namedRacers, findRacer, startWorthiness, canonStartingStand } from './racers.js';
+import { initStands, giveStand } from './stands.js';
+import { CANON_STANDS, STAND_BY_ID } from '../../data/stands.js';
+import { displayRoles } from './events.js';
+import { render } from './text.js';
 import { buildFinale } from './finale.js';
+import './finale-sections.js'; // registers milestone 4+ finale sections
 import { initField, fieldAttrition, fieldReportText } from './field.js';
 import { runMainEvent } from './events.js';
 import { placeStage, standings } from './placement.js';
@@ -56,6 +61,14 @@ export function startRace(state) {
 
   initField(state, rng);
 
+  // Stands: canon racers who start with theirs. They stay hidden on stream
+  // until a Stand event names them.
+  initStands(state);
+  for (const c of state.canon) {
+    const def = canonStartingStand(c);
+    if (def) giveStand({ state, rng, stage: null, roundLabel: 'start' }, c, def, 'canon');
+  }
+
   state.race = {
     plan,
     stageIdx: 0,
@@ -68,7 +81,71 @@ export function startRace(state) {
     history: [], // host-side: earlier rounds' reveals, for the Back button
     reveal: null, // host-side: { cards, index }
   };
+  scheduleStandEvents(state, rng);
   state.rngState = rng.getState();
+}
+
+/** Global round numbers (1-based) of every round in stages lo..hi. */
+function roundsInStages(plan, lo, hi) {
+  const out = [];
+  let n = 0;
+  for (const s of plan) {
+    for (let i = 0; i < s.types.length; i++) {
+      n++;
+      if (s.id >= lo && s.id <= hi) out.push({ round: n, stage: s.id, roundIdx: i });
+    }
+  }
+  return out;
+}
+
+/**
+ * Seeded at Start: when Stand Arrows and Rokakaka turn up, and when Johnny
+ * and Diego awaken their Stands.
+ */
+function scheduleStandEvents(state, rng) {
+  const race = state.race;
+  const A = RULES.arrows;
+  const arrowSlots = roundsInStages(race.plan, A.stages[0], A.stages[1]);
+  race.arrowsDue = Array.from({ length: rng.int(A.perGame[0], A.perGame[1]) }, () => ({ round: rng.pick(arrowSlots).round }))
+    .sort((a, b) => a.round - b.round);
+  // Rokakaka: the guaranteed ones land early enough to be retried before the deadline.
+  const R = RULES.rokakaka;
+  const early = roundsInStages(race.plan, R.stages[0], R.stages[1] - 1);
+  const any = roundsInStages(race.plan, R.stages[0], R.stages[1]);
+  race.rokakakaDue = Array.from({ length: R.guaranteed }, () => ({ round: rng.pick(early).round, guaranteed: true }));
+  if (rng.chance(R.thirdChance)) race.rokakakaDue.push({ round: rng.pick(any).round, guaranteed: false });
+  race.rokakakaDue.sort((a, b) => a.round - b.round);
+  // Canon awakenings (Johnny: Stage 2 or 3; Diego: Stage 3).
+  race.awakenings = [];
+  for (const def of CANON_STANDS.filter((s) => s.awakens)) {
+    if (!state.canon.some((c) => c.canonStand === def.id)) continue;
+    const slots = roundsInStages(race.plan, Math.min(...def.awakens), Math.max(...def.awakens));
+    race.awakenings.push({ standId: def.id, round: rng.pick(slots).round });
+  }
+}
+
+const AWAKEN_LINES = {
+  'tusk-act-1': "{a}'s fingernails start to spin.",
+  'scary-monsters': '{a} wakes from a fever with a taste for raw meat.',
+};
+
+/** Johnny and Diego awaken their Stands on their seeded round. */
+function canonAwakenings(ctx) {
+  const lines = [];
+  for (const aw of ctx.state.race.awakenings ?? []) {
+    if (aw.done || aw.round > ctx.state.race.roundNo) continue;
+    const racer = ctx.state.canon.find((c) => c.canonStand === aw.standId);
+    if (racer && ctx.assigned.has(racer.id) && racer.status !== 'dead') continue; // in another line this round: next round
+    aw.done = true;
+    if (!racer || racer.status === 'dead' || racer.stand) continue;
+    giveStand(ctx, racer, STAND_BY_ID[aw.standId], 'awaken');
+    ctx.assigned.add(racer.id);
+    lines.push({
+      eventId: `awaken-${aw.standId}`, text: render(AWAKEN_LINES[aw.standId] ?? '{a} feels something stir.', displayRoles({ a: racer })),
+      ids: [racer.id], names: [{ name: racer.name, tier: racer.tier }], minor: false, death: false, tags: ['stand'], side: racer.status !== 'racing',
+    });
+  }
+  return lines;
 }
 
 export function currentStage(state) {
@@ -119,6 +196,7 @@ export function runRound(state) {
   // 1. Sub events (and Hunt a rival showdowns) resolve first and lead the
   //    Main Story. A sub event counts as that racer's event this round.
   result.events.push(...resolveSubEvents(ctx, choice));
+  result.events.push(...canonAwakenings(ctx));
   race.choice = null;
 
   // 2. Main events.
@@ -189,6 +267,12 @@ export function nextRoundHeader(state) {
   };
 }
 
+/** The phone's Worthiness bar: a coarse level (0..barSteps), never the number. */
+export function worthinessLevel(w) {
+  const steps = RULES.worthiness.barSteps;
+  return w == null ? null : Math.round(((w ?? 0) / 100) * steps);
+}
+
 /**
  * Copy what the stream has now revealed into the "shown" snapshot that phones
  * read (privateView / publicView). Call after a round's reveal finishes.
@@ -206,6 +290,10 @@ export function syncShown(state) {
       kills: p.kills,
       lastPlacement: last ? { stage: last.stage, rank: last.rank } : null,
       death: p.death ? { cause: p.death.cause, stage: p.death.stage, by: p.death.by } : null,
+      // Private to this player (privateView only). Never the source of a Stand.
+      stand: p.stand ? { name: p.stand.name, tier: p.stand.tier, flavor: STAND_BY_ID[p.stand.id]?.flavor ?? '' } : null,
+      worthinessLevel: worthinessLevel(p.worthiness),
+      hints: (p.hints ?? []).slice(-5),
     };
   }
   race.shownHeader = race.over ? { over: true } : nextRoundHeader(state);

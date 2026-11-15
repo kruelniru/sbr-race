@@ -30,7 +30,7 @@ test('sub event templates are valid', () => {
   for (const s of SUBS) {
     const roles = Object.keys(s.cast);
     assert.deepEqual(lintTemplate(s.text, roles), [], s.id);
-    for (const o of s.options) for (const out of o.outcomes) assert.deepEqual(lintTemplate(out.text, roles), [], `${s.id}:${o.id}`);
+    for (const o of s.options) for (const out of o.outcomes ?? []) assert.deepEqual(lintTemplate(out.text, roles), [], `${s.id}:${o.id}`);
   }
 });
 
@@ -137,8 +137,9 @@ test('secret prompts never reach the host screen', () => {
 test('Worthiness and engine internals stay out of every view', () => {
   const state = setup('privacy-1', { players: 6, humans: 2 });
   openStagePlans(state);
-  for (const p of state.players) assert.ok(p.worthiness >= 60 && p.worthiness <= 75);
-  for (const c of state.canon) assert.ok(c.worthiness >= 50 && c.worthiness <= 80);
+  for (const p of state.players) assert.equal(p.worthiness, 50, "every PC starts at 50");
+  assert.equal(state.canon.find((c) => c.canonId === "gyro").worthiness, 80);
+  assert.equal(state.canon.find((c) => c.canonId === "diego").worthiness, 25);
   const all = JSON.stringify([publicView(state), hostScreenView(state), ...state.players.map((p) => privateView(state, p.id))]);
   assert.doesNotMatch(all, /worthiness/i);
   assert.doesNotMatch(all, /"roles"|"subId"|"rivalKey"/);

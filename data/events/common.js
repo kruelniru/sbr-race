@@ -44,7 +44,7 @@ export default [
   { id: 'common-neck-and-neck', text: '{a} and {b} race neck and neck for miles until {a} edges ahead.',
     cast: { a: 'focus', b: 'named' }, effects: { a: { pace: 1 }, b: { pace: -1 } }, tags: ['minor', 'pace', 'sprint'], when: { rounds: ['day'] }, weight: 3 },
   { id: 'common-kill-named', text: '{a} catches {b} alone on the trail and kills {b.them} for {b.their} supplies.',
-    cast: { a: 'focus', b: 'named' }, effects: { b: { dies: 'killed for supplies', by: 'a' } }, tags: ['kill'], weight: 0.5 },
+    cast: { a: 'focus', b: 'named' }, effects: { b: { dies: 'killed for supplies', by: 'a' } }, tags: ['kill', 'cruel'], weight: 0.5 },
   { id: 'common-save-dragged', text: "{b}'s foot catches in the stirrup and {b.they} {b:is/are} dragged until {a} cuts the strap.",
     cast: { a: 'focus', b: { is: 'named', hasHorse: true } }, effects: { a: { points: 10 }, b: { injured: true } }, tags: ['help'], weight: 1.5 },
   { id: 'common-npc-killed-by-racer', text: '{a} watches {b} pick a fight with the wrong stranger and fall in the dust.',
@@ -75,7 +75,7 @@ export default [
   { id: 'night-jumped', text: '{b} and {c} jump {a} in the dark. {a} kills {b}, and {c} flees into the night.',
     cast: { a: 'focus', b: 'npc', c: 'npc' }, effects: { b: { dies: 'killed in a night ambush', by: 'a' } }, tags: ['defend'], when: { rounds: ['night'] }, weight: 1.5 },
   { id: 'night-murder-named', text: '{a} slips into {b}\'s camp while {b.they} sleep{b:s} and makes sure {b.they} never wake{b:s}.',
-    cast: { a: 'focus', b: 'named' }, effects: { b: { dies: 'murdered in camp', by: 'a' } }, tags: ['kill'], when: { rounds: ['night'] }, weight: 0.45 },
+    cast: { a: 'focus', b: 'named' }, effects: { b: { dies: 'murdered in camp', by: 'a' } }, tags: ['kill', 'cruel'], when: { rounds: ['night'] }, weight: 0.45 },
   { id: 'night-watch-together', text: '{a} keeps watch so {b} can sleep. Nobody bothers them.',
     cast: { a: 'focus', b: 'named' }, tags: ['help'], when: { rounds: ['night'] }, weight: 2.5 },
 ];
