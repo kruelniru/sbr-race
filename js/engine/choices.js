@@ -531,7 +531,7 @@ function resolveSub(ctx, prompt) {
   if (!outcome) return null;
   const text = render(outcome.text, display(roles));
   applyEffects(ctx, outcome.effects, roles);
-  if (option.tags?.includes('help')) addWorthiness(roles.a, RULES.worthiness.help);
+  if (option.tags?.includes('help')) addWorthiness(roles.a, option.tags.includes('save') ? RULES.worthiness.save : RULES.worthiness.help, ctx);
   const death = Object.values(outcome.effects).some((e) => e.dies);
   const line = lineFor(ctx, `${sub.id}:${option.id}`, text, roles, { death, tags: option.tags ?? [] });
   // Quiet results ("waits out the storm") go to the Meanwhile card, but only

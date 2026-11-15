@@ -1,4 +1,5 @@
 // Choice engine tests: Stage Plans, sub events, Hunt a rival, secret prompts.
+import RULES from '../data/rules.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createGameState, addPlayer, applyCharacter, privateView, publicView, hostScreenView } from '../js/engine/state.js';
@@ -137,7 +138,7 @@ test('secret prompts never reach the host screen', () => {
 test('Worthiness and engine internals stay out of every view', () => {
   const state = setup('privacy-1', { players: 6, humans: 2 });
   openStagePlans(state);
-  for (const p of state.players) assert.equal(p.worthiness, 50, "every PC starts at 50");
+  for (const p of state.players) assert.equal(p.worthiness, RULES.worthiness.byPersonality[p.personality], "PCs start by personality");
   assert.equal(state.canon.find((c) => c.canonId === "gyro").worthiness, 80);
   assert.equal(state.canon.find((c) => c.canonId === "diego").worthiness, 25);
   const all = JSON.stringify([publicView(state), hostScreenView(state), ...state.players.map((p) => privateView(state, p.id))]);

@@ -11,8 +11,9 @@ import { standOdds, availableStands, pickStand, giveStand, removeStand } from '.
 import { openStagePlans, openSubEvents, closeChoices, useItem, SUBS } from '../js/engine/choices.js';
 import { roleFits } from '../js/engine/events.js';
 import { addItem } from '../js/engine/items.js';
-import { killRacer } from '../js/engine/racers.js';
-import { lintEvents } from '../js/engine/events.js';
+import { killRacer, addWorthiness } from '../js/engine/racers.js';
+import { lintEvents, EVENTS, KILL_KINDS, killWorthiness, normalizeEvent } from '../js/engine/events.js';
+import PERSONALITIES from '../data/personalities.js';
 
 function setup(seed, { players = 8, humans = 2 } = {}) {
   const state = createGameState(seed);
@@ -163,4 +164,36 @@ test('whole games stay consistent with Stands in play', () => {
     for (const r of state.players) assert.ok(r.worthiness >= 0 && r.worthiness <= 100);
     for (const e of state.stands.log) assert.ok(!BANNED.includes(e.stand));
   }
+});
+
+test('Worthiness: start by personality, kill tags on every kill, hints for big changes', () => {
+  // Every personality has a start value and a trade-off line (no numbers in it).
+  for (const p of PERSONALITIES) {
+    assert.ok(RULES.worthiness.byPersonality[p.id] != null, p.id);
+    assert.ok(p.tradeoff && !/\d/.test(p.tradeoff), p.id);
+  }
+  // Every kill in the content has exactly one kill-* tag, and the linter catches a missing one.
+  const kills = EVENTS.filter((e) => Object.values(e.effects).some((x) => x.dies && x.by));
+  assert.ok(kills.length >= 14);
+  for (const e of kills) assert.equal(e.tags.filter((t) => KILL_KINDS.includes(t)).length, 1, e.id);
+  const bad = normalizeEvent({ id: 'x', text: '{a} kills {b}.', cast: { a: 'focus', b: 'npc' }, effects: { b: { dies: 'x', by: 'a' } }, tags: ['kill'] });
+  assert.equal(lintEvents([bad]).length, 1);
+  assert.equal(killWorthiness(['kill', 'kill-cruel']), -12);
+  assert.equal(killWorthiness(['kill-started']), -8);
+  assert.equal(killWorthiness(['defend', 'kill-defense']), 0);
+
+  const state = setup('worth-1');
+  const [me] = state.players;
+  const ctx = ctxOf(state);
+  me.hints = [];
+  me.worthiness = 50;
+  addWorthiness(me, RULES.worthiness.killStarted, ctx);
+  assert.equal(me.worthiness, 42);
+  assert.equal(me.hints.at(-1).text, 'Something in you hardens.');
+  addWorthiness(me, RULES.worthiness.palmSurvive, ctx);
+  assert.equal(me.hints.length, 1, 'small changes give no hint');
+  addWorthiness(me, RULES.worthiness.spare, ctx);
+  assert.equal(me.hints.at(-1).text, 'You feel lighter in the saddle.');
+  // A full run: the hint shows up only in your own private view.
+  assert.ok(!JSON.stringify([publicView(state), hostScreenView(state)]).includes('lighter in the saddle'));
 });

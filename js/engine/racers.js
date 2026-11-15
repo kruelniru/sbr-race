@@ -39,16 +39,33 @@ export function initPcRacer(player, horse, worthiness) {
   }));
 }
 
-/** Starting Worthiness for a tier (rules.worthiness.start). */
-export function startWorthiness(rng, tier) {
-  const [lo, hi] = RULES.worthiness.start[tier];
+/** Starting Worthiness: PCs by personality (rules.worthiness.byPersonality), others by tier range. */
+export function startWorthiness(rng, tier, personality) {
+  const W = RULES.worthiness;
+  if (tier === 'pc' && W.byPersonality[personality] != null) return W.byPersonality[personality];
+  const [lo, hi] = W.start[tier];
   return rng.int(lo, hi);
 }
 
-/** Change hidden Worthiness, clamped to 0–100. */
-export function addWorthiness(who, n) {
-  if (who?.worthiness == null) return;
+/**
+ * Change hidden Worthiness, clamped to 0–100. With `ctx`, a change of
+ * rules.worthiness.hintAt or more gives a PC a private phone hint, so people
+ * notice without seeing a number.
+ */
+export function addWorthiness(who, n, ctx) {
+  if (who?.worthiness == null || !n) return;
+  const before = who.worthiness;
   who.worthiness = Math.max(0, Math.min(100, who.worthiness + n));
+  if (ctx && Math.abs(n) >= RULES.worthiness.hintAt && who.worthiness !== before) {
+    addHint(who, n > 0 ? 'You feel lighter in the saddle.' : 'Something in you hardens.', ctx);
+  }
+}
+
+/** A private line on this PC's phone (shown after the round's reveal). */
+export function addHint(racer, text, ctx) {
+  if (racer?.tier !== 'pc') return;
+  (racer.hints ??= []).push({ text, stage: ctx?.stage?.id ?? 0, round: ctx?.roundLabel ?? '' });
+  if (racer.hints.length > 12) racer.hints.splice(0, racer.hints.length - 12);
 }
 
 export function makeCanonRacer(def, horse, worthiness) {

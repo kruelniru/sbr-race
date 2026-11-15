@@ -8,7 +8,7 @@
 // state.race.palmLog: [{ tier, worthiness, band, outcome }] for the sim.
 
 import RULES from '../../data/rules.js';
-import { addWorthiness, retireRacer } from './racers.js';
+import { addWorthiness, retireRacer, addHint } from './racers.js';
 import { awakenStand } from './stands.js';
 import { keepNpc } from './field.js';
 
@@ -27,11 +27,7 @@ export function rollPalm(rng, worthiness) {
 }
 
 /** A private line for a PC's phone, shown with the round's private update. */
-export function addHint(racer, text, ctx) {
-  if (racer?.tier !== 'pc') return;
-  (racer.hints ??= []).push({ text, stage: ctx?.stage?.id ?? 0, round: ctx?.roundLabel ?? '' });
-  if (racer.hints.length > 12) racer.hints.splice(0, racer.hints.length - 12);
-}
+export { addHint }; // lives in racers.js now
 
 export function logPalm(ctx, who, outcome) {
   (ctx.state.race.palmLog ??= []).push({ tier: who.tier, worthiness: who.worthiness, band: palmBand(who.worthiness).min, outcome });
@@ -60,7 +56,7 @@ export function palmExit(ctx, who, outcome) {
     }
   }
   logPalm(ctx, who, got ? 'stand' : 'nothing');
-  addWorthiness(who, RULES.worthiness.palmSurvive);
+  addWorthiness(who, RULES.worthiness.palmSurvive, ctx);
   addHint(who, got
     ? 'A strange calm settles over you as you leave the Palm. Something walks out with you.'
     : who.stand
@@ -72,7 +68,7 @@ export function palmExit(ctx, who, outcome) {
 /** Lost in the Palm: time lost, or the race is over for them (still alive). */
 export function palmLost(ctx, who) {
   logPalm(ctx, who, 'lost');
-  addWorthiness(who, RULES.worthiness.palmSurvive);
+  addWorthiness(who, RULES.worthiness.palmSurvive, ctx);
   if (who.tier === 'pc' && ctx.rng.chance(RULES.palm.lostRetire)) {
     if (who.status === 'racing') retireRacer(ctx, who);
     addHint(who, 'You wandered the Palm for days. When you found the trail again, the race had gone on without you.', ctx);

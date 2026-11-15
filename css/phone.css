@@ -46,6 +46,7 @@ legend { margin-bottom: 8px; }
 .choice-card-body { display: grid; gap: 2px; padding: .8em 1em; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); cursor: pointer; }
 .choice-card input:checked + .choice-card-body { border-color: var(--gold); background: #4a3418; }
 .choice-blurb { color: var(--muted); font-size: .9rem; }
+.choice-tradeoff { color: var(--gold-2); font-size: .85rem; font-style: italic; line-height: 1.35; }
 
 .you-card { display: flex; gap: 16px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; margin: 8px 0 16px; }
 .you-card .player-meta, .you-card .player-personality { font-size: .95rem; margin-top: 2px; }

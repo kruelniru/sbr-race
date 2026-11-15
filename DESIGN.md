@@ -48,7 +48,7 @@ Three tiers share the race, and only PCs are controlled by people.
 
 | Tier | Count | Starting Worthiness | Death odds | Behavior |
 | --- | --- | --- | --- | --- |
-| Player characters | 12–18 (max 24) | Exactly 50 | Normal | Owner chooses; personality fills in |
+| Player characters | 12–18 (max 24) | By personality: Honorable 60, Cautious 55, Opportunist 50, Glory-Seeker 50, Ruthless 40 (AI PCs too) | Normal | Owner chooses; personality fills in |
 | Canon racers | 15 (each a host toggle) | Their own (see below) | Low; can't die in Stage 1 | Rarely start kills, often help |
 | NPC field | ~500 | Low, ~5–30 | High | Background; retire and die often |
 
@@ -194,7 +194,7 @@ Plans whose systems don't exist yet are hidden, not greyed out. The numbers live
 
 In milestone 3 (`data/sub-events.js`):
 
-- **Injured racer on the trail:** stop to help (lose time, +5 points, Worthiness) or ride past.
+- **Injured racer on the trail:** stop to help (lose time, +5 points, Worthiness +10 for saving a life) or ride past.
 - **Risky shortcut** (canyon gap, goat path, thin ice, back alleys, dry riverbed): take it or stay on the road.
 - **Hazard** (sandstorm, blizzard, stampede, fog, fire, flash flood): push through or take shelter.
 - **Spent horse / sore legs** (Runners): rest or push on.
@@ -233,27 +233,33 @@ Alliances are in from the start. How one forms depends on who's asking:
 
 **What allies do:** help each other in events, share food and horses, and fight together. Points stay individual.
 
-**Breaking up:** betraying or abandoning an ally is a sub event choice and costs Worthiness (−8). A secret Valentine agent can sit inside an alliance without anyone knowing.
+**Breaking up:** betraying or abandoning an ally is a sub event choice and costs Worthiness (−12). A secret Valentine agent can sit inside an alliance without anyone knowing.
 
 ## Worthiness
 
-Worthiness is a hidden 0–100 stat. Every PC starts at exactly 50; canon racers have their own values; NPCs start at 5–30. Each player sees only their own, on their phone, as an RDR2-style segmented bar with a word ("Unworthy" … "The Saint is watching") and no number; the phone is only ever sent a coarse level. Nobody else sees it, on the host or any other phone, until the finale's secrets reveal (milestone 6).
+Worthiness is a hidden 0–100 stat. PCs start by personality (Honorable 60, Cautious 55, Opportunist 50, Glory-Seeker 50, Ruthless 40; AI PCs use the same values); canon racers have their own values; NPCs start at 5–30. Each player sees only their own, on their phone, as an RDR2-style segmented bar with a word ("Unworthy" … "The Saint is watching") and no number; the phone is only ever sent a coarse level. Nobody else sees it, on the host or any other phone, until the finale's secrets reveal (milestone 6).
 
-**Active from milestone 4:** help or save +5, spare +8, survive the Devil's Palm +5, kill someone helpless or fleeing −5 (events tagged `cruel`). The rest of the table arrives in milestone 5. Everything clamps to 0–100.
+**Character creation** shows each personality's trade-off in one short line under its description, in words, never numbers (for example Ruthless: "Starts less worthy, but gets more chances to kill and sabotage.").
 
-**Worthiness barely matters at the Devil's Palm, and that's intended:** everyone starts at 50 and the Palm only runs in Stages 2–3, so almost every PC is in the 45–59 band there. It matters more for Stand Arrows later in the race and for corpse parts in milestone 5, by which point players have moved apart (by the end of a game: Honorable about 79, Ruthless about 53).
+| Action | Change | Active |
+| --- | --- | --- |
+| Give away a corpse part | +15 | M5 |
+| Spare someone you beat | +12 | M4 |
+| Save a life (help tagged `save`) | +10 (instead of +8) | M4 |
+| Help someone | +8 | M4 |
+| Survive the Devil's Palm | +5 | M4 |
+| Kill in self-defense (or by accident) | 0 | M4 |
+| Any kill you started: you attacked, hunted or ambushed | −8 | M4 |
+| Kill someone helpless, fleeing or asleep | −12 (instead of −8) | M4 |
+| Steal a corpse part | −8 | M5 |
+| Abandon an ally | −12 | M5 |
+| Join Valentine | −30 | M5 |
 
-| Action | Change |
-| --- | --- |
-| Give away a corpse part | +10 |
-| Spare someone you beat | +8 |
-| Help or save a racer | +5 |
-| Survive the Devil's Palm | +5 |
-| Kill in self-defense | 0 |
-| Kill someone helpless or fleeing | −5 |
-| Steal a corpse part | −5 |
-| Abandon an ally | −8 |
-| Join Valentine | Large drop |
+Everything clamps to 0–100. A kill changes the Worthiness of the racer with the kill credit. Every kill event carries exactly one tag, `kill-defense`, `kill-started` or `kill-cruel`, and the content linter fails if one is missing. A Hunt a rival showdown that ends in a kill counts as started; showdowns can't kill yet, so this applies once milestone 5 fights can.
+
+**You notice it:** any change of 8 or more adds a private hint line: "You feel lighter in the saddle." when it goes up, "Something in you hardens." when it goes down. Smaller changes (the Palm's +5) move the bar silently.
+
+**Worthiness barely matters at the Devil's Palm, and that's intended:** the Palm only runs in Stages 2–3, when most PCs are still near where they started (45–59, or 60+ for Honorable players). It matters more for Stand Arrows later in the race and for corpse parts in milestone 5, by which point players have moved apart. In the sim, end-of-race averages are Honorable 92, Cautious 87, Glory-Seeker 70, Opportunist 66 and Ruthless 45.
 
 **What it decides:**
 
@@ -484,7 +490,7 @@ Decisions made after the original design, in the order they came up:
 31. Retune for Stage Plans: PC skill 65, PC death odds 0.65 (about 51% of PCs reach New York, top 10 in about 38% of stages). The 77% PC win rate waits for the M6 retune.
 32. The host logs every choice window (open time, time beyond the results, each answer time). "Export choice times" downloads it; `node sim/simulate.js --choice-times file.json` replays it to settle game length.
 33. The phone feed is grouped by round (newest on top, older rounds collapsed to a tappable header), with one line per row at 16px, a gold bar and tint on your own lines, a red style for deaths, and Meanwhile lines in their own muted block. The status card, choice card and lobby got the same looser spacing. Checked at 360px wide.
-34. Worthiness: every PC starts at exactly 50; canon racers have individual values (Gyro 80 … L.A. 12); NPCs 5–30. Active: help/save +5, spare +8, survive the Palm +5, cruel kills −5. The owner's phone shows a segmented bar with no number (only a coarse level is sent); nobody else sees it until M6. Private hint lines at key moments.
+34. Worthiness (values superseded by 47–48): every PC starts at exactly 50; canon racers have individual values (Gyro 80 … L.A. 12); NPCs 5–30. Active: help/save +5, spare +8, survive the Palm +5, cruel kills −5. The owner's phone shows a segmented bar with no number (only a coarse level is sent); nobody else sees it until M6. Private hint lines at key moments.
 35. Worthiness matters little at the Palm (everyone is near 50 in Stages 2–3) and more for Arrows later and corpse parts in M5. Intended.
 36. Stand tier odds by source (corpse 40/60/0, Arrow 20/40/40, Palm 10/30/60) with a ±2-per-10-Worthiness shift into Legendary from the lowest tier; in `rules.js`.
 37. The Stand pool, banned list and canon Stands live in `data/stands.js`. The ban covers Valentine's non-racer agents only; Oyecomova's and the Boom Booms' Stands enter the pool when their owners die. Gyro has no Stand (Ball Breaker removed); Avdul rides an unnamed camel.
@@ -497,3 +503,7 @@ Decisions made after the original design, in the order they came up:
 44. Stand placement bonus Common +1 / Rare +1 / Legendary +2 (lowered to keep every tier under 2× its share of PC wins); canon racers' own Stands get none. Hazard survival ×0.92 / ×0.85 / ×0.80. Fight bonus hook +4 / +8 / +12 for M5.
 45. Generic Stand lines for racers nobody controls go to the Meanwhile card; signature canon lines and human PCs' Stand lines stay in the Main Story.
 46. The finale gets a "Stands awakened" card after the awards (user, Stand, tier; never the source).
+47. Starting Worthiness by personality instead of 50 for everyone: Honorable 60, Cautious 55, Opportunist 50, Glory-Seeker 50, Ruthless 40, for people and AI PCs alike. Character creation shows each trade-off as one line of words, never numbers.
+48. Bigger Worthiness changes so players notice: help +8, save a life +10 (instead of help), spare +12, survive the Palm +5, self-defense 0, a kill you started −8, a helpless/fleeing/asleep kill −12 (instead of −8). Recorded for M5: give a part +15, steal a part −8, abandon an ally −12, join Valentine −30. Before this, kills that weren't tagged cruel cost nothing.
+49. Every kill event is tagged `kill-defense`, `kill-started` or `kill-cruel` (linted), and the change goes to the racer with the kill credit. Audit calls: the water-hole duel is self-defense (the other rider challenged), "killed for supplies" moved from cruel to started (the victim was alone but not helpless), "shot by mistake" counts as an accident (0), and Hot Pants striking a Valentine man first counts as started. Rival showdowns that kill count as started (from M5).
+50. A Worthiness change of 8 or more gives a private hint line: "You feel lighter in the saddle." / "Something in you hardens."

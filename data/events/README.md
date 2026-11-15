@@ -52,7 +52,7 @@ Example: `b: { is: 'named', side: 'valentine' }`.
 | `pace` | `+1` / `-2` | placement boost or drag this stage |
 | `points` | `+10` / `-10` | bonus points (sprint +10, save +10, help +5, shortcut +5, sabotage −10) |
 | `horse` | `'dies'` | the horse is lost and the Rider continues on foot. Runners can't get these. |
-| `worthiness` | `+5` / `-5` | hidden stat. `help`-tagged events already give the focus racer +5 |
+| `worthiness` | `+5` / `-5` | hidden stat. `help` / `save` and `kill-*` tags already change it; don't add it twice |
 
 Sub events (choices) use the same roles and effects; see `data/sub-events.js`.
 
@@ -73,7 +73,11 @@ focus racer's personality (`rules.js` → `personalityLean`). Canon racers add
 - `minor`: a short pace or flavor line, collected on the "Meanwhile on the
   trail..." card. Keep these to one short sentence, and never put a death in one.
 - `stand`: a Stand event (weighted up for Stand users; reveals the Stand on stream if the text names it)
-- `cruel`: the killer kills someone helpless or fleeing (Worthiness −5)
+- Every kill (a `dies` with `by`) needs exactly one Worthiness tag for the
+  killer (the linter checks): `kill-defense` (they attacked first, or an
+  accident: 0), `kill-started` (the killer attacked, hunted or ambushed: −8),
+  `kill-cruel` (helpless, fleeing or asleep: −12, instead of −8).
+- `save`: with `help`, a life was on the line (Worthiness +10 instead of +8)
 - `kill` (starting a killing), `defend` (killing in self-defense), `spare`, `help`,
   `hazard`, `risky`, `pace`, `sprint`, `sabotage`, `cold` (ignoring someone in need)
 

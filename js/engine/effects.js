@@ -39,7 +39,7 @@ export const EFFECTS = {
       const spareer = roles[role];
       if (spareer) {
         spareer.spares = (spareer.spares ?? 0) + 1;
-        addWorthiness(spareer, RULES.worthiness.spare);
+        addWorthiness(spareer, RULES.worthiness.spare, ctx);
       }
     },
   },
@@ -75,10 +75,10 @@ export const EFFECTS = {
   },
 
   // worthiness: +n / -n. Hidden stat (see rules.worthiness). Events tagged
-  // 'help' already give the focus racer +5, so don't add it twice.
+  // 'help' / 'save' and kill-* tags already change it, so don't add it twice.
   worthiness: {
     fits: () => true,
-    apply: (ctx, who, n) => addWorthiness(who, n),
+    apply: (ctx, who, n) => addWorthiness(who, n, ctx),
   },
 
   // palm: 'out' | 'lost' | 'dies'. Devil's Palm lines in main events (canon

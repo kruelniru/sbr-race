@@ -17,6 +17,16 @@ const ROLE_KINDS = ['focus', 'named', 'npc'];
 // ------------------------------------------------------------ normalizing
 
 /** Turn shorthand into full form once, at load. */
+export const KILL_KINDS = ['kill-defense', 'kill-started', 'kill-cruel'];
+
+/** Worthiness for a kill event's killer, from its kill-* tag (rules.worthiness). */
+export function killWorthiness(tags) {
+  const W = RULES.worthiness;
+  if (tags.includes('kill-cruel')) return W.killCruel;
+  if (tags.includes('kill-started')) return W.killStarted;
+  return W.killDefense;
+}
+
 export function normalizeEvent(e) {
   const cast = {};
   for (const [key, spec] of Object.entries(e.cast)) cast[key] = typeof spec === 'string' ? { is: spec } : { ...spec };
@@ -56,6 +66,11 @@ export function lintEvents(events = EVENTS) {
       if (eff.by && !e.cast[eff.by]) problems.push(`${where}: by: "${eff.by}" is not a role`);
       if (eff.sparedBy && !e.cast[eff.sparedBy]) problems.push(`${where}: sparedBy: "${eff.sparedBy}" is not a role`);
     }
+    // Every kill (a death with kill credit) says how Worthiness reads it.
+    const kinds = e.tags.filter((t) => KILL_KINDS.includes(t));
+    const isKill = Object.values(e.effects).some((x) => x.dies && x.by);
+    if (isKill && kinds.length !== 1) problems.push(`${where}: a kill needs exactly one of ${KILL_KINDS.join(', ')}`);
+    if (!isKill && kinds.length) problems.push(`${where}: ${kinds[0]} on an event with no kill credit`);
     for (const r of e.when.rounds ?? []) if (!ROUND_TYPES.includes(r)) problems.push(`${where}: unknown round type "${r}"`);
     if (!(e.weight > 0)) problems.push(`${where}: weight must be > 0`);
   }
@@ -229,9 +244,10 @@ function resolve(ctx, e, roles) {
     }
   }
   // Helping or saving someone: hidden Worthiness (DESIGN.md table).
-  if (e.tags.includes('help')) addWorthiness(roles[e.focusKey], RULES.worthiness.help);
-  // Killing someone helpless or fleeing.
-  if (e.tags.includes('cruel')) addWorthiness(roles[e.focusKey], RULES.worthiness.cruel);
+  if (e.tags.includes('help')) addWorthiness(roles[e.focusKey], e.tags.includes('save') ? RULES.worthiness.save : RULES.worthiness.help, ctx);
+  // Kills: the racer with the kill credit, by the event's kill-* tag.
+  const killW = killWorthiness(e.tags);
+  for (const effs of Object.values(e.effects)) if (effs.dies && effs.by) addWorthiness(roles[effs.by], killW, ctx);
 
   const ids = [];
   for (const who of Object.values(roles)) {

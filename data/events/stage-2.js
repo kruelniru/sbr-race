@@ -9,7 +9,7 @@ export default [
   { id: 's2-sandstorm', text: '{a} waits out a sandstorm under {a.their} blanket.',
     cast: { a: 'focus' }, effects: { a: { pace: -1 } }, tags: ['minor'], when: { stages: [2] }, weight: 4 },
   { id: 's2-share-water', text: '{a} shares {a.their} last canteen with {b}, who was about to collapse.',
-    cast: { a: 'focus', b: 'named' }, effects: { a: { points: 5 }, b: { pace: 1 } }, tags: ['help'], when: { stages: [2] }, weight: 2.5 },
+    cast: { a: 'focus', b: 'named' }, effects: { a: { points: 5 }, b: { pace: 1 } }, tags: ['help', 'save'], when: { stages: [2] }, weight: 2.5 },
   { id: 's2-scorpion', text: "A scorpion stings {a.horse} in the night. The horse doesn't see morning.",
     cast: { a: { is: 'focus', hasHorse: true } }, effects: { a: { horse: 'dies' } }, tags: ['hazard'], when: { stages: [2], rounds: ['night'] }, weight: 0.5 },
   { id: 's2-devils-palm-rumor', text: "{a} hears whispers about the Devil's Palm and gives the dunes a wide berth.",

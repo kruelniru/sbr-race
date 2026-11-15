@@ -11,7 +11,7 @@
 //   stand:       id of their Stand in data/stands.js (CANON_STANDS), or null.
 //                It's locked while they live and joins the pool when they
 //                die. Johnny and Diego awaken theirs mid-race (stands.js awakens).
-//   worthiness:  their starting Worthiness (hidden; PCs start at 50)
+//   worthiness:  their starting Worthiness (hidden; PCs start by personality, rules.worthiness.byPersonality)
 //   palm:        true if they may walk into a Devil's Palm (Standless only)
 //   animal:      'camel' for a camel rider (text says camel, not horse)
 //   notes:       for writers; not used by the engine

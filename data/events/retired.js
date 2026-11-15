@@ -7,7 +7,7 @@ export default [
   { id: 'retired-scout', text: '{a} rides ahead as a scout, warning anyone who will listen about the trail ahead.',
     cast: { a: 'focus' }, tags: ['minor', 'help'], retiredOnly: true, weight: 3 },
   { id: 'retired-mistaken', text: '{b} mistakes {a} for a contender and shoots {a.them} dead.',
-    cast: { a: 'focus', b: 'npc' }, effects: { a: { dies: 'shot by mistake', by: 'b' } }, tags: ['hazard'], retiredOnly: true, weight: 0.5 },
+    cast: { a: 'focus', b: 'npc' }, effects: { a: { dies: 'shot by mistake', by: 'b' } }, tags: ['hazard', 'kill-defense'], retiredOnly: true, weight: 0.5 },
   { id: 'retired-follows', text: "{a} trails the race, following the field's dust toward New York.",
     cast: { a: 'focus' }, tags: ['minor'], retiredOnly: true, weight: 4 },
 ];

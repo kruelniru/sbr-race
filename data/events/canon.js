@@ -8,14 +8,14 @@ export default [
     cast: { a: focus('hotpants'), b: { is: 'named', injured: true } },
     effects: { a: { points: 5 }, b: { heal: true } }, tags: ['help'], weight: 10 },
   { id: 'hp-heal-stranger', text: '{a} finds {b} bleeding out on the trail and seals the wound with Cream Starter.',
-    cast: { a: focus('hotpants'), b: 'npc' }, effects: { a: { points: 5 } }, tags: ['help'], weight: 4 },
+    cast: { a: focus('hotpants'), b: 'npc' }, effects: { a: { points: 5 } }, tags: ['help', 'save'], weight: 4 },
   { id: 'hp-disguise', text: '{a} reshapes {a.their} face with Cream Starter and slips past a knot of rivals unnoticed.',
     cast: { a: focus('hotpants') }, effects: { a: { pace: 1 } }, tags: ['pace'], weight: 3 },
   { id: 'hp-ambushed', text: "{b} ambushes {a} and opens a gash in {a.their} arm. {a} seals it with Cream Starter, then fills {b}'s throat with flesh spray. {b} doesn't get up.",
-    cast: { a: focus('hotpants'), b: 'npc' }, effects: { b: { dies: 'choked by Cream Starter', by: 'a' } }, tags: ['defend'], weight: 3 },
+    cast: { a: focus('hotpants'), b: 'npc' }, effects: { b: { dies: 'choked by Cream Starter', by: 'a' } }, tags: ['defend', 'kill-defense'], weight: 3 },
   { id: 'hp-vs-valentine', text: "{a} recognizes {b} as one of the President's men. Cream Starter fills {b}'s lungs before {b.they} can strike.",
     cast: { a: focus('hotpants'), b: { is: 'named', side: 'valentine' } },
-    effects: { b: { dies: 'smothered by Cream Starter', by: 'a' } }, tags: ['kill'], weight: 2 },
+    effects: { b: { dies: 'smothered by Cream Starter', by: 'a' } }, tags: ['kill', 'kill-started'], weight: 2 },
   { id: 'hp-prayer', text: '{a} kneels alone by the fire and prays for {a.their} brother.',
     cast: { a: focus('hotpants') }, tags: ['minor'], when: { rounds: ['night'] }, weight: 3 },
   { id: 'hp-mends-herself', text: "{a} takes a fall on the rocks, sprays the wound closed, and doesn't slow down.",
@@ -49,7 +49,7 @@ export default [
 
   // ============================================================ Mountain Tim
   { id: 'tim-lasso', text: '{a} lassoes {b} out of a flash flood.',
-    cast: { a: focus('mountaintim'), b: 'named' }, effects: { a: { points: 10 } }, tags: ['help'], weight: 2.5 },
+    cast: { a: focus('mountaintim'), b: 'named' }, effects: { a: { points: 10 } }, tags: ['help', 'save'], weight: 2.5 },
   { id: 'tim-cowboy', text: '{a} tips {a.their} hat to every rider {a.they} pass{a:es}.',
     cast: { a: focus('mountaintim') }, tags: ['minor'], weight: 3 },
 
@@ -69,7 +69,7 @@ export default [
 
   // ============================================================ Oyecomova
   { id: 'oyecomova-bomb', text: '{a} plants a bomb under a bridge. {b} rides over it.',
-    cast: { a: focus('oyecomova'), b: 'npc' }, effects: { b: { dies: 'blown up on a bridge', by: 'a' } }, tags: ['kill'], weight: 2 },
+    cast: { a: focus('oyecomova'), b: 'npc' }, effects: { b: { dies: 'blown up on a bridge', by: 'a' } }, tags: ['kill', 'kill-started'], weight: 2 },
 
   // ============================================================ Urmd Avdul
   { id: 'avdul-desert', text: '{a} reads the desert like a map and finds water where no one else can.',

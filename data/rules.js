@@ -53,12 +53,25 @@ export default {
   // milestone 4; nobody else sees it until the finale's secrets reveal.
   // Canon racers have their own value in canon-racers.js (worthiness).
   worthiness: {
-    start: { pc: [50, 50], canon: [50, 80], npc: [5, 30] },
-    help: 5,        // help or save a racer (events tagged 'help', help choices)
-    spare: 8,       // spare someone you beat (sparedBy)
-    palmSurvive: 5, // walk out of the Devil's Palm alive
-    cruel: -5,      // kill someone helpless or fleeing (events tagged 'cruel')
-    barSteps: 20,   // the phone gets a coarse level (0–20), never the number
+    // PCs (people and AI) start by personality; canon and NPCs by range.
+    byPersonality: { honorable: 60, cautious: 55, opportunist: 50, glory: 50, ruthless: 40 },
+    start: { pc: [50, 50], canon: [50, 80], npc: [5, 30] }, // pc: fallback only
+    help: 8,          // help someone (events / choices tagged 'help')
+    save: 10,         // save a life (tagged 'help' + 'save'); instead of help, not on top
+    spare: 12,        // spare someone you beat (sparedBy)
+    palmSurvive: 5,   // walk out of the Devil's Palm alive
+    // Kills, for the racer with the kill credit (`by`). Every kill event has
+    // exactly one of these tags (tests/stands.test.js checks it).
+    killDefense: 0,   // 'kill-defense': they attacked you (or an accident)
+    killStarted: -8,  // 'kill-started': you attacked, hunted or ambushed
+    killCruel: -12,   // 'kill-cruel': helpless, fleeing or asleep (instead of -8)
+    // Milestone 5 (recorded now, not used yet):
+    givePart: 15,     // give away a corpse part
+    stealPart: -8,    // steal a part
+    abandonAlly: -12, // abandon an ally
+    joinValentine: -30,
+    hintAt: 8,        // a change this big gives the phone a private hint line
+    barSteps: 20,     // the phone gets a coarse level (0–20), never the number
   },
 
   // ---------------------------------------------------------------- Stands

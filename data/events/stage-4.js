@@ -7,7 +7,7 @@ export default [
   { id: 's4-sniper', text: '{b} snipes at riders from the tall grass. {a} takes a bullet in the shoulder.',
     cast: { a: 'focus', b: 'npc' }, effects: { a: { injured: true } }, tags: ['hazard'], when: { stages: [4] }, weight: 2 },
   { id: 's4-sniper-hunted', text: '{b} snipes at riders from the tall grass until {a} circles around and ends it.',
-    cast: { a: 'focus', b: 'npc' }, effects: { b: { dies: 'shot in the grass', by: 'a' }, a: { points: 10 } }, tags: ['defend', 'help'], when: { stages: [4] }, weight: 1.5 },
+    cast: { a: 'focus', b: 'npc' }, effects: { b: { dies: 'shot in the grass', by: 'a' }, a: { points: 10 } }, tags: ['defend', 'help', 'kill-defense'], when: { stages: [4] }, weight: 1.5 },
   { id: 's4-flat-out', text: '{a} gallops flat out across the open grass.',
     cast: { a: { is: 'focus', hasHorse: true } }, effects: { a: { pace: 1 } }, tags: ['minor', 'pace'], when: { stages: [4] }, weight: 5 },
   { id: 's4-little-tomb', text: '{a} stops at a lonely grave on the prairie to pay {a.their} respects.',

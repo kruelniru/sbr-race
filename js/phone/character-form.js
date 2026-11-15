@@ -80,7 +80,7 @@ export function characterForm({ initial = {}, submitLabel, onSubmit, onCancel })
 
   const personalityChoices = h('div', { class: 'choice-list', role: 'radiogroup' },
     PERSONALITIES.map((p) =>
-      radio('personality', p.id, [h('strong', {}, p.label), h('span', { class: 'choice-blurb' }, p.blurb)],
+      radio('personality', p.id, [h('strong', {}, p.label), h('span', { class: 'choice-blurb' }, p.blurb), p.tradeoff ? h('span', { class: 'choice-tradeoff' }, p.tradeoff) : null],
         data.personality === p.id, () => { data.personality = p.id; }, 'choice-card'),
     ),
   );

@@ -13,5 +13,5 @@ export default [
   { id: 's3-frostbite', text: "{a} loses feeling in {a.their} fingers and has to stop to thaw them.",
     cast: { a: 'focus' }, effects: { a: { injured: true } }, tags: ['hazard'], when: { stages: [3] }, weight: 1.5 },
   { id: 's3-rescue-crevasse', text: '{b} slips into a crevasse. {a} lowers a rope and pulls {b.them} out.',
-    cast: { a: 'focus', b: 'named' }, effects: { a: { points: 10, pace: -1 } }, tags: ['help'], when: { stages: [3] }, weight: 1.5 },
+    cast: { a: 'focus', b: 'named' }, effects: { a: { points: 10, pace: -1 } }, tags: ['help', 'save'], when: { stages: [3] }, weight: 1.5 },
 ];

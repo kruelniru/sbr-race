@@ -12,7 +12,7 @@
 //   options: [{
 //     id, label, hint,                // hint: the trade-off, shown under the label
 //     lean: { honorable: 3, ... },    // highest = "★ In character"; AI picks by it
-//     tags: ['help'],                 // 'help' gives hidden Worthiness +5
+//     tags: ['help'],                 // 'help' gives hidden Worthiness +8 ('save' too: +10)
 //     outcomes: [{ weight, text, effects: { a: {...}, b: {...} }, minor? }],
 //     // minor: a quiet result, shown on the Meanwhile card (phones still get it)
 //   }],
@@ -33,7 +33,7 @@ function injuredRacer(id, { text, when, help, past, pastDies }) {
   return {
     id, title: 'Injured racer on the trail', text, cast: { a: 'focus', b: 'npc' }, when, weight: 3,
     options: [
-      { id: 'help', label: 'Stop to help', hint: 'Lose time, +5 points', lean: L(5, 0.4, 2, 0.8, 1), tags: ['help'],
+      { id: 'help', label: 'Stop to help', hint: 'Lose time, +5 points', lean: L(5, 0.4, 2, 0.8, 1), tags: ['help', 'save'],
         outcomes: [{ weight: 1, text: help, effects: { a: { pace: -1, points: 5 } } }] },
       { id: 'past', label: 'Ride past', hint: 'Keep your pace', lean: L(0.5, 3, 1.5, 2, 2.2), tags: ['cold'],
         outcomes: [
@@ -273,7 +273,10 @@ export const SUB_EVENTS = [
 // Hunt a rival (Stage Plan): a guaranteed sprint showdown with the target.
 // Both choose if both are PCs. The engine scores it as a contest (skill +
 // option bonus + randomness). Milestone 5 turns it into a real fight.
+// Showdowns don't kill yet. When milestone 5 fights can end in a kill, the
+// hunter's kill counts as 'kill-started' (rules.worthiness.killStarted).
 export const RIVAL = {
+  killKind: 'kill-started',
   title: 'Rival showdown',
   hunterText: '{a} has finally caught up with {b}. Time to settle it.',
   targetText: '{a} has been hunting you, and now {a.they} {a:is/are} right beside you.',

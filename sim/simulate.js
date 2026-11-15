@@ -453,6 +453,7 @@ function newStandStats() {
     arrows: { found: 0, pierce: 0, keep: 0, leave: 0, used: 0, stand: 0, died: 0, already: 0, tiers: {} },
     roka: { found: 0, foundHuman: 0, gamesUnder2: 0, eaten: 0, kept: 0, left: 0, before: {}, after: {} },
     worth: {}, // personality -> [end worthiness]
+    arrowBands: {}, // band min -> { stand, died }
     holders: {}, // tier|none -> { n, points, ny, pc }
     winTier: {}, fieldTier: {}, pcWinTier: {}, pcFieldTier: {}, games: 0, breakouts: 0, share: {},
   };
@@ -473,7 +474,11 @@ function collectStands(S, state, results, palm) {
   for (const e of state.race.arrowLog ?? []) {
     if (e.event === 'found') { T.arrows.found++; bump(T.arrows, e.choice); }
     else if (e.event === 'used') T.arrows.used++;
-    else if (e.outcome) { bump(T.arrows, e.outcome); if (e.tier) bump(T.arrows.tiers, e.tier); }
+    else if (e.outcome) {
+      bump(T.arrows, e.outcome); if (e.tier) bump(T.arrows.tiers, e.tier);
+      const band = RULES.arrows.survive.find((b) => (e.worthiness ?? 50) >= b.min).min;
+      bump((T.arrowBands[band] ??= {}), e.outcome);
+    }
   }
   let human = 0;
   for (const e of state.race.rokakakaLog ?? []) {
@@ -549,8 +554,14 @@ function printStands(S) {
   console.log(`  eaten ${pct(R.eaten, R.found)} · kept ${pct(R.kept, R.found)} · left ${pct(R.left, R.found)}`);
   console.log(`  tier before eating: ${JSON.stringify(R.before)} · next Stand after: ${JSON.stringify(R.after)}`);
 
-  console.log('\nWorthiness at the end of the race (PCs, start 50)');
-  console.log('  ' + Object.entries(T.worth).map(([k, a]) => `${k} ${f1(avg(a))}`).join(' · '));
+  console.log('  piercings by Worthiness band (everyone): ' + Object.entries(T.arrowBands).sort((x, y) => y[0] - x[0])
+    .map(([b, o]) => `${b}+: ${(o.stand ?? 0) + (o.died ?? 0)} tries, survived ${pct(o.stand ?? 0, (o.stand ?? 0) + (o.died ?? 0))} (rule ${RULES.arrows.survive.find((x) => x.min === +b).p}%)`).join(' · '));
+
+  console.log('\nWorthiness at the end of the race (PCs; start by personality; 10th–90th percentile)');
+  table(['Personality', 'start', 'end avg', '10th–90th'], Object.entries(T.worth).map(([k, a]) => {
+    const sorted = a.slice().sort((x, y) => x - y), q = (f) => sorted[Math.floor(f * (sorted.length - 1))];
+    return [k, RULES.worthiness.byPersonality[k], f1(avg(a)), `${q(0.1)}–${q(0.9)}`];
+  }));
 
   console.log('\nStand holders vs non-holders (Stand at the end of the race; PCs + canon)');
   const order = ['legendary', 'rare', 'common', 'none'];

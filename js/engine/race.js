@@ -56,7 +56,7 @@ export function startRace(state) {
   let h = 0;
   const nextHorse = () => freeHorses[h++ % freeHorses.length];
 
-  for (const p of readyPlayers(state)) initPcRacer(p, p.mount === 'runner' ? null : nextHorse(), startWorthiness(rng, 'pc'));
+  for (const p of readyPlayers(state)) initPcRacer(p, p.mount === 'runner' ? null : nextHorse(), startWorthiness(rng, 'pc', p.personality));
   state.canon = defs.map((d) => makeCanonRacer(d, d.mount === 'runner' ? null : d.horse ?? nextHorse(), startWorthiness(rng, 'canon')));
 
   initField(state, rng);
