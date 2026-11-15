@@ -1,5 +1,7 @@
 // Stand events (milestone 4). Only racers with a Stand get these; `{a.stand}`
 // is their Stand's name. A line that names a Stand reveals it on stream.
+// Generic lines ('generic') go to the Meanwhile card unless the racer is a
+// human-controlled PC; signature lines always stay in the Main Story.
 //
 // The rule for every Stand: it can be beaten. No Stand event kills anyone,
 // stops time, or erases a person. Fights (milestone 5) hook in separately.
@@ -9,21 +11,21 @@ const ANY = { is: 'focus', hasStand: true };
 export default [
   // ------------------------------------------------------------ any Stand
   { id: 'stand-rockslide', text: "{a}'s {a.stand} smashes a path through a rockslide, and {a.they} ride{a:s} on while the others dig.",
-    cast: { a: ANY }, effects: { a: { pace: 1 } }, tags: ['stand', 'pace'], when: { terrain: ['rough', 'mountains'] }, weight: 2 },
+    cast: { a: ANY }, effects: { a: { pace: 1 } }, tags: ['stand', 'generic', 'pace'], when: { terrain: ['rough', 'mountains'] }, weight: 2 },
   { id: 'stand-river-save', text: '{b} is swept off {b.their} feet at the ford. {a} sends {a.stand} in after {b.them} and hauls {b.them} out.',
-    cast: { a: ANY, b: 'npc' }, effects: { a: { points: 10 } }, tags: ['stand', 'help'], weight: 1.5 },
+    cast: { a: ANY, b: 'npc' }, effects: { a: { points: 10 } }, tags: ['stand', 'generic', 'help'], weight: 1.5 },
   { id: 'stand-bandits', text: 'Bandits jump {a} at a water hole. {a.stand} sends them running before a shot is fired.',
-    cast: { a: ANY }, effects: { a: { pace: 1 } }, tags: ['stand'], weight: 1.5 },
+    cast: { a: ANY }, effects: { a: { pace: 1 } }, tags: ['stand', 'generic'], weight: 1.5 },
   { id: 'stand-night-watch', text: '{a} sleeps soundly while {a.stand} keeps watch over the camp.',
-    cast: { a: ANY }, effects: { a: { pace: 1 } }, tags: ['stand'], when: { rounds: ['night'] }, weight: 1.5 },
+    cast: { a: ANY }, effects: { a: { pace: 1 } }, tags: ['stand', 'generic'], when: { rounds: ['night'] }, weight: 1.5 },
   { id: 'stand-lift-wagon', text: '{a} uses {a.stand} to lift an overturned wagon off the leg of {b}.',
-    cast: { a: ANY, b: 'npc' }, effects: { a: { points: 5, pace: -1 } }, tags: ['stand', 'help'], weight: 1.5 },
+    cast: { a: ANY, b: 'npc' }, effects: { a: { points: 5, pace: -1 } }, tags: ['stand', 'generic', 'help'], weight: 1.5 },
   { id: 'stand-show-off', text: '{a} shows off {a.stand} to a crowd at the checkpoint. Nobody else can see it, so they just think {a.they} {a:is/are} strange.',
-    cast: { a: ANY }, tags: ['stand'], when: { rounds: ['day', 'finish'] }, weight: 1 },
+    cast: { a: ANY }, tags: ['stand', 'generic'], when: { rounds: ['day', 'finish'] }, weight: 1 },
   { id: 'stand-strain', text: '{a} pushes {a.stand} too far and collapses from the strain.',
-    cast: { a: ANY }, effects: { a: { injured: true } }, tags: ['stand', 'risky'], weight: 1 },
+    cast: { a: ANY }, effects: { a: { injured: true } }, tags: ['stand', 'generic', 'risky'], weight: 1 },
   { id: 'stand-sense', text: "{a}'s {a.stand} bristles as {b} rides past. Neither of them stops.",
-    cast: { a: ANY, b: { is: 'named', hasStand: true } }, tags: ['stand'], weight: 1 },
+    cast: { a: ANY, b: { is: 'named', hasStand: true } }, tags: ['stand', 'generic'], weight: 1 },
 
   // ------------------------------------------------------------ canon Stands
   { id: 'stand-cream-starter', text: '{a} seals the gunshot wound of {b} with a spray of {a.stand} and rides on.',

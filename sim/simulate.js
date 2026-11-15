@@ -68,6 +68,7 @@ function playGame(seed) {
   const windows = [];  // choice windows: { kind, humans }
   const timeRng = new Rng(seed + ':time');
   const palm = { offers: 0, in: 0 };
+  const standShare = [];
   while (!state.race.over) {
     if (needsStagePlans(state)) {
       const w = openStagePlans(state);
@@ -102,9 +103,15 @@ function playGame(seed) {
     }
     windows.push({ kind: 'sub', humans: w.prompts.filter((x) => humanIds.has(x.playerId)).length });
     closeChoices(state);
-    results.push(runRound(state));
+    const res = runRound(state);
+    results.push(res);
+    // Stand holders among PCs at the end of Stages 3, 6 and 9.
+    if (res.placements && [3, 6, 9].includes(res.stage.id)) {
+      const living = state.players.filter((x) => x.status !== 'dead');
+      standShare.push({ stage: res.stage.id, ofAll: living.filter((x) => x.stand).length / state.players.length, ofLiving: living.filter((x) => x.stand).length / (living.length || 1) });
+    }
   }
-  return { state, results, stageLog, windows, timeRng, palm };
+  return { state, results, stageLog, windows, timeRng, palm, standShare };
 }
 
 /** Sim plan modes: random, star, or one fixed plan for everyone. */
@@ -190,8 +197,9 @@ function newStats() {
   };
 }
 
-function collect(S, { state, results, stageLog, windows, timeRng, palm }) {
+function collect(S, { state, results, stageLog, windows, timeRng, palm, standShare }) {
   collectStands(S, state, results, palm);
+  for (const x of standShare) (S.st.share[x.stage] ??= []).push(x);
   S.games++;
   const racers = namedRacers(state);
   for (const r of racers) {
@@ -446,7 +454,7 @@ function newStandStats() {
     roka: { found: 0, foundHuman: 0, gamesUnder2: 0, eaten: 0, kept: 0, left: 0, before: {}, after: {} },
     worth: {}, // personality -> [end worthiness]
     holders: {}, // tier|none -> { n, points, ny, pc }
-    winTier: {}, fieldTier: {}, pcWinTier: {}, pcFieldTier: {}, games: 0, breakouts: 0,
+    winTier: {}, fieldTier: {}, pcWinTier: {}, pcFieldTier: {}, games: 0, breakouts: 0, share: {},
   };
 }
 
@@ -520,6 +528,9 @@ function printStands(S) {
     }));
   console.log(`  NPC breakouts: ${f1(T.breakouts / g)} per game`);
 
+  console.log('\nPCs holding a Stand (living holders)');
+  console.log('  ' + Object.entries(T.share).map(([st, a]) => `end of Stage ${st}: ${pct(avg(a.map((x) => x.ofAll)), 1)} of all PCs (${pct(avg(a.map((x) => x.ofLiving)), 1)} of those alive)`).join(' · '));
+
   console.log('\nStands gained during the race (per game)');
   const tiers = ['legendary', 'rare', 'common'];
   table(['Source', 'Legendary', 'Rare', 'Common', 'total'],
@@ -566,7 +577,7 @@ function simPeopleUseItems(state, rng) {
   for (const it of state.items ?? []) {
     const p = state.players.find((x) => x.id === it.owner);
     if (!p || p.isAI || it.pendingUse || p.status !== 'racing') continue;
-    if (it.kind === 'arrow' && !p.stand && rng.chance(0.35)) useItem(state, p.id, it.id);
+    if (it.kind === 'arrow' && !p.stand && rng.chance(0.6)) useItem(state, p.id, it.id);
     if (it.kind === 'rokakaka' && p.stand?.tier === 'common' && rng.chance(0.25)) useItem(state, p.id, it.id);
   }
 }

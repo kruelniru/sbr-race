@@ -307,7 +307,7 @@ export const RIVAL = {
 // The Edge of the Devil's Palm: random in Stages 2–3 for racers without a
 // Stand, and guaranteed once that stage by the "Seek the Devil's Palm" plan.
 export const PALM = {
-  id: 'sub-palm', title: "The edge of the Devil's Palm", special: 'palm', weight: 1.5,
+  id: 'sub-palm', title: "The edge of the Devil's Palm", special: 'palm', weight: 7,
   text: "The ground ahead drops away into a Devil's Palm. People say it gives some riders a gift, and swallows the rest.",
   textHasStand: "You've found a Devil's Palm. You already have a Stand; the Palm has nothing more to give you.",
   cast: { a: { is: 'focus', hasStand: false } }, when: { stages: [2, 3] },

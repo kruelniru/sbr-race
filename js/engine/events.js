@@ -245,7 +245,10 @@ function resolve(ctx, e, roles) {
   const effects = Object.entries(e.effects);
   const death = effects.some(([, x]) => x.dies);
   const namedDeath = effects.some(([k, x]) => x.dies && roles[k].tier !== 'npc');
-  const minor = e.minor && !death;
+  // Generic Stand lines for racers nobody controls (AI, canon, NPCs) are minor.
+  const focus = roles[e.focusKey];
+  const generic = e.tags.includes('generic') && !(focus.tier === 'pc' && !focus.isAI);
+  const minor = (e.minor || generic) && !death;
   // Named racers in the line, so screens can highlight them (NPCs stay plain).
   const names = Object.values(roles).filter((w) => w.tier !== 'npc').map((w) => ({ name: w.name, tier: w.tier }));
   return {

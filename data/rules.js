@@ -76,7 +76,7 @@ export default {
   // race outright: these shift odds, and randomness stays on top.
   standTier: {
     common: { placement: 1, hazardDeath: 0.92, fightBonus: 4 },
-    rare: { placement: 2, hazardDeath: 0.85, fightBonus: 8 },
+    rare: { placement: 1, hazardDeath: 0.85, fightBonus: 8 },
     legendary: { placement: 2, hazardDeath: 0.8, fightBonus: 12 }, // fightBonus: hook for milestone 5
   },
   standEventWeight: 1.5,     // weight multiplier on Stand events for Stand users
@@ -100,11 +100,11 @@ export default {
 
   // ---------------------------------------------------------------- Stand Arrows (our addition)
   arrows: {
-    perGame: [2, 4],        // surface this many times (seeded)
+    perGame: [6, 8],        // surface this many times (seeded)
     stages: [2, 8],         // between these stages
     // Survive the piercing (%), by Worthiness band.
     survive: [{ min: 75, p: 95 }, { min: 60, p: 88 }, { min: 45, p: 78 }, { min: 25, p: 65 }, { min: 0, p: 50 }],
-    aiUseChance: 0.35,      // an AI racer with a kept Arrow uses it in a later window this often
+    aiUseChance: 0.6,      // an AI racer with a kept Arrow uses it in a later window this often
   },
 
   // ---------------------------------------------------------------- Rokakaka (our addition)
