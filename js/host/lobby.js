@@ -34,6 +34,7 @@ export class HostLobby {
     this.playerToConn = new Map(); // playerId -> connId
     this.lastSeen = new Map();     // playerId -> ms timestamp
     this.onChoice = null;          // RaceHost: (player, CHOICE message) => void
+    this.onUseItem = null;         // RaceHost: (player, itemId) => void
     this.timerView = null;         // RaceHost: () => { remainingMs, durationMs, paused } | null
 
     // After a host reload nobody is connected until their phone says hello.
@@ -65,6 +66,9 @@ export class HostLobby {
         if (typeof m.promptId === 'string' && typeof m.optionId === 'string') {
           this.onChoice?.(player, { promptId: m.promptId, optionId: m.optionId, targetId: typeof m.targetId === 'string' ? m.targetId : undefined });
         }
+        break;
+      case TO_HOST.USE_ITEM:
+        if (typeof m.itemId === 'string') this.onUseItem?.(player, m.itemId);
         break;
       default:
         // VOTE arrives in milestone 6.

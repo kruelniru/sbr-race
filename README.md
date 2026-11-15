@@ -81,17 +81,22 @@ js/engine/           pure game logic, no DOM (Node can import it)
   racers.js          PCs and canon racers share one racer shape
   field.js           the NPC field, pack leaders, named NPCs, field reports
   placement.js       Finish Line scores, points, standings
-  choices.js         Stage Plans, sub events, Hunt a rival, personality picks
+  choices.js         Stage Plans, sub events, Hunt a rival, Palm/Arrow/Rokakaka prompts, items in use
+  stands.js          Stand odds, the pool, giving/removing Stands, canon locks
+  palm.js            the Devil's Palm outcomes, private hints
+  items.js           the item inventory (owner field; trading in M5)
+  finale-sections.js extra finale cards (Stands awakened)
   plans.js           Stage Plan lookups
   reveal.js          round result -> host cards + text-based timing (shared with the sim)
   finale.js          podium, awards, memorial, and the registry for later finale sections
 js/host/             host-main.js, lobby.js, race-host.js (reveal, Back, skipping), race-view.js, backdrop.js, persist.js, debug.js
-js/phone/            phone-main.js, character-form.js, image.js, wake-lock.js, feed.js
+js/phone/            phone-main.js, secrets.js (Worthiness bar, Stand, Items, hints), character-form.js, image.js, wake-lock.js, feed.js
 js/ui/dom.js         small DOM helpers
 data/                game content, separate from the engine
   rules.js           every tunable number (points, placement, death odds, choices, pacing...)
   plans.js           Stage Plans
-  sub-events.js      sub events and Hunt a rival showdowns
+  sub-events.js      sub events, Hunt a rival, the Palm, Arrows, Rokakaka
+  stands.js          the Stand pool, banned list, canon Stands
   stages.js          the 9 stages: rounds, terrain, NPC attrition
   canon-racers.js    the 15 canon racers (each a host toggle)
   events/            event templates; see data/events/README.md
@@ -139,6 +144,18 @@ tests/               node --test
 - Content: `data/plans.js` (Stage Plans) and `data/sub-events.js` (sub events,
   Hunt a rival). Engine: `js/engine/choices.js`.
 
+### Stands (milestone 4)
+- Each phone shows its owner's **Worthiness** bar (no number), **Stand** (name,
+  tier, what it does), **Items** (kept Stand Arrows and Rokakaka, usable while
+  any decision is open) and private hints ("Only you know"). None of it
+  reaches the host or another phone.
+- The Devil's Palm (Stages 2–3), Stand Arrows (secret) and Rokakaka (secret,
+  human PCs only) are sub events. Content: `data/stands.js` (the pool, banned
+  list, canon Stands), `data/events/stands.js`, `data/events/palm.js`,
+  `data/sub-events.js`. Numbers: `rules.js` (`worthiness`, `standOdds`,
+  `standTier`, `palm`, `arrows`, `rokakaka`).
+- The finale adds a **Stands awakened** card after the awards.
+
 **Host controls:** ◂ Back (view-only: steps through earlier cards and earlier
 rounds, changes nothing), Pause/Auto, Next, Back to live, Skip side stories.
 While a choice window is open, the same slots hold Pause timer and End now.
@@ -171,7 +188,7 @@ node sim/simulate.js --games 500                 # 18 PCs by default
 node sim/simulate.js --games 500 --runners 0.3   # 30% Runners
 node sim/simulate.js --seed demo --verbose       # read one full game
 node sim/simulate.js --plans random              # Stage Plan balance (also: star, push, pace, rival, laylow)
-node sim/simulate.js --freq low --humans 12      # sub event frequency; how many PCs are people
+node sim/simulate.js --freq low --humans 12      # sub event frequency; how many PCs are people (only people find Rokakaka)
 node sim/simulate.js --choice-times log.json     # use real answer times exported from a game
 ```
 

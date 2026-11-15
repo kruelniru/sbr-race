@@ -195,3 +195,15 @@
 .countdown-fill { height: 100%; background: linear-gradient(90deg, #c98a22, #f2c66d); transition: width .25s linear; }
 .overlap-hint { font-size: .85rem; color: var(--gold-2); background: #000a; padding: 4px 10px; border-radius: 999px; }
 @media (prefers-reduced-motion: reduce) { .countdown-fill { transition: none; } }
+
+/* ---------------------------------------------------------------- finale: Stands awakened */
+.stand-list { list-style: none; padding: 0; margin: 16px 0 0; columns: 2; column-gap: 36px; text-align: left; }
+.stand-list li { display: flex; gap: 12px; align-items: center; padding: 8px 0; break-inside: avoid; border-bottom: 1px solid #ffffff10; }
+.stand-list li.fallen .avatar { filter: grayscale(1) brightness(.85); }
+.stand-who { flex: 1; min-width: 0; }
+.stand-what { color: var(--gold-2); font-family: var(--display); font-size: 1.15rem; }
+.tier-badge { font-size: .75rem; font-weight: 700; border-radius: 999px; padding: 2px 10px; letter-spacing: .08em; text-transform: uppercase; }
+.tier-badge.tier-legendary { background: #f2c66d; color: #24170c; }
+.tier-badge.tier-rare { background: #9fb4ff; color: #121a33; }
+.tier-badge.tier-common { background: #ffffff22; color: var(--text); }
+@media (max-width: 800px) { .stand-list { columns: 1; } }

@@ -48,15 +48,19 @@ Three tiers share the race, and only PCs are controlled by people.
 
 | Tier | Count | Starting Worthiness | Death odds | Behavior |
 | --- | --- | --- | --- | --- |
-| Player characters | 12–18 (max 24) | High, ~60–75 | Normal | Owner chooses; personality fills in |
-| Canon racers | 15 (each a host toggle) | ~50–80 | Low; can't die in Stage 1 | Rarely start kills, often help |
+| Player characters | 12–18 (max 24) | Exactly 50 | Normal | Owner chooses; personality fills in |
+| Canon racers | 15 (each a host toggle) | Their own (see below) | Low; can't die in Stage 1 | Rarely start kills, often help |
 | NPC field | ~500 | Low, ~5–30 | High | Background; retire and die often |
 
-**Canon racers:** Johnny Joestar, Gyro Zeppeli, Diego Brando, Sandman, Hot Pants, Mountain Tim, Pocoloco, Wekapipo, Norisuke Higashikata IV, Mrs. Robinson, Oyecomova, Urmd Avdul, and the Boom Boom family: Benjamin, Andre and L.A. The Boom Booms are on Valentine's side.
+**Canon racers:** Johnny Joestar, Gyro Zeppeli, Diego Brando, Sandman, Hot Pants, Mountain Tim, Pocoloco, Wekapipo, Norisuke Higashikata IV, Mrs. Robinson, Oyecomova, Urmd Avdul, and the Boom Boom family: Benjamin, Andre and L.A.
+
+**Valentine's side:** Oyecomova is Valentine's agent and secretly posted the bounty on Gyro; the Boom Booms came for that bounty. All four are on Valentine's side, so Hot Pants' ruthlessness toward the President's people applies to them.
 
 - Wekapipo races from Stage 1. That's a liberty, not canon timing.
 - They choose by canon personality: Gyro spares, and Diego does whatever helps Diego.
-- Some start with Stands (Hot Pants, Mountain Tim, Pocoloco, Sandman); Johnny and Diego awaken theirs during the race.
+- **Stands (verified):** Hot Pants: Cream Starter. Mountain Tim: Oh! Lonesome Me. Pocoloco: Hey Ya!. Sandman: In a Silent Way. Oyecomova: Boku no Rhythm wo Kiitekure ("Listen to My Rhythm", turns anything into a bomb; from a Devil's Palm). Benjamin, Andre and L.A. Boom Boom: Tomb of the Boom 1, 2 and 3 (magnetism; from a Devil's Palm). Johnny awakens Tusk Act 1 during Stage 2 or 3, and Diego awakens Scary Monsters in Stage 3.
+- **No Stand:** Gyro and Wekapipo (Spin users), Norisuke IV, Mrs. Robinson (insects in his body set off cholla cactus needles; his horse is El Condor Pasa) and Urmd Avdul (an Egyptian nomad who rides an unnamed camel, so his text says camel, and horse-only events skip him). Only Norisuke, Mrs. Robinson and Avdul may walk into a Devil's Palm.
+- **Starting Worthiness:** Gyro 80, Hot Pants 75, Mountain Tim 70, Pocoloco 65, Johnny 60, Sandman 60, Wekapipo 60, Norisuke 55, Avdul 50, Diego 25, Mrs. Robinson 20, Oyecomova 15, Benjamin 15, Andre 12, L.A. 12.
 - They help others by sharing food, giving a horse or a corpse part, warning of ambushes, or teaching Spin (Gyro and Wekapipo).
 - Sandman is a canon Runner.
 
@@ -178,7 +182,7 @@ Players make one Stage Plan per stage, plus sub events when something happens to
 | Pace yourself | Safe | Average placement | M3 |
 | Hunt a rival | A guaranteed sprint showdown with your pick | You might lose | M3 (a real fight in M5) |
 | Lay low | Very safe | Bad placement | M3 |
-| Seek the Devil's Palm (Stages 2–3) | Stand gamble | Low Worthiness can kill you | M4 |
+| Seek the Devil's Palm (Stages 2–3) | A guaranteed Edge of the Devil's Palm that stage | Low Worthiness can kill you; −5 placement | M4 |
 | Hunt a corpse part | Better odds of finding one | Valentine's agents notice you | M5 |
 | Ally up | Ride with someone (they accept or refuse) | They might betray you | M5 |
 
@@ -197,6 +201,12 @@ In milestone 3 (`data/sub-events.js`):
 - **Sprint challenge:** race a canon racer or NPC for +10, or let them go.
 - **Bad injury:** keep riding, stop and heal, or retire.
 
+In milestone 4:
+
+- **Edge of the Devil's Palm** (Stages 2–3): go in or turn back. It comes up at random for racers without a Stand, and once that stage for anyone on "Seek the Devil's Palm" (a Stand holder can pick that plan; the card warns "You already have a Stand; the Palm has nothing more to give you" until corpse parts arrive in M5).
+- **Found a Stand Arrow** (secret): pierce yourself now, keep it, or leave it. A Stand holder only sees keep it / leave it.
+- **Found a Rokakaka** (secret, human PCs only): eat it now (only if you have a Stand), keep it, or leave it.
+
 A person's choice result always shows in the Main Story, even a quiet one ("Kruel waits out the storm"). Quiet results for AI racers and timed-out players go to the Meanwhile card.
 
 Later milestones:
@@ -205,7 +215,6 @@ Later milestones:
 - **Found a part:** keep it, hide it, or give it to someone.
 - **Ambushed by agents:** fight, flee, or hand over a part to live.
 - **Injured racer on the trail:** stop to help (lose time, gain Worthiness) or ride past.
-- **Edge of the Devil's Palm:** go in or turn back.
 - **Valentine's offer (Stages 4–6 only):** join him or refuse.
 
 **PC vs PC fights:** both players choose at once. The attacker chooses kill, spare, or take a horse or part; the defender chooses fight back, flee, or surrender a part. Both choices combine into the result.
@@ -228,7 +237,11 @@ Alliances are in from the start. How one forms depends on who's asking:
 
 ## Worthiness
 
-Worthiness is a hidden 0–100 stat, tracked silently from milestone 3 (help or save +5, spare +8; starting values from the tier table). Each player sees only their own (from milestone 4), as an RDR2-style bar with no number; nobody else sees it until the finale's secrets reveal.
+Worthiness is a hidden 0–100 stat. Every PC starts at exactly 50; canon racers have their own values; NPCs start at 5–30. Each player sees only their own, on their phone, as an RDR2-style segmented bar with a word ("Unworthy" … "The Saint is watching") and no number; the phone is only ever sent a coarse level. Nobody else sees it, on the host or any other phone, until the finale's secrets reveal (milestone 6).
+
+**Active from milestone 4:** help or save +5, spare +8, survive the Devil's Palm +5, kill someone helpless or fleeing −5 (events tagged `cruel`). The rest of the table arrives in milestone 5. Everything clamps to 0–100.
+
+**Worthiness barely matters at the Devil's Palm, and that's intended:** everyone starts at 50 and the Palm only runs in Stages 2–3, so almost every PC is in the 45–59 band there. It matters more for Stand Arrows later in the race and for corpse parts in milestone 5, by which point players have moved apart (by the end of a game: Honorable about 79, Ruthless about 53).
 
 | Action | Change |
 | --- | --- |
@@ -249,31 +262,68 @@ Worthiness is a hidden 0–100 stat, tracked silently from milestone 3 (help or 
 - Whether you survive a Stand Arrow.
 - How likely you are to awaken a Stand, and how strong it is.
 
-**Hints on your phone:** key moments add a line of text, such as "The corpse part feels warm in your hands."
+**Hints on your phone:** key moments add a private line under "Only you know", such as "A strange calm settles over you as you leave the Palm." They arrive with the round's private update, after the stream has shown the round.
 
 **Anonymous announcements on the host screen:** "Someone has been deemed worthy of the Saint" when a PC merges with a corpse part, and "Someone has fallen to the dark side" when a PC joins Valentine. Neither names the player.
 
 ## Stands
 
-Stands come from every part of JoJo, each with a power tier. A canon character's Stand stays locked until that character dies; if Johnny dies, Tusk enters the pool.
+Stands come from every part of JoJo, each with a tier. The pool lives in `data/stands.js` so more can be added.
 
-**Tiers:**
+**Design rule:** every Stand can be beaten. Stands are used in race events now and fights in milestone 5. A tier shifts the odds; no Stand ever wins a fight or a race outright, and no Stand event time-stops, erases, or instantly kills anyone.
 
-- **Common:** weaker or utility, such as Hey Ya!, Oh! Lonesome Me, Echoes Act 1.
-- **Rare:** solid fighters, such as Magician's Red, Sticky Fingers, Hierophant Green, Anubis.
-- **Legendary:** Star Platinum, The World, Gold Experience Requiem–level, D4C, Tusk Act 4.
+**The pool:**
 
-**Sources:**
+- **Legendary:** Star Platinum (no time stop), Killer Queen (no Bites the Dust), Gold Experience (not Requiem), Crazy Diamond, Stone Free, Weather Report (no Heavy Weather), Cream (heavy damage but never an instant kill: its user is blind inside the void, so it can miss, overshoot or hurt the user).
+- **Rare:** Magician's Red, Hierophant Green, Silver Chariot, Anubis, Hermit Purple, Sticky Fingers, Purple Haze, Spice Girl, Sex Pistols, Echoes Act 3, Aerosmith, Kraft Work, Soft & Wet, The Hand (only erases space to pull things closer, never a person).
+- **Common:** Echoes Act 1, Harvest, Pearl Jam, Highway Star, Moody Blues, Beach Boy, Little Feet, Tower of Gray, Ebony Devil, Surface, Planet Waves, Paisley Park.
+- **Banned, never obtainable:** The World, Star Platinum: The World, King Crimson, Made in Heaven, Gold Experience Requiem, Silver Chariot Requiem, Tusk Acts 2–4, Wonder of U, C-Moon, Bites the Dust, Green Day, Metallica, Whitesnake, D4C, and every Stand of Valentine's non-racer agents (Mandom, Catch the Rainbow, 20th Century Boy, Tubular Bells, Civil War, Tatoo You!, Wired…).
 
-| Source | Odds | Risk |
-| --- | --- | --- |
-| Devil's Palm | Mostly Common, some Rare, rare Legendary | Low Worthiness can kill or lose you |
-| Stand Arrow (rare item, our addition) | Mostly Rare, some Legendary | Must survive the piercing; low Worthiness can kill you |
-| Corpse part | Leans Rare to Legendary | Rejection if unworthy |
+**Canon Stands** stay locked while their owner lives and join the pool when they die (Johnny's Tusk enters only as Act 1, even if he dies before awakening it). Tiers once unlocked: Cream Starter, In a Silent Way, Boku no Rhythm wo Kiitekure, Tusk Act 1 and Scary Monsters are Rare; Oh! Lonesome Me, Hey Ya! and Tomb of the Boom 1–3 are Common. Valentine-side racers' Stands (Oyecomova, the Boom Booms) do enter the pool. A PC's or NPC's Stand dies with them.
 
-Higher Worthiness shifts the odds up a tier from any source. Stand Arrows don't exist in SBR canon; they're a liberty, since the Stand pool already spans every part.
+**One Stand per racer, always.** An Arrow, the Devil's Palm or a corpse part does nothing for someone who already has one (the text says so). The only way to swap is Rokakaka.
 
-**Reveal rule:** a Stand stays hidden until its user first uses it in a fight. Its source is never shown, so a Legendary Stand doesn't prove someone holds a corpse part. (Canon Stand details for Oyecomova, the Boom Booms and Mrs. Robinson are still to be verified when Stands are built.)
+**Sources** (tier odds at Worthiness 50, in `rules.js`):
+
+| Source | Legendary | Rare | Common | Risk |
+| --- | --- | --- | --- | --- |
+| Corpse part (M5) | 40% | 60% | 0% | Rejection if unworthy |
+| Stand Arrow (our addition) | 20% | 40% | 40% | Must survive the piercing |
+| Devil's Palm | 10% | 30% | 60% | Can kill or lose you |
+
+**Worthiness shift:** every 10 points above 50 adds 2 points to Legendary, taken from the lowest tier (Common; Rare for corpse parts); every 10 below 50 does the reverse. It uses the exact value (Worthiness 65 = +3) and reaches ±10 at Worthiness 0 or 100. Corpse parts never give Common. Stand Arrows don't exist in SBR canon; they're a liberty, since the pool spans every part.
+
+**What a Stand does** (`rules.standTier`): a placement bonus (Common +1, Rare +1, Legendary +2; canon racers' own Stands get none, since their skill already includes them), better odds of surviving hazards (×0.92 / ×0.85 / ×0.80 death odds), Stand events, and a fight bonus hook for milestone 5 (+4 / +8 / +12, always with randomness on top).
+
+**Stand events:** generic lines with a `{a.stand}` token, plus signature lines for every canon Stand and a handful of famous pool Stands. Generic lines for racers nobody controls (AI racers, canon racers, NPCs) go to the Meanwhile card; signature canon lines and every human PC's Stand lines stay in the Main Story.
+
+**Reveal rule:** your own phone shows your Stand (name, tier and what it does) from the round you get it. On stream a Stand stays hidden until the first time a revealed line names it. Its source (Palm, Arrow, corpse part) is never shown anywhere, so a Legendary Stand doesn't prove someone holds a corpse part.
+
+### The Devil's Palm (Stages 2–3)
+
+A racer who goes in gets one outcome from their Worthiness band (tuned with the sim):
+
+| Worthiness | Awaken a Stand | Nothing | Lost (−2 pace, or retire 1 in 4) | Dies |
+| --- | --- | --- | --- | --- |
+| 75–100 | 65% | 27% | 6% | 2% |
+| 60–74 | 55% | 30% | 10% | 5% |
+| 45–59 | 45% | 30% | 15% | 10% |
+| 25–44 | 30% | 30% | 20% | 20% |
+| 0–24 | 15% | 25% | 25% | 35% |
+
+Awakening a Stand and coming out with nothing read the same on stream ("walks back out at dusk, silent"). Canon racers with `palm` (Norisuke, Mrs. Robinson, Avdul) and NPCs walk in too; an NPC who awakens a Stand becomes a breakout NPC (cap 5 a game).
+
+### Stand Arrows (our addition)
+
+About 6–8 surface per game, seeded across Stages 2–8, each going to a PC (human or AI) as a secret "Found a Stand Arrow" prompt. Surviving the piercing depends on Worthiness: 95% at 75+, 88% at 60–74, 78% at 45–59, 65% at 25–44, 50% below. A survivor gets a Stand from the Arrow odds; a death is a normal named death on stream ("pierced by a strange arrow"). A kept Arrow can be used later from the phone.
+
+### Rokakaka (our addition)
+
+Eating it removes your Stand completely, as equivalent exchange. You're Standless until an Arrow, the Palm or a corpse part gives you a fresh roll (normal odds, normal risks); the removed Stand goes back into the pool (canon Stands follow their lock rule). Only human-controlled PCs ever find one: at least 2 per game, given to random racing human PCs by the end of Stage 6, plus a third by chance (cap 3). If the finder falls before the find resolves, it turns up again the next round; if no human PC is left, none drop. The stream shows nothing until a resulting Stand is revealed by the usual rule, or the player dies.
+
+### Items
+
+Kept Arrows and Rokakaka sit in an **Items** section on their owner's phone (a general inventory with an owner field). A player can use an item while any choice window is open (a sub event or the Stage Plan); it resolves with that round. A kept Arrow is disabled while you have a Stand, and a Rokakaka while you don't. Nobody else knows what you hold.
 
 ## Corpse parts
 
@@ -305,6 +355,8 @@ Nine parts of the Saint's Corpse surface over the race, one per stage. Holding o
 - Buy one in a town (costs points).
 - Be given one by another racer.
 - Take the horse of a racer who died.
+
+**Trading (milestone 5):** a player offers an item or a horse to another player from the phone; the other accepts or refuses in their next choice window, and the swap resolves with that round. No real-time haggling.
 
 Losing a second horse means retiring or continuing on foot. Runners never have horses (see Runners).
 
@@ -360,7 +412,7 @@ In the manga, points come only from stage placements, plus a time bonus for fini
 
 1. "The race is over."
 2. **Podium:** 3rd place, then 2nd, then a dramatic pause ("And the winner of the Steel Ball Run is…"), then the winner. Auto-advance stops on the winner.
-3. **Awards:** Most Kills, Most Merciful (spares), Best Runner, Biggest Comeback (most places climbed from a racer's worst standing to the final one). Later: Corpse Holder (most parts, plus the President's count), every Stand awakened, Breakout Racers, and others.
+3. **Awards:** Most Kills, Most Merciful (spares), Best Runner, Biggest Comeback (most places climbed from a racer's worst standing to the final one), then **Stands awakened**: every racer who gained a Stand during the race, with the Stand and its tier (✝ if they fell, "gave it up" after a Rokakaka), never its source. Later: Corpse Holder (most parts, plus the President's count), Breakout Racers, and others.
 4. **Reached New York:** every survivor with their points, plus how many from the field finished.
 5. **In memory of the Fallen:** everyone who died, how, by whom, and when.
 6. **The secrets reveal** (later milestones), the last and biggest moment: who joined Valentine, everyone's Worthiness bar, and who held which corpse parts.
@@ -432,3 +484,16 @@ Decisions made after the original design, in the order they came up:
 31. Retune for Stage Plans: PC skill 65, PC death odds 0.65 (about 51% of PCs reach New York, top 10 in about 38% of stages). The 77% PC win rate waits for the M6 retune.
 32. The host logs every choice window (open time, time beyond the results, each answer time). "Export choice times" downloads it; `node sim/simulate.js --choice-times file.json` replays it to settle game length.
 33. The phone feed is grouped by round (newest on top, older rounds collapsed to a tappable header), with one line per row at 16px, a gold bar and tint on your own lines, a red style for deaths, and Meanwhile lines in their own muted block. The status card, choice card and lobby got the same looser spacing. Checked at 360px wide.
+34. Worthiness: every PC starts at exactly 50; canon racers have individual values (Gyro 80 … L.A. 12); NPCs 5–30. Active: help/save +5, spare +8, survive the Palm +5, cruel kills −5. The owner's phone shows a segmented bar with no number (only a coarse level is sent); nobody else sees it until M6. Private hint lines at key moments.
+35. Worthiness matters little at the Palm (everyone is near 50 in Stages 2–3) and more for Arrows later and corpse parts in M5. Intended.
+36. Stand tier odds by source (corpse 40/60/0, Arrow 20/40/40, Palm 10/30/60) with a ±2-per-10-Worthiness shift into Legendary from the lowest tier; in `rules.js`.
+37. The Stand pool, banned list and canon Stands live in `data/stands.js`. The ban covers Valentine's non-racer agents only; Oyecomova's and the Boom Booms' Stands enter the pool when their owners die. Gyro has no Stand (Ball Breaker removed); Avdul rides an unnamed camel.
+38. One Stand per racer; only Rokakaka removes one. Every Stand can be beaten: no Stand event kills, time-stops or erases.
+39. A Stand is revealed on stream the first time a revealed line names it; the owner's phone shows it from the round they get it; the source is never shown. Secret prompts (Arrow, Rokakaka) never replace the racer's main event, so a missing line can't give them away.
+40. The Devil's Palm: Seek plan unhidden for Stages 2–3; random Edge of the Palm for Standless PCs; outcome table by Worthiness band; "Stand" and "nothing" read the same on stream; canon (Norisuke, Mrs. Robinson, Avdul) and NPCs can enter; NPC breakouts capped at 5. Glory-Seeker's ★ plan in Stages 2–3 is Seek the Devil's Palm.
+41. Stand Arrows: 6–8 per game across Stages 2–8 (raised from 2–4 so about a third of PCs end with a Stand), secret prompt, survival by Worthiness band. A Stand holder gets only keep / leave, and a kept Arrow's Use is disabled while holding a Stand.
+42. Rokakaka: human PCs only, at least 2 per game by the end of Stage 6 (re-queued if the finder falls first), a third by chance; secret; "eat it now" only with a Stand.
+43. Items are a general inventory with an owner; use during any choice window, resolving with that round. Trading (items and horses) is planned for M5.
+44. Stand placement bonus Common +1 / Rare +1 / Legendary +2 (lowered to keep every tier under 2× its share of PC wins); canon racers' own Stands get none. Hazard survival ×0.92 / ×0.85 / ×0.80. Fight bonus hook +4 / +8 / +12 for M5.
+45. Generic Stand lines for racers nobody controls go to the Meanwhile card; signature canon lines and human PCs' Stand lines stay in the Main Story.
+46. The finale gets a "Stands awakened" card after the awards (user, Stand, tier; never the source).

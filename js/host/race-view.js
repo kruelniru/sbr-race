@@ -14,7 +14,19 @@ import { nextRoundHeader } from '../engine/race.js';
  * Renderers for extra finale sections registered in js/engine/finale.js
  * (e.g. the secrets reveal). Later milestones add: FINALE_RENDERERS.secrets = (state, data) => element
  */
-export const FINALE_RENDERERS = {};
+export const FINALE_RENDERERS = {
+  // Milestone 4: every Stand awakened during the race, with its tier. Never its source.
+  stands: (state, data) => h('div', { class: 'card card-finale card-stands' },
+    h('h2', {}, 'Stands awakened'),
+    h('ul', { class: 'stand-list' }, data.users.map((u) =>
+      h('li', { class: `tier-${u.standTier}` + (u.dead ? ' fallen' : '') },
+        face(state, u.id),
+        h('div', { class: 'stand-who' },
+          h('strong', {}, u.name, u.dead ? ' ✝' : ''),
+          h('div', { class: 'stand-what' }, u.stand, u.gaveUp ? h('span', { class: 'hint' }, ' (gave it up)') : null)),
+        h('span', { class: `tier-badge tier-${u.standTier}` }, u.standTier)))),
+  ),
+};
 
 /**
  * @param {object} state

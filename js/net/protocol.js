@@ -9,6 +9,7 @@ export const TO_HOST = Object.freeze({
   HELLO: 'hello',         // { v, token? }  first message on every connection
   CHARACTER: 'character', // { name, gender, pronouns, personality, picture? }
   CHOICE: 'choice',       // { promptId, optionId, targetId? }  answer a Stage Plan or sub event
+  USE_ITEM: 'use_item',   // { itemId }  use (or cancel using) a kept item while a choice is open
   VOTE: 'vote',           // { promptId, optionId }        (milestone 6)
   PING: 'ping',           // {}
 });

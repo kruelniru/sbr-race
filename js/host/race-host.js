@@ -23,7 +23,7 @@
 
 import { startRace, runRound, syncShown, nextRoundHeader } from '../engine/race.js';
 import { buildCards, cardSeconds } from '../engine/reveal.js';
-import { needsStagePlans, openStagePlans, openSubEvents, closeChoices, answerPrompt } from '../engine/choices.js';
+import { needsStagePlans, openStagePlans, openSubEvents, closeChoices, answerPrompt, useItem } from '../engine/choices.js';
 import { getPlayer } from '../engine/state.js';
 
 export class RaceHost {
@@ -42,6 +42,7 @@ export class RaceHost {
     this.onTick = null; // host-main: refresh countdowns without a full re-render
     this.ticker = setInterval(() => this.#tick(), 250);
     lobby.onChoice = (player, m) => this.answer(player, m);
+    lobby.onUseItem = (player, itemId) => this.useItem(player, itemId);
     lobby.timerView = () => this.timerView();
   }
 
@@ -276,6 +277,13 @@ export class RaceHost {
     this.lobby.sendPrivate(player.id);
     if (this.#windowDone()) return this.#finishWindow();
     this.onChange();
+  }
+
+  /** A phone uses (or cancels using) a kept item; it resolves with this round. Private. */
+  useItem(player, itemId) {
+    if (!this.#windowOpen()) return;
+    const res = useItem(this.state, player.id, itemId);
+    if (res.ok) this.lobby.sendPrivate(player.id);
   }
 
   /** Pause / resume the timer (the host is talking over the stream). */

@@ -11,6 +11,7 @@ import { h, $, mount, avatar, store } from '../ui/dom.js';
 import { characterForm } from './character-form.js';
 import { MiniFeed } from './feed.js';
 import { keepAwake } from './wake-lock.js';
+import { worthinessBar, standCard, itemsCard, hintsCard } from './secrets.js';
 
 // Storage keys. Tabs in one browser share localStorage, so to test several
 // "phones" on one computer give each tab its own slot: phone.html?room=ABCD&slot=2
@@ -347,6 +348,11 @@ function renderRacing() {
       you?.prompt ? choiceCard(you.prompt) : null,
       youCard(),
       r ? statusCard(r) : null,
+      r && r.status !== 'dead' ? standCard(r) : null,
+      itemsCard(you, (itemId) => {
+        if (!net.send(msg(TO_HOST.USE_ITEM, { itemId }))) choiceError = 'Not connected. Try again in a moment.';
+      }),
+      r?.hints?.length ? hintsCard(r.hints) : null,
       r?.status === 'dead'
         ? h('p', { class: 'waiting fallen' }, 'You can still follow the race below. Dead riders get to vote on the living in a later update.')
         : !you?.prompt && h('p', { class: 'waiting' }, 'Watch the stream. When you have a decision to make, it appears here.'),
@@ -458,8 +464,10 @@ function statusCard(r) {
     r.lastPlacement && [h('dt', {}, 'Last stage'), h('dd', {}, `${ordinal(r.lastPlacement.rank)} in Stage ${r.lastPlacement.stage}`)],
     r.kills ? [h('dt', {}, 'Kills'), h('dd', {}, String(r.kills))] : null,
     you?.plan && r.status === 'racing' ? [h('dt', {}, 'Stage plan'), h('dd', {}, PLANS.find((x) => x.id === you.plan)?.label ?? you.plan)] : null,
+    r.worthinessLevel != null ? [h('dt', {}, 'Worthiness'), h('dd', {}, worthinessBar(r.worthinessLevel))] : null,
   );
 }
+
 
 function youCard() {
   if (!you?.hasCharacter) return null;

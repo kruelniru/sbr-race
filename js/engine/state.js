@@ -170,6 +170,8 @@ export function privateView(state, playerId) {
     // An open choice for this player (Stage Plan or sub event), phone-safe.
     prompt: promptView(state, p.id),
     plan: p.plan ?? null, // this stage's Stage Plan (their own choice)
+    // A choice window is open (items can be used now), for this player if racing.
+    choiceOpen: !!(state.race?.choice && !state.race.choice.closed && p.status === 'racing'),
     // Kept Stand Arrows and Rokakaka. Usable while a choice window is open.
     items: (state.items ?? []).filter((i) => i.owner === p.id).map((i) => ({
       id: i.id, kind: i.kind, label: ITEM_KINDS[i.kind]?.label ?? i.kind, blurb: ITEM_KINDS[i.kind]?.blurb ?? '',
