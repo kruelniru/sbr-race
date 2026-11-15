@@ -9,5 +9,5 @@ export default [
   { id: 's9-rooftop', text: '{a} is shot from a rooftop within sight of the finish.',
     cast: { a: 'focus' }, effects: { a: { dies: 'shot from a rooftop' } }, tags: ['hazard'], when: { stages: [9] }, weight: 0.5 },
   { id: 's9-last-rivals', text: '{a} and {b} trade blows on a crowded avenue, neither willing to yield.',
-    cast: { a: 'focus', b: 'named' }, effects: { a: { injured: true }, b: { injured: true } }, tags: ['risky'], when: { stages: [9] }, weight: 1.5 },
+    cast: { a: 'focus', b: 'named' }, effects: { a: { injured: true }, b: { injured: true } }, tags: ['risky', 'no-fault'], when: { stages: [9] }, weight: 1.5 },
 ];

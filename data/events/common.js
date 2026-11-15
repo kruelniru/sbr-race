@@ -42,7 +42,7 @@ export default [
   { id: 'common-thrown-retire', text: "{a} is thrown hard from the saddle and can't go on. {a.Their} race is over.",
     cast: { a: { is: 'focus', hasHorse: true } }, effects: { a: { retires: true } }, tags: ['hazard'], weight: 0.5 },
   { id: 'common-neck-and-neck', text: '{a} and {b} race neck and neck for miles until {a} edges ahead.',
-    cast: { a: 'focus', b: 'named' }, effects: { a: { pace: 1 }, b: { pace: -1 } }, tags: ['minor', 'pace', 'sprint'], when: { rounds: ['day'] }, weight: 3 },
+    cast: { a: 'focus', b: 'named' }, effects: { a: { pace: 1 }, b: { pace: -1 } }, tags: ['minor', 'pace', 'sprint', 'no-fault'], when: { rounds: ['day'] }, weight: 3 },
   { id: 'common-kill-named', text: '{a} catches {b} alone on the trail and kills {b.them} for {b.their} supplies.',
     cast: { a: 'focus', b: 'named' }, effects: { b: { dies: 'killed for supplies', by: 'a' } }, tags: ['kill', 'kill-started'], weight: 0.5 },
   { id: 'common-save-dragged', text: "{b}'s foot catches in the stirrup and {b.they} {b:is/are} dragged until {a} cuts the strap.",

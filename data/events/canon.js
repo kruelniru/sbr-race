@@ -37,7 +37,7 @@ export default [
 
   // ============================================================ Diego
   { id: 'diego-slipstream', text: "{a} rides in {b}'s slipstream all afternoon, then overtakes {b.them} at the last moment.",
-    cast: { a: focus('diego'), b: 'named' }, effects: { a: { pace: 1 }, b: { pace: -1 } }, tags: ['sabotage'], weight: 3 },
+    cast: { a: focus('diego'), b: 'named' }, effects: { a: { pace: 1 }, b: { pace: -1 } }, tags: ['no-fault'], weight: 3 },
   { id: 'diego-reads-horse', text: '{a} reads the terrain like a jockey reads a track and finds the fastest line.',
     cast: { a: focus('diego') }, effects: { a: { pace: 1 } }, tags: ['minor', 'pace'], weight: 3 },
 

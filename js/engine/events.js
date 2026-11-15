@@ -70,6 +70,10 @@ export function lintEvents(events = EVENTS) {
     const kinds = e.tags.filter((t) => KILL_KINDS.includes(t));
     const isKill = Object.values(e.effects).some((x) => x.dies && x.by);
     if (isKill && kinds.length !== 1) problems.push(`${where}: a kill needs exactly one of ${KILL_KINDS.join(', ')}`);
+    // Hurting another racer without killing them: sabotage (−8) or no-fault
+    // (a race, a rescue, an accident). Every such event must say which.
+    const hurts = Object.entries(e.effects).some(([k, x]) => k !== e.focusKey && !x.dies && (x.pace < 0 || x.injured || x.retires || x.points < 0 || x.horse));
+    if (hurts && !e.tags.some((t) => ['sabotage', 'no-fault', 'help'].includes(t))) problems.push(`${where}: hurts another racer; tag it 'sabotage' or 'no-fault'`);
     if (!isKill && kinds.length) problems.push(`${where}: ${kinds[0]} on an event with no kill credit`);
     for (const r of e.when.rounds ?? []) if (!ROUND_TYPES.includes(r)) problems.push(`${where}: unknown round type "${r}"`);
     if (!(e.weight > 0)) problems.push(`${where}: weight must be > 0`);
@@ -246,6 +250,9 @@ function resolve(ctx, e, roles) {
   // Helping or saving someone: hidden Worthiness (DESIGN.md table).
   if (e.tags.includes('help')) addWorthiness(roles[e.focusKey], e.tags.includes('save') ? RULES.worthiness.save : RULES.worthiness.help, ctx);
   // Kills: the racer with the kill credit, by the event's kill-* tag.
+  // Sabotage or cheating; riding past someone in need.
+  if (e.tags.includes('sabotage')) addWorthiness(roles[e.focusKey], RULES.worthiness.sabotage, ctx);
+  else if (e.tags.includes('cold')) addWorthiness(roles[e.focusKey], RULES.worthiness.ridePast, ctx);
   const killW = killWorthiness(e.tags);
   for (const effs of Object.values(e.effects)) if (effs.dies && effs.by) addWorthiness(roles[effs.by], killW, ctx);
 

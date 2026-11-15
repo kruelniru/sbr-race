@@ -7,7 +7,7 @@ export default [
   { id: 'finish-fades', text: '{a} fades badly in the final miles.',
     cast: { a: 'focus' }, effects: { a: { pace: -1 } }, tags: ['minor'], when: { rounds: ['finish'] }, weight: 4 },
   { id: 'finish-npc-collapse', text: '{a} passes {b}, who has collapsed a mile short of the finish.',
-    cast: { a: 'focus', b: 'npc' }, effects: { b: { retires: true } }, tags: [], when: { rounds: ['finish'] }, weight: 2.5 },
+    cast: { a: 'focus', b: 'npc' }, effects: { b: { retires: true } }, tags: ['no-fault'], when: { rounds: ['finish'] }, weight: 2.5 },
   { id: 'finish-photo', text: '{a} and {b} cross the line almost together, both claiming the better time.',
     cast: { a: 'focus', b: 'named' }, tags: ['minor'], when: { rounds: ['finish'] }, weight: 3 },
   { id: 'finish-crowd-crush', text: '{a} is pinned against a fence when the crowd surges onto the track at the finish.',

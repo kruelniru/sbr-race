@@ -34,16 +34,19 @@ export default {
   canonEventChance: 0.4,   // a canon racer gets their own event this often
   retiredEventChance: 0.25,// a retired racer gets an event this often
   // How likely an event that would kill this tier is (weight multiplier).
-  deathOdds: { pc: 0.65, canon: 0.35, npc: 1 },
+  deathOdds: { pc: 0.56, canon: 0.35, npc: 1 },
   canonImmuneStages: [1],  // canon racers can't die in these stages
 
   // Personality nudges: multiply an event's weight by tag for the FOCUS racer.
   personalityLean: {
-    honorable: { help: 2.2, spare: 2.5, kill: 0.45, sabotage: 0.3, cold: 0.4 },
-    ruthless: { kill: 2.2, sabotage: 2, cold: 2, help: 0.45, spare: 0.3 },
-    cautious: { risky: 0.5, kill: 0.7, hazard: 0.8, help: 1.2, spare: 1.3 },
-    glory: { risky: 1.8, sprint: 2, pace: 1.3 },
-    opportunist: { sabotage: 1.6, kill: 1.2, cold: 1.4, sprint: 1.2 },
+    // 'kill' = kills they start (kill-started / kill-cruel events). Tuned so
+    // end-of-race Worthiness lands near Honorable 80, Cautious 75, Glory 60,
+    // Opportunist 60, Ruthless 35 (sim).
+    honorable: { help: 1.05, spare: 1.1, kill: 0.45, sabotage: 0.3, cold: 0.7 },
+    ruthless: { kill: 3, sabotage: 2.6, cold: 2, help: 0.4, spare: 0.3 },
+    cautious: { risky: 0.5, kill: 0.7, hazard: 0.8, help: 0.9, spare: 0.9 },
+    glory: { risky: 1.8, sprint: 2, pace: 1.3, cold: 1.8, help: 0.7 },
+    opportunist: { sabotage: 2, kill: 1.6, cold: 1.4, sprint: 1.2 },
   },
   // Canon racers rarely start kills and often help (on top of personality).
   canonLean: { kill: 0.35, help: 1.6, sabotage: 0.4, spare: 1.5 },
@@ -60,6 +63,9 @@ export default {
     save: 10,         // save a life (tagged 'help' + 'save'); instead of help, not on top
     spare: 12,        // spare someone you beat (sparedBy)
     palmSurvive: 5,   // walk out of the Devil's Palm alive
+    ridePast: -3,     // ride past someone who needs help (tagged 'cold'; sub event 'Ride past')
+    sabotage: -8,     // sabotage or cheat (tagged 'sabotage'; see KILL_KINDS / HARM_KINDS)
+    halfAbove: 80,    // above this, gains are halved (rounded down); losses stay full
     // Kills, for the racer with the kill credit (`by`). Every kill event has
     // exactly one of these tags (tests/stands.test.js checks it).
     killDefense: 0,   // 'kill-defense': they attacked you (or an accident)
@@ -90,7 +96,7 @@ export default {
   standTier: {
     common: { placement: 1, hazardDeath: 0.92, fightBonus: 4 },
     rare: { placement: 1, hazardDeath: 0.85, fightBonus: 8 },
-    legendary: { placement: 2, hazardDeath: 0.8, fightBonus: 12 }, // fightBonus: hook for milestone 5
+    legendary: { placement: 1.5, hazardDeath: 0.88, fightBonus: 12 }, // fightBonus: hook for milestone 5
   },
   standEventWeight: 1.5,     // weight multiplier on Stand events for Stand users
 

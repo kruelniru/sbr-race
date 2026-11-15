@@ -77,6 +77,10 @@ focus racer's personality (`rules.js` → `personalityLean`). Canon racers add
   killer (the linter checks): `kill-defense` (they attacked first, or an
   accident: 0), `kill-started` (the killer attacked, hunted or ambushed: −8),
   `kill-cruel` (helpless, fleeing or asleep: −12, instead of −8).
+- Every event that hurts another racer without killing (pace loss, injury,
+  retires, horse) needs `sabotage` (−8 Worthiness for the focus racer) or
+  `no-fault` (a fair race, an accident); `help` events are exempt. The linter checks.
+- `cold`: riding past someone in need (Worthiness −3)
 - `save`: with `help`, a life was on the line (Worthiness +10 instead of +8)
 - `kill` (starting a killing), `defend` (killing in self-defense), `spare`, `help`,
   `hazard`, `risky`, `pace`, `sprint`, `sabotage`, `cold` (ignoring someone in need)

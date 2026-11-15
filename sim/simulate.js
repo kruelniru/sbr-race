@@ -468,6 +468,9 @@ function collectStands(S, state, results, palm) {
   for (const e of state.race.palmLog ?? []) {
     const key = e.tier === 'pc' ? `PCs, Worthiness ${e.band}+` : e.tier === 'canon' ? 'canon' : 'NPCs';
     bump((T.palmLog[key] ??= {}), e.outcome);
+    // The table in DESIGN.md is for racers who can still get a Stand.
+    if (e.tier === 'pc' && !e.hadStand) bump((T.palmLog[`PCs Standless, Worthiness ${e.band}+`] ??= {}), e.outcome);
+    if (e.tier === 'pc' && e.hadStand) T.palmHolders = (T.palmHolders ?? 0) + 1;
   }
   for (const e of state.stands.log) if (e.source !== 'canon') bump((T.gained[e.source] ??= {}), e.tier);
   T.breakouts += state.field.breakouts ?? 0;
@@ -535,6 +538,8 @@ function printStands(S) {
 
   console.log('\nPCs holding a Stand (living holders)');
   console.log('  ' + Object.entries(T.share).map(([st, a]) => `end of Stage ${st}: ${pct(avg(a.map((x) => x.ofAll)), 1)} of all PCs (${pct(avg(a.map((x) => x.ofLiving)), 1)} of those alive)`).join(' · '));
+  console.log(`  holding one at the end or when they died: ${pct((T.pcFieldTier.legendary ?? 0) + (T.pcFieldTier.rare ?? 0) + (T.pcFieldTier.common ?? 0), Object.values(T.pcFieldTier).reduce((a, b) => a + b, 0), 1)} of all PCs`);
+  console.log(`  PC Palm entries by racers who already had a Stand: ${f1((T.palmHolders ?? 0) / g)} per game (a Stand roll is "nothing" for them)`);
 
   console.log('\nStands gained during the race (per game)');
   const tiers = ['legendary', 'rare', 'common'];
@@ -558,9 +563,9 @@ function printStands(S) {
     .map(([b, o]) => `${b}+: ${(o.stand ?? 0) + (o.died ?? 0)} tries, survived ${pct(o.stand ?? 0, (o.stand ?? 0) + (o.died ?? 0))} (rule ${RULES.arrows.survive.find((x) => x.min === +b).p}%)`).join(' · '));
 
   console.log('\nWorthiness at the end of the race (PCs; start by personality; 10th–90th percentile)');
-  table(['Personality', 'start', 'end avg', '10th–90th'], Object.entries(T.worth).map(([k, a]) => {
+  table(['Personality', 'start', 'end avg', '10th–90th', 'end at 100', 'end below 25'], Object.entries(T.worth).map(([k, a]) => {
     const sorted = a.slice().sort((x, y) => x - y), q = (f) => sorted[Math.floor(f * (sorted.length - 1))];
-    return [k, RULES.worthiness.byPersonality[k], f1(avg(a)), `${q(0.1)}–${q(0.9)}`];
+    return [k, RULES.worthiness.byPersonality[k], f1(avg(a)), `${q(0.1)}–${q(0.9)}`, pct(a.filter((x) => x >= 100).length, a.length), pct(a.filter((x) => x < 25).length, a.length)];
   }));
 
   console.log('\nStand holders vs non-holders (Stand at the end of the race; PCs + canon)');

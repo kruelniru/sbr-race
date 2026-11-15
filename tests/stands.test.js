@@ -197,3 +197,30 @@ test('Worthiness: start by personality, kill tags on every kill, hints for big c
   // A full run: the hint shows up only in your own private view.
   assert.ok(!JSON.stringify([publicView(state), hostScreenView(state)]).includes('lighter in the saddle'));
 });
+
+test('Worthiness: gains halve above 80, losses stay full; sabotage and ride-past are tagged and cost', () => {
+  const state = setup('worth-2');
+  const [me] = state.players;
+  const ctx = ctxOf(state);
+  me.worthiness = 81;
+  addWorthiness(me, RULES.worthiness.spare, ctx); // +12 -> +6
+  assert.equal(me.worthiness, 87);
+  addWorthiness(me, RULES.worthiness.palmSurvive, ctx); // +5 -> +2
+  assert.equal(me.worthiness, 89);
+  addWorthiness(me, RULES.worthiness.killCruel, ctx);
+  assert.equal(me.worthiness, 77, 'losses are never halved');
+  me.worthiness = 80;
+  addWorthiness(me, RULES.worthiness.help, ctx);
+  assert.equal(me.worthiness, 88, 'at exactly 80 the gain is full');
+
+  // Every event that hurts another racer without killing says whose fault it is.
+  const hurt = normalizeEvent({ id: 'y', text: '{a} trips {b}.', cast: { a: 'focus', b: 'npc' }, effects: { b: { pace: -2 } }, tags: [] });
+  assert.equal(lintEvents([hurt]).length, 1);
+  assert.equal(lintEvents([{ ...hurt, tags: ['sabotage'] }]).length, 0);
+  assert.ok(EVENTS.filter((e) => e.tags.includes('sabotage')).length >= 8);
+  assert.equal(RULES.worthiness.sabotage, -8);
+  assert.equal(RULES.worthiness.ridePast, -3);
+  assert.ok(RULES.worthiness.ridePast > -RULES.worthiness.hintAt, 'riding past is quiet (no hint)');
+  const past = SUBS.flatMap((s) => s.options ?? []).filter((o) => o.id === 'past');
+  assert.ok(past.length && past.every((o) => o.tags.includes('cold')));
+});

@@ -55,6 +55,9 @@ export function startWorthiness(rng, tier, personality) {
 export function addWorthiness(who, n, ctx) {
   if (who?.worthiness == null || !n) return;
   const before = who.worthiness;
+  // Diminishing gains near the top: the saints don't get there for free.
+  if (n > 0 && who.worthiness > RULES.worthiness.halfAbove) n = Math.floor(n / 2);
+  if (!n) return;
   who.worthiness = Math.max(0, Math.min(100, who.worthiness + n));
   if (ctx && Math.abs(n) >= RULES.worthiness.hintAt && who.worthiness !== before) {
     addHint(who, n > 0 ? 'You feel lighter in the saddle.' : 'Something in you hardens.', ctx);

@@ -30,7 +30,9 @@ export function rollPalm(rng, worthiness) {
 export { addHint }; // lives in racers.js now
 
 export function logPalm(ctx, who, outcome) {
-  (ctx.state.race.palmLog ??= []).push({ tier: who.tier, worthiness: who.worthiness, band: palmBand(who.worthiness).min, outcome });
+  // hadStand: went in already holding one (a 'stand' roll then reads as 'nothing').
+  const hadStand = outcome === 'stand' ? false : !!who.stand;
+  (ctx.state.race.palmLog ??= []).push({ tier: who.tier, worthiness: who.worthiness, band: palmBand(who.worthiness).min, outcome, hadStand });
 }
 
 /**

@@ -249,17 +249,21 @@ Worthiness is a hidden 0–100 stat. PCs start by personality (Honorable 60, Cau
 | Help someone | +8 | M4 |
 | Survive the Devil's Palm | +5 | M4 |
 | Kill in self-defense (or by accident) | 0 | M4 |
+| Ride past someone who needs help | −3 | M4 |
+| Sabotage or cheat (cut a cinch, crowd into the rail, steal water) | −8 | M4 |
 | Any kill you started: you attacked, hunted or ambushed | −8 | M4 |
 | Kill someone helpless, fleeing or asleep | −12 (instead of −8) | M4 |
 | Steal a corpse part | −8 | M5 |
 | Abandon an ally | −12 | M5 |
 | Join Valentine | −30 | M5 |
 
-Everything clamps to 0–100. A kill changes the Worthiness of the racer with the kill credit. Every kill event carries exactly one tag, `kill-defense`, `kill-started` or `kill-cruel`, and the content linter fails if one is missing. A Hunt a rival showdown that ends in a kill counts as started; showdowns can't kill yet, so this applies once milestone 5 fights can.
+**Diminishing gains:** above 80, every gain is halved (rounded down), so a spare is +6 and the Palm +2; losses always count in full. Everything clamps to 0–100. A kill changes the Worthiness of the racer with the kill credit. Every kill event carries exactly one tag, `kill-defense`, `kill-started` or `kill-cruel`, and the content linter fails if one is missing. A Hunt a rival showdown that ends in a kill counts as started; showdowns can't kill yet, so this applies once milestone 5 fights can.
 
-**You notice it:** any change of 8 or more adds a private hint line: "You feel lighter in the saddle." when it goes up, "Something in you hardens." when it goes down. Smaller changes (the Palm's +5) move the bar silently.
+Every event that hurts another racer without killing them (pace loss, injury, a forced retirement, a lost horse) is tagged either `sabotage` (−8 for the focus racer) or `no-fault` (a fair race, an accident, a rescue); the linter fails if neither is there. Riding past is tagged `cold` (−3, no hint). Ruthless racers get the most events where they start a kill or sabotage, Opportunists the next most (`rules.personalityLean`).
 
-**Worthiness barely matters at the Devil's Palm, and that's intended:** the Palm only runs in Stages 2–3, when most PCs are still near where they started (45–59, or 60+ for Honorable players). It matters more for Stand Arrows later in the race and for corpse parts in milestone 5, by which point players have moved apart. In the sim, end-of-race averages are Honorable 92, Cautious 87, Glory-Seeker 70, Opportunist 66 and Ruthless 45.
+**You notice it:** any change of 8 or more adds a private hint line: "You feel lighter in the saddle." when it goes up, "Something in you hardens." when it goes down. Smaller changes (the Palm's +5, riding past) move the bar silently.
+
+**Worthiness barely matters at the Devil's Palm, and that's intended:** the Palm only runs in Stages 2–3, when most PCs are still near where they started (45–59, or 60+ for Honorable players). It matters more for Stand Arrows later in the race and for corpse parts in milestone 5, by which point players have moved apart. In the sim (4,500 games), end-of-race averages are Honorable 82, Cautious 75, Glory-Seeker 62, Opportunist 59 and Ruthless 35; 11% of Honorable and 5% of Cautious players end at 100, and 20% of Ruthless players end below 25.
 
 **What it decides:**
 
@@ -299,7 +303,7 @@ Stands come from every part of JoJo, each with a tier. The pool lives in `data/s
 
 **Worthiness shift:** every 10 points above 50 adds 2 points to Legendary, taken from the lowest tier (Common; Rare for corpse parts); every 10 below 50 does the reverse. It uses the exact value (Worthiness 65 = +3) and reaches ±10 at Worthiness 0 or 100. Corpse parts never give Common. Stand Arrows don't exist in SBR canon; they're a liberty, since the pool spans every part.
 
-**What a Stand does** (`rules.standTier`): a placement bonus (Common +1, Rare +1, Legendary +2; canon racers' own Stands get none, since their skill already includes them), better odds of surviving hazards (×0.92 / ×0.85 / ×0.80 death odds), Stand events, and a fight bonus hook for milestone 5 (+4 / +8 / +12, always with randomness on top).
+**What a Stand does** (`rules.standTier`): a placement bonus (Common +1, Rare +1, Legendary +1.5; canon racers' own Stands get none, since their skill already includes them), better odds of surviving hazards (×0.92 / ×0.85 / ×0.88 death odds), Stand events, and a fight bonus hook for milestone 5 (+4 / +8 / +12, always with randomness on top).
 
 **Stand events:** generic lines with a `{a.stand}` token, plus signature lines for every canon Stand and a handful of famous pool Stands. Generic lines for racers nobody controls (AI racers, canon racers, NPCs) go to the Meanwhile card; signature canon lines and every human PC's Stand lines stay in the Main Story.
 
@@ -307,7 +311,7 @@ Stands come from every part of JoJo, each with a tier. The pool lives in `data/s
 
 ### The Devil's Palm (Stages 2–3)
 
-A racer who goes in gets one outcome from their Worthiness band (tuned with the sim):
+A racer who goes in gets one outcome from their Worthiness band (tuned with the sim). A racer who already has a Stand can still go in, but a Stand roll gives them nothing (one Stand per racer); the sim's Standless entrants match this table within about two points.
 
 | Worthiness | Awaken a Stand | Nothing | Lost (−2 pace, or retire 1 in 4) | Dies |
 | --- | --- | --- | --- | --- |
@@ -507,3 +511,7 @@ Decisions made after the original design, in the order they came up:
 48. Bigger Worthiness changes so players notice: help +8, save a life +10 (instead of help), spare +12, survive the Palm +5, self-defense 0, a kill you started −8, a helpless/fleeing/asleep kill −12 (instead of −8). Recorded for M5: give a part +15, steal a part −8, abandon an ally −12, join Valentine −30. Before this, kills that weren't tagged cruel cost nothing.
 49. Every kill event is tagged `kill-defense`, `kill-started` or `kill-cruel` (linted), and the change goes to the racer with the kill credit. Audit calls: the water-hole duel is self-defense (the other rider challenged), "killed for supplies" moved from cruel to started (the victim was alone but not helpless), "shot by mistake" counts as an accident (0), and Hot Pants striking a Valentine man first counts as started. Rival showdowns that kill count as started (from M5).
 50. A Worthiness change of 8 or more gives a private hint line: "You feel lighter in the saddle." / "Something in you hardens."
+51. Diminishing Worthiness gains above 80: gains halved (rounded down), losses full. Honorable and Cautious were ending at 92 and 87 with many at 100.
+52. More ways to lose Worthiness: riding past someone who needs help −3 (`cold`), sabotage and cheating −8 (`sabotage`). Every event that hurts another racer without killing is tagged `sabotage` or `no-fault` (linted). No-fault calls: Diego's slipstream (fair riding, was tagged sabotage), neck-and-neck races, the avalanche, the final-mile collapse, and the Stage 9 brawl.
+53. Personality leans retuned to target end-of-race Worthiness of about Honorable 80, Cautious 75, Glory-Seeker 60, Opportunist 60, Ruthless 35: Ruthless kill 3 / sabotage 2.6, Opportunist kill 1.6 / sabotage 2, Honorable help 1.05 / spare 1.1 / cold 0.7, Cautious help and spare 0.9, Glory-Seeker cold 1.8 / help 0.7.
+54. Balance after 51–53: PC death odds 0.65 → 0.56 (more started kills among PCs had pushed New York survival down to 46%), Legendary placement +2 → +1.5 and hazard survival ×0.80 → ×0.88 (Legendary was at about 2.05× on some seeds). Single 1,500-game runs swing about ±0.2× on the 2× check, so it's judged on 4,500 games.

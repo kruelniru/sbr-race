@@ -1,7 +1,7 @@
 // Stage 3: Rocky Mountains
 export default [
   { id: 's3-avalanche', text: 'An avalanche roars down the pass. {a} outruns it, {b} is buried alive, and {c} turns back for good.',
-    cast: { a: 'focus', b: 'named', c: 'npc' }, effects: { b: { dies: 'buried by an avalanche' }, c: { retires: true } }, tags: ['hazard'], when: { stages: [3] }, weight: 0.6 },
+    cast: { a: 'focus', b: 'named', c: 'npc' }, effects: { b: { dies: 'buried by an avalanche' }, c: { retires: true } }, tags: ['hazard', 'no-fault'], when: { stages: [3] }, weight: 0.6 },
   { id: 's3-ledge', text: '{a} slips on an icy ledge and falls into the ravine.',
     cast: { a: 'focus' }, effects: { a: { dies: 'fell from an icy ledge' } }, tags: ['hazard'], when: { stages: [3] }, weight: 0.8 },
   { id: 's3-freezing-night', text: '{a} shivers through a freezing night in the pass.',
