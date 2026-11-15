@@ -49,7 +49,7 @@ export function startWorthiness(rng, tier, personality) {
 
 /**
  * Change hidden Worthiness, clamped to 0–100. With `ctx`, a change of
- * rules.worthiness.hintAt or more gives a PC a private phone hint, so people
+ * rules.worthiness.hintAt or more (softHintAt for a softer line) gives a PC a private phone hint, so people
  * notice without seeing a number.
  */
 export function addWorthiness(who, n, ctx) {
@@ -59,9 +59,11 @@ export function addWorthiness(who, n, ctx) {
   if (n > 0 && who.worthiness > RULES.worthiness.halfAbove) n = Math.floor(n / 2);
   if (!n) return;
   who.worthiness = Math.max(0, Math.min(100, who.worthiness + n));
-  if (ctx && Math.abs(n) >= RULES.worthiness.hintAt && who.worthiness !== before) {
-    addHint(who, n > 0 ? 'You feel lighter in the saddle.' : 'Something in you hardens.', ctx);
-  }
+  if (!ctx || who.worthiness === before) return;
+  // n is the applied change (after halving above 80), so halved gains still get a line.
+  const W = RULES.worthiness;
+  if (Math.abs(n) >= W.hintAt) addHint(who, n > 0 ? 'You feel lighter in the saddle.' : 'Something in you hardens.', ctx);
+  else if (Math.abs(n) >= W.softHintAt) addHint(who, n > 0 ? 'You feel steady.' : 'Something nags at you.', ctx);
 }
 
 /** A private line on this PC's phone (shown after the round's reveal). */

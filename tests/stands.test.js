@@ -191,7 +191,15 @@ test('Worthiness: start by personality, kill tags on every kill, hints for big c
   assert.equal(me.worthiness, 42);
   assert.equal(me.hints.at(-1).text, 'Something in you hardens.');
   addWorthiness(me, RULES.worthiness.palmSurvive, ctx);
-  assert.equal(me.hints.length, 1, 'small changes give no hint');
+  assert.equal(me.hints.at(-1).text, 'You feel steady.', '3–7 gets the soft line');
+  addWorthiness(me, 2, ctx);
+  assert.equal(me.hints.length, 2, 'under 3 gives no hint');
+  addWorthiness(me, RULES.worthiness.ridePast, ctx);
+  assert.equal(me.hints.at(-1).text, 'Something nags at you.');
+  me.worthiness = 85;
+  addWorthiness(me, RULES.worthiness.help, ctx); // halved to +4
+  assert.equal(me.hints.at(-1).text, 'You feel steady.', 'a halved gain still gets a line');
+  me.worthiness = 50;
   addWorthiness(me, RULES.worthiness.spare, ctx);
   assert.equal(me.hints.at(-1).text, 'You feel lighter in the saddle.');
   // A full run: the hint shows up only in your own private view.

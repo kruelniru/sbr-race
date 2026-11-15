@@ -454,6 +454,7 @@ function newStandStats() {
     roka: { found: 0, foundHuman: 0, gamesUnder2: 0, eaten: 0, kept: 0, left: 0, before: {}, after: {} },
     worth: {}, // personality -> [end worthiness]
     arrowBands: {}, // band min -> { stand, died }
+    deeds: {}, // personality -> { n, helps, spares } (PCs, whole game)
     holders: {}, // tier|none -> { n, points, ny, pc }
     winTier: {}, fieldTier: {}, pcWinTier: {}, pcFieldTier: {}, games: 0, breakouts: 0, share: {},
   };
@@ -503,6 +504,7 @@ function collectStands(S, state, results, palm) {
     (T.roka.why ??= []).push(drops);
   }
   for (const p of state.players) (T.worth[p.personality] ??= []).push(p.worthiness);
+  for (const p of state.players) { const d = (T.deeds[p.personality] ??= { n: 0, helps: 0, spares: 0 }); d.n++; d.helps += p.helps ?? 0; d.spares += p.spares ?? 0; }
   // Stand holders (the Stand they held at the end, or when they died) vs non-holders.
   const named = [...state.players, ...state.canon];
   for (const r of named) {
@@ -568,6 +570,7 @@ function printStands(S) {
     return [k, RULES.worthiness.byPersonality[k], f1(avg(a)), `${q(0.1)}–${q(0.9)}`, pct(a.filter((x) => x >= 100).length, a.length), pct(a.filter((x) => x < 25).length, a.length)];
   }));
 
+  console.log('  helps and spares per PC per game: ' + Object.entries(T.deeds).map(([k, d]) => `${k} ${f1(d.helps / d.n)} + ${f1(d.spares / d.n)} = ${f1((d.helps + d.spares) / d.n)}`).join(' · '));
   console.log('\nStand holders vs non-holders (Stand at the end of the race; PCs + canon)');
   const order = ['legendary', 'rare', 'common', 'none'];
   table(['Stand tier', 'racers/game', 'avg points', 'reach NY', 'PC avg points', 'PC reach NY', 'win share', 'field share', 'win/field'],

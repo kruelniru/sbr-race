@@ -42,9 +42,9 @@ export default {
     // 'kill' = kills they start (kill-started / kill-cruel events). Tuned so
     // end-of-race Worthiness lands near Honorable 80, Cautious 75, Glory 60,
     // Opportunist 60, Ruthless 35 (sim).
-    honorable: { help: 1.05, spare: 1.1, kill: 0.45, sabotage: 0.3, cold: 0.7 },
+    honorable: { help: 1.2, spare: 1.15, kill: 0.45, sabotage: 0.3, cold: 1.3 },
     ruthless: { kill: 3, sabotage: 2.6, cold: 2, help: 0.4, spare: 0.3 },
-    cautious: { risky: 0.5, kill: 0.7, hazard: 0.8, help: 0.9, spare: 0.9 },
+    cautious: { risky: 0.5, kill: 0.7, hazard: 0.8, help: 0.8, spare: 0.8 },
     glory: { risky: 1.8, sprint: 2, pace: 1.3, cold: 1.8, help: 0.7 },
     opportunist: { sabotage: 2, kill: 1.6, cold: 1.4, sprint: 1.2 },
   },
@@ -77,6 +77,7 @@ export default {
     abandonAlly: -12, // abandon an ally
     joinValentine: -30,
     hintAt: 8,        // a change this big gives the phone a private hint line
+    softHintAt: 3,    // 3–7 gets a softer one ("You feel steady." / "Something nags at you.")
     barSteps: 20,     // the phone gets a coarse level (0–20), never the number
   },
 

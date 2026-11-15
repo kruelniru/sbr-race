@@ -248,6 +248,7 @@ function resolve(ctx, e, roles) {
     }
   }
   // Helping or saving someone: hidden Worthiness (DESIGN.md table).
+  if (e.tags.includes('help')) roles[e.focusKey].helps = (roles[e.focusKey].helps ?? 0) + 1;
   if (e.tags.includes('help')) addWorthiness(roles[e.focusKey], e.tags.includes('save') ? RULES.worthiness.save : RULES.worthiness.help, ctx);
   // Kills: the racer with the kill credit, by the event's kill-* tag.
   // Sabotage or cheating; riding past someone in need.

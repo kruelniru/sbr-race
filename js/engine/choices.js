@@ -531,6 +531,7 @@ function resolveSub(ctx, prompt) {
   if (!outcome) return null;
   const text = render(outcome.text, display(roles));
   applyEffects(ctx, outcome.effects, roles);
+  if (option.tags?.includes('help')) roles.a.helps = (roles.a.helps ?? 0) + 1;
   if (option.tags?.includes('help')) addWorthiness(roles.a, option.tags.includes('save') ? RULES.worthiness.save : RULES.worthiness.help, ctx);
   if (option.tags?.includes('cold')) addWorthiness(roles.a, RULES.worthiness.ridePast, ctx);
   const death = Object.values(outcome.effects).some((e) => e.dies);
