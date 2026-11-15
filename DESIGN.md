@@ -146,7 +146,14 @@ The race runs 9 stages. Stage 1 has 2 rounds, Stages 2–4 have 4, and the rest 
 
 Text sits on solid card panels so it stays easy to read on stream. The effects use one lightweight canvas, respect reduced motion, pause when the tab is hidden, and have a host **Effects** toggle.
 
-**Phones during the race:** each line arrives in the mini feed as it's revealed on stream, with lines that involve you highlighted. Your private status card (racing / retired / fallen, horse or Runner, points, last placement) only updates once the round's reveal has finished, so a phone never spoils the stream.
+**Phones during the race:** each line arrives in the race feed as it's revealed on stream (never earlier), so a phone never spoils the stream. The feed is built to scan on a narrow phone:
+
+- **Grouped by round**, each under a small header ("Stage 2 · Night 1", "Stage 2 · Finish Line"). The newest round is on top and open; older rounds collapse to their header (with a line count and a "You" badge if you're in them) and open with a tap. Phones keep about the last 150 lines.
+- Each line is its own row with a divider, at 16px with a line height of about 1.45 and comfortable side padding.
+- **Lines that involve you** get a gold accent bar and a tinted background. **Deaths** get a red bar, a soft red tint and a ✝.
+- **Meanwhile / side story lines** sit in their own muted block under a "Meanwhile on the trail…" label, after the Main Story lines.
+
+Your private status card (racing / retired / fallen, horse or Runner, points, last placement, Stage Plan) only updates once the round's reveal has finished. A choice card appears at the top of the screen when you have a decision to make.
 
 ## Choices
 
@@ -424,3 +431,4 @@ Decisions made after the original design, in the order they came up:
 30. Worthiness is tracked silently from M3 (help/save +5, spare +8), shown nowhere until M4.
 31. Retune for Stage Plans: PC skill 65, PC death odds 0.65 (about 51% of PCs reach New York, top 10 in about 38% of stages). The 77% PC win rate waits for the M6 retune.
 32. The host logs every choice window (open time, time beyond the results, each answer time). "Export choice times" downloads it; `node sim/simulate.js --choice-times file.json` replays it to settle game length.
+33. The phone feed is grouped by round (newest on top, older rounds collapsed to a tappable header), with one line per row at 16px, a gold bar and tint on your own lines, a red style for deaths, and Meanwhile lines in their own muted block. The status card, choice card and lobby got the same looser spacing. Checked at 360px wide.

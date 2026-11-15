@@ -71,4 +71,4 @@ export const HOST_TIMEOUT_MS = 12000;
 export const RECONNECT_GIVE_UP_MS = 2 * 60 * 1000;
 
 // How many feed items a phone keeps and receives on (re)connect.
-export const FEED_KEEP = 30;
+export const FEED_KEEP = 150; // phones keep several rounds so older ones can be reopened
