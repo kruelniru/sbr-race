@@ -130,7 +130,7 @@ test('Arrow and Rokakaka prompts are secret, with Stand-dependent options; Rokak
     closeChoices(state);
     runRound(state);
   }
-  assert.ok(arrows >= 2 && arrows <= 4, `${arrows} Arrows`);
+  assert.ok(arrows >= RULES.arrows.perGame[0] - 1 && arrows <= RULES.arrows.perGame[1], `${arrows} Arrows`); // one may land after every PC is out
   assert.ok(rokas >= 2 && rokas <= 3, `${rokas} Rokakaka`);
 });
 
