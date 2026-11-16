@@ -24,7 +24,7 @@ import RULES from '../../data/rules.js';
 import { PART_LINES } from '../../data/corpse.js';
 import { addWorthiness, addHint, namedRacers } from './racers.js';
 import { giveStand, pickStand, rollTier } from './stands.js';
-import { presidentParts } from './corpse.js';
+import { presidentParts, carried, deliverPart } from './corpse.js';
 
 const V = () => RULES.valentine;
 
@@ -97,14 +97,39 @@ export function errandTargets(state, self, rivalTargets) {
   return rivalTargets(state, self);
 }
 
+/**
+ * Agents leave a joiner alone, unless they carry a part that has merged with
+ * them: the President wants it. Delivering it brings the protection back.
+ */
+export function valentineProtected(state, r) {
+  return isJoiner(r) && !carried(state, r).some((i) => i.merged);
+}
+
+/** "Deliver it to the President" (a joiner's item action, resolved with the round). */
+export function deliver(ctx, p, item) {
+  if (!isJoiner(p) || item.kind !== 'part' || !item.merged || item.owner !== p.id) return false;
+  const name = item.label;
+  deliverPart(ctx, item, p);
+  p.points += V().deliverPoints;
+  p.valentine.delivered = (p.valentine.delivered ?? 0) + 1;
+  addHint(p, `You hand ${name} to the President's man. +${V().deliverPoints} points.${valentineProtected(ctx.state, p) ? " His agents will ride past you again." : ''}`, ctx);
+  log(ctx, { event: 'delivered', id: p.id });
+  return true;
+}
+
 /** Reward 5, at the end of the race (before the podium). */
 export function valentineEnding(state) {
   const held = (state.items ?? []).filter((i) => i.kind === 'part').length;
   const pres = presidentParts(state);
   const triggered = pres > held;
   state.race.valentineEnding = { president: pres, racers: held, triggered };
-  if (!triggered) return;
   for (const r of namedRacers(state)) {
-    if (isJoiner(r)) { r.points += V().endingBonus; r.valentine.bonus = V().endingBonus; }
+    if (!isJoiner(r)) continue;
+    // Kept for the M6 secrets reveal too.
+    r.valentine.outcome = triggered ? 'won' : 'lost';
+    if (triggered) { r.points += V().endingBonus; r.valentine.bonus = V().endingBonus; }
+    addHint(r, triggered
+      ? `The President holds the Corpse. As promised: +${V().endingBonus} points.`
+      : "The President's plan failed. You rode for the losing side.", { stage: { id: 9 }, roundLabel: 'end' });
   }
 }

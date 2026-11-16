@@ -187,6 +187,10 @@ export function privateView(state, playerId) {
       errand: (state.race?.errands ?? []).some((e) => e.from === p.id && !e.done) ? 'next round' : null,
       bonus: RULES.valentine.endingBonus,
       relay: RULES.valentine.relay,
+      deliverPoints: RULES.valentine.deliverPoints,
+      // Live, like Items: the agents hunt you while you carry a merged part.
+      hunted: (state.items ?? []).some((i) => i.kind === 'part' && i.owner === p.id && i.merged),
+      outcome: p.shown?.valentineOutcome ?? null, // 'won' | 'lost', after the last reveal
     } : null,
     // Kept Stand Arrows and Rokakaka. Usable while a choice window is open.
     // Corpse parts are items too (secret, like Stands): hidden ones can be held later.
@@ -194,6 +198,8 @@ export function privateView(state, playerId) {
       id: i.id, kind: i.kind, label: i.kind === 'part' ? `${cap(i.label)} (corpse part)` : ITEM_KINDS[i.kind]?.label ?? i.kind, blurb: ITEM_KINDS[i.kind]?.blurb ?? '',
       pending: !!i.pendingUse,
       hidden: i.kind === 'part' ? !!i.hidden : undefined,
+      deliverable: i.kind === 'part' && !!i.merged && !!p.valentine?.joined && p.status === 'racing',
+      delivering: !!i.pendingDeliver,
       usable: canUse(i, p),
       why: p.status !== 'racing' ? '' : i.kind === 'part' ? (i.hidden ? '' : 'It has merged with you.') : ITEM_KINDS[i.kind]?.needs === 'noStand' && p.stand ? 'You already have a Stand.' : ITEM_KINDS[i.kind]?.needs === 'stand' && !p.stand ? 'You have no Stand to give up.' : '',
     })),

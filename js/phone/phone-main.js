@@ -346,6 +346,7 @@ function renderRacing() {
   const head = pub?.race;
   mount(ui.main,
     h('section', {},
+      alertsBox(),
       head && (head.over
         ? h('div', { class: 'race-where' }, 'The race is over: New York!')
         : h('div', { class: 'race-where' }, `Stage ${head.stageId} · ${head.stageName}`, h('span', { class: 'race-round' }, head.label))),
@@ -356,8 +357,8 @@ function renderRacing() {
       offering ? offerSheet() : you?.offer ? offerPending(you.offer) : null,
       r && r.status !== 'dead' ? standCard(r) : null,
       itemsCard(you, useItem, canOffer('item') ? offerItem : null),
-      partsCard(you, useItem, canOffer('item') ? offerItem : null),
-      r && r.status !== 'dead' ? valentineCard(you?.valentine) : null,
+      partsCard(you, useItem, canOffer('item') ? offerItem : null, deliverItem),
+      r && (r.status !== 'dead' || you?.valentine?.outcome) ? valentineCard(you?.valentine) : null,
       r?.hints?.length ? hintsCard(r.hints) : null,
       r?.status === 'dead'
         ? h('p', { class: 'waiting fallen' }, 'You can still follow the race below. Dead riders get to vote on the living in a later update.')
@@ -466,6 +467,32 @@ function choiceCard(prompt) {
 
 const QUALITY = { nag: 'Nag', sound: 'Sound', fine: 'Fine', thoroughbred: 'Thoroughbred' };
 
+function deliverItem(itemId) {
+  if (!net.send(msg(TO_HOST.USE_ITEM, { itemId, action: 'deliver' }))) choiceError = 'Not connected. Try again in a moment.';
+}
+
+// ---------------------------------------------------------------- alerts (milestone 5b)
+// Big private changes (your horse is gone, a Stand, a corpse part, a bad
+// injury, your ally) arrive with the round's private update, after the
+// reveal. Shown until you tap "Got it"; remembered per room on this phone.
+const alertKey = () => `sbr-alerts-${code}-${you?.id}`;
+function seenAlert() {
+  try { return Number(localStorage.getItem(alertKey()) ?? 0); } catch { return 0; }
+}
+function alertsBox() {
+  const list = (you?.race?.alerts ?? []).filter((a) => a.id > seenAlert());
+  if (!list.length) return null;
+  const big = list.some((a) => a.level === 'big');
+  return h('section', { class: 'alerts' + (big ? ' big' : ''), role: 'alert' },
+    list.map((a) => h('div', { class: `alert alert-${a.level}` },
+      h('div', { class: 'alert-title' }, a.title),
+      h('p', { class: 'alert-text' }, a.text))),
+    h('button', { type: 'button', class: 'btn btn-small alert-ok', onclick: () => {
+      try { localStorage.setItem(alertKey(), String(Math.max(...list.map((a) => a.id)))); } catch { /* private mode: shows again next update */ }
+      renderScreen();
+    } }, 'Got it'));
+}
+
 function useItem(itemId) {
   if (!net.send(msg(TO_HOST.USE_ITEM, { itemId }))) choiceError = 'Not connected. Try again in a moment.';
 }
@@ -511,7 +538,10 @@ function statusCard(r) {
       ? `On foot (lost ${r.horse})`
       : [`${r.horse}${r.horseQuality ? ` · ${QUALITY[r.horseQuality]}` : ''}`,
         canOffer('horse') ? h('button', { type: 'button', class: 'btn btn-small btn-quiet offer-horse', onclick: () => { offering = { give: 'horse', label: r.horse }; renderScreen(); } }, 'Offer') : null];
-  return h('dl', { class: 'status-card' },
+  const onFootBanner = r.mount === 'horse' && r.onFoot && r.status === 'racing'
+    ? h('div', { class: 'on-foot-banner' }, h('strong', {}, 'ON FOOT'), h('span', {}, r.nextTrader ?? 'Far slower until you get a horse.'))
+    : null;
+  return h('div', {}, onFootBanner, h('dl', { class: 'status-card' },
     h('dt', {}, 'Status'), h('dd', { class: `st-${status[1]}` }, status[0]),
     h('dt', {}, r.mount === 'runner' ? 'Running' : 'Horse'), h('dd', {}, mount),
     h('dt', {}, 'Points'), h('dd', {}, String(r.points)),
@@ -520,7 +550,7 @@ function statusCard(r) {
     r.kills ? [h('dt', {}, 'Kills'), h('dd', {}, String(r.kills))] : null,
     you?.plan && r.status === 'racing' ? [h('dt', {}, 'Stage plan'), h('dd', {}, PLANS.find((x) => x.id === you.plan)?.label ?? you.plan)] : null,
     r.worthinessLevel != null ? [h('dt', {}, 'Worthiness'), h('dd', {}, worthinessBar(r.worthinessLevel))] : null,
-  );
+  ));
 }
 
 

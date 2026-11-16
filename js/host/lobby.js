@@ -71,7 +71,7 @@ export class HostLobby {
         }
         break;
       case TO_HOST.USE_ITEM:
-        if (typeof m.itemId === 'string') this.onUseItem?.(player, m.itemId);
+        if (typeof m.itemId === 'string') this.onUseItem?.(player, m.itemId, m.action === 'deliver' ? 'deliver' : null);
         break;
       case TO_HOST.BUY_HORSE:
         if (m.quality === null || typeof m.quality === 'string') this.onBuyHorse?.(player, m.quality);

@@ -66,6 +66,7 @@ export function placeStage(state, rng, stage) {
 
   // Reset per-stage modifiers.
   for (const r of [...namedRacers(state), ...state.field.packLeaders, ...state.field.kept]) {
+    if (r.injured && r.tier === 'pc') r.hurtThisStage = true; // the phone alert still sees it
     r.pace = 0;
     r.injured = false;
   }

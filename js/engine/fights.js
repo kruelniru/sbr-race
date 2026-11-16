@@ -79,7 +79,8 @@ export function fightScore(ctx, r, bonus = 0, { masked = false } = {}) {
     score += F().ally;
     notes.push(['ally', r, ally]);
   }
-  return { score: score + ctx.rng.normal(0, F().sd), notes };
+  const roll = ctx.rng.normal(0, F().sd);
+  return { score: score + roll, base: score, roll, notes };
 }
 
 /** What a racer nobody controls does (canon mostly spare, NPCs often kill). */
@@ -126,6 +127,7 @@ export function resolveFight(ctx, spec) {
   x.fights = (x.fights ?? 0) + 1;
   y.fights = (y.fights ?? 0) + 1;
   const carriedBefore = carried(ctx.state, y).length;
+  let scores = null; // { a: { base, roll }, d } for the debug log
 
   const addNotes = (notes) => {
     for (const [k, w, z] of notes) {
@@ -157,6 +159,7 @@ export function resolveFight(ctx, spec) {
 
   const a = fightScore(ctx, x, spec.bonusA ?? 0, { masked });
   const d = fightScore(ctx, y, (spec.bonusD ?? 0) - (caught ? F().caughtPenalty : 0));
+  scores = { a: { base: a.base, roll: a.roll }, d: { base: d.base, roll: d.roll } };
   addNotes([...a.notes, ...d.notes]);
   const margin = a.score - d.score;
 
@@ -246,6 +249,8 @@ export function resolveFight(ctx, spec) {
       pvp: x.tier === 'pc' && y.tier === 'pc',
       a: { tier: x.tier, personality: x.personality, ai: !!x.isAI, id: x.id }, d: { tier: y.tier, personality: y.personality, id: y.id, holder: carriedBefore },
       win: spec.win, defend: spec.defend,
+      // Host debug log only (?debug=1); never sent anywhere.
+      names: [x.name ?? '?', y.name ?? '?'], scores, masked,
     });
     return { text: rendered, death, roles, outcome };
   }

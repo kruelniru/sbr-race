@@ -113,7 +113,7 @@ function startRace() {
 }
 
 function makeRaceHost() {
-  const rh = new RaceHost({ lobby, onChange: lobby.onChange });
+  const rh = new RaceHost({ lobby, onChange: lobby.onChange, debug: DEBUG });
   // The choice countdown ticks without re-rendering (or re-saving) the screen.
   rh.onTick = () => {
     const t = rh.timerView();

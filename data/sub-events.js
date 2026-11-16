@@ -296,16 +296,20 @@ export const SUB_EVENTS = [
 // ------------------------------------------------------------ milestone 5: fights
 // Every fight asks both sides at once (js/engine/fights.js). The attacker
 // says what happens "If you win"; the defender fights back or flees.
-export const FIGHT_WIN = [
-  { id: 'kill', label: 'Kill them if you win', hint: 'Worthiness drops', lean: L(0.1, 4, 0.4, 1.2, 2) },
-  { id: 'spare', label: 'Let them go if you win', hint: 'Mercy', lean: L(4, 0.5, 3, 2, 1.5) },
-  { id: 'horse', label: 'Take their horse if you win', hint: 'They go on foot', lean: L(0.6, 2, 0.8, 1, 3), needsHorse: true },
+// Every option says it's a fight, so "let them go" never reads as "skip it".
+// `verb`: 'Attack' when you can still say no (A chance to strike), 'Fight'
+// when the fight is happening anyway (Hunt a rival).
+export const fightWin = (verb) => [
+  { id: 'kill', label: `${verb}: if you win, kill them`, hint: 'Worthiness drops', lean: L(0.1, 4, 0.4, 1.2, 2) },
+  { id: 'spare', label: `${verb}: if you win, let them go`, hint: 'Mercy', lean: L(4, 0.5, 3, 2, 1.5) },
+  { id: 'horse', label: `${verb}: if you win, take their horse`, hint: 'They go on foot', lean: L(0.6, 2, 0.8, 1, 3), needsHorse: true },
   // Milestone 5b: you never know if they carry one. Same line on stream either way.
-  { id: 'part', label: 'Search them if you win', hint: 'Take a corpse part if they carry one', lean: L(0.2, 1.2, 0.3, 0.6, 1.6) },
+  { id: 'part', label: `${verb}: if you win, search them`, hint: 'Take a corpse part if they carry one', lean: L(0.2, 1.2, 0.3, 0.6, 1.6) },
 ];
+export const FIGHT_WIN = fightWin('Attack');
 export const FIGHT_DEFEND = [
-  { id: 'fight-kill', label: 'Fight back, to kill', hint: 'Self-defense', lean: L(0.3, 4, 0.5, 2, 2) },
-  { id: 'fight-spare', label: 'Fight back, then let them go', hint: 'Mercy if you win', lean: L(4, 0.6, 1.5, 2.5, 1.5) },
+  { id: 'fight-kill', label: 'Fight back: if you win, kill them', hint: 'Self-defense', lean: L(0.3, 4, 0.5, 2, 2) },
+  { id: 'fight-spare', label: 'Fight back: if you win, let them go', hint: 'Mercy if you win', lean: L(4, 0.6, 1.5, 2.5, 1.5) },
   { id: 'flee', label: 'Flee', hint: 'Often gets away; caught, you fight at a disadvantage', lean: L(1, 0.4, 4, 0.3, 2) },
   // Milestone 5b: they get what they chose if they'd won (a kill counts as cruel).
   { id: 'surrender', label: 'Give up without a fight', hint: 'They get what they came for', lean: L(0.2, 0.05, 0.6, 0.05, 0.3) },
@@ -319,7 +323,7 @@ export const RIVAL = {
   title: 'Rival showdown',
   hunterText: '{a} has finally caught up with {b}. It comes to a fight.',
   targetText: '{a} has been hunting you, and now {a.they} {a:is/are} right beside you.',
-  hunter: FIGHT_WIN,
+  hunter: fightWin('Fight'),
   target: FIGHT_DEFEND,
   lines: {
     gone: "{a}'s rival is gone.",
@@ -342,8 +346,8 @@ export const STRIKE = {
   text: "{b} is alone at a water hole and hasn't seen {a} yet.",
   targetText: '{a} is riding up on you at the water hole, hand on {a.their} gun.',
   options: [
+    { id: 'leave', label: "Don't attack: leave them be", hint: 'Ride on. Nothing happens.', lean: L(4, 0.2, 3, 1, 1.2) },
     ...FIGHT_WIN,
-    { id: 'leave', label: 'Leave them be', hint: 'Ride on', lean: L(4, 0.2, 3, 1, 1.2) },
   ],
 };
 

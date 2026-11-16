@@ -48,7 +48,7 @@ import { allyOf, formAlliance, canonAccepts, log as logAlly } from './alliances.
 import { pendingFor, tradePromptText, tradeLeans, resolveTrade } from './trades.js';
 import { looseParts, pickFinder, markFinding, resolveFind, resolveOtherFind, carried, takePart, holdHidden } from './corpse.js';
 import { ambushChance, pickAgent, resolveAmbush, otherAmbushes, canFaceValentine, resolveValentine, log as logAgents } from './agents.js';
-import { isJoiner, dueOffers, joinValentine, refuseValentine, log as logValentine } from './valentine.js';
+import { isJoiner, dueOffers, joinValentine, refuseValentine, deliver, log as logValentine } from './valentine.js';
 import { PART_HINTS } from '../../data/corpse.js';
 
 export const SUBS = [...SUB_EVENTS, PALM, ATTACKED, STRIKE].map((s) => ({ ...normalizeEvent({ ...s, when: s.when ?? {}, effects: {} }), options: s.options, secret: !!s.secret, special: s.special, fightKind: s.fightKind, leanTag: s.leanTag, targetText: s.targetText }));
@@ -182,6 +182,7 @@ function applyStagePlans(state, choice, rng) {
     if (optionId === 'ally' && targetId) askToAlly(state, rng, choice.stageId, p, targetId);
     if (prompt.buy) buyHorse(state, rng, p, prompt.buy);
   }
+  rollHunts(state, rng, choice.stageId);
   // Canon racers on foot buy a horse in town if they can.
   if (townStage(STAGES.find((x) => x.id === choice.stageId))) {
     for (const c of state.canon ?? []) {
@@ -267,7 +268,7 @@ export function openSubEvents(state) {
     busy.add(hunter.id).add(target.id);
     const key = `rival-${roundNo}-${hunter.id}`;
     const roles = { a: hunter, b: target };
-    prompts.push(rivalPrompt(rng, state, key, 'rival-hunter', hunter, render(RIVAL.hunterText, display(roles)), winOptions(target), roles));
+    prompts.push(rivalPrompt(rng, state, key, 'rival-hunter', hunter, render(RIVAL.hunterText, display(roles)), winOptions(target, [], RIVAL.hunter), roles));
     if (target.tier === 'pc') {
       prompts.push(rivalPrompt(rng, state, key, 'rival-target', target, render(RIVAL.targetText, display(roles)), RIVAL.target, roles));
     }
@@ -304,15 +305,16 @@ export function openSubEvents(state) {
     p.palmQuest.done = true;
     if (busy.has(p.id)) { notes.push(noteLine(PALM.lines.missed, { a: p })); continue; }
     busy.add(p.id);
-    prompts.push(subPromptFor(ctx, PALM_SUB, p, roundNo, { a: p }));
+    prompts.push(Object.assign(subPromptFor(ctx, PALM_SUB, p, roundNo, { a: p }), { planned: true }));
   }
 
   // 3. Stand Arrows and Rokakaka, on their seeded rounds (secret prompts).
   for (const due of (race.arrowsDue ?? []).filter((x) => !x.placed && x.round <= roundNo)) {
-    const pick = rng.pick(racingPcs(state).filter((x) => !busy.has(x.id)));
+    const pick = rng.weighted(racingPcs(state).filter((x) => !busy.has(x.id)), (x) => (x.isAI ? 1 : RULES.arrows.humanWeight));
     if (!pick) continue; // try again next round
     due.placed = roundNo;
     busy.add(pick.id);
+    (race.arrowFinds ??= []).push({ stage: stage.id, human: !pick.isAI });
     prompts.push(itemPrompt(rng, state, ARROW, pick, roundNo));
   }
   const humansAlive = readyPlayers(state).some((x) => !x.isAI && x.status !== 'dead');
@@ -337,16 +339,24 @@ export function openSubEvents(state) {
 
   // 4. Random sub events by the host's frequency setting; at least one PC per round.
   const eligible = racingPcs(state).filter((p) => !busy.has(p.id));
-  // Rival showdowns and the prompts above count toward the round's target.
-  const showdowns = new Set(prompts.map((x) => x.rivalKey ?? x.id)).size;
+  // Prompts above count toward the round's target, except the ones a player's
+  // own Stage Plan guarantees (a rival showdown, a hunt's find, the Palm quest):
+  // those shouldn't crowd everyone else out of the random ones.
+  // They count half, so the round's length stays about where it was.
+  const planned = (x) => x.rivalKey || x.planned;
+  const showdowns = new Set(prompts.filter((x) => !planned(x)).map((x) => x.id)).size
+    + 0.5 * new Set(prompts.filter(planned).map((x) => x.rivalKey ?? x.id)).size;
   const expected = Math.max(0, (RULES.choices.subEventsPerRound[state.settings.subEventFreq ?? 'normal'] ?? 2.5) - showdowns);
+  // Fairness: someone who has had more prompts than the average living PC
+  // (rival showdowns, finds, ambushes...) gets fewer random ones, and the reverse.
+  const fair = fairness(state);
   const chosen = eligible.filter((p) =>
-    rng.chance(Math.min(RULES.choices.maxChancePerPc, (expected / Math.max(1, eligible.length)) * (planOf(p)?.subEventMult ?? 1))));
+    rng.chance(Math.min(RULES.choices.maxChancePerPc, (expected / Math.max(1, eligible.length)) * (planOf(p)?.subEventMult ?? 1) * fair(p))));
   const anyPcPrompt = () => chosen.length || prompts.some((x) => readyPlayers(state).some((p) => p.id === x.playerId));
   if (!anyPcPrompt() && eligible.length) {
     // Prefer a connected human who didn't just have one.
     const pick = rng.weighted(eligible, (p) =>
-      (p.isAI ? 1 : p.connected ? 4 : 0.5) * (p.lastSubRound === roundNo - 1 ? RULES.choices.recentPenalty : 1));
+      (p.isAI ? 1 : p.connected ? 4 : 0.5) * (p.lastSubRound === roundNo - 1 ? RULES.choices.recentPenalty : 1) * fair(p));
     if (pick) chosen.push(pick);
   }
   for (const p of chosen) {
@@ -357,6 +367,13 @@ export function openSubEvents(state) {
     prompts.push(...[].concat(got));
   }
 
+  // Count prompts per PC for fairness (Valentine-only prompts don't count).
+  for (const p of racingPcs(state)) p.fairRounds = (p.fairRounds ?? 0) + 1;
+  for (const pr of prompts) {
+    if ([VALENTINE_OFFER.id, ERRAND.id].includes(pr.special)) continue;
+    const p = readyPlayers(state).find((x) => x.id === pr.playerId);
+    if (p) p.fairPrompts = (p.fairPrompts ?? 0) + 1;
+  }
   race.choice = { kind: 'sub', stageId: stage.id, roundNo, closed: false, prompts, notes, finds: race.pendingFinds ?? [], errands: race.autoErrands ?? [] };
   race.pendingFinds = [];
   race.autoErrands = [];
@@ -376,8 +393,30 @@ function corpsePrompts(state, rng, stage, roundNo, roundsLeft, type, busy, promp
   race.pendingFinds = [];
   race.autoErrands = [];
 
+  // Hunters who made their roll this stage claim a part first: this stage's
+  // part (even before it would surface), or any loose one.
+  const loose = looseParts(state, roundNo);
+  const thisPart = state.corpse?.parts.find((x) => x.stage === stage.id);
+  const hunts = (race.hunts ?? []).filter((h) => h.stage === stage.id && !h.done);
+  for (const h of rng.shuffle(hunts)) {
+    const who = findAnyRacer(state, h.id);
+    if (!who || who.status !== 'racing') { h.done = true; continue; }
+    if (h.round > roundNo || busy.has(who.id)) continue;
+    const part = thisPart && (thisPart.status === 'loose' || (thisPart.status === 'waiting' && !thisPart.inPalm)) ? thisPart
+      : looseParts(state, roundNo).find((x) => x.status === 'loose');
+    if (!part) continue; // maybe a part comes loose later this stage
+    h.done = true;
+    busy.add(who.id);
+    markFinding(part, who.id);
+    const prompt = specialPrompt(rng, state, FOUND_PART, who, roundNo, { a: who.id }, FOUND_PART.text.replace('{part}', part.name), null, rivalTargets(state, who));
+    prompt.partId = part.id;
+    prompt.planned = true;
+    prompts.push(prompt);
+  }
+  const reserved = hunts.some((h) => !h.done) && thisPart; // hunters still to claim it
+
   // Finds: each loose part may be found this round.
-  for (const part of looseParts(state, roundNo)) {
+  for (const part of loose.filter((x) => x.status === 'loose' && x !== reserved)) {
     const who = pickFinder(state, rng);
     if (!who) continue;
     if (who === 'npc' || who.tier !== 'pc' || who.status !== 'racing') {
@@ -412,9 +451,10 @@ function corpsePrompts(state, rng, stage, roundNo, roundsLeft, type, busy, promp
     }
   }
 
-  // Agent ambushes (never a joiner).
+  // Agent ambushes (never a protected joiner). Fairness applies here too.
+  const fairAmbush = fairness(state);
   for (const p of free()) {
-    if (!rng.chance(ambushChance(state, p))) continue;
+    if (!rng.chance(ambushChance(state, p) * Math.min(1, fairAmbush(p)))) continue;
     const agent = pickAgent(rng, state);
     if (!agent) break;
     busy.add(p.id);
@@ -461,8 +501,8 @@ function corpsePrompts(state, rng, stage, roundNo, roundsLeft, type, busy, promp
 }
 
 /** "If you win" options: no "take their horse" if they have none. */
-function winOptions(target, extra = []) {
-  return [...FIGHT_WIN.filter((o) => !o.needsHorse || hasHorse(target)), ...extra];
+function winOptions(target, extra = [], list = FIGHT_WIN) {
+  return [...extra, ...list.filter((o) => !o.needsHorse || hasHorse(target))];
 }
 
 /** A prompt with fixed options (horse-two, ally-invite, trade). */
@@ -552,6 +592,10 @@ function itemPrompt(rng, state, def, pc, roundNo) {
 function aiUseItems(state, rng) {
   for (const it of state.items ?? []) {
     const owner = readyPlayers(state).find((x) => x.id === it.owner);
+    // AI joiners hand parts to the President now and then.
+    if (owner?.isAI && it.kind === 'part' && it.merged && isJoiner(owner) && owner.status === 'racing' && !it.pendingDeliver && rng.chance(RULES.valentine.aiDeliver)) {
+      it.pendingDeliver = true; it.pendingUse = false; continue;
+    }
     if (!owner?.isAI || it.pendingUse || !canUse(it, owner)) continue;
     if (rng.chance(it.kind === 'part' ? 0.1 : RULES.arrows.aiUseChance)) it.pendingUse = true;
   }
@@ -561,14 +605,22 @@ function aiUseItems(state, rng) {
  * A phone uses a kept item during an open choice window (untrusted input).
  * It resolves with this round. Sending it again cancels.
  */
-export function useItem(state, playerId, itemId) {
+export function useItem(state, playerId, itemId, action = null) {
   const choice = state.race?.choice;
   if (!choice || choice.closed) return { ok: false, error: 'Items can be used while a decision is open.' };
   const item = (state.items ?? []).find((i) => i.id === itemId && i.owner === playerId);
   const owner = readyPlayers(state).find((x) => x.id === playerId);
   if (!item) return { ok: false, error: 'no such item' };
+  if (action === 'deliver') {
+    // A joiner hands a corpse part to the President (secret). Again to cancel.
+    if (item.kind !== 'part' || !item.merged || !isJoiner(owner) || owner.status !== 'racing') return { ok: false, error: "You can't do that." };
+    item.pendingDeliver = !item.pendingDeliver;
+    if (item.pendingDeliver) item.pendingUse = false;
+    return { ok: true, pending: item.pendingDeliver };
+  }
   if (!item.pendingUse && !canUse(item, owner)) return { ok: false, error: 'You can\'t use that right now.' };
   item.pendingUse = !item.pendingUse;
+  if (item.pendingUse) item.pendingDeliver = false;
   return { ok: true, pending: item.pendingUse };
 }
 
@@ -920,7 +972,10 @@ function resolvePalm(ctx, prompt) {
 /** Survive the piercing by Worthiness band (rules.arrows.survive), then a Stand from the Arrow odds. */
 function pierce(ctx, a) {
   if (a.stand) {
-    addHint(a, "The Arrow won't take: you already have a Stand.", ctx);
+    // Only possible if two piercings land in one round (a kept Arrow and a
+    // found one): the Stand came from the first, and this Arrow is kept, not lost.
+    addItem(ctx.state, 'arrow', a, { stage: ctx.stage.id, round: ctx.roundLabel });
+    addHint(a, "The second Arrow won't take: you already have a Stand. You keep it.", ctx);
     log(ctx, 'arrowLog', { outcome: 'already' });
     return null;
   }
@@ -978,6 +1033,11 @@ function resolveItemFind(ctx, prompt) {
 /** Kept items used during this round's windows resolve first. */
 function resolveItems(ctx) {
   const lines = [];
+  for (const it of [...(ctx.state.items ?? [])].filter((i) => i.pendingDeliver)) {
+    it.pendingDeliver = false;
+    const a = findAnyRacer(ctx.state, it.owner);
+    if (a && a.status === 'racing') deliver(ctx, a, it);
+  }
   for (const it of [...(ctx.state.items ?? [])].filter((i) => i.pendingUse)) {
     const a = findAnyRacer(ctx.state, it.owner);
     it.pendingUse = false;
@@ -1071,4 +1131,45 @@ function resolveErrand(ctx, errandId, defend) {
   const shown = f.outcome === 'reversal-kill' ? f.roles : Object.fromEntries(Object.entries(f.roles).filter(([, w]) => w !== x));
   const line = lineFor(ctx, 'valentine-errand', f.text, shown, { death: f.death, tags: ['fight'] });
   return line;
+}
+
+/**
+ * "Hunt a corpse part": at the start of each stage every hunter rolls
+ * rules.corpse.hunt (base, a little Worthiness, plus pity for each earlier
+ * hunting stage that found nothing). A hunter who makes it claims a part on
+ * a random round of the stage (state.race.hunts). Pity resets after a find.
+ */
+export function rollHunts(state, rng, stageId) {
+  const H = RULES.corpse.hunt;
+  const race = state.race;
+  const stage = STAGES.find((x) => x.id === stageId);
+  const types = race.plan[stageId - 1].types;
+  const first = race.plan.slice(0, stageId - 1).reduce((n, s) => n + s.types.length, 0) + 1;
+  const rounds = types.map((t, i) => ({ t, round: first + i })).filter((x) => x.t !== 'finish').map((x) => x.round);
+  for (const p of racingPcs(state)) {
+    // Close out the last stage this PC hunted.
+    if (p.huntStage && p.huntStage < stageId && !p.huntClosed) {
+      p.huntClosed = true;
+      const found = (state.corpse?.log ?? []).some((e) => e.to === p.id && ['found', 'palm'].includes(e.event) && e.stage === p.huntStage);
+      p.huntPity = found ? 0 : (p.huntPity ?? 0) + 1;
+    }
+    if (p.plan !== 'corpse' || !stage) continue;
+    p.huntStage = stageId;
+    p.huntClosed = false;
+    const chance = H.base + ((p.worthiness ?? 50) - 50) * H.perWorthiness + (p.huntPity ?? 0) * H.pity;
+    if (rng.chance(Math.min(0.95, chance))) (race.hunts ??= []).push({ id: p.id, stage: stageId, round: rng.pick(rounds), done: false });
+  }
+}
+
+/**
+ * Sub event fairness between living PCs: a multiplier on the chance of a
+ * random sub event, from how many prompts this PC has had per round so far
+ * against the average (rules.choices.fairness). Smoothed, and clamped.
+ */
+function fairness(state) {
+  const F = RULES.choices.fairness;
+  const pcs = racingPcs(state);
+  const rate = (p) => ((p.fairPrompts ?? 0) + F.prior * F.priorRate) / ((p.fairRounds ?? 0) + F.prior);
+  const mean = pcs.reduce((t, p) => t + rate(p), 0) / (pcs.length || 1);
+  return (p) => Math.max(F.min, Math.min(F.max, (mean / rate(p)) ** F.power));
 }

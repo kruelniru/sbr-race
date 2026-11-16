@@ -192,7 +192,7 @@ Plans whose systems don't exist yet are hidden, not greyed out. The numbers live
 
 **Ally up (milestone 5):** pick a racing named racer who rides alone. A PC answers in their next sub-event window ("Ride together?"); a canon racer answers by character fit (Gyro takes in the worthy, Diego rarely unless you're in the top five); a named NPC agrees 60% of the time. The stream announces the answer.
 
-**Sub events:** every round, each PC has a chance of one, and at least one PC always gets one (Low about 1 a round, Normal 2–3, High 4–5, a host setting; rival showdowns count toward it). Everyone affected answers at the same time, and the host screen announces it while the main flow waits. A sub event counts as that racer's event for the round. Some sub events chain (win a fight, then choose kill or spare).
+**Sub events:** every round, each PC has a chance of one, and at least one PC always gets one (Low about 1 a round, Normal 2–3, High 4–5, a host setting). Prompts a player's own Stage Plan guarantees (a rival showdown, a hunt's find, the Palm quest) count only half toward that number, so they don't crowd everyone else out. **Fairness:** random sub events and agent ambushes lean toward living PCs who have had fewer prompts per round so far, and away from those who've had more (`rules.choices.fairness`). Valentine's offer and errands don't count. Everyone affected answers at the same time, and the host screen announces it while the main flow waits. A sub event counts as that racer's event for the round. Some sub events chain (win a fight, then choose kill or spare).
 
 In milestone 3 (`data/sub-events.js`):
 
@@ -214,7 +214,7 @@ A person's choice result always shows in the Main Story, even a quiet one ("Krue
 In milestone 5a:
 
 - **Attacked on the trail:** an NPC attacks you. Fight back to kill, fight back and let them go, or flee.
-- **A chance to strike:** a named racer is alone and hasn't seen you. "If you win: kill them / let them go / take their horse", or leave them be. Ruthless racers get this one more often. If the target is a PC, they get "Someone is coming for you" at the same time.
+- **A chance to strike:** a named racer is alone and hasn't seen you. "Don't attack: leave them be" comes first; the rest read "Attack: if you win, kill them / let them go / take their horse / search them", so nobody mistakes "let them go" for skipping the fight. A rival showdown's options read "Fight: if you win, …" and a defender's "Fight back: if you win, …". Ruthless racers get this one more often. If the target is a PC, they get "Someone is coming for you" at the same time.
 - **Your ally is in trouble:** stop and help (counts as help), or ride on (abandoning: the alliance ends, −12).
 - **A chance to betray:** your ally is asleep beside their horse. Take it and go (−12, the alliance ends), or stay loyal. ★ only for Ruthless and Opportunist personalities, but anyone can pick it.
 - **Your second horse is gone:** go on, on foot, or retire.
@@ -288,6 +288,12 @@ Every event that hurts another racer without killing them (pace loss, injury, a 
 - How likely you are to awaken a Stand, and how strong it is.
 
 **Hints on your phone:** key moments add a private line under "Only you know", such as "A strange calm settles over you as you leave the Palm." They arrive with the round's private update, after the stream has shown the round.
+
+**Alerts on your phone** (since the first live tests): big private changes get a card at the top of the phone, shown when the round's private update arrives (the end of the reveal, so nothing spoils the stream) and kept until you tap "Got it".
+
+- **Your horse is dead / was taken** (Riders): a large flashing red alert ("YOUR HORSE IS DEAD. You're on foot and far slower. Buy one at the next town, or take a riderless horse.") naming the next horse trader, plus a red **ON FOOT** banner on the status card until you ride again.
+- Calmer alerts: a Stand gained or lost, a corpse part gained or lost, a bad injury, your ally dead or gone, and a horse again.
+- While a part is merging (until the end of the next round), a Standless player's Stand card says "The part is settling into you…" instead of "No Stand yet".
 
 **Anonymous announcements on the host screen:** "Someone has been deemed worthy of the Saint." when a PC merges with a corpse part, and "Someone has fallen to the dark side." when a PC joins Valentine. Neither names the player; they come at the end of that round's Main Story, in gold italics, with no faces.
 
@@ -376,7 +382,8 @@ Nine parts of the Saint's Corpse surface over the race, one per stage. Holding o
 **How it works (milestone 5b, `js/engine/corpse.js`, numbers in `rules.corpse`):**
 
 - **One part a stage**, in order: the Left Arm, the Heart, the Eyes, the Spine, the Ears, the Right Arm, the Legs, the Torso, the Head. Each surfaces on a seeded Day or Night round of its stage and lies **loose** on the trail.
-- **Finding:** each round a loose part is found 90% of the time. Who finds it is weighted by Worthiness (0.5 + Worthiness ÷ 50, so the corpse chooses the worthy): ×3 on "Hunt a corpse part", ×0.5 for retired racers, canon ×0.6 (Johnny and Gyro ×2 on top), and the whole NPC field counts as one weight of 4. A PC gets the secret "You found a corpse part" prompt; canon racers and NPCs keep theirs (an NPC finder becomes a named breakout, within the cap).
+- **Hunting:** at the start of each stage, every PC on "Hunt a corpse part" rolls their own chance: 90% at Worthiness 50, ±0.2% per point (so Worthiness matters only a little; it mostly decides rejection), +15% for each earlier hunting stage that found nothing (the pity rule; it resets after a find). A hunter who makes it claims that stage's part on a random round, even before it would surface, or any loose part; if several hunters make it in one stage, they share what's there. In the sim a hunter finds a part in about 37% of stages; the limit is supply when many hunt at once.
+- **Finding:** otherwise, each round a loose part is found 95% of the time. Who finds it is weighted a little by Worthiness (1 + Worthiness ÷ 100): ×3 on "Hunt a corpse part", ×0.5 for retired racers, canon ×0.6 (Johnny and Gyro ×2 on top), and the whole NPC field counts as one weight of 4. A PC gets the secret "You found a corpse part" prompt; canon racers and NPCs keep theirs (an NPC finder becomes a named breakout, within the cap).
 - **The Devil's Palm** (Stages 2–3): 25% of the time that stage's part waits in the Palm, and the first racer to walk out alive comes out holding it. If nobody has by the stage's last Day or Night round, it surfaces normally.
 - **Merging:** every part that comes to a racer merges with them, whether found and kept, given, traded, stolen, searched for, or taken from a body. The only exception is a part they chose to **hide on them**: wrapped, it can't touch them (no Stand, no rejection) and agents notice it half as much. A hidden part can be held later from the phone (Corpse parts → **Hold it**). A merge resolves at the end of the **next** round, so a rejection never lands right after the line where the part changed hands.
 - **Rejection,** rolled once per merge by Worthiness: 75+ 0%, 60–74 3%, 45–59 8%, 25–44 18%, below 25 35%. Two thirds of rejections kill (the stream says "there's only sand", "vanishes from the trail" or "drops dead in the middle of the trail"; the Fallen cause is just as vague, and the real cause is kept for the M6 reveal). The rest just lose the part, which goes back onto the trail.
@@ -422,8 +429,8 @@ Runners never have, buy, catch or receive a horse.
 
 **Valentine's agents** (Ringo Roadagain, Blackmore, Magent Magent, Mike O., Dr. Ferdinand, Axl RO, the Pork Pie Hat Kid, the Tattoo You men, the Eleven Men) attack as events, not racers (`js/engine/agents.js`, `rules.agents`). Their Stands stay banned and are never named.
 
-- **Ambush chance per racer per round:** 4% + 6% per part carried (3% for a hidden one) for holders; 1.5% for PCs holding nothing, so an ambush proves nothing. ×2 on "Hunt a corpse part". Canon and NPC holders at half the rate (nobody controls them, and they can't hide a part or plan). **Joiners are never ambushed.**
-- **The fight:** an agent fights at their own skill (57–66), with no bonus. If they win they search you (a part if you carry one) or try to kill. Let them search you and they never kill. A PC can kill an agent; dead agents stay dead.
+- **Ambush chance per racer per round:** 4% + 6% per part carried (3% for a hidden one) for holders; 1.5% for PCs holding nothing, so an ambush proves nothing. ×2 on "Hunt a corpse part". Canon and NPC holders at half the rate (nobody controls them, and they can't hide a part or plan). Sub event fairness can lower a PC's chance. **Joiners are never ambushed, unless they carry a part that has merged with them** (below).
+- **The fight:** an agent fights at their own skill (57–66) minus 8 (tuned with deliveries, below, to keep the President's bad ending near one game in five). If they win they search you (a part if you carry one) or try to kill. Let them search you and they never kill. A PC can kill an agent; dead agents stay dead.
 - A PC's ambush is a sub event prompt; canon and NPC holders are ambushed inside the round.
 
 **Funny Valentine** (Stages 8–9): "Face him / Avoid him", offered once to a PC with a Rare or Legendary Stand and Worthiness 60+, never to a joiner (20% a round while eligible). He fights at 77 before the roll, so a Legendary user wins about 30%. Driving him off: +50 points and pace. Losing: he takes every part you carry, or kills you on a clear win. He can never be killed. Avoiding him costs time.
@@ -437,8 +444,10 @@ Runners never have, buy, catch or receive a horse.
   2. Relay horses: +1 placement every remaining stage.
   3. If you're Standless, a free Stand on the Arrow odds with no risk.
   4. Once a stage, a secret **Valentine's errand**: pick a racer, and next round you ambush them as "a rider in a dark hat" with agent backup (+8). Win and a part they carry goes to the President; with nothing to find, you take their horse. No name, no Stand, no ally on stream, unless they kill you, which unmasks you ("It was Kruel."). It can target your own ally.
-  5. If the President ends with more parts than every racer combined, every joiner gets +50 points (before the podium).
-- **Your phone** shows a "You ride for Valentine" card; nobody else knows. A joiner can stay in an alliance and their ally sees nothing.
+  5. If the President ends with more parts than every racer combined, every joiner gets +30 points (before the podium).
+- **Joiners and parts:** when a part merges with a joiner, the protection ends ("The President wants what you carry."), and agents hunt them like any holder. In any choice window, the joiner's Corpse card offers **Deliver it to the President** (secret): the part goes to the President's count, they get +10 points a part, and the protection comes back once they carry no merged part. Only a merged part can be delivered.
+- **The losing side:** at the end of the race, if the President didn't win on parts, every joiner's phone says "The President's plan failed. You rode for the losing side." (dead joiners see it on their final screen); if he did, "As promised: +30 points." Kept as `valentine.outcome` for the M6 secrets reveal.
+- **Your phone** shows a "You ride for Valentine" card with your status (Protected, or HUNTED while you carry a merged part); nobody else knows. A joiner can stay in an alliance and their ally sees nothing.
 - **The balance check** (sim, 4,500 games): offers only reach PCs still racing in Stages 4–6, so joiners are judged against PCs racing at the start of Stage 4. Their share of those PCs' race wins must stay under 1.3× their share of those PCs. Against all PCs, even the PCs who refused score about 1.6×, so that test only measured survival.
 - The host's browser holds every secret, so a host who also plays shouldn't go digging.
 - It's revealed in the finale's secrets reveal (M6).
@@ -514,7 +523,9 @@ In the manga, points come only from stage placements, plus a time bonus for fini
 
 **Open questions for milestone 6:**
 
-- **Love Train never triggers.** With nine parts spread over many holders (and the President), the top racer ends with about 1.7 parts; nobody reaches 5 in the sim. Lower the threshold (for example "the most parts, at least 3"), let parts gather (allies pooling, holders drawn to each other), or both.
+- **Love Train rarely triggers.** In the first M5b build the top racer ended with about 1.7 parts and nobody reached 5. Since hunters get first claim on parts (after the live tests), parts gather more and a racer reaches 5+ in roughly one game in seven; still worth deciding the threshold and how parts gather. Lower the threshold (for example "the most parts, at least 3"), let parts gather (allies pooling, holders drawn to each other), or both.
+
+**Debugging:** with `?debug=1`, the host prints every fight to the browser console with a `[fight]` prefix: both sides' base scores, rolls, the margin, both choices and the outcome.
 
 **Ideas for later:**
 
@@ -599,5 +610,12 @@ Decisions made after the original design, in the order they came up:
 71. Agents: 4% + 6% per part (3% hidden) per round for holders, 1.5% for PCs holding nothing, ×2 on Hunt a corpse part, half for canon and NPC holders, no fight bonus; never joiners. Tuned so the President ends with the most parts in about two thirds of games and more than every racer combined in about one in six (the first build gave him the bad ending in half of all games).
 72. Funny Valentine: 77 before the roll (a Legendary user wins about 30%), +50 and pace for driving him off, takes every part on a win, can't die; never offered to joiners.
 73. Valentine errands take two rounds (pick a target secretly, strike next round), so a PC target gets their own "Someone is coming for you" prompt. Masked on stream unless the joiner dies in it.
-74. Joiner balance is judged against PCs still racing at the start of Stage 4 (limit 1.3×), because offers only reach them; against all PCs even the refusers score about 1.6×. Rewards restored in order to just under the limit: relay horses +1, ending bonus +50. Original rewards (+3, +100) were too strong on the same test.
+74. Joiner balance is judged against PCs still racing at the start of Stage 4 (limit 1.3×), because offers only reach them; against all PCs even the refusers score about 1.6×. Rewards restored in order to just under the limit: relay horses +1, ending bonus +50 (1.24×). Original rewards (+3, +100) were too strong on the same test. After the live tests, deliveries (decision 77) pushed joiners over, so the ending bonus went back to +30.
 75. Love Train (5+ parts) never happens in the sim; an open question for M6.
+76. Fight options say they're fights: "Attack: if you win, …" (A chance to strike, with "Don't attack: leave them be" first), "Fight: if you win, …" (rival showdowns), "Fight back: if you win, …" (defenders). `?debug=1` logs every fight's scores and rolls to the console.
+77. A joiner who carries a merged part loses the agents' protection until they deliver it ("Deliver it to the President", secret, any window, merged parts only): +10 points a part. Each delivery moves a part from the racers to the President, so to keep his bad ending near 15–20%: loose parts are found 95% of rounds (was 80%) and agents fight at −8. AI joiners deliver 15% of windows. Joiners learn at the end whether they rode for the losing side (kept for M6).
+78. Phone alerts for big private changes, shown with the round's private update and kept until dismissed: losing your horse (big, flashing, with the next town and a persistent ON FOOT banner), Stands, corpse parts, bad injuries, allies. A merging part shows "settling" on the Stand card.
+79. Stand Arrow report: in the sim every piercing without a Stand gives a Stand or kills (457 from found Arrows, 477 kept ones). The one gap: two piercings in a round (a kept Arrow and a found one) wasted the second Arrow; it's now kept. The likely cause of "it gave nothing" was that the result reached the phone only as a quiet hint at the end of the reveal; the new Stand alert fixes that.
+80. Hunting corpse parts: each hunter rolls 90% a stage (±0.2% per Worthiness point, +15% pity per dry hunting stage) for first claim on that stage's part; normal finds 80% a round, weighted 1 + Worthiness ÷ 100. Hunters find a part in about 37% of stages; when many hunt at once, supply is the limit (one part a stage). More parts in circulation is the next lever if that should be higher.
+81. Stand Arrows 8–10 a game (was 6–8), and a human-controlled PC is twice as likely as an AI racer to find one.
+82. Sub event fairness between living PCs: random sub events and agent ambushes lean toward whoever has had fewer prompts per round; prompts a player's own plan guarantees count half toward the round's number. Valentine-only prompts are excluded.

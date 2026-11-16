@@ -9,7 +9,7 @@ export const TO_HOST = Object.freeze({
   HELLO: 'hello',         // { v, token? }  first message on every connection
   CHARACTER: 'character', // { name, gender, pronouns, personality, picture? }
   CHOICE: 'choice',       // { promptId, optionId, targetId? }  answer a Stage Plan or sub event
-  USE_ITEM: 'use_item',   // { itemId }  use (or cancel using) a kept item while a choice is open
+  USE_ITEM: 'use_item',   // { itemId, action? }  use (or cancel using) a kept item while a choice is open; action 'deliver': a joiner hands a corpse part to the President
   BUY_HORSE: 'buy_horse', // { quality | null }  pick a horse at the trader (Stage Plan window, town stages)
   OFFER: 'offer',         // { give: itemId | 'horse', to, ask: null | 'arrow' | 'rokakaka' | 'horse' }  secret trade offer
   CANCEL_OFFER: 'cancel_offer', // {}

@@ -123,7 +123,8 @@ export default {
 
   // ---------------------------------------------------------------- Stand Arrows (our addition)
   arrows: {
-    perGame: [6, 8],        // surface this many times (seeded)
+    perGame: [8, 10],       // surface this many times (seeded)
+    humanWeight: 2,         // a human-controlled PC is this much likelier to find one than an AI racer
     stages: [2, 8],         // between these stages
     // Survive the piercing (%), by Worthiness band.
     survive: [{ min: 75, p: 95 }, { min: 60, p: 88 }, { min: 45, p: 78 }, { min: 25, p: 65 }, { min: 0, p: 50 }],
@@ -210,12 +211,21 @@ export default {
   // someone finds it each round with findChance; still loose at the Finish
   // Line, Valentine's agents recover it for the President.
   corpse: {
-    findChance: 0.9,
+    findChance: 0.95,
     palmStages: [2, 3],
     palmChance: 0.25,          // that stage's part waits in the Devil's Palm for whoever walks out
     // Who finds it: weight = base + Worthiness * perWorthiness (the corpse chooses).
+    // "Hunt a corpse part": each stage every hunter rolls their own chance; a
+    // hunter who makes it has first claim on that stage's part (or any loose
+    // part). Worthiness matters only a little here; it decides rejection.
+    hunt: {
+      base: 0.9,               // at Worthiness 50
+      perWorthiness: 0.002,    // ±0.1 at Worthiness 0 / 100
+      pity: 0.15,              // per hunting stage without a find; resets after one
+    },
+    // Everyone else (and hunters who missed): weight = base + Worthiness * perWorthiness.
     find: {
-      base: 0.5, perWorthiness: 1 / 50,
+      base: 1, perWorthiness: 1 / 100,
       huntMult: 3,             // "Hunt a corpse part" Stage Plan
       retired: 0.5,            // retired racers still hunt, at this weight
       canon: 0.6, canonSeekers: { johnny: 2, gyro: 2 }, // x canon on top of canon
@@ -236,7 +246,7 @@ export default {
     huntMult: 2,               // "Hunt a corpse part"
     canonNonHolder: 0.005,
     othersMult: 0.5,           // canon and NPC holders (nobody controls them; they can't hide a part or plan)
-    bonus: 0,                  // their (banned) Stands, in a fight
+    bonus: -8,                 // in a fight (their banned Stands are never used on stream; tuned so the President's bad ending stays near 15–20%)
     // What they do if they win: search for a part, or kill.
     wins: { holder: { part: 7, kill: 3 }, none: { part: 6, kill: 4 } },
   },
@@ -263,7 +273,11 @@ export default {
     // President ends with more parts than every racer combined.
     relay: 1,                  // placement every remaining stage
     errandBonus: 8,            // agent backup in the errand fight
-    endingBonus: 50,
+    endingBonus: 30,
+    // A joiner who merges with a part loses the agents' protection until they
+    // deliver it ("Deliver it to the President", secret, any choice window).
+    deliverPoints: 10,         // per part delivered
+    aiDeliver: 0.15,           // AI joiners deliver a carried part this often per window
     // Sim check: joiners' share of race wins over their share of PCs still racing
     // at the start of Stage 4 (offers only reach them), on 4,500 games.
     joinerWinLimit: 1.3,
@@ -278,6 +292,9 @@ export default {
     maxChancePerPc: 0.85,
     aiInCharacter: 0.8,        // AI racers pick the ★ option this often
     recentPenalty: 0.5,        // weight for the guaranteed pick if they had one last round
+    // Evens out sub events between living PCs (choices.js fairness): random
+    // ones lean toward whoever has had fewer prompts per round so far.
+    fairness: { power: 4, min: 0.1, max: 4, prior: 4, priorRate: 0.25 },
   },
 
   // ---------------------------------------------------------------- pacing

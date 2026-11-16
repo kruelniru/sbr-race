@@ -56,9 +56,10 @@ export function giveHorse(racer, name, quality) {
  * queues the "retire or continue on foot" decision for their next window.
  * Returns the lost horse { name, quality } or null.
  */
-export function loseHorse(ctx, racer, { counts = true } = {}) {
+export function loseHorse(ctx, racer, { counts = true, how = counts ? 'dead' : 'given' } = {}) {
   if (racer.tier === 'npc' || !hasHorse(racer)) return null;
   const lost = { name: racer.horse, quality: racer.horseQuality };
+  racer.horseLossHow = how; // 'dead' | 'taken' | 'given' (the phone alert's wording)
   racer.onFoot = true;
   racer.lostHorse = racer.horse;
   if (counts) {
@@ -71,7 +72,7 @@ export function loseHorse(ctx, racer, { counts = true } = {}) {
 
 /** Steal / take a horse: the winner rides off on it if on foot (or if it's better). */
 export function takeHorse(ctx, winner, loser) {
-  const lost = loseHorse(ctx, loser);
+  const lost = loseHorse(ctx, loser, { how: 'taken' });
   if (!lost) return null;
   if (canHaveHorse(winner) && (winner.onFoot || QUALITIES.indexOf(lost.quality) > QUALITIES.indexOf(winner.horseQuality))) {
     giveHorse(winner, lost.name, lost.quality);

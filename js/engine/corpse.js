@@ -210,6 +210,12 @@ export function palmPart(ctx, who) {
   return part;
 }
 
+/** A joiner delivers a part to the President (valentine.js decides the reward). */
+export function deliverPart(ctx, item, from) {
+  const part = partById(ctx.state, item.partId);
+  if (part) giveTo(ctx, part, 'president', 'delivered', { item, from });
+}
+
 /** Give a part away from the phone (through a trade offer): +15 instead of help. */
 export function partGiftWorthiness(ctx, giver) {
   addWorthiness(giver, RULES.worthiness.givePart, ctx);
@@ -278,6 +284,7 @@ export function processMerges(ctx, { all = false } = {}) {
     }
     item.merged = true;
     log(ctx, part, 'merged', { to: who.id, toTier: who.tier, worthiness: w, band });
+    if (who.valentine?.joined) addHint(who, 'The President wants what you carry. His agents will hunt you until you deliver it.', ctx);
     if (who.tier === 'pc') {
       hint(who, 'merged', { part: part.name }, ctx);
       ctx.state.corpse.announce.push(PART_LINES.worthy);

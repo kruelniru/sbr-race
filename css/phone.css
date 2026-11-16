@@ -216,3 +216,28 @@ legend { margin-bottom: 8px; }
 .valentine-errand { color: #d9b8ff; margin: 6px 0; }
 .choice.secret { border-color: #6c4d86; }
 .secret-note { margin: 0 0 8px; font-size: .85rem; color: #d9b8ff; }
+
+/* alerts and status (milestone 5b, after live tests) */
+.alerts { position: sticky; top: 0; z-index: 5; margin: 0 0 14px; padding: 12px 14px; border-radius: var(--radius); background: #2a2016; border: 1px solid var(--gold); box-shadow: 0 6px 24px rgba(0,0,0,.5); }
+.alerts.big { background: #4a1210; border: 2px solid #ff5a47; animation: alert-flash 1s ease-in-out 6; }
+@keyframes alert-flash { 50% { background: #7a1a14; box-shadow: 0 0 0 4px rgba(255,90,71,.35); } }
+.alert + .alert { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.12); }
+.alert-title { font-weight: 800; letter-spacing: .02em; }
+.alert-big .alert-title { font-size: 1.35rem; color: #fff; }
+.alert-calm .alert-title { color: var(--gold-2); }
+.alert-text { margin: 4px 0 0; }
+.alert-ok { margin-top: 10px; }
+.on-foot-banner { display: flex; flex-direction: column; gap: 2px; background: #5a1410; border: 1px solid #ff5a47; color: #fff; border-radius: 10px; padding: 8px 12px; margin: 0 0 8px; }
+.on-foot-banner strong { font-size: 1.1rem; letter-spacing: .08em; }
+.on-foot-banner span { font-size: .9rem; }
+.stand-card.settling .stand-none { color: var(--gold-2); font-style: italic; }
+.valentine-status { margin: 0 0 8px; }
+.valentine-card.hunted { border-color: #ff5a47; }
+.valentine-card.hunted .valentine-status { color: #ffb4a8; font-weight: 700; }
+.valentine-card.lost .valentine-outcome { color: #ffb4a8; }
+.valentine-card.won .valentine-outcome { color: var(--gold-2); }
+.item-deliver { white-space: normal; }
+@media (prefers-reduced-motion: reduce) { .alerts.big { animation: none; } }
+.parts-card .item { grid-template-columns: 1fr; gap: 8px; }
+.parts-card .item-actions { flex-direction: row; flex-wrap: wrap; align-items: center; }
+.parts-card .item-use, .parts-card .item-deliver { max-width: none; flex: 1 1 auto; }

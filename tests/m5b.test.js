@@ -84,7 +84,7 @@ test('corpse parts: a find is a secret prompt; keep / hide / give', () => {
   closeChoices(state);
   const res = runRound(state);
   const me = state.players.find((x) => x.id === p.playerId);
-  const it = carried(state, me)[0];
+  const it = carried(state, me).find((i) => i.partId === p.partId);
   assert.ok(it?.hidden && !it.merged);
   assert.ok(privateView(state, me.id).items.find((i) => i.id === it.id).usable, 'a hidden part can be held later');
   // Nothing on stream names the part or the find.
@@ -297,4 +297,102 @@ test('whole games: every part is accounted for, once', () => {
     assert.equal(sum.holders.reduce((t, h) => t + h.parts.length, 0) + sum.president, 9);
     for (const it of items) assert.notEqual(state.players.find((x) => x.id === it.owner)?.status, 'dead', 'the dead hold nothing');
   }
+});
+
+// ---------------------------------------------------------------- after the first live tests
+import { useItem, rollHunts } from '../js/engine/choices.js';
+import { syncShown } from '../js/engine/race.js';
+import { loseHorse } from '../js/engine/horses.js';
+import { addItem } from '../js/engine/items.js';
+import { STRIKE, RIVAL } from '../data/sub-events.js';
+
+test('fight prompts say they are fights; A chance to strike can be declined', () => {
+  assert.equal(STRIKE.options[0].id, 'leave');
+  assert.match(STRIKE.options[0].label, /Don't attack/);
+  for (const o of STRIKE.options.slice(1)) assert.match(o.label, /^Attack: if you win, /);
+  for (const o of RIVAL.hunter) assert.match(o.label, /^Fight: if you win, /);
+  for (const o of RIVAL.target.filter((x) => x.id.startsWith('fight'))) assert.match(o.label, /^Fight back: if you win, /);
+});
+
+test('Stand Arrow: piercing without a Stand always gives one or kills; a second piercing in one round keeps the Arrow', () => {
+  for (let i = 0; i < 60; i++) {
+    const state = setup('ar' + i, { players: 3, humans: 3 });
+    const a = state.players[0];
+    a.stand = null;
+    addItem(state, 'arrow', a, { stage: 1 });
+    addItem(state, 'arrow', a, { stage: 1 });
+    openSubEvents(state);
+    for (const it of state.items.filter((x) => x.owner === a.id)) assert.equal(useItem(state, a.id, it.id).ok, true);
+    closeChoices(state);
+    runRound(state);
+    if (a.status === 'dead' && a.death.cause === 'pierced by a strange arrow') continue;
+    assert.ok(a.stand, 'survived: a Stand');
+    assert.equal(state.items.filter((x) => x.owner === a.id && x.kind === 'arrow').length, 1, 'the second Arrow is kept, not wasted');
+  }
+});
+
+test('a joiner holding a merged part is hunted until they deliver it (+points, protection back)', () => {
+  const state = setup('dl', { players: 4, humans: 4 });
+  const a = state.players[0];
+  joinValentine(ctxOf(state, 'j', 4), a);
+  const it = givePart(state, a, 2);
+  assert.equal(ambushChance(state, a), 0, 'not merged yet');
+  state.race.roundNo++;
+  processMerges(ctxOf(state, 'm'));
+  if (!carried(state, a).length) return; // rejected (possible at low Worthiness)
+  assert.ok(ambushChance(state, a) > 0, 'the President wants what you carry');
+  assert.ok(a.hints.some((h) => /President wants what you carry/.test(h.text)));
+  openSubEvents(state);
+  assert.equal(useItem(state, a.id, it.id, 'deliver').ok, true);
+  assert.equal(useItem(state, state.players[1].id, it.id, 'deliver').ok, false, 'only the owner');
+  const before = a.points;
+  closeChoices(state);
+  runRound(state);
+  assert.equal(state.corpse.parts[2].status, 'president');
+  assert.ok(a.points >= before + RULES.valentine.deliverPoints);
+  assert.equal(ambushChance(state, a), 0, 'protected again');
+});
+
+test('joiners on the losing side are told so (and it is kept for M6)', () => {
+  const state = setup('ls');
+  const a = state.players[0];
+  joinValentine(ctxOf(state, 'j', 4), a);
+  givePart(state, state.players[1], 0);
+  valentineEnding(state);
+  assert.equal(a.valentine.outcome, 'lost');
+  assert.ok(a.hints.some((h) => h.text === "The President's plan failed. You rode for the losing side."));
+  syncShown(state);
+  assert.equal(privateView(state, a.id).valentine.outcome, 'lost');
+});
+
+test('phone alerts: your horse is dead, only after the reveal; ON FOOT names the next trader; a settling part', () => {
+  const state = setup('al', { players: 3, humans: 3 });
+  const a = state.players[0];
+  syncShown(state);
+  loseHorse(ctxOf(state, 'h', 3), a);
+  assert.equal((privateView(state, a.id).race.alerts ?? []).length, 0, 'nothing before the round is revealed');
+  syncShown(state);
+  const al = privateView(state, a.id).race.alerts.at(-1);
+  assert.equal(al.level, 'big');
+  assert.equal(al.title, 'YOUR HORSE IS DEAD');
+  assert.match(al.text, /next horse trader is at the start of Stage \d/);
+  assert.match(privateView(state, a.id).race.nextTrader, /Stage \d/);
+  a.stand = null;
+  givePart(state, a, 1);
+  syncShown(state);
+  assert.equal(privateView(state, a.id).race.settling, true);
+  assert.ok(privateView(state, a.id).race.alerts.some((x) => x.title === 'A corpse part is yours'));
+  for (const v of [hostScreenView(state), publicView(state), privateView(state, state.players[1].id)]) assert.doesNotMatch(JSON.stringify(v), /HORSE IS DEAD|corpse part is yours/);
+});
+
+test('hunting: a dry stage adds pity; a find resets it', () => {
+  const state = setup('hp', { players: 3, humans: 3 });
+  const a = state.players[0];
+  a.plan = 'corpse';
+  rollHunts(state, new Rng('h1'), 2);
+  rollHunts(state, new Rng('h2'), 3);
+  assert.equal(a.huntPity, 1, 'stage 2 found nothing');
+  state.corpse.log.push({ stage: 3, event: 'found', to: a.id });
+  rollHunts(state, new Rng('h3'), 4);
+  assert.equal(a.huntPity, 0);
 });

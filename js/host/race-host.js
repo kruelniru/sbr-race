@@ -33,7 +33,8 @@ export class RaceHost {
    * @param {import('./lobby.js').HostLobby} opts.lobby
    * @param {() => void} opts.onChange   re-render + save
    */
-  constructor({ lobby, onChange }) {
+  constructor({ lobby, onChange, debug = false }) {
+    this.debug = debug; // ?debug=1: fight scores in the console
     this.lobby = lobby;
     this.state = lobby.state;
     this.onChange = onChange;
@@ -43,7 +44,7 @@ export class RaceHost {
     this.onTick = null; // host-main: refresh countdowns without a full re-render
     this.ticker = setInterval(() => this.#tick(), 250);
     lobby.onChoice = (player, m) => this.answer(player, m);
-    lobby.onUseItem = (player, itemId) => this.useItem(player, itemId);
+    lobby.onUseItem = (player, itemId, action) => this.useItem(player, itemId, action);
     lobby.onBuyHorse = (player, quality) => this.buyHorse(player, quality);
     lobby.onOffer = (player, offer) => this.offer(player, offer);
     lobby.onCancelOffer = (player) => this.cancelOffer(player);
@@ -137,7 +138,9 @@ export class RaceHost {
 
   #runRound() {
     if (this.reveal) (this.race.history ??= []).push(this.reveal);
+    const seen = this.race.fightLog?.length ?? 0;
     const result = runRound(this.state);
+    if (this.debug) logFights(this.state.race.fightLog?.slice(seen) ?? []);
     this.race.reveal = {
       cards: buildCards(result),
       index: -1,
@@ -284,9 +287,9 @@ export class RaceHost {
   }
 
   /** A phone uses (or cancels using) a kept item; it resolves with this round. Private. */
-  useItem(player, itemId) {
+  useItem(player, itemId, action = null) {
     if (!this.#windowOpen()) return;
-    const res = useItem(this.state, player.id, itemId);
+    const res = useItem(this.state, player.id, itemId, action);
     if (res.ok) this.lobby.sendPrivate(player.id);
   }
 
@@ -510,5 +513,18 @@ export class RaceHost {
         for (const a of card.awards) L.feed(`${a.title}: ${a.winners.map((w) => w.name).join(' & ')} (${a.detail})`, 'stage', a.winners.map((w) => w.id));
         break;
     }
+  }
+}
+
+/** ?debug=1: every fight's scores and rolls, in the browser console. */
+function logFights(fights) {
+  const n = (x) => (x == null ? '-' : x.toFixed(1));
+  for (const f of fights) {
+    const [a, d] = f.names ?? ['?', '?'];
+    const sc = f.scores;
+    const line = sc
+      ? `${a}${f.masked ? ' (masked)' : ''} ${n(sc.a.base)}${sc.a.roll >= 0 ? '+' : ''}${n(sc.a.roll)}=${n(sc.a.base + sc.a.roll)} vs ${d} ${n(sc.d.base)}${sc.d.roll >= 0 ? '+' : ''}${n(sc.d.roll)}=${n(sc.d.base + sc.d.roll)} · margin ${n(sc.a.base + sc.a.roll - sc.d.base - sc.d.roll)}`
+      : `${a} vs ${d} · no roll`;
+    console.log(`[fight] Stage ${f.stage} ${f.kind}: ${line} · ${f.win} / ${f.defend} -> ${f.outcome}`);
   }
 }

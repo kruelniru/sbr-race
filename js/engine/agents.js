@@ -11,7 +11,7 @@ import { AGENTS, VALENTINE } from '../../data/corpse.js';
 import { carried } from './corpse.js';
 import { resolveFight, npcDefend } from './fights.js';
 import { keepNpc } from './field.js';
-import { isJoiner } from './valentine.js';
+import { isJoiner, valentineProtected } from './valentine.js';
 
 const A = () => RULES.agents;
 
@@ -23,7 +23,8 @@ export const livingAgents = (state) => (state.agents ?? []).filter((a) => a.stat
 
 /** Chance this racer is ambushed this round (see rules.agents). */
 export function ambushChance(state, r) {
-  if (r.status !== 'racing' || isJoiner(r) || !livingAgents(state).length) return 0;
+  if (r.status !== 'racing' || !livingAgents(state).length) return 0;
+  if (isJoiner(r) && valentineProtected(state, r)) return 0;
   const parts = carried(state, r);
   let p;
   if (!parts.length) p = r.tier === 'canon' ? A().canonNonHolder : r.tier === 'pc' ? A().nonHolder : 0;

@@ -292,6 +292,47 @@ function allyName(state, p) {
   return a ? a.name : null;
 }
 
+/** Where the next horse trader is, from where the race stands now. */
+export function nextTraderText(state) {
+  const race = state.race;
+  if (!race || race.over) return null;
+  // The next Stage Plan window: this stage's if it hasn't opened yet, otherwise the next stage's.
+  const nextPlan = race.roundIdx === 0 ? race.stageIdx + 1 : race.stageIdx + 2;
+  const town = RULES.horses.townStages.find((s) => s >= nextPlan);
+  if (!town) return 'No more horse traders ahead. A riderless horse is your only chance.';
+  return `The next horse trader is at the start of Stage ${town}, leaving ${STAGES[town - 1].from}.`;
+}
+
+/**
+ * Big private changes since the last reveal become phone alerts (shown once,
+ * after the round has been revealed, so nothing spoils the stream).
+ * level 'big' (flashing): losing your horse. 'calm': everything else.
+ */
+function addAlerts(state, p, prev, next) {
+  const add = (level, title, text) => {
+    p.alertSeq = (p.alertSeq ?? 0) + 1;
+    (p.alerts ??= []).push({ id: p.alertSeq, level, title, text });
+    if (p.alerts.length > 6) p.alerts.splice(0, p.alerts.length - 6);
+  };
+  const alive = next.status !== 'dead';
+  if (p.mount === 'horse' && !prev.onFoot && next.onFoot && alive && p.horseLossHow !== 'given') {
+    add('big', p.horseLossHow === 'taken' ? 'YOUR HORSE WAS TAKEN' : 'YOUR HORSE IS DEAD',
+      `You're on foot and far slower. Buy one at the next town, or take a riderless horse. ${next.nextTrader ?? ''}`.trim());
+  }
+  if (p.mount === 'horse' && prev.onFoot && !next.onFoot && alive) add('calm', 'You have a horse again', `${next.horse}${next.horseQuality ? `, a ${next.horseQuality} horse` : ''}.`);
+  if (!prev.stand && next.stand) add('calm', 'You have a Stand', `${next.stand.name} (${next.stand.tier}). Only you know.`);
+  if (prev.stand && !next.stand && alive) add('calm', 'Your Stand is gone', `${prev.stand.name} has left you.`);
+  for (const name of next.parts ?? []) if (!(prev.parts ?? []).includes(name)) add('calm', 'A corpse part is yours', `${name.charAt(0).toUpperCase() + name.slice(1)}. Only you know.`);
+  if (alive) for (const name of prev.parts ?? []) if (!(next.parts ?? []).includes(name)) add('calm', 'You lost a corpse part', `${name.charAt(0).toUpperCase() + name.slice(1)} is no longer with you.`);
+  if (!prev.injured && next.injured && alive) add('calm', "You're badly hurt", 'It costs you placement until this stage ends.');
+  if (prev.allyId && next.allyId !== prev.allyId && alive) {
+    const a = state.players.concat(state.canon ?? []).find((r) => r.id === prev.allyId)
+      ?? state.field?.kept.find((n) => n.id === prev.allyId) ?? state.field?.packLeaders.find((n) => n.id === prev.allyId);
+    if (a?.status === 'dead') add('calm', 'Your ally is dead', `${a.name} won't ride with you anymore.`);
+    else add('calm', 'Your alliance is over', `${a?.name ?? 'Your ally'} no longer rides with you.`);
+  }
+}
+
 /** The phone's Worthiness bar: a coarse level (0..barSteps), never the number. */
 export function worthinessLevel(w) {
   const steps = RULES.worthiness.barSteps;
@@ -306,6 +347,11 @@ export function syncShown(state) {
   const race = state.race;
   for (const p of readyPlayers(state)) {
     const last = p.placements?.at(-1);
+    const prev = p.shown;
+    const parts = (state.items ?? []).filter((i) => i.kind === 'part' && i.owner === p.id).map((i) => i.label);
+    const settling = !p.stand && (race.mergeQueue ?? []).some((q) => (state.items ?? []).some((i) => i.id === q.id && i.owner === p.id));
+    const injured = !!(p.injured || p.hurtThisStage);
+    p.hurtThisStage = false;
     p.shown = {
       status: p.status,
       mount: p.mount,
@@ -321,7 +367,16 @@ export function syncShown(state) {
       stand: p.stand ? { name: p.stand.name, tier: p.stand.tier, flavor: STAND_BY_ID[p.stand.id]?.flavor ?? '' } : null,
       worthinessLevel: worthinessLevel(p.worthiness),
       hints: (p.hints ?? []).slice(-5),
+      valentineOutcome: p.valentine?.outcome ?? null,
+      // Milestone 5b: phone alerts and status.
+      allyId: allyOf(state, p)?.id ?? null,
+      parts,
+      settling,            // a corpse part is merging: the Stand card says so
+      injured,
+      nextTrader: p.mount === 'horse' && p.onFoot ? nextTraderText(state) : null,
     };
+    if (prev && race) addAlerts(state, p, prev, p.shown);
+    p.shown.alerts = (p.alerts ?? []).slice(-6);
   }
   race.shownHeader = race.over ? { over: true } : nextRoundHeader(state);
 }

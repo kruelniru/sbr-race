@@ -44,6 +44,7 @@ for (const kv of String(args.set ?? '').split(',').filter(Boolean)) {
   obj[keys.at(-1)] = Number(v);
 }
 const HORSE_VALUE = {}; // ridden at the Finish Line -> { n, pts }
+const FAIR = {};        // sub event prompts per living PC per round, by personality
 const GAMES = args.verbose ? 1 : Number(args.games ?? 100);
 const PLAYERS = Number(args.players ?? 18);
 const RUNNERS = args.runners != null ? Number(args.runners) : null;
@@ -84,6 +85,7 @@ function playGame(seed) {
   const standShare = [];
   const horseValue = HORSE_VALUE;
   const partsByStage = []; // at each Finish Line: who holds the parts
+  const fair = (FAIR.byPers ??= {});
   while (!state.race.over) {
     if (needsStagePlans(state)) {
       const w = openStagePlans(state);
@@ -103,7 +105,7 @@ function playGame(seed) {
       const pcs = Object.fromEntries(state.players.map((x) => [x.id, x]));
       for (const pr of w.prompts) {
         const pc = pcs[pr.playerId];
-        stageLog.push({ id: pc.id, stage: w.stageId, plan: pr.answer.optionId, star: pr.star, personality: pc.personality, start: pc.points });
+        stageLog.push({ id: pc.id, stage: w.stageId, plan: pr.answer.optionId, star: pr.star, personality: pc.personality, start: pc.points, worthiness: pc.worthiness });
       }
       closeChoices(state);
     }
@@ -120,6 +122,14 @@ function playGame(seed) {
       if (humanIds.has(pr.playerId)) pr.answer.by = 'player';
     }
     windows.push({ kind: 'sub', humans: w.prompts.filter((x) => humanIds.has(x.playerId)).length });
+    // Fairness: prompts per living PC per round, by personality (Valentine-only prompts apart).
+    for (const p of state.players.filter((x) => x.status === 'racing')) {
+      const f = (fair[p.personality] ??= { rounds: 0, prompts: 0, valentine: 0 });
+      f.rounds++;
+      for (const pr of w.prompts.filter((x) => x.playerId === p.id)) {
+        if (['valentine-offer', 'valentine-errand'].includes(pr.special)) f.valentine++; else f.prompts++;
+      }
+    }
     closeChoices(state);
     const res = runRound(state);
     results.push(res);
@@ -230,6 +240,7 @@ function collect(S, { state, results, stageLog, windows, timeRng, palm, standSha
   collectStands(S, state, results, palm);
   collectM5a(S, state);
   collectM5b(S, state, results, partsByStage);
+  collectHunts(S, state, stageLog);
   for (const x of standShare) (S.st.share[x.stage] ??= []).push(x);
   S.games++;
   const racers = namedRacers(state);
@@ -398,6 +409,7 @@ function printStats(S) {
   printStands(S);
   printM5a(S);
   printM5b(S);
+  printHunts(S);
 
   console.log('\nChecks');
   console.log(`  canon deaths in Stage 1: ${S.canonStage1Deaths} ${S.canonStage1Deaths ? 'FAIL' : 'ok'}`);
@@ -652,6 +664,7 @@ function simPeopleUseItems(state, rng) {
     if (it.kind === 'arrow' && !p.stand && rng.chance(0.6)) useItem(state, p.id, it.id);
     if (it.kind === 'rokakaka' && p.stand?.tier === 'common' && rng.chance(0.25)) useItem(state, p.id, it.id);
     if (it.kind === 'part' && it.hidden && rng.chance(0.1)) useItem(state, p.id, it.id); // hold a hidden part after all
+    if (it.kind === 'part' && it.merged && p.valentine?.joined && !it.pendingDeliver && rng.chance(RULES.valentine.aiDeliver)) useItem(state, p.id, it.id, 'deliver'); // joiners deliver like AI joiners
   }
 }
 
@@ -793,6 +806,7 @@ function collectM5b(S, state, results, partsByStage) {
     if (v.event === 'errand') bump(T.errands, v.outcome);
     if (v.event === 'errand-picked') bump(T.errands, 'picked');
     if (v.event === 'errand-missed') bump(T.errands, 'missed');
+    if (v.event === 'delivered') bump(T.errands, 'parts delivered');
   }
   if (state.race.valentineEnding?.triggered) T.triggered++;
   const winner = results.at(-1).finale.podium[0];
@@ -864,4 +878,51 @@ function printM5b(S) {
   console.log(`  THE CHECK (offers only reach PCs still racing in Stage 4): joiners win ${pct(J.wins, T.at4Wins)} of wins by PCs racing at Stage 4 vs ${pct(J.n, T.at4)} of those PCs = ${f2(at4Ratio)}x (limit ${lim}x)${at4Ratio > lim ? ' FAIL' : ''}`);
   console.log(`  PCs who refused: reach NY ${pct(R.ny, R.n)}, avg points ${f1(R.points / (R.n || 1))}, ${f2(((R.wins / (T.at4Wins || 1)) / ((R.n / (T.at4 || 1)) || 1)))}x on the same test`);
   console.log('  errands per game: ' + Object.entries(T.errands).map(([k, n]) => `${k} ${per(n)}`).join(' · '));
+}
+
+// ---------------------------------------------------------------- after the live tests: hunting, Arrows, fairness
+function collectHunts(S, state, stageLog) {
+  const T = (S.hunt ??= { bands: {}, streaks: [], longest: 0, arrows: { human: 0, ai: 0, humans: 0, ais: 0 } });
+  const byPc = {};
+  for (const row of stageLog.filter((r) => r.plan === 'corpse')) (byPc[row.id] ??= []).push(row);
+  for (const [id, rows] of Object.entries(byPc)) {
+    let run = 0, worst = 0, prev = null;
+    for (const row of rows.sort((a, b) => a.stage - b.stage)) {
+      const found = state.corpse.log.some((e) => e.to === id && ['found', 'palm'].includes(e.event) && e.stage === row.stage);
+      const pc = state.players.find((x) => x.id === id);
+      const alive = !(pc.death && pc.death.stage <= row.stage) || found;
+      if (!alive && !found) continue; // died during the stage: not a fair dry stage
+      const band = row.worthiness >= 60 ? '60+' : row.worthiness >= 45 ? '45–59' : row.worthiness >= 25 ? '25–44' : 'below 25';
+      const b = (T.bands[band] ??= { n: 0, found: 0 });
+      b.n++; if (found) b.found++;
+      if (prev != null && row.stage !== prev + 1) run = 0; // a break in hunting resets the streak count
+      run = found ? 0 : run + 1;
+      worst = Math.max(worst, run);
+      prev = row.stage;
+    }
+    if (rows.length >= 3) T.streaks.push(worst);
+    T.longest = Math.max(T.longest, worst);
+  }
+  for (const e of state.race.arrowLog ?? []) if (e.event === 'found') { /* who found isn't logged per tier */ }
+  for (const p of state.players) {
+    if (p.isAI) T.arrows.ais++; else T.arrows.humans++;
+  }
+  for (const it of state.race.arrowFinds ?? []) T.arrows[it.human ? 'human' : 'ai']++;
+}
+
+function printHunts(S) {
+  const T = S.hunt, g = S.games;
+  const pct = (n, d) => `${((100 * n) / (d || 1)).toFixed(0)}%`;
+  const avg = (a) => a.reduce((x, y) => x + y, 0) / (a.length || 1);
+  console.log('\nHunt a corpse part (PC-stages on the plan; target 35–40% at average Worthiness)');
+  console.log('  found a part that stage, by Worthiness at the Stage Plan: ' + ['60+', '45–59', '25–44', 'below 25'].filter((b) => T.bands[b]).map((b) => `${b} ${pct(T.bands[b].found, T.bands[b].n)} (${(T.bands[b].n / g).toFixed(1)}/game)`).join(' · '));
+  const all = Object.values(T.bands).reduce((t, b) => ({ n: t.n + b.n, found: t.found + b.found }), { n: 0, found: 0 });
+  console.log(`  overall ${pct(all.found, all.n)} · longest dry streak (hunting stages in a row with no find): ${T.longest} · per hunter with 3+ hunting stages: average worst streak ${avg(T.streaks).toFixed(1)}, ${pct(T.streaks.filter((x) => x >= 4).length, T.streaks.length)} go 4+ stages dry`);
+  if (T.arrows.human + T.arrows.ai) console.log(`  Stand Arrows found per game: by human PCs ${(T.arrows.human / g).toFixed(1)} (${(T.arrows.human / (T.arrows.humans || 1)).toFixed(2)} per human PC), by AI PCs ${(T.arrows.ai / g).toFixed(1)} (${(T.arrows.ai / (T.arrows.ais || 1)).toFixed(2)} per AI PC)`);
+  console.log('\nSub events per living PC per round, by personality (Valentine offers and errands apart)');
+  const F = FAIR.byPers ?? {};
+  const rates = Object.fromEntries(Object.entries(F).map(([k, f]) => [k, f.prompts / (f.rounds || 1)]));
+  const mean = Object.values(F).reduce((t, f) => t + f.prompts, 0) / (Object.values(F).reduce((t, f) => t + f.rounds, 0) || 1);
+  console.log('  ' + Object.entries(rates).map(([k, r]) => `${k} ${r.toFixed(2)} (${r > mean * 1.2 ? 'OVER +20%' : `${((r / mean - 1) * 100).toFixed(0)}%`})`).join(' · ') + ` · average ${mean.toFixed(2)}`);
+  console.log('  Valentine-only prompts per living PC per round: ' + Object.entries(F).map(([k, f]) => `${k} ${(f.valentine / (f.rounds || 1)).toFixed(3)}`).join(' · '));
 }
