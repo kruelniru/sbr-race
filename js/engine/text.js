@@ -35,18 +35,24 @@ const FORMS = ['they', 'them', 'their', 'theirs', 'themself'];
  * @param {string} template
  * @param {Record<string, {name:string, pronouns:string}>} roles
  */
+// Punctuation inside a name ("Mike O.", "Hey Ya!") is not a sentence end:
+// it's hidden from the sentence-casing pass, then put back.
+const SHIELD = { '.': '\uE001', '!': '\uE002', '?': '\uE003' };
+const UNSHIELD = Object.fromEntries(Object.entries(SHIELD).map(([k, v]) => [v, k]));
+const shield = (s) => String(s).replace(/[.!?]/g, (c) => SHIELD[c]);
+
 export function render(template, roles) {
   return template.replace(TOKEN, (whole, role, sep, rest) => {
     const who = roles[role];
     if (!who) return unknown(whole, `no role "${role}"`);
     const p = PRONOUNS[who.pronouns] ?? PRONOUNS.they;
 
-    if (!sep) return who.name;
+    if (!sep) return shield(who.name);
 
     if (sep === '.') {
-      if (rest === 'horse') return who.horse || (who.steed === 'camel' ? `${p.their} camel` : 'the horse');
+      if (rest === 'horse') return shield(who.horse || (who.steed === 'camel' ? `${p.their} camel` : 'the horse'));
       if (rest === 'steed') return who.steed || 'horse';
-      if (rest === 'stand') return who.stand || unknown(whole, 'this racer has no Stand');
+      if (rest === 'stand') return who.stand ? shield(who.stand) : unknown(whole, 'this racer has no Stand');
       const lower = rest.charAt(0).toLowerCase() + rest.slice(1);
       if (!FORMS.includes(lower)) return unknown(whole, `unknown pronoun form "${rest}"`);
       const word = p[lower];
@@ -59,7 +65,8 @@ export function render(template, roles) {
     else if (rest === 's' || rest === 'es') [singular, plural] = [rest, ''];
     else return unknown(whole, `verb agreement needs "singular/plural", got "${rest}"`);
     return p.plural ? plural : singular;
-  }).replace(/(^|[.!?]\s+)([a-z])/g, (m, before, ch) => before + ch.toUpperCase()); // "his camel..." at a sentence start
+  }).replace(/(^|[.!?]\s+)([a-z])/g, (m, before, ch) => before + ch.toUpperCase()) // "his camel..." at a sentence start
+    .replace(/[\uE001-\uE003]/g, (c) => UNSHIELD[c]);
 }
 
 /** Capitalizes the first letter of a sentence after rendering, if needed. */

@@ -89,6 +89,8 @@ export function buildGameLog(state) {
       alliances: race.allyLog ?? [],
       finale: (race.finaleLog ?? []),
       boss: race.boss ?? null,
+      d4c: race.d4c ? { ...race.d4c } : null,
+      requiem: race.requiem ? { ...race.requiem } : null,
       fv: race.fv ? { beaten: race.fv.beaten, dead: race.fv.dead, killers: (race.fv.killers ?? []).map(name), riders: (race.fv.riders ?? []).map(name), beatenBy: name(race.fv.beatenBy) } : null,
     },
     ending: race.ending ?? null,

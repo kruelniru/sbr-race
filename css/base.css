@@ -99,3 +99,5 @@ h1, h2, h3 { font-family: var(--display); font-weight: 700; margin: 0 0 .5em; }
 .cheat-num { width: 70px; min-height: 36px; }
 .cheat-select { max-width: 100%; min-height: 36px; }
 .cheat-close { margin-top: 10px; }
+.cheat-said { min-height: 1.3em; margin: 8px 0 0; font-size: .9rem; color: #9fe0b5; }
+.cheat-said.warn { color: #ffb4a8; }

@@ -401,3 +401,15 @@ test('hunting: a dry stage adds pity; a find resets it', () => {
   rollHunts(state, new Rng('h3'), 4);
   assert.equal(a.huntPity, 0);
 });
+
+test('two living racers never hold the same Stand (whole games, every round)', () => {
+  for (let g = 0; g < 15; g++) {
+    const state = setup('ds' + g, { players: 18, humans: 18 });
+    while (!state.race.over) {
+      runRound(state);
+      const f = state.field;
+      const held = [...state.players, ...state.canon, ...f.kept, ...f.packLeaders].filter((r) => r.status !== 'dead' && r.stand).map((r) => r.stand.id);
+      assert.equal(new Set(held).size, held.length, `game ${g}, round ${state.race.roundNo}: a Stand held twice`);
+    }
+  }
+});

@@ -87,10 +87,11 @@ init();
 // 7 quick taps on the connection status, then the PIN. The host checks it;
 // a wrong PIN just closes the pad. Nothing in the normal UI hints at this.
 let cheatWanted = false;
+let cheatMenu = null; // { close, say } while open
 function openCheats() {
-  openCheatMenu({
+  cheatMenu = openCheatMenu({
     stands: you?.cheat?.stands ?? [],
-    onAction: (action, value) => net?.send(msg(TO_HOST.CHEAT, { action, value })),
+    onAction: (action, value) => (net?.send(msg(TO_HOST.CHEAT, { action, value })) ? { ok: true, info: 'Sent…' } : { ok: false, error: 'Not connected.' }),
   });
 }
 ui.status.addEventListener('click', sevenTaps(() => {
@@ -152,6 +153,8 @@ function handle(m) {
       you = m.you;
       notice = m.notice ?? '';
       if (cheatWanted && you?.cheat) { cheatWanted = false; openCheats(); }
+      // The host's answer to a cheat (applied, a warning, or why not).
+      if (cheatMenu && m.notice && document.querySelector('.cheat-overlay')) cheatMenu.say(m.notice === 'Cheat applied.' ? { ok: true, info: m.notice } : { ok: true, warning: m.notice });
       timer = m.timer ? { ...m.timer, at: performance.now() } : null;
       if (you?.prompt?.id !== lastPromptId) {
         lastPromptId = you?.prompt?.id ?? null;

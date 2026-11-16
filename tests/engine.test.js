@@ -95,3 +95,11 @@ test('views do not leak private fields', () => {
   assert.ok(!JSON.stringify(hostScreenView(s)).includes('worthiness'));
   assert.equal(privateView(s, p.id).name, 'Kruel');
 });
+
+test('names ending in "." or "!" never start a new sentence (Mike O., Hey Ya!)', async () => {
+  const { render } = await import('../js/engine/text.js');
+  const r = { a: { name: 'Mike O.', pronouns: 'he' }, b: { name: 'Pocoloco', pronouns: 'he', stand: 'Hey Ya!', horse: 'Mr. Ed' }, c: { name: 'Kruel', pronouns: 'they' } };
+  assert.equal(render('{a} steps into the trail.', r), 'Mike O. steps into the trail.');
+  assert.equal(render('{c} drives {a} off.', r), 'Kruel drives Mike O. off.');
+  assert.equal(render("{b}'s {b.stand} bristles as {b.horse} rears. {b.they} {b:is/are} calm.", r), "Pocoloco's Hey Ya! bristles as Mr. Ed rears. He is calm.");
+});

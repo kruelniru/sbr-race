@@ -13,7 +13,8 @@ import { ALL_STANDS, REQUIEM_STANDS } from '../../data/stands.js';
 import { readyPlayers } from './state.js';
 import { addWorthiness, killRacer } from './racers.js';
 import { Rng } from './rng.js';
-import { giveStand, removeStand } from './stands.js';
+import { giveStand, removeStand, pickStand } from './stands.js';
+import { d4cReturn } from './secret-endings.js';
 import { addItem } from './items.js';
 import { joinValentine } from './valentine.js';
 import { cheatGiveAllParts, cheatDropAllParts } from './corpse.js';
@@ -46,6 +47,7 @@ export const CHEAT_ACTIONS = [
   'horse-lose', 'horse-thoroughbred',
   'skip-stage9', 'kill', 'revive',
   'force-palm', 'force-offer', 'force-fv', 'force-fight',
+  'setup-requiem', 'trigger-d4c',
 ];
 
 function cheatCtx(state) {
@@ -68,6 +70,7 @@ export function applyCheat(state, { by, target, action, value = null }) {
   if (!p) return { ok: false, error: 'no such player' };
   const ctx = cheatCtx(state);
   const alive = p.status !== 'dead';
+  let warning = null;
   switch (action) {
     case 'worthiness+10': addWorthiness(p, 10, ctx); break;
     case 'worthiness-10': addWorthiness(p, -10, ctx); break;
@@ -84,8 +87,14 @@ export function applyCheat(state, { by, target, action, value = null }) {
     case 'stand-give': {
       const def = [...ALL_STANDS, ...REQUIEM_STANDS].find((s) => s.id === value);
       if (!def) return { ok: false, error: 'no such Stand' };
-      // Free it from whoever holds it, so the pool stays consistent.
-      for (const r of readyPlayers(state).concat(state.canon ?? [])) if (r.stand?.id === def.id) removeStand(state, r);
+      // Two living racers never share a Stand: the cheat takes it from whoever holds it (and says so).
+      const f = state.field;
+      for (const r of [...readyPlayers(state), ...(state.canon ?? []), ...(f?.kept ?? []), ...(f?.packLeaders ?? [])]) {
+        if (r.id !== p.id && r.stand?.id === def.id) {
+          removeStand(state, r);
+          warning = `${def.name} was held by ${r.name ?? 'a rider from the pack'}${r.status === 'dead' ? ' (dead)' : ''}: the cheat took it from them.`;
+        }
+      }
       if (p.stand) removeStand(state, p);
       giveStand(ctx, p, def, 'cheat');
       break;
@@ -103,6 +112,27 @@ export function applyCheat(state, { by, target, action, value = null }) {
       state.race.memorial = state.race.memorial.filter((f) => f.id !== p.id);
       state.race.fallenSince = state.race.fallenSince.filter((f) => f.id !== p.id);
       break;
+    case 'setup-requiem': {
+      // An Arrow, 2 Rokakaka, a Legendary Stand (kept if they have one) and Worthiness 80.
+      if (!alive) return { ok: false, error: 'They are dead.' };
+      addItem(state, 'arrow', p, { stage: ctx.stage.id, round: 'cheat' });
+      addItem(state, 'rokakaka', p, { stage: ctx.stage.id, round: 'cheat' });
+      addItem(state, 'rokakaka', p, { stage: ctx.stage.id, round: 'cheat' });
+      if (p.stand?.tier !== 'legendary' || p.stand.requiem) {
+        if (p.stand) removeStand(state, p);
+        giveStand(ctx, p, pickStand(state, ctx.rng, 'legendary'), 'cheat');
+      }
+      p.worthiness = Math.max(p.worthiness ?? 0, 80);
+      break;
+    }
+    case 'trigger-d4c': {
+      if (alive) return { ok: false, error: 'Pick a dead player.' };
+      if (state.race.d4c) return { ok: false, error: 'D4C already happened this game.' };
+      state.race.d4cPick = p.id; // at the Final Stage's start; now, if it has begun
+      if (state.race.stageIdx === STAGES.length - 1 && state.race.plansFor === STAGES.length) d4cReturn(state, ctx.rng, p.id);
+      else warning = 'Queued: they come back when Stage 9 plans close.';
+      break;
+    }
     case 'force-palm': p.forceSub = 'palm'; break;
     case 'force-offer': p.forceSub = 'offer'; break;
     case 'force-fv': p.forceSub = 'fv'; break;
@@ -112,5 +142,5 @@ export function applyCheat(state, { by, target, action, value = null }) {
   state.rngState = ctx.rng.getState();
   (state.cheats ??= []).push({ at: Date.now(), round: state.race.roundNo, stage: ctx.stage.id, by, target: p.id, action, value });
   state.cheatsUsed = true;
-  return { ok: true };
+  return { ok: true, warning };
 }

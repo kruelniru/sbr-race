@@ -54,6 +54,7 @@ export const blessTargets = (state) => readyPlayers(state).filter((p) => p.statu
  */
 export function deathProof(ctx, who) {
   if (who?.tier === 'pc' && RULES.pcSafeStages.includes(ctx?.stage?.id)) return true;
+  if (who?.stand?.requiem) return true; // a Requiem Stand: whatever is done to its user never arrives
   return blessed(ctx, who);
 }
 

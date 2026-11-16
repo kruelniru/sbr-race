@@ -90,10 +90,11 @@ test('game invariants over many seeds', () => {
 });
 
 test('dead racers stay dead and get no more events', () => {
-  const { results } = game('dead-1');
+  const { state, results } = game('dead-1');
   const dead = new Set();
+  const d4c = state.race.d4c?.id; // D4C brings one fallen racer back for the Final Stage (milestone 6d)
   for (const res of results) {
-    for (const e of res.events) for (const id of e.ids) assert.ok(!dead.has(id), `${id} acted after dying`);
+    for (const e of res.events) for (const id of e.ids) assert.ok(!dead.has(id) || (id === d4c && res.stage.id === 9), `${id} acted after dying`);
     for (const id of res.deaths) dead.add(id);
   }
 });
@@ -104,12 +105,18 @@ test('finale: podium, awards, memorial', () => {
     const f = results.at(-1).finale;
     assert.ok(f, 'last round carries the finale');
     assert.ok(f.podium.length <= 3);
-    for (let i = 1; i < f.podium.length; i++) assert.ok(f.podium[i - 1].points >= f.podium[i].points);
-    const dead = namedRacers(state).filter((r) => r.status === 'dead');
-    assert.equal(f.memorial.length, dead.length, 'memorial lists every named death');
+    for (let i = state.race.ending?.winnerId ? 2 : 1; i < f.podium.length; i++) assert.ok(f.podium[i - 1].points >= f.podium[i].points);
+    // Every death is in the memorial (a D4C rider who stayed in this world, or died twice, is counted once per death).
+    const deaths = namedRacers(state).filter((r) => r.status === 'dead' || r.otherWorld?.stayed).length + (state.race.d4c && findRacerStatus(state) === 'died-again' ? 1 : 0);
+    assert.equal(f.memorial.length, deaths, 'memorial lists every named death');
     for (const a of f.awards) assert.ok(a.winners.length > 0 && a.title && a.detail);
     const cards = buildCards(results.at(-1)).map((c) => c.kind);
     const order = ['podium', 'drumroll', 'awards', 'survivors', 'memorial', 'the-end'].filter((k) => cards.includes(k));
     assert.deepEqual(order.map((k) => cards.indexOf(k)), [...order.map((k) => cards.indexOf(k))].sort((a, b) => a - b));
   }
 });
+
+function findRacerStatus(state) {
+  const r = namedRacers(state).find((x) => x.id === state.race.d4c.id);
+  return r?.otherWorld && r.status === 'dead' && !r.otherWorld.faded ? 'died-again' : 'ok';
+}

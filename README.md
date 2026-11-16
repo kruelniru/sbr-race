@@ -98,6 +98,7 @@ js/engine/           pure game logic, no DOM (Node can import it)
   secrets.js         the secrets reveal and each player's story (M6c)
   game-log.js        the full game log (exported after the game)
   cheats.js          the secret cheat menu (testing; PIN hash only)
+  secret-endings.js  D4C, The Saint Walks Again, the Requiem Arrow (M6d; see DESIGN.md)
   finale-sections.js extra finale cards (Stands awakened)
   plans.js           Stage Plan lookups
   reveal.js          round result -> host cards + text-based timing (shared with the sim)

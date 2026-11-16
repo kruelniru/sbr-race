@@ -33,6 +33,7 @@ const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
 export const STAND_SOURCES = {
   palm: "the Devil's Palm", arrow: 'a Stand Arrow', corpse: 'a corpse part', valentine: "Valentine's gift", awaken: 'awakened on the trail',
+  d4c: 'another world (D4C)', requiem: 'the Requiem Arrow', cheat: 'the cheat menu',
 };
 
 export const VALENTINE_OUTCOMES = {
@@ -162,6 +163,11 @@ registerFinaleSection({
     const fv = state.race.fv;
     const boss = state.race.boss;
     if (boss) lines.push(`Going into the Final Stage, the Saint's Corpse chose ${boss.name}${boss.loveTrain ? ', with Love Train' : ''}${boss.joiner ? ', who secretly rode for Valentine' : ''}.`);
+    const d4c = state.race.d4c;
+    if (d4c) lines.push(`Dirty Deeds Done Dirt Cheap: going into the Final Stage, Funny Valentine brought ${d4c.name} back from another world to ride for him. ${d4c.stayed ? 'The President won, so they stayed in this world.' : 'When it was over, they faded back into death.'}`);
+    const rq = state.race.requiem;
+    if (rq) lines.push(`In Stage ${rq.stage}, ${rq.name} pierced ${rq.from} with a Stand Arrow and it became ${rq.stand}.`);
+    if (e?.id === 'saint') lines.push(`${e.winnerName} held all nine parts of the Saint's Corpse at Trinity Church.`);
     if (fv?.beatenBy) lines.push(`${nameOf(state, fv.beatenBy)} beat Funny Valentine in the Final Stage. Dirty Deeds Done Dirt Cheap: the Valentine who came back was from another world.`);
     if (fv?.dead) lines.push(`The other Valentine was killed by ${fv.killers.map((id) => nameOf(state, id)).join(' and ')}. No world was left for him to run to.`);
     // The Corpse Holder's story: how the top holder came by each part.
@@ -203,7 +209,9 @@ export function storyFor(state, p) {
   const touched = new Set((state.corpse?.log ?? []).filter((e) => e.to === p.id).map((e) => e.part));
   const holding = (state.items ?? []).filter((i) => i.kind === 'part' && i.owner === p.id).map((i) => i.label);
   if (touched.size) lines.push(`You held ${touched.size} corpse ${touched.size === 1 ? 'part' : 'parts'} during the race${holding.length ? `, and ended with ${holding.join(', ')}` : ', and ended with none'}.`);
-  if (p.valentine?.joined) lines.push(`You joined Valentine in Stage ${p.valentine.stage}, and ${YOUR_OUTCOMES[p.valentine.outcome] ?? 'rode for him'}.`);
+  if (p.otherWorld) lines.push(`Funny Valentine brought you back from another world for the Final Stage. ${p.otherWorld.stayed ? 'He won, and you stayed in this world.' : 'When it ended, you faded back into death.'}`);
+  else if (p.valentine?.joined) lines.push(`You joined Valentine in Stage ${p.valentine.stage}, and ${YOUR_OUTCOMES[p.valentine.outcome] ?? 'rode for him'}.`);
+  if (state.race.requiem?.id === p.id) lines.push(`You pierced ${state.race.requiem.from} and it became ${state.race.requiem.stand}.`);
   lines.push(`Your Worthiness at the end: ${worthWord(worthinessLevel(p.worthiness))}.`);
   const e = state.race.ending;
   if (e && ENDINGS[e.id]) lines.push(`The race ended: ${ENDINGS[e.id].title}.`);

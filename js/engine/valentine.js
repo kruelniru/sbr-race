@@ -131,6 +131,7 @@ export function valentineEnding(state) {
     let outcome = triggered ? 'won' : 'lost';
     if (ending === 'president-dead') outcome = 'dead';
     if (ending === 'double-cross') outcome = state.race.ending.bossId === r.id ? 'traitor' : 'betrayed';
+    if (r.valentine.otherWorld) r.valentine.outcome = outcome; // (D4C: decides whether they stay)
     r.valentine.outcome = outcome;
     if (triggered) { r.points += V().endingBonus; r.valentine.bonus = V().endingBonus; }
     addHint(r, {

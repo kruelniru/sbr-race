@@ -503,7 +503,7 @@ In the manga, points come only from stage placements, plus a time bonus for fini
 
 - **The boss:** when the Final Stage's Stage Plans close, the racing racer (PC, canon or NPC) holding the most parts, at least 3, becomes the boss. Ties go to higher Worthiness, then points. The stream announces only that ("The Saint's Corpse has chosen Kruel."), plus "Love Train" at 5+ parts; nothing else about who holds parts. The boss gets +6 placement in the Final Stage, a Love Train holder +30.
 - **Holding the Corpse pays:** "Hunt a corpse part" costs no placement once you carry 3+ parts.
-- **Love Train is a real shot at winning:** Love Train holders go into the Final Stage around 8th place, 200+ points behind; with the +30 placement and the +200 bonus, a Love Train holder wins the race about 40% of the time (a boss of any size about 18%).
+- **Love Train is a real shot at winning:** Love Train holders go into the Final Stage around 8th place, 200+ points behind; with the +30 placement and the +250 bonus, a Love Train holder wins the race about 37% of the time (a boss of any size about 18%).
 - **Love Train (5+ parts):** nothing can kill the holder (no deadly event picks them; the Palm, an Arrow and rejection can't kill them). A fight that would kill them kills a random nearby racer instead ("misfortune slides off Kruel and onto…").
 - **Bring them down:** in every Day and Night round of the Final Stage, up to 4 random living PCs (never Valentine joiners) get "Bring them down": ride with the others, or stay out. Everyone who says yes fights the boss in one combined fight: the team fights at its average fight skill + 6.5 per rider, the boss at their own fight score + 19.5 with Love Train (+4.5 without). Equal riders: a Love Train holder loses to 2 / 3 / 4 riders about 35 / 51 / 65% of the time; a 3–4-part boss about 70 / 81 / 90%. Win: each rider takes one part, the rest come loose, the boss is hurt. Lose: one rider is hurt, or killed on a clear loss. It works the same against a canon or NPC boss.
 - **The boss dies or retires in the Final Stage:** no Corpse ending; their parts come loose (or go to their killer) as usual.
@@ -515,7 +515,7 @@ In the manga, points come only from stage placements, plus a time bonus for fini
 1. **The President is dead:** he was killed in the Final Stage. Joiners: "The President is dead. You rode for a dead man." No joiner bonus.
 2. **The President takes the Corpse:** he holds more parts than every racer combined. The podium becomes "First across the line"; joiners get their bonus.
 3. **The Double-Cross:** the boss is a Valentine joiner who reaches New York still holding the Corpse. "The President's own rider has betrayed him." The traitor gets the Corpse ending's bonus; other joiners get nothing.
-4. **Holder of the Saint's Corpse:** the boss reaches New York holding 3+ parts: +50 points, or +200 for a boss chosen with Love Train who still holds 3+ (a fight may have taken a part or two).
+4. **Holder of the Saint's Corpse:** the boss reaches New York holding 3+ parts: +50 points, or +250 for a boss chosen with Love Train who still holds 3+ (a fight may have taken a part or two).
 5. **The Bloodbath:** fewer than 22% of the PCs who started reach New York (canon racers don't count; with 18 PCs that's 3 or fewer). "The Steel Ball Run ends in silence."
 6. Otherwise, a normal ending (no card).
 
@@ -544,6 +544,29 @@ The race winner is still whoever has the most points (except that in the Preside
 
    The Fallen screen never names a masked killer ("by a rider in a dark hat"); the reveal does.
 7. Final standings.
+
+## Secret endings
+
+Milestone 6d (`js/engine/secret-endings.js`). **None of this is ever hinted at in the game**; this section is the only place the rules are written down. They outrank every other ending.
+
+**D4C (Dirty Deeds Done Dirt Cheap).** When the Final Stage's plans close, if Funny Valentine is alive, he brings one fallen racer back from another world to ride for him: a dead human PC if there is one, then a dead AI PC, then a dead canon racer.
+- The stream: "Dirty Deeds Done Dirt Cheap. Kruel rides again… from another world."
+- That player controls their other-world self for the Final Stage: same personality, a Legendary Stand from the pool, and a Valentine rider (agents ride past them, errands, the secret "Ride with him"). They're never asked to bring down the boss.
+- They can't win the race: they don't place at the Finish Line and never stand on the podium.
+- **If the President wins** (his ending), they stay in this world: they count as reaching New York and get the joiners' bonus. Otherwise they fade back into death when the race ends.
+- The secrets reveal and their phone story say what happened.
+
+**The Saint Walks Again.** One racer still racing holds all 9 parts at the final Finish Line. They win outright, whatever the points, with their own ending card. Not canon: our secret ending. Nearly impossible.
+
+**The Requiem Arrow** (the rarest):
+- **The recipe:** a Stand Arrow and 2 Rokakaka in Items at the same time, a Legendary Stand, and Worthiness 80+. Trading counts, so players can trade for the pieces.
+- When all of it is true, a secret prompt appears in their next window: "Pierce your Stand". It consumes the Arrow and both Rokakaka and evolves their Stand into a Requiem: Gold Experience → Gold Experience Requiem, Silver Chariot → Silver Chariot Requiem, anything else → "[Stand] Requiem". This is the only place a banned Requiem Stand can appear (the cheat menu aside).
+- A Requiem's user can't be killed ("whatever is done to you never arrives"). The host gets one anonymous line: "Somewhere on the trail, a Stand has become something else."
+- **The Requiem ending:** reaching New York with it wins outright, with its own ending card. Breaking "no automatic wins" is intentional, because it should almost never happen.
+
+**Priority:** Requiem > The Saint Walks Again > the President is dead > the President takes the Corpse > the Double-Cross > Holder of the Saint's Corpse > the Bloodbath > normal.
+
+**Testing:** the cheat menu has "Set up Requiem" (an Arrow, 2 Rokakaka, a Legendary Stand and Worthiness 80) and "Trigger D4C" (pick a dead player; they return when Stage 9's plans close, or at once if those have closed).
 
 ## Settings, tech and later ideas
 
@@ -689,3 +712,8 @@ Decisions made after the original design, in the order they came up:
 99. Survival after the first live tests: about 48% of PCs reach New York (PC death odds 0.95 → 0.75). Stages 1–2 are safe for PCs except the Palm and the Arrow; later PC deaths lean toward Stages 6–9 (×0.2 in Stage 3 … ×1.9 in Stage 9), for events and fights alike.
 100. The full game log: exported by the host only after the game ends, as a readable HTML page (secrets marked) and raw JSON, both with the seed, settings, dates and the cheat flag.
 101. The secret cheat menu for testing: 7 quick taps on the connection status, then a PIN checked against a stored SHA-256 hash (set with tools/set-cheat-pin.js; the PIN is never in the repo). Every cheat is recorded and the game is marked "Cheats used" on the finale and in the exports.
+102. Fight lines and every rendered name: punctuation inside a name ("Mike O.", "Hey Ya!") never starts a new sentence; fight notes render once.
+103. Two living racers never share a Stand in normal play (a held Stand is out of the pool; checked every round in tests). The cheat takes a Stand from whoever holds it (NPCs included) and says so.
+104. Secret endings (M6d): D4C, The Saint Walks Again, the Requiem Arrow (Worthiness 80+). Rules only in DESIGN.md → Secret endings; outrank every other ending.
+105. A D4C rider can't win or place; if the President wins they stay in this world (joiners' bonus), otherwise they fade back into death.
+106. Love Train bonus +200 → +250: with a D4C rider able to ride beside Valentine, Love Train holders fell to 31%; now about 37%.

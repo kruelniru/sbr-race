@@ -29,7 +29,13 @@ export function buildFinale(state) {
   const racers = namedRacers(state);
   const finishers = racers.filter((r) => r.status === 'racing');
   const namedNpcFinishers = state.field.packLeaders.filter((n) => n.status === 'racing' && n.name);
-  const ranked = [...finishers, ...namedNpcFinishers].sort((a, b) => b.points - a.points);
+  // Other-world riders (D4C) can't win; a secret ending's winner wins outright.
+  const ranked = [...finishers, ...namedNpcFinishers].filter((r) => !r.otherWorld).sort((a, b) => b.points - a.points);
+  const outright = state.race.ending?.winnerId;
+  if (outright) {
+    const i = ranked.findIndex((r) => r.id === outright);
+    if (i > 0) ranked.unshift(...ranked.splice(i, 1));
+  }
   const brief = (r) => ({ id: r.id, name: r.name, tier: r.tier, points: r.points, mount: r.mount ?? 'horse' });
 
   const podium = ranked.slice(0, 3).map((r, i) => ({ rank: i + 1, ...brief(r) }));

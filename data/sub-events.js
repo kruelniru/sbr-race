@@ -532,6 +532,16 @@ export const VALENTINE_REMATCH = {
   ],
 };
 
+// ------------------------------------------------------------ milestone 6d (secret: see DESIGN.md → Secret endings)
+export const REQUIEM = {
+  id: 'requiem', title: 'Your Stand is listening', secret: true,
+  text: 'The Arrow in your pack is humming, and your Stand is humming back. You could drive the Arrow into it.',
+  options: [
+    { id: 'pierce', label: 'Pierce your Stand', hint: 'There is no going back', lean: L(2, 3, 1, 4, 3) },
+    { id: 'wait', label: 'Not yet', hint: 'Nothing happens', lean: L(1, 0.5, 2, 0.3, 0.5) },
+  ],
+};
+
 export const ERRAND_TARGET = {
   id: 'errand-target', title: 'Someone is coming for you',
   text: 'A rider in a dark hat is closing in on you, with two more riders close behind.',

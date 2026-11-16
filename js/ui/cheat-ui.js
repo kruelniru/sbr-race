@@ -44,7 +44,10 @@ export function openPinPad(onSubmit) {
 export function openCheatMenu({ players = null, stands = [], onAction }) {
   let target = players?.[0]?.id ?? null;
   let el = null;
-  const btn = (label, action, value = () => null) => h('button', { type: 'button', class: 'btn btn-small', onclick: () => onAction(action, value(), target) }, label);
+  // What happened: the host shows the result here; a phone gets it as a notice too.
+  const said = h('p', { class: 'cheat-said', 'aria-live': 'polite' }, '');
+  const say = (res) => { said.textContent = !res ? '' : res.ok === false ? res.error ?? 'That did not work.' : res.warning ?? res.info ?? 'Done.'; said.className = 'cheat-said' + (res?.warning || res?.ok === false ? ' warn' : ''); };
+  const btn = (label, action, value = () => null) => h('button', { type: 'button', class: 'btn btn-small', onclick: () => say(onAction(action, value(), target)) }, label);
   const worth = h('input', { type: 'number', min: 0, max: 100, value: 50, class: 'cheat-num' });
   const stand = h('select', { class: 'cheat-select' }, stands.map((s) => h('option', { value: s.id }, `${s.name} (${s.tier})`)));
   const row = (title, ...items) => h('div', { class: 'cheat-row' }, h('strong', {}, title), h('div', { class: 'cheat-btns' }, ...items));
@@ -59,8 +62,11 @@ export function openCheatMenu({ players = null, stands = [], onAction }) {
     row('Items', btn('Stand Arrow', 'item-arrow'), btn('Rokakaka', 'item-rokakaka')),
     row('Horse', btn('Lose horse', 'horse-lose'), btn('Thoroughbred', 'horse-thoroughbred')),
     row('Race', btn('Skip to Stage 9', 'skip-stage9'), btn('Kill', 'kill'), btn('Revive', 'revive')),
+    h('p', { class: 'cheat-note' }, 'Set parts, Stands and Worthiness first; the boss is chosen when Stage 9 plans close.'),
+    row('Secret endings', btn('Set up Requiem', 'setup-requiem'), btn('Trigger D4C (pick a dead player)', 'trigger-d4c')),
     row('Force next sub event', btn("Devil's Palm", 'force-palm'), btn('Valentine offer', 'force-offer'), btn('Funny Valentine', 'force-fv'), btn('A fight', 'force-fight')),
+    said,
     h('button', { type: 'button', class: 'btn btn-quiet cheat-close', onclick: () => el.remove() }, 'Close'),
   );
-  return () => el?.remove();
+  return { close: () => el?.remove(), say };
 }

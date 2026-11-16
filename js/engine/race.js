@@ -36,6 +36,7 @@ import { initAgents } from './agents.js';
 import { scheduleOffers, valentineEnding } from './valentine.js';
 import { resolveDeadVote, openDeadVote } from './dead.js';
 import { decideEnding } from './endings.js';
+import { otherWorldEnding } from './secret-endings.js';
 import { recordRound } from './game-log.js';
 
 /** Round types for a stage with n rounds: Day/Night alternate, last is the Finish Line. */
@@ -271,6 +272,7 @@ export function runRound(state) {
       result.over = true;
       decideEnding(state);    // the main ending (and the boss's bonus), before the podium
       valentineEnding(state); // reward 5 and every joiner's outcome
+      otherWorldEnding(state); // D4C: stay in this world, or fade back
       result.finale = buildFinale(state);
     }
   }

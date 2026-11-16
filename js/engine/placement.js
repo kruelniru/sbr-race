@@ -51,7 +51,8 @@ export function placementScore(racer, stage, rng, state = null) {
 
 /** Returns placements [{ rank, id, name, tier, points, unnamed }] and updates racers. */
 export function placeStage(state, rng, stage) {
-  const named = namedRacers(state).filter((r) => r.status === 'racing');
+  // Other-world riders (D4C) ride but never place: they can't win the race.
+  const named = namedRacers(state).filter((r) => r.status === 'racing' && !r.otherWorld);
   const pack = state.field.packLeaders.filter((n) => n.status === 'racing');
   const scored = [...named, ...pack]
     .map((r) => ({ r, score: placementScore(r, stage, rng, state) }))

@@ -30,7 +30,8 @@
 import RULES from '../../data/rules.js';
 import { SUB_EVENTS, RIVAL, PALM, ARROW, ROKAKAKA, ATTACKED, STRIKE, FIGHT_WIN, FIGHT_DEFEND, HORSE_TWO, ALLY_INVITE, TRADE,
   FOUND_PART, STEAL_PART, AMBUSH, FUNNY_VALENTINE, VALENTINE_OFFER, ERRAND, ERRAND_TARGET,
-  BRING_DOWN, VALENTINE_RIDE, VALENTINE_REMATCH } from '../../data/sub-events.js';
+  BRING_DOWN, VALENTINE_RIDE, VALENTINE_REMATCH, REQUIEM } from '../../data/sub-events.js';
+import { requiemReady, pierceStand, d4cReturn } from './secret-endings.js';
 import { EFFECTS } from './effects.js';
 import { render } from './text.js';
 import { Rng } from './rng.js';
@@ -187,7 +188,7 @@ function applyStagePlans(state, choice, rng) {
     if (prompt.buy) buyHorse(state, rng, p, prompt.buy);
   }
   rollHunts(state, rng, choice.stageId);
-  if (choice.stageId === FINAL_STAGE()) chooseBoss(state);
+  if (choice.stageId === FINAL_STAGE()) { chooseBoss(state); d4cReturn(state, rng); }
   // Canon racers on foot buy a horse in town if they can.
   if (townStage(STAGES.find((x) => x.id === choice.stageId))) {
     for (const c of state.canon ?? []) {
@@ -470,6 +471,12 @@ function corpsePrompts(state, rng, stage, roundNo, roundsLeft, type, busy, promp
     } else {
       race.autoErrands.push(e.id);
     }
+  }
+
+  // The Requiem Arrow (secret ending): the prompt appears only when the recipe is complete.
+  for (const p of free().filter((x) => requiemReady(state, x))) {
+    busy.add(p.id);
+    prompts.push(specialPrompt(rng, state, REQUIEM, p, roundNo, { a: p.id }, REQUIEM.text));
   }
 
   // Agent ambushes (never a protected joiner). Fairness applies here too.
@@ -946,6 +953,11 @@ function resolveSub(ctx, prompt, targetPrompt = null) {
     return null; // secret
   }
   if (prompt.special === ERRAND_TARGET.id) return resolveErrand(ctx, prompt.errandId, prompt.answer.optionId);
+  if (prompt.special === REQUIEM.id) {
+    const a = findAnyRacer(ctx.state, prompt.roles.a);
+    if (a && prompt.answer.optionId === 'pierce') pierceStand(ctx, a);
+    return null; // secret
+  }
   if (prompt.special) return resolveItemFind(ctx, prompt);
   const sub = SUBS.find((s) => s.id === prompt.subId);
   if (sub?.special === 'palm') return resolvePalm(ctx, prompt);

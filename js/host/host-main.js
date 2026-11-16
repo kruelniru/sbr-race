@@ -128,7 +128,7 @@ function makeRaceHost() {
   lobby.onCheat = (player, { action, value }) => {
     if (!player.cheatUnlocked) return;
     const res = hostCheat(player.name, player.id, action, value);
-    lobby.sendPrivate(player.id, res.ok ? 'Cheat applied.' : res.error);
+    lobby.sendPrivate(player.id, !res.ok ? res.error : res.warning ?? 'Cheat applied.');
   };
   // The choice countdown ticks without re-rendering (or re-saving) the screen.
   rh.onTick = () => {

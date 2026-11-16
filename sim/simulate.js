@@ -560,8 +560,10 @@ function collectStands(S, state, results, palm) {
   for (const p of state.players) { const d = (T.deeds[p.personality] ??= { n: 0, helps: 0, spares: 0 }); d.n++; d.helps += p.helps ?? 0; d.spares += p.spares ?? 0; }
   // Stand holders (the Stand they held at the end, or when they died) vs non-holders.
   const named = [...state.players, ...state.canon];
+  // A D4C rider is judged by the Stand they had when they first died, not the one Valentine gave them.
+  const tierOf = (r) => (r.otherWorld ? [...state.stands.log].reverse().find((e) => e.racerId === r.id && e.source !== 'd4c')?.tier ?? 'none' : r.stand?.tier ?? 'none');
   for (const r of named) {
-    const k = r.stand?.tier ?? 'none';
+    const k = tierOf(r);
     const h = (T.holders[k] ??= { n: 0, points: 0, ny: 0, pcN: 0, pcPoints: 0, pcNy: 0 });
     h.n++; h.points += r.points; if (r.status === 'racing') h.ny++;
     if (r.tier === 'pc') { h.pcN++; h.pcPoints += r.points; if (r.status === 'racing') h.pcNy++; }
@@ -571,8 +573,8 @@ function collectStands(S, state, results, palm) {
   const winner = results.at(-1).finale.podium[0];
   if (winner) {
     const r = named.find((x) => x.id === winner.id);
-    bump(T.winTier, r?.stand?.tier ?? (r ? 'none' : 'pack leader'));
-    if (r?.tier === 'pc') bump(T.pcWinTier, r.stand?.tier ?? 'none');
+    bump(T.winTier, r ? tierOf(r) : 'pack leader');
+    if (r?.tier === 'pc') bump(T.pcWinTier, tierOf(r));
   }
 }
 
@@ -819,7 +821,7 @@ function collectM5b(S, state, results, partsByStage) {
   const winner = results.at(-1).finale.podium[0];
   for (const p of state.players) {
     T.pcN++;
-    const j = !!p.valentine?.joined;
+    const j = !!p.valentine?.joined && !p.valentine.otherWorld; // a D4C rider isn't a joiner
     const b = j ? T.joiners : T.others;
     b.n++; b.points += p.points; if (p.status === 'racing') b.ny++;
     if (j) {
@@ -994,6 +996,9 @@ function collectM6b(S, state, results) {
     if (e.event === 'redirect') bump(T.fv, 'redirect');
   }
   if (state.race.fv?.dead) T.fvDead++;
+  const d = state.race.d4c;
+  if (d) { T.d4c = (T.d4c ?? 0) + 1; const r = state.players.find((x) => x.id === d.id); bump((T.d4cWho ??= {}), r ? (r.isAI ? 'AI PC' : 'human PC') : 'canon'); if (d.stayed) T.d4cStayed = (T.d4cStayed ?? 0) + 1; }
+  if (state.race.requiem) T.requiemPierced = (T.requiemPierced ?? 0) + 1;
   T.canon.games++;
   for (const c of state.canon) if (['johnny', 'gyro'].includes(c.canonId)) T.canon[c.canonId] += (state.items ?? []).filter((i) => i.kind === 'part' && i.owner === c.id).length;
   for (const e of results.at(-1).finale.epilogues ?? []) bump(T.epi, e.id);
@@ -1003,7 +1008,7 @@ function printM6b(S) {
   const T = S.m6b, g = T.games;
   const pct = (n, d) => `${((100 * (n ?? 0)) / (d || 1)).toFixed(0)}%`;
   console.log('\nThe finale');
-  console.log('  main ending: ' + ['president-dead', 'president', 'double-cross', 'corpse', 'bloodbath', 'normal'].map((k) => `${k} ${pct(T.endings[k], g)}`).join(' · '));
+  console.log('  main ending: ' + ['requiem', 'saint', 'president-dead', 'president', 'double-cross', 'corpse', 'bloodbath', 'normal'].map((k) => `${k} ${pct(T.endings[k], g)}`).join(' · '));
   console.log(`  a boss in ${pct(T.boss, g)} of games (Love Train ${pct(T.lt, g)}; ${Object.entries(T.bossTier).map(([k, n]) => `${k} ${pct(n, T.boss)}`).join(', ')}; a Valentine joiner ${pct(T.joinerBoss, T.boss)}) · the boss wins the race ${pct(T.bossWins, T.boss)} · a Love Train holder wins ${pct(T.ltWins, T.lt)} · the boss reaches New York ${pct(T.bossNY, T.boss)}, dies in the Final Stage ${pct(T.bossDied, T.boss)}, retires ${pct(T.bossRetired, T.boss)}`);
   console.log('  Bring down in games (joiners -> the holder lost): ' + Object.entries(T.bring).sort().map(([k, x]) => `${k} ${pct(x.won, x.n)} (${(x.n / g).toFixed(2)}/game)`).join(' · '));
   // The target odds, with equal riders (PCs at 65 with a Rare Stand on both sides).
@@ -1015,6 +1020,7 @@ function printM6b(S) {
   console.log(`  Bring-down odds, equal riders: Love Train holder loses to 2 / 3 / 4 joiners ${odds(2, B.loveTrainBonus)} / ${odds(3, B.loveTrainBonus)} / ${odds(4, B.loveTrainBonus)} (target 35 / 50 / 65%) · a 3–4-part boss ${odds(2, B.bossBonus)} / ${odds(3, B.bossBonus)} / ${odds(4, B.bossBonus)}`);
   const F = T.fv;
   console.log(`  Funny Valentine in the Final Stage: comes for a Love Train holder ${pct(F.hunt, g)} of games (takes the parts ${pct(F['hunt-won'], F.hunt)}) · beaten once (D4C) ${pct(F.beaten, g)} · the other Valentine fought ${pct(F.rematch, g)} (nobody joined ${pct(F['rematch-empty'], g)}) · killed ${pct(T.fvDead, g)} of games [target 5–10%] · misfortune redirected ${((F.redirect ?? 0) / g).toFixed(2)}/game`);
+  console.log(`  D4C: someone comes back from another world in ${pct(T.d4c, g)} of games (${Object.entries(T.d4cWho ?? {}).map(([k, n]) => `${k} ${pct(n, T.d4c)}`).join(', ')}); they stay in this world ${pct(T.d4cStayed, T.d4c)} · Requiem: a Stand pierced in ${T.requiemPierced ?? 0} of ${g} games (ending ${T.endings.requiem ?? 0}) · The Saint Walks Again: ${T.endings.saint ?? 0} of ${g} games`);
   console.log(`  Johnny holds ${(T.canon.johnny / g).toFixed(2)} parts at the end, Gyro ${(T.canon.gyro / g).toFixed(2)}`);
   console.log('  epilogues: ' + Object.entries(T.epi).map(([k, n]) => `${k} ${pct(n, g)}`).join(' · '));
 }

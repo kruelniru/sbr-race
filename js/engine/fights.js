@@ -145,12 +145,18 @@ export function resolveFight(ctx, spec) {
   const carriedBefore = carried(ctx.state, y).length;
   let scores = null; // { a: { base, roll }, d } for the debug log
 
+  // Notes stay templates (rendered once, at the end), keyed to the roles they name.
   const addNotes = (notes) => {
     for (const [k, w, z] of notes) {
-      const r = { ...roles, w, ...(z ? { z } : {}) };
-      text += render(LINES[k], displayRoles(r));
+      const wKey = Object.keys(roles).find((key) => roles[key] === w);
+      let tpl = LINES[k].replaceAll('{w', `{${wKey}`);
+      if (z) {
+        const zKey = `ally${Object.keys(roles).length}`;
+        roles[zKey] = z;
+        tpl = tpl.replaceAll('{z', `{${zKey}`);
+      }
+      text += tpl;
       if (k === 'stand' && w.stand) w.stand.revealed = true; // first fight with it reveals it
-      if (z) roles[`ally${Object.keys(roles).length}`] = z;
     }
   };
 
