@@ -215,3 +215,12 @@
 /* ?debug=1: each phone's connection route */
 .tag-route { background: #1f3a2a; color: #9fe0b5; }
 .tag-route.relay { background: #3a2a10; color: #f3d58a; }
+
+/* milestone 6b: the main ending and epilogues */
+.card-ending, .card-epilogue { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.card-ending .ending-text, .card-epilogue .ending-text { font-size: clamp(1.1rem, 1.8vw, 1.5rem); max-width: 40ch; line-height: 1.45; margin: 0; }
+.card-ending.ending-president, .card-ending.ending-double-cross { border-color: #6c4d86; }
+.card-ending.ending-president h2, .card-ending.ending-double-cross h2 { color: #d9b8ff; }
+.card-ending.ending-bloodbath h2 { color: #ffb4a8; }
+.card-ending.ending-corpse h2, .card-ending.ending-president-dead h2 { color: var(--gold-2, #f3d58a); }
+.card-epilogue h2 { color: var(--gold-2, #f3d58a); margin: 0; }

@@ -28,6 +28,7 @@ import { fightScore } from '../js/engine/fights.js';
 import { offerTrade } from '../js/engine/trades.js';
 import { corpseSummary } from '../js/engine/corpse.js';
 import { castDeadVote, deadVoteView } from '../js/engine/dead.js';
+import { teamFight } from '../js/engine/final-stage.js';
 import PLANS from '../data/plans.js';
 import PERSONALITIES from '../data/personalities.js';
 import { readFileSync } from 'node:fs';
@@ -244,6 +245,7 @@ function collect(S, { state, results, stageLog, windows, timeRng, palm, standSha
   collectM5b(S, state, results, partsByStage);
   collectHunts(S, state, stageLog);
   collectDead(S, state);
+  collectM6b(S, state, results);
   for (const x of standShare) (S.st.share[x.stage] ??= []).push(x);
   S.games++;
   const racers = namedRacers(state);
@@ -414,6 +416,7 @@ function printStats(S) {
   printM5b(S);
   printHunts(S);
   printDead(S);
+  printM6b(S);
 
   console.log('\nChecks');
   console.log(`  canon deaths in Stage 1: ${S.canonStage1Deaths} ${S.canonStage1Deaths ? 'FAIL' : 'ok'}`);
@@ -966,4 +969,52 @@ function printDead(S) {
   console.log('\nThe dead vote (sim people who are dead vote 70% of rounds, by personality)');
   console.log(`  the dead act ${per(T.acts)} times per game (avg ${(T.voters / (T.acts || 1)).toFixed(1)} voters): hazard ${per(T.by.hazard)} · ambush ${per(T.by.ambush)} · blessing ${per(T.by.blessing)} · first act in Stage ${(T.firstRound.reduce((a, b) => a + b, 0) / (T.firstRound.length || 1)).toFixed(1)} on average`);
   console.log(`  ambushes: on PCs ${per(T.ambushPc)} · kills ${per(T.ambushDeaths)} per game · outcomes: ` + Object.entries(T.by).filter(([k]) => k.startsWith('ambush:')).map(([k, n]) => `${k.slice(7)} ${per(n)}`).join(' · '));
+}
+
+// ---------------------------------------------------------------- milestone 6b: the finale
+function collectM6b(S, state, results) {
+  const T = (S.m6b ??= { games: 0, endings: {}, boss: 0, lt: 0, bossTier: {}, bossWins: 0, ltWins: 0, bossNY: 0, bossDied: 0, bossRetired: 0, bring: {}, fv: {}, fvDead: 0, canon: { johnny: 0, gyro: 0, games: 0 }, epi: {}, joinerBoss: 0 });
+  T.games++;
+  bump(T.endings, state.race.ending?.id ?? 'normal');
+  const b = state.race.boss;
+  const winner = results.at(-1).finale.podium[0];
+  if (b) {
+    T.boss++; if (b.loveTrain) T.lt++; bump(T.bossTier, b.tier); if (b.joiner) T.joinerBoss++;
+    const r = [...state.players, ...state.canon, ...state.field.kept, ...state.field.packLeaders].find((x) => x.id === b.id);
+    if (winner?.id === b.id) { T.bossWins++; if (b.loveTrain) T.ltWins++; }
+    if (r?.status === 'racing') T.bossNY++;
+    if (r?.death?.stage === 9) T.bossDied++;
+    if (r?.retiredAt?.stage === 9) T.bossRetired++;
+  }
+  for (const e of state.race.finaleLog ?? []) {
+    if (e.event === 'bring') { const k = `${e.loveTrain ? 'LT' : 'boss'}:${Math.min(e.joiners, 4)}`; const x = (T.bring[k] ??= { n: 0, won: 0 }); x.n++; if (e.won) x.won++; }
+    if (e.event === 'fv-hunt') { bump(T.fv, 'hunt'); if (e.won) bump(T.fv, 'hunt-won'); }
+    if (e.event === 'fv-beaten') bump(T.fv, 'beaten');
+    if (e.event === 'fv-rematch') { bump(T.fv, e.fought ? 'rematch' : 'rematch-empty'); if (e.won) bump(T.fv, 'killed'); }
+    if (e.event === 'redirect') bump(T.fv, 'redirect');
+  }
+  if (state.race.fv?.dead) T.fvDead++;
+  T.canon.games++;
+  for (const c of state.canon) if (['johnny', 'gyro'].includes(c.canonId)) T.canon[c.canonId] += (state.items ?? []).filter((i) => i.kind === 'part' && i.owner === c.id).length;
+  for (const e of results.at(-1).finale.epilogues ?? []) bump(T.epi, e.id);
+}
+
+function printM6b(S) {
+  const T = S.m6b, g = T.games;
+  const pct = (n, d) => `${((100 * (n ?? 0)) / (d || 1)).toFixed(0)}%`;
+  console.log('\nThe finale');
+  console.log('  main ending: ' + ['president-dead', 'president', 'double-cross', 'corpse', 'bloodbath', 'normal'].map((k) => `${k} ${pct(T.endings[k], g)}`).join(' · '));
+  console.log(`  a boss in ${pct(T.boss, g)} of games (Love Train ${pct(T.lt, g)}; ${Object.entries(T.bossTier).map(([k, n]) => `${k} ${pct(n, T.boss)}`).join(', ')}; a Valentine joiner ${pct(T.joinerBoss, T.boss)}) · the boss wins the race ${pct(T.bossWins, T.boss)} · a Love Train holder wins ${pct(T.ltWins, T.lt)} · the boss reaches New York ${pct(T.bossNY, T.boss)}, dies in the Final Stage ${pct(T.bossDied, T.boss)}, retires ${pct(T.bossRetired, T.boss)}`);
+  console.log('  Bring down in games (joiners -> the holder lost): ' + Object.entries(T.bring).sort().map(([k, x]) => `${k} ${pct(x.won, x.n)} (${(x.n / g).toFixed(2)}/game)`).join(' · '));
+  // The target odds, with equal riders (PCs at 65 with a Rare Stand on both sides).
+  const rng = new Rng('bring-odds');
+  const ctx = { state: { players: [], canon: [], field: { packLeaders: [], kept: [] } }, rng };
+  const mk = () => ({ tier: 'pc', skill: 65, stand: { tier: 'rare' } });
+  const odds = (n, bonus) => { let w = 0; for (let i = 0; i < 20000; i++) if (teamFight(ctx, Array.from({ length: n }, mk), mk(), bonus).margin > 0) w++; return pct(w, 20000); };
+  const B = RULES.finale.bring;
+  console.log(`  Bring-down odds, equal riders: Love Train holder loses to 2 / 3 / 4 joiners ${odds(2, B.loveTrainBonus)} / ${odds(3, B.loveTrainBonus)} / ${odds(4, B.loveTrainBonus)} (target 35 / 50 / 65%) · a 3–4-part boss ${odds(2, B.bossBonus)} / ${odds(3, B.bossBonus)} / ${odds(4, B.bossBonus)}`);
+  const F = T.fv;
+  console.log(`  Funny Valentine in the Final Stage: comes for a Love Train holder ${pct(F.hunt, g)} of games (takes the parts ${pct(F['hunt-won'], F.hunt)}) · beaten once (D4C) ${pct(F.beaten, g)} · the other Valentine fought ${pct(F.rematch, g)} (nobody joined ${pct(F['rematch-empty'], g)}) · killed ${pct(T.fvDead, g)} of games [target 5–10%] · misfortune redirected ${((F.redirect ?? 0) / g).toFixed(2)}/game`);
+  console.log(`  Johnny holds ${(T.canon.johnny / g).toFixed(2)} parts at the end, Gyro ${(T.canon.gyro / g).toFixed(2)}`);
+  console.log('  epilogues: ' + Object.entries(T.epi).map(([k, n]) => `${k} ${pct(n, g)}`).join(' · '));
 }

@@ -293,7 +293,9 @@ function renderCard(state, card) {
     case 'podium': {
       const p = card.place;
       return h('div', { class: `card card-finale card-podium podium-${p.rank}` + (card.winner ? ' winner' : '') },
-        h('div', { class: 'podium-place' }, card.winner ? 'Winner of the Steel Ball Run' : `${ordinal(p.rank)} place`),
+        h('div', { class: 'podium-place' }, card.president
+          ? (card.winner ? 'First across the line' : `${ordinal(p.rank)} across the line`)
+          : card.winner ? 'Winner of the Steel Ball Run' : `${ordinal(p.rank)} place`),
         face(state, p.id, 'xl'),
         h('h2', { class: 'card-big' }, p.name),
         h('div', { class: 'podium-points' }, `${p.points} points`),
@@ -303,7 +305,24 @@ function renderCard(state, card) {
 
     case 'drumroll':
       return h('div', { class: 'card card-finale card-drumroll' },
-        h('h2', { class: 'card-big' }, 'And the winner of the Steel Ball Run is…'),
+        h('h2', { class: 'card-big' }, card.president ? 'And first across the line…' : 'And the winner of the Steel Ball Run is…'),
+      );
+
+    // Milestone 6b: the main ending, and epilogues after the podium.
+    case 'ending':
+      return h('div', { class: `card card-finale card-ending ending-${card.ending.id}` },
+        h('div', { class: 'label' }, 'The Saint\'s Corpse'),
+        card.ending.bossId ? face(state, card.ending.bossId, 'xl') : null,
+        h('h2', { class: 'card-big' }, card.ending.title),
+        h('p', { class: 'ending-text' }, card.ending.text),
+      );
+
+    case 'epilogue':
+      return h('div', { class: 'card card-finale card-epilogue' },
+        h('div', { class: 'label' }, 'Epilogue'),
+        card.epilogue.who ? face(state, card.epilogue.who, 'lg') : null,
+        h('h2', {}, card.epilogue.title),
+        h('p', { class: 'ending-text' }, card.epilogue.text),
       );
 
     case 'no-winner':

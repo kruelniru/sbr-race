@@ -102,11 +102,16 @@ export function partsCard(you, onUse, onOffer = null, onDeliver = null) {
 export function valentineCard(v) {
   if (!v) return null;
   if (v.outcome) {
-    return h('section', { class: 'valentine-card ' + (v.outcome === 'won' ? 'won' : 'lost') },
+    const text = {
+      won: `The President holds the Corpse. As promised: +${v.bonus} points.`,
+      lost: "The President's plan failed. You rode for the losing side.",
+      dead: 'The President is dead. You rode for a dead man.',
+      betrayed: "The President's own rider betrayed him. You get nothing.",
+      traitor: 'You kept the Saint\'s Corpse for yourself. The President will never forgive you.',
+    }[v.outcome];
+    return h('section', { class: 'valentine-card ' + (['won', 'traitor'].includes(v.outcome) ? 'won' : 'lost') },
       h('h3', {}, 'You rode for Valentine'),
-      h('p', { class: 'valentine-outcome' }, v.outcome === 'won'
-        ? `The President holds the Corpse. As promised: +${v.bonus} points.`
-        : "The President's plan failed. You rode for the losing side."));
+      h('p', { class: 'valentine-outcome' }, text));
   }
   return h('section', { class: 'valentine-card' + (v.hunted ? ' hunted' : '') },
     h('h3', {}, 'You ride for Valentine'),

@@ -816,87 +816,90 @@ Union Beach → Trinity Church
 ======================================================================
 
 --- Day 1 ---
-  The dead stir. A wildfire sweeps the trail. Mrs. Robinson, Diego Brando and Virgil Yates lose time, and Mrs. Robinson is hurt.
+  The dead stir. Acid rain sweeps the trail. Norisuke Higashikata IV, Hot Pants and Urmd Avdul lose time, and Norisuke Higashikata IV is hurt.
   Hot Pants and Virgil Yates agree to ride together.
-  Ellis Hale cuts through the back alleys and comes out three blocks ahead.
-  A rider in a dark hat ambushes Rowan Finch on the trail. The rider in the dark hat beats Rowan Finch and goes through their things.
-  Boone Wilder cuts Wekapipo's cinch strap at a water stop. Wekapipo loses an hour fixing it.
+  The Saint's Corpse has chosen Ellis Hale. Everyone else is coming for it.
+  A rider in a dark hat ambushes Rowan Finch on the trail. They fight to a standstill, and both ride off hurt.
+  Boone Wilder cuts Diego Brando's cinch strap at a water stop. Diego Brando loses an hour fixing it.
   -- Side stories --
     Meanwhile on the trail...
-      · Gyro Zeppeli takes the wrong fork and has to double back.
+      · Mountain Tim gallops through the streets of Manhattan as crowds scatter.
+      · Pearl Wilder, out of the race, watches the leaders pass from a saloon porch.
       · Clementine Finch, out of the race, watches the leaders pass from a saloon porch.
-      · A whole town turns out to cheer Johnny Joestar through.
-      · Apache Wind throws a shoe, and Oyecomova loses an hour at a roadside smithy.
-  [Field] New York is in sight. 7 racers retired and 2 died. 120 remain.
+      · Virgil Yates stops to splint the arm of Wendell Underhill, who was thrown from his horse.
+      · Mrs. Robinson takes the wrong fork and has to double back.
+      · Ellis Hale takes the wrong fork and has to double back.
+      · Johnny Joestar and Gyro Zeppeli race neck and neck for miles until Johnny Joestar edges ahead.
+  [Field] New York is in sight. 7 racers retired and 4 died. 118 remain.
 
 --- Night 1 ---
   The dead stir. Matilda Hartley rides out of the dust at Rupert Faraday, eyes empty. Matilda Hartley beats Rupert Faraday and lets him go.
   One of the Tattoo You men ambushes Ellis Hale on the trail. Ellis Hale fights with Star Platinum. Ellis Hale turns the fight around and drives one of the Tattoo You men off.
-  Rowan Finch runs until their legs give out and has to rest for hours.
-  Mrs. Robinson follows a trapper's map down a shortcut and gains half a day.
+  Gyro Zeppeli keeps watch so Norisuke Higashikata IV can sleep. Nobody bothers them.
+  Bandits jump Opal Finch at a water hole. The Hand sends them running before a shot is fired.
+  Benjamin Boom Boom follows a trapper's map down a shortcut and gains half a day.
+✝ Oyecomova plants a bomb under a bridge. Leopold Fairweather rides over it.
   Someone has been deemed worthy of the Saint.
   -- Side stories --
     Meanwhile on the trail...
-      · Clementine Finch sleeps under the stars.
-      · Boone Wilder and Oyecomova share a campfire and agree not to shoot each other tonight.
-      · Gyro Zeppeli sleeps under the stars.
-      · Dixie throws a shoe, and Mountain Tim loses an hour at a roadside smithy.
-      · Seraphina Thibodeaux waves for help by the trail. Virgil Yates rides straight past.
-      · Opal Finch and Hot Pants share a campfire and agree not to shoot each other tonight.
-  [Field] 6 racers retired and 4 died. 110 remain.
-  [The Fallen] No named racers. And 6 from the field.
+      · Johnny Joestar finds a steady rhythm and makes good time.
+      · Mountain Tim sleeps soundly while Oh! Lonesome Me keeps watch over the camp.
+      · Rowan Finch sleeps under the stars.
+      · Boone Wilder is so saddle-sore he can barely sit.
+      · Mrs. Robinson finds a steady rhythm and makes good time.
+      · Hot Pants takes the wrong fork and has to double back.
+      · Virgil Yates takes the wrong fork and has to double back.
+  [Field] 7 racers retired and 5 died. 106 remain.
+  [The Fallen] No named racers. And 9 from the field.
 
 --- Finish Line ---
-  The dead stir. Rupert Dunmore rides out of the dust at Henrietta Nightingale, eyes empty. Rupert Dunmore beats Henrietta Nightingale and lets her go.
-  Sawyer Barlow jumps Virgil Yates on the trail. Virgil Yates tries to flee, but Sawyer Barlow runs him down. Virgil Yates fights with Cream. Hot Pants rides in to help Virgil Yates. Virgil Yates turns the fight around and drives Sawyer Barlow off.
+  The dead stir. Thaddeus Zamora rides out of the dust at Rupert Faraday, eyes empty. Rupert Faraday turns the fight around and drives Thaddeus Zamora off.
   Opal Finch catches up with Ellis Hale, and they fight. Ellis Hale gives up without a fight. Opal Finch beats Ellis Hale and drives off Wildfire.
-✝ Shots ring out near Trinity Church. Leopold Kincaid is killed in the crossfire as Urmd Avdul rides past.
-  Bandits jump Rowan Finch at a water hole. Aerosmith sends them running before a shot is fired.
-  Diego Brando passes Augustus Quigley, who has collapsed a mile short of the finish.
+  Virgil Yates waves Benjamin Boom Boom on and keeps his own pace.
   -- Side stories --
     Meanwhile on the trail...
-      · Benjamin Boom Boom's Tomb of the Boom 1 bristles as Boone Wilder rides past. Neither of them stops.
-      · Pearl Wilder rides ahead as a scout, warning anyone who will listen about the trail ahead.
-      · Blaze throws a shoe, and Wekapipo loses an hour at a roadside smithy.
-      · Pocoloco finds a steady rhythm and makes good time.
-      · Clementine Finch rides ahead as a scout, warning anyone who will listen about the trail ahead.
-  [Field] 8 racers retired and 1 died. 101 remain.
-  [The Fallen] No named racers. And 1 from the field.
+      · Boone Wilder gallops through the streets of Manhattan as crowds scatter.
+      · Urmd Avdul catches the ferry across to Manhattan just as it pulls away.
+      · Rowan Finch catches the ferry across to Manhattan just as it pulls away.
+      · Bandits jump Diego Brando at a water hole. Scary Monsters sends them running before a shot is fired.
+      · Mountain Tim shows off Oh! Lonesome Me to a crowd at the checkpoint. Nobody else can see it, so they just think he is strange.
+  [Field] 5 racers retired. No one in the field died. 101 remain.
 
   STAGE 9 RESULTS
-     1. Ottoline Blackwell [pack]  +100
-     2. Opal Finch  +90
-     3. Pocoloco  +80
-     4. Hot Pants  +70
-     5. Johnny Joestar  +60
-     6. Virgil Yates  +50
-     7. Wekapipo  +40
-     8. Augustus Pemberton [pack]  +30
-     9. Mountain Tim  +20
-    10. Gyro Zeppeli  +10
+     1. Virgil Yates  +100
+     2. Gyro Zeppeli  +90
+     3. Johnny Joestar  +80
+     4. Mountain Tim  +70
+     5. Benjamin Boom Boom  +60
+     6. Pocoloco  +50
+     7. Urmd Avdul  +40
+     8. Boone Wilder  +30
+     9. Casimir Dunmore [pack]  +20
+    10. Diego Brando  +10
   STANDINGS
-    Ellis Hale  425
-    Gyro Zeppeli  385
-    Opal Finch  375
-    Johnny Joestar  355
-    Rowan Finch  345
-    Reese Carver (dead)  275
+    Gyro Zeppeli  465
+    Ellis Hale  415
+    Johnny Joestar  375
+    Rowan Finch  350
+    Opal Finch  290
+    Mountain Tim  290
 
 ======================================================================
 NEW YORK · TRINITY CHURCH
 ======================================================================
-  3rd: Opal Finch  375 points
-  2nd: Gyro Zeppeli  385 points
-  1st: Ellis Hale  425 points   <-- WINNER
+  3rd: Johnny Joestar  375 points
+  2nd: Gyro Zeppeli  465 points
+  1st: Ellis Hale  465 points   <-- WINNER
 
   AWARDS
-    Most Kills: Boone Wilder & Reese Carver & Opal Finch & Ellis Hale (2 kills)
-    Most Merciful: Virgil Yates & Ellis Hale & Gyro Zeppeli (spared 4 riders)
-    Best Runner: Rowan Finch (345 points on foot)
-    Biggest Comeback: Opal Finch (from 34th to 3rd)
+    Most Kills: Boone Wilder & Reese Carver & Opal Finch & Ellis Hale & Oyecomova (2 kills)
+    Most Merciful: Ellis Hale & Gyro Zeppeli (spared 4 riders)
+    Corpse Holder: Ellis Hale (3 parts · the President held 3)
+    Best Runner: Rowan Finch (350 points on foot)
+    Biggest Comeback: Opal Finch (from 34th to 5th)
 
   REACHED NEW YORK (17 named, plus 101 from the field)
-    Ellis Hale, Gyro Zeppeli, Opal Finch, Johnny Joestar, Rowan Finch, Mountain Tim, Pocoloco, Boone Wilder, Hot Pants, Oyecomova, Diego Brando, Urmd Avdul, Virgil Yates, Norisuke Higashikata IV, Wekapipo, Mrs. Robinson, Benjamin Boom Boom
+    Ellis Hale, Gyro Zeppeli, Johnny Joestar, Rowan Finch, Opal Finch, Mountain Tim, Boone Wilder, Virgil Yates, Pocoloco, Urmd Avdul, Oyecomova, Diego Brando, Benjamin Boom Boom, Hot Pants, Norisuke Higashikata IV, Mrs. Robinson, Wekapipo
 
   THE FALLEN (13)
     ✝ Nell Ketchum: killed by a rival, by Reese Carver (Stage 1, Day 1)
@@ -913,4 +916,4 @@ NEW YORK · TRINITY CHURCH
     ✝ Reese Carver: shot from ambush, by Fitzgerald Jessup (Stage 7, Night 1)
     ✝ Andre Boom Boom: killed for supplies, by Ellis Hale (Stage 8, Night 1)
 
-(30 rounds · reveals at Normal speed: ~49 min, or ~38 min skipping side stories)
+(30 rounds · reveals at Normal speed: ~50 min, or ~38 min skipping side stories)

@@ -17,6 +17,7 @@ import { planOf } from './plans.js';
 import { standMods } from './stands.js';
 import { horseMod } from './horses.js';
 import { ridesDouble } from './alliances.js';
+import { bossPlacement } from './final-stage.js';
 
 export function runnerTerrainBonus(stage) {
   let bonus = RULES.runner.base ?? 0;
@@ -40,6 +41,8 @@ export function placementScore(racer, stage, rng, state = null) {
   if (racer.mount === 'horse' && racer.onFoot && state && ridesDouble(state, racer)) score += P.onFootPenalty * (1 - RULES.horses.doubleRide);
   // Valentine's relay horses (milestone 5b; a joiner's reward, secret).
   if (racer.valentine?.joined) score += RULES.valentine.relay;
+  // The boss in the Final Stage (milestone 6b).
+  if (state) score += bossPlacement(state, racer);
   return score + rng.normal(0, P.noiseSd);
 }
 

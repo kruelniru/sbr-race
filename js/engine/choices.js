@@ -29,7 +29,8 @@
 
 import RULES from '../../data/rules.js';
 import { SUB_EVENTS, RIVAL, PALM, ARROW, ROKAKAKA, ATTACKED, STRIKE, FIGHT_WIN, FIGHT_DEFEND, HORSE_TWO, ALLY_INVITE, TRADE,
-  FOUND_PART, STEAL_PART, AMBUSH, FUNNY_VALENTINE, VALENTINE_OFFER, ERRAND, ERRAND_TARGET } from '../../data/sub-events.js';
+  FOUND_PART, STEAL_PART, AMBUSH, FUNNY_VALENTINE, VALENTINE_OFFER, ERRAND, ERRAND_TARGET,
+  BRING_DOWN, VALENTINE_RIDE, VALENTINE_REMATCH } from '../../data/sub-events.js';
 import { EFFECTS } from './effects.js';
 import { render } from './text.js';
 import { Rng } from './rng.js';
@@ -51,6 +52,7 @@ import { ambushChance, pickAgent, resolveAmbush, otherAmbushes, canFaceValentine
 import { isJoiner, dueOffers, joinValentine, refuseValentine, deliver, log as logValentine } from './valentine.js';
 import { PART_HINTS } from '../../data/corpse.js';
 import { blessed } from './dead.js';
+import { FINAL_STAGE, chooseBoss, bossRacer, isBoss, resolveBringDown, resolveValentineHunt, resolveValentineRematch } from './final-stage.js';
 
 export const SUBS = [...SUB_EVENTS, PALM, ATTACKED, STRIKE].map((s) => ({ ...normalizeEvent({ ...s, when: s.when ?? {}, effects: {} }), options: s.options, secret: !!s.secret, special: s.special, fightKind: s.fightKind, leanTag: s.leanTag, targetText: s.targetText }));
 const PALM_SUB = SUBS.find((s) => s.id === PALM.id);
@@ -184,6 +186,7 @@ function applyStagePlans(state, choice, rng) {
     if (prompt.buy) buyHorse(state, rng, p, prompt.buy);
   }
   rollHunts(state, rng, choice.stageId);
+  if (choice.stageId === FINAL_STAGE()) chooseBoss(state);
   // Canon racers on foot buy a horse in town if they can.
   if (townStage(STAGES.find((x) => x.id === choice.stageId))) {
     for (const c of state.canon ?? []) {
@@ -337,6 +340,8 @@ export function openSubEvents(state) {
 
   // 3b. Milestone 5b: corpse parts, agents, Valentine.
   corpsePrompts(state, rng, stage, roundNo, roundsLeft, type, busy, prompts);
+  // 3c. Milestone 6b: the Final Stage's group fights.
+  const groups = finalePrompts(state, rng, stage, roundNo, type, busy, prompts);
 
   // 4. Random sub events by the host's frequency setting; at least one PC per round.
   const eligible = racingPcs(state).filter((p) => !busy.has(p.id));
@@ -375,7 +380,7 @@ export function openSubEvents(state) {
     const p = readyPlayers(state).find((x) => x.id === pr.playerId);
     if (p) p.fairPrompts = (p.fairPrompts ?? 0) + 1;
   }
-  race.choice = { kind: 'sub', stageId: stage.id, roundNo, closed: false, prompts, notes, finds: race.pendingFinds ?? [], errands: race.autoErrands ?? [] };
+  race.choice = { kind: 'sub', stageId: stage.id, roundNo, closed: false, prompts, notes, finds: race.pendingFinds ?? [], errands: race.autoErrands ?? [], groups };
   race.pendingFinds = [];
   race.autoErrands = [];
   state.rngState = rng.getState();
@@ -740,6 +745,7 @@ export function resolveSubEvents(ctx, choice) {
   ctx.inPrompts = new Set(choice.prompts.flatMap((x) => [x.playerId, ...Object.values(x.roles ?? {})]));
   const done = new Set();
   for (const prompt of ctx.rng.shuffle([...choice.prompts])) {
+    if (prompt.groupKey) continue; // the Final Stage's group fights resolve together, below
     if (prompt.rivalKey) {
       if (done.has(prompt.rivalKey)) continue;
       done.add(prompt.rivalKey);
@@ -774,6 +780,70 @@ export function resolveSubEvents(ctx, choice) {
     if (line) lines.push(line);
   }
   lines.push(...otherAmbushes(ctx));
+  lines.push(...resolveGroups(ctx, choice));
+  return lines;
+}
+
+/**
+ * The Final Stage (milestone 6b): Bring down the boss (a few living PCs, never
+ * joiners), Valentine coming for a Love Train holder (joiners may secretly ride
+ * with him), and the other Valentine after D4C (the one who beat him and
+ * anyone who joins). Everyone who says yes fights together.
+ */
+function finalePrompts(state, rng, stage, roundNo, type, busy, prompts) {
+  const race = state.race;
+  const groups = [];
+  if (stage.id !== FINAL_STAGE()) return groups;
+  const free = () => racingPcs(state).filter((x) => !busy.has(x.id));
+  const ask = (def, list, key, text, extra = {}) => {
+    for (const p of list) {
+      busy.add(p.id);
+      const pr = specialPrompt(rng, state, def, p, roundNo, { a: p.id }, text);
+      pr.groupKey = key;
+      pr.planned = true;
+      prompts.push(pr);
+    }
+    groups.push({ key, kind: def.id, ...extra });
+  };
+  const fv = race.fv;
+  // The other Valentine (after D4C): the one who beat him, plus up to 3 more.
+  if (fv?.rematch && fv.rematch.due <= roundNo && !fv.dead) {
+    const beater = findAnyRacer(state, fv.rematch.beaterId);
+    const others = rng.shuffle(free().filter((p) => p.id !== beater?.id && !isJoiner(p))).slice(0, 3);
+    const asked = beater?.tier === 'pc' && beater.status === 'racing' && !busy.has(beater.id) ? [beater, ...others] : others;
+    ask(VALENTINE_REMATCH, asked, `rematch-${roundNo}`, VALENTINE_REMATCH.text, { auto: beater && beater.tier !== 'pc' && beater.status === 'racing' ? [beater.id] : [] });
+    if (beater) busy.add(beater.id);
+  }
+  const boss = bossRacer(state);
+  // Valentine comes for the Love Train holder (joiners may ride with him, secretly).
+  if (fv?.hunt && fv.hunt.due <= roundNo && boss) {
+    const riders = free().filter((p) => isJoiner(p) && p.id !== boss.id);
+    ask(VALENTINE_RIDE, riders, `hunt-${roundNo}`, render(VALENTINE_RIDE.text, display({ b: boss })));
+    busy.add(boss.id);
+  }
+  // Bring down the boss, every Day and Night round.
+  if (type !== 'finish' && boss && boss.status === 'racing' && isBoss(state, boss) && !busy.has(boss.id)) {
+    const asked = rng.shuffle(free().filter((p) => p.id !== boss.id && !isJoiner(p))).slice(0, RULES.finale.bring.maxAsked);
+    if (asked.length) {
+      ask(BRING_DOWN, asked, `bring-${roundNo}`, render(BRING_DOWN.text, display({ b: boss })));
+      busy.add(boss.id);
+    }
+  }
+  return groups;
+}
+
+function resolveGroups(ctx, choice) {
+  const lines = [];
+  for (const g of choice.groups ?? []) {
+    const yes = choice.prompts.filter((x) => x.groupKey === g.key && x.answer?.optionId === 'join').map((x) => x.playerId);
+    let res = null;
+    if (g.kind === BRING_DOWN.id) res = resolveBringDown(ctx, yes);
+    else if (g.kind === VALENTINE_RIDE.id) res = resolveValentineHunt(ctx, yes);
+    else if (g.kind === VALENTINE_REMATCH.id) res = resolveValentineRematch(ctx, [...(g.auto ?? []), ...yes]);
+    if (!res) continue;
+    // Riders in dark hats stay secret: only the holder is named for the hunt.
+    lines.push(lineFor(ctx, g.kind, res.text, res.roles, { death: res.death, tags: ['fight', 'finale'] }));
+  }
   return lines;
 }
 

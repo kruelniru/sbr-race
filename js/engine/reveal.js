@@ -41,15 +41,20 @@ export function buildCards(result) {
 
 function finaleCards(f) {
   const cards = [{ kind: 'finale-title' }];
+  // Milestone 6b: the main ending comes first; in the President's ending the
+  // podium is only "first across the line".
+  const president = f.ending?.id === 'president';
+  if (f.ending) cards.push({ kind: 'ending', ending: f.ending, hold: true });
   const [first, second, third] = f.podium;
-  if (third) cards.push({ kind: 'podium', place: third });
-  if (second) cards.push({ kind: 'podium', place: second });
+  if (third) cards.push({ kind: 'podium', place: third, president });
+  if (second) cards.push({ kind: 'podium', place: second, president });
   if (first) {
-    cards.push({ kind: 'drumroll' });
-    cards.push({ kind: 'podium', place: first, winner: true, hold: true });
+    cards.push({ kind: 'drumroll', president });
+    cards.push({ kind: 'podium', place: first, winner: true, hold: true, president });
   } else {
     cards.push({ kind: 'no-winner' });
   }
+  for (const e of f.epilogues ?? []) cards.push({ kind: 'epilogue', epilogue: e });
   if (f.awards.length) cards.push({ kind: 'awards', awards: f.awards });
   // Sections under order 100 (Stands awakened) follow the awards.
   for (const x of f.extras.filter((e) => (e.order ?? 100) < 100)) cards.push({ kind: 'extra', id: x.id, data: x.data });
@@ -84,6 +89,8 @@ export function cardSeconds(card, speed = 'normal') {
     case 'podium': s = (card.winner ? B.winner : B.podium) * pause; break;
     case 'drumroll': s = B.drumroll; break; // the dramatic pause doesn't speed up
     case 'no-winner': s = B.podium * pause; break;
+    case 'ending': s = B.winner * pause + read(card.ending.text); break;
+    case 'epilogue': s = B.award * pause + read(card.epilogue.text); break;
     case 'awards': s = B.page * pause + card.awards.length * B.award * pause; break;
     case 'survivors': s = B.page * pause + card.survivors.length * T.perName * 0.5; break;
     case 'memorial': s = B.page * pause + card.fallen.reduce((t, f) => t + T.perName + read(f.cause), 0); break;

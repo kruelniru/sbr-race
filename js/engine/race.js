@@ -34,6 +34,7 @@ import { initCorpse, processMerges, corpseFinishLine, announcements } from './co
 import { initAgents } from './agents.js';
 import { scheduleOffers, valentineEnding } from './valentine.js';
 import { resolveDeadVote, openDeadVote } from './dead.js';
+import { decideEnding } from './endings.js';
 
 /** Round types for a stage with n rounds: Day/Night alternate, last is the Finish Line. */
 export function roundTypes(n) {
@@ -266,7 +267,8 @@ export function runRound(state) {
     if (race.stageIdx >= STAGES.length) {
       race.over = true;
       result.over = true;
-      valentineEnding(state); // reward 5: before the podium
+      decideEnding(state);    // the main ending (and the boss's bonus), before the podium
+      valentineEnding(state); // reward 5 and every joiner's outcome
       result.finale = buildFinale(state);
     }
   }

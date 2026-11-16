@@ -150,7 +150,10 @@ test('parts change hands: killer takes from the body, a lone death drops it, the
   assert.equal(carried(state, b).length, 1, 'the killer takes it');
   killRacer(ctxOf(state), b, 'fell', null);
   assert.equal(state.corpse.parts[0].status, 'loose');
+  const share = RULES.finale.canonShare;
+  RULES.finale.canonShare = 0; // (milestone 6b: Johnny and Gyro may take a share)
   corpseFinishLine(ctxOf(state, 'f', 3));
+  RULES.finale.canonShare = share;
   assert.equal(state.corpse.parts[0].status, 'president');
   assert.ok(presidentParts(state) >= 1);
   // An agent's kill sends it to the President.
@@ -291,10 +294,12 @@ test('whole games: every part is accounted for, once', () => {
     for (const p of state.corpse.parts) {
       const held = items.some((i) => i.partId === p.id);
       assert.equal(held, p.status === 'held', `${p.id} ${p.status}`);
-      assert.ok(['held', 'president'].includes(p.status), `${p.id} ends ${p.status}`);
+      // A dead President (milestone 6b) recovers nothing: what fell after his death stays loose.
+      assert.ok(['held', 'president'].includes(p.status) || (p.status === 'loose' && state.race.fv?.dead), `${p.id} ends ${p.status}`);
     }
     const sum = corpseSummary(state);
-    assert.equal(sum.holders.reduce((t, h) => t + h.parts.length, 0) + sum.president, 9);
+    const loose = state.corpse.parts.filter((p) => p.status === 'loose').length;
+    assert.equal(sum.holders.reduce((t, h) => t + h.parts.length, 0) + sum.president + loose, 9);
     for (const it of items) assert.notEqual(state.players.find((x) => x.id === it.owner)?.status, 'dead', 'the dead hold nothing');
   }
 });

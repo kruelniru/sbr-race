@@ -109,6 +109,11 @@ export function takePart(ctx, item, to, how, from = null, { quiet = false } = {}
   return got;
 }
 
+/** A part comes loose from its holder (the finale's Bring-down). */
+export function dropPart(ctx, item, how) {
+  makeLoose(ctx, item, how);
+}
+
 /** A part goes back onto the trail (a holder died alone, or it rejected them). */
 function makeLoose(ctx, item, how) {
   const part = partById(ctx.state, item.partId);
@@ -302,8 +307,13 @@ export function processMerges(ctx, { all = false } = {}) {
 
 /** The Finish Line: anything still loose (or never found) is recovered for the President. */
 export function corpseFinishLine(ctx) {
+  const seekers = (ctx.state.canon ?? []).filter((c) => ['johnny', 'gyro'].includes(c.canonId) && c.status === 'racing');
   for (const p of ctx.state.corpse?.parts ?? []) {
     if (p.status === 'loose' || (p.status === 'waiting' && p.stage <= ctx.stage.id)) {
+      // Johnny and Gyro collect the Corpse too (milestone 6b): they get a share of what's left.
+      if (seekers.length && ctx.rng.chance(RULES.finale.canonShare)) { giveTo(ctx, p, ctx.rng.pick(seekers), 'canon-share'); continue; }
+      // A dead President recovers nothing: it stays where it fell.
+      if (ctx.state.race.fv?.dead) continue;
       p.status = 'president';
       log(ctx, p, 'president', { how: 'unclaimed' });
     }

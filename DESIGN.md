@@ -497,11 +497,33 @@ In the manga, points come only from stage placements, plus a time bonus for fini
 - **A racer holds the most:** with 5+ parts they get Love Train and are nearly untouchable, because misfortune is redirected onto others. Everyone else has to work together to take the parts.
 - **Valentine holds more than all racers combined:** the bad ending, where he wins whoever crosses the line.
 
+**How it works (milestone 6b, `js/engine/final-stage.js`, `js/engine/endings.js`, numbers in `rules.finale`):**
+
+- **The boss:** when the Final Stage's Stage Plans close, the racing racer (PC, canon or NPC) holding the most parts, at least 3, becomes the boss. Ties go to higher Worthiness, then points. The stream announces only that ("The Saint's Corpse has chosen Kruel."), plus "Love Train" at 5+ parts; nothing else about who holds parts. The boss gets +6 placement in the Final Stage.
+- **Love Train (5+ parts):** nothing can kill the holder (no deadly event picks them; the Palm, an Arrow and rejection can't kill them). A fight that would kill them kills a random nearby racer instead ("misfortune slides off Kruel and onto…").
+- **Bring them down:** in every Day and Night round of the Final Stage, up to 4 random living PCs (never Valentine joiners) get "Bring them down": ride with the others, or stay out. Everyone who says yes fights the boss in one combined fight: the team fights at its average fight skill + 6.5 per rider, the boss at their own fight score + 19.5 with Love Train (+4.5 without). Equal riders: a Love Train holder loses to 2 / 3 / 4 riders about 35 / 51 / 65% of the time; a 3–4-part boss about 70 / 81 / 90%. Win: each rider takes one part, the rest come loose, the boss is hurt. Lose: one rider is hurt, or killed on a clear loss. It works the same against a canon or NPC boss.
+- **The boss dies or retires in the Final Stage:** no Corpse ending; their parts come loose (or go to their killer) as usual.
+- **Funny Valentine in the Final Stage:** he can't be killed before it. With a Love Train holder, he comes for them once (early in the stage); joiners get a secret "Ride with him" prompt (+5 each). He wins: every part the holder carries is his. Beating him in the Final Stage, there or in "Face him", makes **D4C** swap in another-world Valentine ("Dirty Deeds Done Dirt Cheap…"), and a fresh group fight comes next round: the one who beat him plus up to 3 other living PCs who join (the same combined fight, against 77). A second win kills him for good: every part he held comes loose (and stays loose), each racer in that fight gets +80, joiners lose their rewards. In the sim he dies in about 8% of games.
+- **Johnny and Gyro** collect too: a part still loose at a Finish Line goes to one of them (if racing) 40% of the time, instead of the President.
+
+**The main ending** (exactly one per game, the first that applies), shown as its own card before the podium:
+
+1. **The President is dead:** he was killed in the Final Stage. Joiners: "The President is dead. You rode for a dead man." No joiner bonus.
+2. **The President takes the Corpse:** he holds more parts than every racer combined. The podium becomes "First across the line"; joiners get their bonus.
+3. **The Double-Cross:** the boss is a Valentine joiner who reaches New York still holding the Corpse. "The President's own rider has betrayed him." The traitor gets the Corpse ending's bonus; other joiners get nothing.
+4. **Holder of the Saint's Corpse:** the boss reaches New York holding 3+ parts: +50 points (+100 with 5+, Love Train).
+5. **The Bloodbath:** 3 or fewer named racers reach New York. "The Steel Ball Run ends in silence."
+6. Otherwise, a normal ending (no card).
+
+The race winner is still whoever has the most points (except that in the President's ending the podium is only "first across the line").
+
+**Epilogues** (`data/epilogues.js`, any number per game, one short card each, after the winner): The Saint Smiles (the winner never killed and has Worthiness 75+), The Devil's Champion (the winner has the most kills), On Foot to Glory (a Runner wins), Ride Together (allies finish 1st and 2nd), and a canon champion card in character when a canon racer wins (Hot Pants gets the longest). Adding one is one entry in that file.
+
 **The ending sequence** (after the last Finish Line), revealed card by card:
 
 1. "The race is over."
 2. **Podium:** 3rd place, then 2nd, then a dramatic pause ("And the winner of the Steel Ball Run is…"), then the winner. Auto-advance stops on the winner.
-3. **Awards:** Most Kills, Most Merciful (spares), Best Runner, Biggest Comeback (most places climbed from a racer's worst standing to the final one), then **Stands awakened**: every racer who gained a Stand during the race, with the Stand and its tier (✝ if they fell, "gave it up" after a Rokakaka), never its source. Later: Corpse Holder (most parts, plus the President's count), Breakout Racers, and others.
+3. **Awards:** Most Kills, Most Merciful (spares), Best Runner, Biggest Comeback (most places climbed from a racer's worst standing to the final one), then **Stands awakened**: every racer who gained a Stand during the race, with the Stand and its tier (✝ if they fell, "gave it up" after a Rokakaka), never its source. **Corpse Holder** (most parts at the end, plus the President's count; milestone 6b). Later: Breakout Racers, and others.
 4. **Reached New York:** every survivor with their points, plus how many from the field finished.
 5. **In memory of the Fallen:** everyone who died, how, by whom, and when.
 6. **The secrets reveal** (later milestones), the last and biggest moment: who joined Valentine, everyone's Worthiness bar, and who held which corpse parts.
@@ -532,7 +554,7 @@ In the manga, points come only from stage placements, plus a time bonus for fini
 
 **Open questions for milestone 6:**
 
-- **Love Train rarely triggers.** In the first M5b build the top racer ended with about 1.7 parts and nobody reached 5. Since hunters get first claim on parts (after the live tests), parts gather more and a racer reaches 5+ in roughly one game in seven; still worth deciding the threshold and how parts gather. Lower the threshold (for example "the most parts, at least 3"), let parts gather (allies pooling, holders drawn to each other), or both.
+- **Love Train** (settled in milestone 6b): the boss needs 3+ parts and Love Train 5+; in the sim there's a boss in about half of all games and Love Train in about one in twelve.
 
 **Debugging:** with `?debug=1`, the host prints every fight to the browser console with a `[fight]` prefix: both sides' base scores, rolls, the margin, both choices and the outcome.
 
@@ -631,3 +653,10 @@ Decisions made after the original design, in the order they came up:
 83. Dead players (M6a): one vote card a round (Hazard / Ambush / Blessing, the Blessing's target on the same card), open from a round's reveal until the next round starts, applied to that round; no votes, nothing happens; the game breaks ties. Only dead humans vote.
 84. The dead's strengths: Hazard = 3 named racers −1 pace, one hurt, a few field riders die, no named deaths; Ambush = an NPC at +6 against a random PC or named NPC (a PC defends by ★); Blessing = heal, +2 pace, can't die that round. One anonymous line on stream.
 85. NPC field size is a lobby setting (200 / 350 / 500 / 750), fixed once the race starts.
+86. The boss (M6b): most parts going into the Final Stage, at least 3; ties by Worthiness, then points; +6 Final Stage placement. Only the boss is announced.
+87. Love Train: no deadly event, Palm, Arrow or rejection can kill the holder; a killing blow in a fight lands on a random nearby racer.
+88. "Bring them down": a combined fight, team = average fight skill + 6.5 per rider, against the boss + 19.5 (Love Train) or + 4.5. Equal riders: a Love Train holder loses to 2 / 3 / 4 about 35 / 51 / 65%; a 3–4-part boss 70 / 81 / 90%. Up to 4 living PCs asked a round, never joiners.
+89. Funny Valentine can only die in the Final Stage: a first win there brings D4C's other Valentine and a group fight next round; a second win kills him (+80 each to that group, his parts stay loose). With Love Train he comes for the holder once; joiners may secretly ride with him (+5 each). Dies in about 8% of games.
+90. One main ending per game, in priority: the President is dead > the President takes the Corpse > the Double-Cross > Holder of the Saint's Corpse (+50, +100 with Love Train) > the Bloodbath (3 or fewer named racers reach New York) > normal. A dead or retired boss gets no Corpse ending.
+91. Johnny and Gyro get 40% of parts still loose at a Finish Line (if racing), so they hold some again without costing PC hunters.
+92. Epilogue cards after the podium from `data/epilogues.js` (Saint Smiles, Devil's Champion, On Foot to Glory, Ride Together, canon champions in character).

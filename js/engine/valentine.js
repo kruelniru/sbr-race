@@ -121,15 +121,24 @@ export function deliver(ctx, p, item) {
 export function valentineEnding(state) {
   const held = (state.items ?? []).filter((i) => i.kind === 'part').length;
   const pres = presidentParts(state);
-  const triggered = pres > held;
+  const ending = state.race.ending?.id ?? (pres > held ? 'president' : 'normal');
+  const triggered = ending === 'president';
   state.race.valentineEnding = { president: pres, racers: held, triggered };
+  const ctx = { stage: { id: 9 }, roundLabel: 'end' };
   for (const r of namedRacers(state)) {
     if (!isJoiner(r)) continue;
-    // Kept for the M6 secrets reveal too.
-    r.valentine.outcome = triggered ? 'won' : 'lost';
+    // Kept for the M6 secrets reveal too: 'won' | 'lost' | 'dead' | 'betrayed' | 'traitor'.
+    let outcome = triggered ? 'won' : 'lost';
+    if (ending === 'president-dead') outcome = 'dead';
+    if (ending === 'double-cross') outcome = state.race.ending.bossId === r.id ? 'traitor' : 'betrayed';
+    r.valentine.outcome = outcome;
     if (triggered) { r.points += V().endingBonus; r.valentine.bonus = V().endingBonus; }
-    addHint(r, triggered
-      ? `The President holds the Corpse. As promised: +${V().endingBonus} points.`
-      : "The President's plan failed. You rode for the losing side.", { stage: { id: 9 }, roundLabel: 'end' });
+    addHint(r, {
+      won: `The President holds the Corpse. As promised: +${V().endingBonus} points.`,
+      lost: "The President's plan failed. You rode for the losing side.",
+      dead: 'The President is dead. You rode for a dead man.',
+      betrayed: "The President's own rider betrayed him. You get nothing.",
+      traitor: 'You kept the Saint\'s Corpse for yourself. The President will never forgive you.',
+    }[outcome], ctx);
   }
 }

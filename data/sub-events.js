@@ -505,6 +505,33 @@ export const ERRAND = {
   ],
 };
 
+// ------------------------------------------------------------ milestone 6b: the Final Stage
+// Group fights: everyone who says yes fights together (js/engine/final-stage.js).
+export const BRING_DOWN = {
+  id: 'bring-down', title: 'Bring them down',
+  text: "{b} holds the Saint's Corpse. Others are riding for it right now. Ride with them?",
+  options: [
+    { id: 'join', label: 'Ride with them', hint: 'One fight, all of you together. Win and you each take a corpse part.', lean: L(1, 3, 0.6, 3, 3) },
+    { id: 'stay', label: 'Stay out of it', hint: 'Keep riding', lean: L(2, 0.5, 3, 0.5, 0.8) },
+  ],
+};
+export const VALENTINE_RIDE = {
+  id: 'valentine-ride', title: 'The President rides', secret: true,
+  text: 'Funny Valentine is going after {b} and the Corpse himself. Ride at his side, in a dark hat?',
+  options: [
+    { id: 'join', label: 'Ride with him', hint: 'Secret. You help him take the Corpse.', lean: L(1, 3, 0.8, 2, 2.5) },
+    { id: 'stay', label: 'Stay back', hint: 'Nothing happens', lean: L(2, 0.6, 2, 1, 1) },
+  ],
+};
+export const VALENTINE_REMATCH = {
+  id: 'valentine-rematch', title: 'The other Valentine',
+  text: 'Another Funny Valentine has stepped out of another world, and he is coming. Face him together?',
+  options: [
+    { id: 'join', label: 'Face him', hint: 'One fight, all of you together. Win and he dies for good: a big bonus.', lean: L(2, 2, 0.6, 4, 1.5) },
+    { id: 'stay', label: 'Stay out of it', hint: 'Keep riding', lean: L(1, 1, 3, 0.3, 1.5) },
+  ],
+};
+
 export const ERRAND_TARGET = {
   id: 'errand-target', title: 'Someone is coming for you',
   text: 'A rider in a dark hat is closing in on you, with two more riders close behind.',

@@ -24,6 +24,7 @@ import { castNpc, keepNpc } from './field.js';
 import { resolveFight, npcWin, npcDefend } from './fights.js';
 import { render } from './text.js';
 import { displayRoles } from './events.js';
+import { isLoveTrain } from './final-stage.js';
 
 export const DEAD_CATEGORIES = ['hazard', 'ambush', 'blessing'];
 const D = () => RULES.dead;
@@ -49,6 +50,7 @@ export const blessTargets = (state) => readyPlayers(state).filter((p) => p.statu
 
 /** Is this racer protected by a Blessing right now? */
 export function blessed(ctx, who) {
+  if (ctx?.state && isLoveTrain(ctx.state, who)) return true; // Love Train (milestone 6b): misfortune slides off
   return who?.blessedRound != null && who.blessedRound === ctx?.state?.race?.roundNo;
 }
 

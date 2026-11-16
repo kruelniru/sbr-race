@@ -13,8 +13,10 @@
 // Valentine, everyone's Worthiness bar, who held which corpse parts) goes here
 // as the last, biggest moment.
 
-import { namedRacers } from './racers.js';
+import { namedRacers, findRacerAnywhere } from './racers.js';
 import { standings } from './placement.js';
+import { endingCard, epilogues } from './endings.js';
+import { corpseSummary } from './corpse.js';
 
 const SECTIONS = [];
 
@@ -30,8 +32,12 @@ export function buildFinale(state) {
   const ranked = [...finishers, ...namedNpcFinishers].sort((a, b) => b.points - a.points);
   const brief = (r) => ({ id: r.id, name: r.name, tier: r.tier, points: r.points, mount: r.mount ?? 'horse' });
 
+  const podium = ranked.slice(0, 3).map((r, i) => ({ rank: i + 1, ...brief(r) }));
   return {
-    podium: ranked.slice(0, 3).map((r, i) => ({ rank: i + 1, ...brief(r) })),
+    podium,
+    // Milestone 6b: the main ending (null when normal) and epilogue cards.
+    ending: endingCard(state),
+    epilogues: epilogues(state, podium),
     awards: awards(state, racers, finishers),
     survivors: finishers.map(brief).sort((a, b) => b.points - a.points),
     fieldFinished: state.field.racing,
@@ -59,6 +65,17 @@ function awards(state, racers, finishers) {
 
   const spares = most(racers, 'spares');
   if (spares) out.push({ id: 'spares', title: 'Most Merciful', winners: spares.winners.map(pick), detail: `spared ${spares.max} ${spares.max === 1 ? 'rider' : 'riders'}` });
+
+  // Milestone 6b: Corpse Holder (most parts at the end), and the President's count.
+  const sum = corpseSummary(state);
+  const topParts = sum.holders[0]?.parts.length ?? 0;
+  if (topParts > 0 || sum.president > 0) {
+    const winners = sum.holders.filter((h) => h.parts.length === topParts && topParts > 0).map((h) => findRacerAnywhere(state, h.id)).filter(Boolean);
+    out.push({
+      id: 'corpse', title: 'Corpse Holder', winners: winners.map(pick),
+      detail: `${topParts ? `${topParts} ${topParts === 1 ? 'part' : 'parts'}` : 'No racer holds a part'} · the President held ${sum.president}`,
+    });
+  }
 
   const runners = racers.filter((r) => r.mount === 'runner');
   if (runners.length) {

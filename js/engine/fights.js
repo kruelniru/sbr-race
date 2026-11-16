@@ -35,6 +35,7 @@ import { allyOf } from './alliances.js';
 import { hasHorse, takeHorse } from './horses.js';
 import { carried, takePart } from './corpse.js';
 import { blessed } from './dead.js';
+import { isLoveTrain, redirectMisfortune } from './final-stage.js';
 
 const F = () => RULES.fights;
 
@@ -198,7 +199,11 @@ export function resolveFight(ctx, spec) {
     if (choice === 'horse' && !hasHorse(y)) choice = 'spare';
     // Agents you give up to never kill: they search you and ride off.
     if (spec.defend === 'surrender' && x.tier === 'agent' && !x.immortal) choice = 'searched';
-    if (choice === 'kill') {
+    if (choice === 'kill' && isLoveTrain(ctx.state, y) && m >= F().killMargin) {
+      // Love Train: the killing blow lands on someone nearby instead.
+      outcome = 'kill-missed';
+      text += LINES.killMissed + (redirectMisfortune(ctx, y, x) ?? '');
+    } else if (choice === 'kill') {
       if (m < F().killMargin || ctx.rng.chance(F().killEscape) || !mortal(ctx, y)) {
         outcome = 'kill-missed';
         y.injured = true;

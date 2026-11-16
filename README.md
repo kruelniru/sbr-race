@@ -93,6 +93,8 @@ js/engine/           pure game logic, no DOM (Node can import it)
   agents.js          Valentine's agents' ambushes and Funny Valentine (M5b)
   valentine.js       the secret Valentine offer, its rewards and errands (M5b)
   dead.js            dead players' vote: Hazard, Ambush, Blessing (M6a)
+  final-stage.js     the boss, Love Train, Bring them down, Funny Valentine's last stand (M6b)
+  endings.js         the main ending and epilogues (M6b)
   finale-sections.js extra finale cards (Stands awakened)
   plans.js           Stage Plan lookups
   reveal.js          round result -> host cards + text-based timing (shared with the sim)
@@ -108,6 +110,7 @@ data/                game content, separate from the engine
   stages.js          the 9 stages: rounds, terrain, NPC attrition
   canon-racers.js    the 15 canon racers (each a host toggle)
   corpse.js          corpse part names, Valentine's agents, announcement lines (M5b)
+  epilogues.js       epilogue cards after the podium, canon champions (M6b)
   events/            event templates; see data/events/README.md
   horse-names.js, npc-names.js, ai-names.js, personalities.js, pronouns.js
 sim/simulate.js      headless balance simulator

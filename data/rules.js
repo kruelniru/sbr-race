@@ -283,6 +283,26 @@ export default {
     joinerWinLimit: 1.3,
   },
 
+  // ---------------------------------------------------------------- the finale (milestone 6b)
+  finale: {
+    bossMin: 3,                // parts to become the boss going into the Final Stage
+    loveTrain: 5,              // ...and Love Train
+    bossPlacement: 6,          // the boss's Final Stage placement bonus
+    corpseBonus: 50,           // the boss reaches New York holding the Corpse (3+ parts)...
+    loveTrainBonus: 100,       // ...with Love Train (5+)
+    bloodbath: 3,              // this many named racers or fewer reach New York
+    canonShare: 0.4,           // a part unclaimed at a Finish Line goes to Johnny or Gyro (if racing) this often
+    // "Bring down": team = mean fight skill + perJoiner x joiners + roll, vs the boss + bonus.
+    // Tuned (sim prints it) so a Love Train holder loses to 2 / 3 / 4 joiners ~35 / 50 / 65%.
+    bring: { perJoiner: 6.5, loveTrainBonus: 19.5, bossBonus: 4.5, maxAsked: 4 },
+    valentine: {
+      huntBonus: 0,            // Valentine against the Love Train holder (his score is funnyValentine.score)
+      riderBonus: 5,           // each joiner who rides with him
+      rematchBonus: 0,         // the other Valentine, against a group
+      killBonus: 80,           // each racer in the group that kills him
+    },
+  },
+
   // ---------------------------------------------------------------- dead players (milestone 6a)
   // Each round the dead vote Hazard / Ambush / Blessing (js/engine/dead.js).
   dead: {

@@ -12,6 +12,7 @@ import { carried } from './corpse.js';
 import { resolveFight, npcDefend } from './fights.js';
 import { keepNpc } from './field.js';
 import { isJoiner, valentineProtected } from './valentine.js';
+import { valentineBeaten } from './final-stage.js';
 
 const A = () => RULES.agents;
 
@@ -102,7 +103,10 @@ export function resolveValentine(ctx, pc) {
     open: '{y} stands {y.their} ground against Funny Valentine.', takeAll: true, noSpareCredit: true,
     reversalLine: ' {y} drives the President off!', cause: 'killed by Funny Valentine',
   });
-  if (f.outcome === 'reversal-spare') { pc.points += V.winPoints; pc.pace += V.winPace; }
+  if (f.outcome === 'reversal-spare') {
+    pc.points += V.winPoints; pc.pace += V.winPace;
+    f.text += valentineBeaten(ctx, pc); // the Final Stage: D4C swaps in another Valentine
+  }
   log(ctx, { event: 'valentine', outcome: f.outcome, tier: pc.stand?.tier, holder });
   return f;
 }
