@@ -95,10 +95,12 @@ export default {
   },
   // What a Stand does for its user, by tier. No Stand ever wins a fight or a
   // race outright: these shift odds, and randomness stays on top.
+  // Fight target (milestone 5): a Stand user beats an equal racer without one
+  // about 57% / 63% / 70% of decided fights (the sim prints it).
   standTier: {
-    common: { placement: 1, hazardDeath: 0.92, fightBonus: 2 },
-    rare: { placement: 1, hazardDeath: 0.85, fightBonus: 4 },
-    legendary: { placement: 1, hazardDeath: 0.88, fightBonus: 5 }, // fightBonus: added to fight scores (milestone 5)
+    common: { placement: 1, hazardDeath: 0.92, fightBonus: 2.5 },
+    rare: { placement: 1, hazardDeath: 0.85, fightBonus: 5 },
+    legendary: { placement: 1.5, hazardDeath: 0.88, fightBonus: 7.5 }, // fightBonus: added to fight scores (milestone 5)
   },
   standEventWeight: 1.5,     // weight multiplier on Stand events for Stand users
 
@@ -134,6 +136,10 @@ export default {
     thirdChance: 0.35,      // a third may drop
     stages: [2, 6],
   },
+
+  // A Stand tier's share of PC race wins may be at most this many times its
+  // share of PCs (sim check; survivorship alone puts every tier near 1.7x).
+  tierWinLimit: { common: 2, rare: 2, legendary: 2.5 },
 
   // ---------------------------------------------------------------- fights (milestone 5)
   // score = skill (NPCs npcSkill) + Stand fightBonus + Spin + ally + noise.

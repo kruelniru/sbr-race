@@ -23,6 +23,7 @@ import { makeAiCharacter } from '../js/engine/roster.js';
 import { startRace, runRound } from '../js/engine/race.js';
 import { needsStagePlans, openStagePlans, openSubEvents, closeChoices, starOption, answerLikeAi, useItem } from '../js/engine/choices.js';
 import { aiBuys } from '../js/engine/horses.js';
+import { fightScore } from '../js/engine/fights.js';
 import { offerTrade } from '../js/engine/trades.js';
 import PLANS from '../data/plans.js';
 import PERSONALITIES from '../data/personalities.js';
@@ -606,7 +607,8 @@ function printStands(S) {
   const pcField = Object.values(T.pcFieldTier).reduce((a, b) => a + b, 0);
   console.log('  PCs only: ' + order.filter((k) => T.pcFieldTier[k]).map((k) => {
     const r = ((T.pcWinTier[k] ?? 0) / (pcWins || 1)) / ((T.pcFieldTier[k] ?? 0) / pcField);
-    return `${k} wins ${pct(T.pcWinTier[k] ?? 0, pcWins)} of PC wins vs ${pct(T.pcFieldTier[k], pcField)} of PCs = ${r.toFixed(2)}x${k !== 'none' && r > 2 ? ' FAIL' : ''}`;
+    const limit = RULES.tierWinLimit[k];
+    return `${k} wins ${pct(T.pcWinTier[k] ?? 0, pcWins)} of PC wins vs ${pct(T.pcFieldTier[k], pcField)} of PCs = ${r.toFixed(2)}x${limit ? ` (limit ${limit}x)${r > limit ? ' FAIL' : ''}` : ''}`;
   }).join('\n            '));
 }
 
@@ -644,7 +646,9 @@ function collectM5a(S, state) {
   for (const f of state.race.fightLog ?? []) {
     bump(T.fights, f.kind);
     bump(T.fights, `${f.kind}:${f.outcome}`);
-    if (f.pvp) T.pvp++;
+    const who = ['kill', 'kill-missed', 'spare', 'horse'].includes(f.outcome) ? 'attacker' : f.outcome.startsWith('reversal') ? 'defender' : f.outcome;
+    if (f.pvp) { T.pvp++; bump((T.pvpOut ??= {}), who); }
+    bump((T.allOut ??= {}), `${f.kind}:${who}`);
     if (f.outcome.startsWith('reversal')) T.reversals++;
     // Kills vs spares for PCs who won as the attacker, or won defending.
     const side = f.outcome.startsWith('reversal') ? f.d : f.a;
@@ -675,7 +679,27 @@ function printM5a(S) {
     const outs = ['kill', 'kill-missed', 'spare', 'horse', 'escape', 'both-hurt', 'reversal-kill', 'reversal-spare'];
     console.log(`  ${kind.padEnd(9)} ${per(F[kind])}: ` + outs.map((o) => `${o} ${per(F[`${kind}:${o}`])}`).join(' · '));
   }
-  console.log(`  PC vs PC fights ${per(T.pvp)} · reversals ${per(T.reversals)}`);
+  const O = T.pvpOut ?? {};
+  const aw = O.attacker ?? 0, dw = O.defender ?? 0;
+  console.log(`  PC vs PC: ${per(T.pvp)} fights per game · attacker wins ${per(aw)}, defender wins ${per(dw)}, escaped ${per(O.escape)}, both hurt ${per(O['both-hurt'])} · attacker win rate ${Math.round((100 * aw) / (aw + dw || 1))}% of decided fights`);
+  const AO = T.allOut ?? {};
+  console.log('  attacker win rate by kind (all fights, decided): ' + ['rival', 'strike', 'attacked'].map((k) => {
+    const a = AO[`${k}:attacker`] ?? 0, d = AO[`${k}:defender`] ?? 0;
+    return `${k} ${Math.round((100 * a) / (a + d || 1))}%`;
+  }).join(' · ') + '  (attacked = an NPC attacks a PC)');
+  // How much a Stand matters in a fight: a Stand user vs an equal racer without one.
+  const rows = ['common', 'rare', 'legendary'].map((tier) => {
+    const rng = new Rng('standfight-' + tier);
+    const ctx = { state: { players: [], canon: [], field: { packLeaders: [], kept: [] } }, rng };
+    const a = { tier: 'pc', skill: 65, stand: { tier } }, b = { tier: 'pc', skill: 65 };
+    let win = 0, lose = 0, close = 0;
+    for (let i = 0; i < 20000; i++) {
+      const m = fightScore(ctx, a).score - fightScore(ctx, b).score;
+      if (Math.abs(m) < RULES.fights.close) close++; else if (m > 0) win++; else lose++;
+    }
+    return `${tier} +${RULES.standTier[tier].fightBonus}: wins ${Math.round((100 * win) / (win + lose))}% of decided fights (${Math.round((100 * close) / 20000)}% end with both hurt)`;
+  });
+  console.log('  Stand user vs an equal racer without one: ' + rows.join(' · '));
   console.log('  PCs who won a fight chose (whole sim): ' + Object.entries(T.byPers).map(([k, v]) => {
     const n = v.kill + v.spare + v.horse || 1;
     return `${k} kill ${Math.round((100 * v.kill) / n)}% / spare ${Math.round((100 * v.spare) / n)}% / horse ${Math.round((100 * v.horse) / n)}%`;
