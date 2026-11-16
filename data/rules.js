@@ -296,7 +296,7 @@ export default {
     loveTrainPlacement: 30,    // ...with Love Train (5+ parts)
     holderNoHuntPenalty: true, // "Hunt a corpse part" costs no placement once you carry 3+ parts
     corpseBonus: 50,           // the boss reaches New York holding the Corpse (3+ parts)...
-    loveTrainBonus: 250,       // ...chosen with Love Train (5+) and still holding 3+ (tuned: a Love Train holder wins about 35–40%)
+    loveTrainBonus: 225,       // ...chosen with Love Train (5+) and still holding 3+ (tuned: a Love Train holder wins about 35–40%)
     bloodbathShare: 0.22,      // the Bloodbath: fewer than this share of the PCs who started reach New York
     canonShare: 0.4,           // a part unclaimed at a Finish Line goes to Johnny or Gyro (if racing) this often
     // "Bring down": team = mean fight skill + perJoiner x joiners + roll, vs the boss + bonus.
@@ -313,6 +313,7 @@ export default {
   // ---------------------------------------------------------------- secret endings (milestone 6d)
   // Documented only in DESIGN.md → Secret endings. Never hinted at in the game.
   requiem: { minWorthiness: 80 },
+  d4c: { minPresidentParts: 3 }, // Valentine needs this many parts as Stage 9's plans close
 
   // ---------------------------------------------------------------- dead players (milestone 6a)
   // Each round the dead vote Hazard / Ambush / Blessing (js/engine/dead.js).

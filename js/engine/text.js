@@ -66,6 +66,7 @@ export function render(template, roles) {
     else return unknown(whole, `verb agreement needs "singular/plural", got "${rest}"`);
     return p.plural ? plural : singular;
   }).replace(/(^|[.!?]\s+)([a-z])/g, (m, before, ch) => before + ch.toUpperCase()) // "his camel..." at a sentence start
+    .replace(/([\uE001-\uE003])\.(?=\s|$)/g, '$1') // a name ending in "." or "!" ends the sentence too: no second period
     .replace(/[\uE001-\uE003]/g, (c) => UNSHIELD[c]);
 }
 

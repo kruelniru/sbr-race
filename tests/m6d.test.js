@@ -102,8 +102,11 @@ test('The Saint Walks Again: all 9 parts at the final Finish Line wins outright'
   const last = () => state.race.stageIdx === 8 && state.race.roundIdx === state.race.plan[8].types.length - 1;
   while (!last()) runRound(state);
   if (a.status !== 'racing') { a.status = 'racing'; a.death = null; }
-  openSubEvents(state);
+  const w = openSubEvents(state);
+  // Keep the holder out of this round's fights, and safe for it, so the test is about the ending.
+  w.prompts = w.prompts.filter((x) => x.playerId !== a.id && !Object.values(x.roles ?? {}).includes(a.id));
   closeChoices(state);
+  a.blessedRound = state.race.roundNo + 1;
   applyCheat(state, { by: 'test', target: a.id, action: 'parts-all' });
   runRound(state); // the final Finish Line
   assert.equal(state.items.filter((i) => i.kind === 'part' && i.owner === a.id).length, 9);

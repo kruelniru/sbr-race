@@ -1,7 +1,7 @@
 // Secret endings (milestone 6d, DESIGN.md → Secret endings). Pure engine code.
 // None of these is ever hinted at in the game.
 //
-//   D4C: going into the Final Stage, Funny Valentine brings one fallen racer
+//   D4C: going into the Final Stage, if Funny Valentine holds 3+ parts, he brings one fallen racer
 //        back from another world to ride for him (a dead human PC if any,
 //        then a dead AI PC, then a dead canon racer). That player controls
 //        their other-world self for the Final Stage: same personality, a
@@ -25,7 +25,7 @@ import { readyPlayers } from './state.js';
 import { namedRacers, addHint, findRacerAnywhere } from './racers.js';
 import { giveStand, pickStand, removeStand } from './stands.js';
 import { itemsOf, removeItem } from './items.js';
-import { carried } from './corpse.js';
+import { carried, presidentParts } from './corpse.js';
 
 export const isOtherWorld = (r) => !!r?.otherWorld;
 
@@ -46,7 +46,11 @@ export function d4cCandidate(state, rng, forcedId = null) {
 export function d4cReturn(state, rng, forcedId = null) {
   const race = state.race;
   if (race.d4c || race.fv?.dead) return null;
-  const r = d4cCandidate(state, rng, forcedId ?? race.d4cPick ?? null);
+  // Only when Valentine is strong going into the Final Stage (rules.d4c.minPresidentParts),
+  // unless the cheat menu forces it.
+  const forced = forcedId ?? race.d4cPick ?? null;
+  if (!forced && presidentParts(state) < RULES.d4c.minPresidentParts) return null;
+  const r = d4cCandidate(state, rng, forced);
   if (!r) return null;
   const ctx = { state, rng, stage: { id: 9 }, roundLabel: 'start' };
   r.otherWorld = { death: r.death, stage: 9 };

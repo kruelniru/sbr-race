@@ -110,3 +110,65 @@ test('a disconnected player does not hold up the window', () => {
     rh.stop();
   }
 });
+
+// ---------------------------------------------------------------- game night: the game can't get stuck
+/** Drive the host to the end like a person clicking "go on" (answering when asked). Returns steps. */
+function drive(rh, lobby, { answer = true, max = 20000, onStep = null } = {}) {
+  let steps = 0;
+  while (steps++ < max) {
+    if (lobby.state.race.over && rh.waiting && !rh.choosing) return steps;
+    onStep?.(steps);
+    if (rh.choosing) { if (answer) answerAll(rh, lobby); if (rh.choosing) rh.endWindow(); continue; }
+    if (rh.waiting) rh.nextRound(); else rh.next();
+  }
+  throw new Error(`stuck after ${steps} steps (stage ${lobby.state.race.stageIdx + 1}, round ${lobby.state.race.roundIdx})`);
+}
+
+test('a whole game with only AI racers runs to the end', () => {
+  const lobby = fakeLobby('night-ai', { humans: 0, players: 10 });
+  const rh = new RaceHost({ lobby, onChange: () => {} });
+  try { rh.start(); drive(rh, lobby); assert.ok(lobby.state.race.over); } finally { rh.stop(); }
+});
+
+test('everyone dead: the race still finishes (and the dead can vote)', () => {
+  const lobby = fakeLobby('night-dead', { humans: 4, players: 4 });
+  const rh = new RaceHost({ lobby, onChange: () => {} });
+  try {
+    rh.start();
+    drive(rh, lobby, { onStep: () => { for (const p of lobby.state.players) if (p.status !== 'dead' && lobby.state.race.stageIdx >= 2) { p.status = 'dead'; p.death = { cause: 'test', stage: 3 }; } } });
+    assert.ok(lobby.state.race.over);
+    assert.equal(lobby.state.players.filter((p) => p.status === 'dead').length, 4);
+  } finally { rh.stop(); }
+});
+
+test('nobody answers (every phone away): windows close on End now and the race finishes', () => {
+  const lobby = fakeLobby('night-away', { humans: 6, players: 8 });
+  const rh = new RaceHost({ lobby, onChange: () => {} });
+  try { rh.start(); drive(rh, lobby, { answer: false }); assert.ok(lobby.state.race.over); } finally { rh.stop(); }
+});
+
+test('a phone disconnecting mid-window, then the host reloading mid-round, and the game goes on', () => {
+  const lobby = fakeLobby('night-reload', { humans: 3, players: 8 });
+  const rh = new RaceHost({ lobby, onChange: () => {} });
+  const STOP = new Error('reload now');
+  try {
+    rh.start();
+    // Play into Stage 4 (a phone drops during a Stage 2 window), then stop mid-round.
+    drive(rh, lobby, { onStep: () => {
+      if (rh.choosing && lobby.state.race.stageIdx === 1) lobby.state.players[0].connected = false;
+      if (lobby.state.race.stageIdx === 3 && lobby.state.race.roundIdx === 1 && !rh.waiting) throw STOP;
+    } });
+  } catch (e) { if (e !== STOP) throw e; } finally { rh.stop(); }
+  assert.ok(!lobby.state.race.over && lobby.state.race.stageIdx === 3, 'mid-game when the host reloads');
+  // The host page reloads: the saved state comes back as JSON, a new RaceHost resumes.
+  const saved = JSON.parse(JSON.stringify(lobby.state));
+  const lobby2 = { ...lobby, state: saved };
+  for (const p of saved.players) if (!p.isAI) p.connected = false; // nobody is connected right after a reload
+  const rh2 = new RaceHost({ lobby: lobby2, onChange: () => {} });
+  try {
+    rh2.resume();
+    saved.players[1].connected = true; // a phone reconnects
+    drive(rh2, lobby2);
+    assert.ok(saved.race.over);
+  } finally { rh2.stop(); }
+});
