@@ -831,7 +831,7 @@ function printM5b(S) {
   console.log(`  given: ${sumTier('given')} · traded: ${sumTier('traded')} · stolen: ${sumTier('stolen')} · taken in fights: ${sumTier('fight')} · taken from a body: ${sumTier('from-body')}`);
   console.log(`  to the President: unclaimed at a Finish Line ${per(F['president:unclaimed'])} · from agents in fights ${per(F['president:fight'])} · from bodies ${per(F['president:from-body'])} · back on the trail: holder died alone ${per(F['loose:dropped'])}, rejected ${per(F['loose:rejected'])}`);
   console.log(`  end of race: President ${f1(avg(T.pres))} parts avg · the top racer holds ${f1(avg(T.maxHolder))} · PC holders ${per(T.holdersPc)} per game holding ${per(T.pcHeld)} parts`);
-  console.log(`  President holds the most (more than any one racer): ${pct(T.presMost, g)} of games · more than every racer combined (the bad ending; joiners +100): ${pct(T.presAll, g)} · a racer with 5+ parts (Love Train): ${pct(T.loveTrain, g)}`);
+  console.log(`  President holds the most (more than any one racer): ${pct(T.presMost, g)} of games · more than every racer combined (the bad ending: joiners get the bonus): ${pct(T.presAll, g)} · a racer with 5+ parts (Love Train): ${pct(T.loveTrain, g)}`);
 
   console.log('\nRejections (every merge, everyone; rule: 75+ 0%, 60+ 3%, 45+ 8%, 25+ 18%, below 25 35%)');
   table(['Worthiness band', 'merges/game', 'PC share', 'accepted', 'rejected', 'died', 'lost the part'], Object.entries(T.bands).sort((a, b) => b[0] - a[0]).map(([band, b]) => {
@@ -857,8 +857,11 @@ function printM5b(S) {
   const J = T.joiners, N = T.others;
   const share = J.n / T.pcN, winShare = J.wins / (T.pcWins || 1);
   console.log(`  joiners: reach NY ${pct(J.ny, J.n)} (others ${pct(N.ny, N.n)}) · avg points ${f1(J.points / (J.n || 1))} (others ${f1(N.points / (N.n || 1))}) · Stand from Valentine ${pct(J.stands, J.n)} · end Worthiness ${f1(J.worth / (J.n || 1))}`);
-  console.log(`  joiners win ${pct(J.wins, T.pcWins)} of PC race wins vs ${pct(J.n, T.pcN)} of PCs = ${f2(winShare / (share || 1))}x (limit 1.5x)${winShare / (share || 1) > 1.5 ? ' FAIL' : ''} · the +100 triggered in ${pct(T.triggered, g)} of games (${pct(J.bonus, J.n)} of joiners got it)`);
+  console.log(`  joiners win ${pct(J.wins, T.pcWins)} of PC race wins vs ${pct(J.n, T.pcN)} of all PCs = ${f2(winShare / (share || 1))}x (old measure) · the ending bonus triggered in ${pct(T.triggered, g)} of games (${pct(J.bonus, J.n)} of joiners got it)`);
   const R = T.refusers;
-  console.log(`  for comparison (offers only reach PCs still racing in Stage 4): joiners vs PCs racing at the start of Stage 4 = ${f2(winShare / ((J.n / (T.at4 || 1)) || 1) * (T.at4Wins / (T.pcWins || 1)))}x · PCs who refused: reach NY ${pct(R.ny, R.n)}, avg points ${f1(R.points / (R.n || 1))}, win ${pct(R.wins, T.pcWins)} of PC wins vs ${pct(R.n, T.pcN)} of PCs = ${f2((R.wins / (T.pcWins || 1)) / ((R.n / T.pcN) || 1))}x`);
+  const at4Ratio = ((J.wins / (T.at4Wins || 1)) / ((J.n / (T.at4 || 1)) || 1));
+  const lim = RULES.valentine.joinerWinLimit;
+  console.log(`  THE CHECK (offers only reach PCs still racing in Stage 4): joiners win ${pct(J.wins, T.at4Wins)} of wins by PCs racing at Stage 4 vs ${pct(J.n, T.at4)} of those PCs = ${f2(at4Ratio)}x (limit ${lim}x)${at4Ratio > lim ? ' FAIL' : ''}`);
+  console.log(`  PCs who refused: reach NY ${pct(R.ny, R.n)}, avg points ${f1(R.points / (R.n || 1))}, ${f2(((R.wins / (T.at4Wins || 1)) / ((R.n / (T.at4 || 1)) || 1)))}x on the same test`);
   console.log('  errands per game: ' + Object.entries(T.errands).map(([k, n]) => `${k} ${per(n)}`).join(' · '));
 }

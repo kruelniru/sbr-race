@@ -1,28 +1,28 @@
 STEEL BALL RUN · seed "sample" · 18 PCs, 15 canon, 500 in the field
 
 The racers:
-  Gus Ridley (PC, he, honorable, horse Rosie)
-  Clementine Finch (PC, she, opportunist, horse Sorrel)
-  Clay Carver (PC, he, ruthless, horse Sable)
-  Luther Mercer (PC, he, ruthless, horse Ironside)
+  Gus Ridley (PC, he, honorable, horse Clover)
+  Clementine Finch (PC, she, opportunist, horse Pinto)
+  Clay Carver (PC, he, ruthless, horse Rosie)
+  Luther Mercer (PC, he, ruthless, horse Slow Dancer)
   Mabel Prescott (PC, she, ruthless, horse Prairie Fire)
-  Virgil Yates (PC, he, cautious, horse Nugget)
+  Virgil Yates (PC, he, cautious, horse Buckshot)
   Marlow Mercer (PC, they, ruthless, horse Lady Luck)
   Shiloh Wilder (PC, they, glory, horse Calico)
-  Boone Wilder (PC, he, opportunist, horse Mesquite)
+  Boone Wilder (PC, he, opportunist, horse Ranger)
   Reese Carver (PC, they, ruthless, Runner)
-  Pearl Wilder (PC, she, cautious, horse Shiloh)
-  Amos Sutter (PC, he, ruthless, horse Outlaw)
+  Pearl Wilder (PC, she, cautious, horse Bandit)
+  Amos Sutter (PC, he, ruthless, horse Zephyr)
   Opal Finch (PC, she, opportunist, horse Tumbleweed)
-  Ada Thorne (PC, she, honorable, horse Comet)
+  Ada Thorne (PC, she, honorable, horse Starlight)
   Nell Ketchum (PC, she, cautious, horse Quicksilver)
   Rowan Finch (PC, they, honorable, Runner)
   Ellis Hale (PC, they, opportunist, horse Cinder)
-  Wren Prescott (PC, they, honorable, horse Buckshot)
+  Wren Prescott (PC, they, honorable, horse Ghost)
   Hot Pants (canon, she, honorable, horse Pepper)
   Johnny Joestar (canon, he, glory, horse Slow Dancer)
   Gyro Zeppeli (canon, he, honorable, horse Valkyrie)
-  Diego Brando (canon, he, opportunist, horse Starlight)
+  Diego Brando (canon, he, opportunist, horse Silver Bullet)
   Sandman (canon, he, opportunist, Runner)
   Mountain Tim (canon, he, honorable, horse Dixie)
   Pocoloco (canon, he, glory, horse Domino)
@@ -41,73 +41,79 @@ San Diego West Coast Beach → Santa Maria Novella Church
 ======================================================================
 
 --- Day 1 ---
-  Mabel Prescott catches up with Andre Boom Boom, and they fight. Andre Boom Boom fights with Tomb of the Boom 2. Mabel Prescott goes for the kill, but Andre Boom Boom gets away, badly hurt.
-  Clay Carver catches up with Pocoloco, and they fight. Pocoloco fights with Hey Ya!. Clay Carver goes for the kill, but Pocoloco gets away, badly hurt.
-✝ Reese Carver catches up with Nell Ketchum, and they fight. Nell Ketchum tries to flee, but Reese Carver runs her down. Nell Ketchum begs for her life. Reese Carver kills her anyway.
-  Clementine Finch follows a trapper's map down a shortcut and gains half a day.
-✝ Dozens of horses collide off the start line. Ellis Hale gets clear, but Lucius Oakes is trampled.
-✝ Shots ring out in the crush at the start. Tatum Quigley falls. Virgil Yates keeps his head down and rides.
-✝ Philippa Whitaker challenges Ada Thorne to a duel over a water hole. Ada Thorne draws first, and Philippa Whitaker drops into the dust.
-  Luther Mercer lashes Clara Lindqvist across the face with a riding crop to get past.
-  Opal Finch wins a mid-stage sprint and pockets the bonus.
+  Reese Carver catches up with Nell Ketchum, and they fight. Nell Ketchum turns and flees, and gets away.
+  Luther Mercer catches up with Gus Ridley, and they fight. They fight to a standstill, and both ride off hurt.
+  Clay Carver catches up with Pocoloco, and they fight. Pocoloco fights with Hey Ya!. Pocoloco turns the fight around and drives Clay Carver off.
+  Magent Magent ambushes Rowan Finch on the trail. Rowan Finch turns the fight around and drives Magent Magent off.
+  Cornelius Castellanos fires on Ada Thorne from a ridge. The bullet grazes her side.
+  Andre Boom Boom wins a mid-stage sprint and pockets the bonus.
+✝ Kofi Lockhart ambushes Hot Pants and opens a gash in her arm. Hot Pants seals it with Cream Starter, then fills Kofi Lockhart's throat with flesh spray. Kofi Lockhart doesn't get up.
+✝ Imogen Rourke challenges Clementine Finch to a duel over a water hole. Clementine Finch draws first, and Imogen Rourke drops into the dust.
+✝ Dozens of horses collide off the start line. Amos Sutter gets clear, but Henrietta Moreau is trampled.
+  Mabel Prescott cuts Benjamin Boom Boom's cinch strap at a water stop. Benjamin Boom Boom loses an hour fixing it.
+  Shiloh Wilder takes the cliff path along the coast while the pack fights over the beach.
   -- Side stories --
     Meanwhile on the trail...
-      · Shiloh Wilder finds a steady rhythm and makes good time.
-      · Rattler bogs down in the deep sand.
-      · A whole town turns out to cheer Rowan Finch through.
-      · Marlow Mercer finds a steady rhythm and makes good time.
-      · Pearl Wilder stops to splint the arm of Matteo Moreau, who was thrown from his horse.
-      · Sandman and Johnny Joestar race neck and neck for miles until Sandman edges ahead.
-      · Boone Wilder finds a shallow ford and crosses the river dry.
-      · Amos Sutter and Hot Pants race neck and neck for miles until Amos Sutter edges ahead.
-      · Dusty bogs down in the deep sand.
-      · Hester Dunmore waves for help by the trail. Mrs. Robinson rides straight past.
-  [Field] The first stretch of the race is a bloodbath. 6 racers retired and 5 died. 489 remain.
+      · A whole town turns out to cheer Wren Prescott through.
+      · Opal Finch finds a steady rhythm and makes good time.
+      · Tatum Delacroix waves for help by the trail. Marlow Mercer rides straight past.
+      · Wekapipo and Urmd Avdul ride together for an afternoon, trading stories.
+      · Pearl Wilder takes the wrong fork and has to double back.
+      · Paloma bogs down in the deep sand.
+      · Norisuke Higashikata IV takes the wrong fork and has to double back.
+      · Buckshot bogs down in the deep sand.
+      · Ellis Hale and Sandman ride together for an afternoon, trading stories.
+      · Apache Wind throws a shoe, and Oyecomova loses an hour at a roadside smithy.
+      · Hickory throws a shoe, and Boone Wilder loses an hour at a roadside smithy.
+  [Field] 7 racers retired and 5 died. 488 remain.
 
 --- Finish Line ---
-  Marlow Mercer catches up with Mabel Prescott, and they fight. Mabel Prescott turns and flees, and gets away.
-  Luther Mercer catches up with Gus Ridley, and they fight. Gus Ridley turns the fight around and drives Luther Mercer off.
-  Wren Prescott walks Dusty for an afternoon and lets the horse recover.
-  Mountain Tim takes the cliff path along the coast while the pack fights over the beach.
-  Shiloh Wilder passes Matteo Moreau, who has collapsed a mile short of the finish.
-  Andre Boom Boom strings wire across the trail. Gyro Zeppeli's horse goes down hard.
-  Amos Sutter follows a trapper's map down a shortcut and gains half a day.
-  Diego Brando lashes Lucinda Sinclair across the face with a riding crop to get past.
-  Reese Carver crowds Benjamin Boom Boom into the rail on the final turn.
+  Marlow Mercer catches up with Mabel Prescott, and they fight. Marlow Mercer beats Mabel Prescott and drives off Prairie Fire.
+  Rowan Finch takes the cliff path along the coast while the pack fights over the beach.
+  Opal Finch cuts Wekapipo's cinch strap at a water stop. Wekapipo loses an hour fixing it.
+  Mountain Tim takes the time bonus for leading the final mile.
+✝ Wren Prescott watches Temperance Barlow pick a fight with the wrong stranger and fall in the dust.
+  Mrs. Robinson is thrown hard from the saddle and can't go on. His race is over.
+  Amos Sutter draws on Ada Thorne and misses. Ada Thorne has him dead to rights, then lowers the gun.
+  Boone Wilder falls in with Tatum Delacroix, and the two agree to ride together for a while.
+  Ellis Hale crowds Pocoloco into the rail on the final turn.
+  Benjamin Boom Boom's foot catches in the stirrup and he is dragged until Pearl Wilder cuts the strap.
+  Hot Pants seals the gunshot wound of Cornelius Castellanos with a spray of Cream Starter and rides on.
   -- Side stories --
     Meanwhile on the trail...
-      · Boone Wilder is so saddle-sore he can barely sit.
-      · L.A. Boom Boom spurs Paloma into a final gallop toward the line.
-      · Opal Finch finds a steady rhythm and makes good time.
-      · Norisuke Higashikata IV fades badly in the final miles.
-      · Rowan Finch finds a steady rhythm and makes good time.
-      · Ada Thorne spurs Flint into a final gallop toward the line.
-      · Clover throws a shoe, and Clementine Finch loses an hour at a roadside smithy.
-      · Virgil Yates and Oyecomova cross the line almost together, both claiming the better time.
-      · Barnabas Everhart waves for help by the trail. Ellis Hale rides straight past.
-      · Pearl Wilder fades badly in the final miles.
+      · Shiloh Wilder is so saddle-sore they can barely sit.
+      · Reese Carver takes the wrong fork and has to double back.
+      · Gus Ridley is so saddle-sore he can barely sit.
+      · Luther Mercer spurs Yankee into a final gallop toward the line.
+      · Norisuke Higashikata IV takes the wrong fork and has to double back.
       · Sable throws a shoe, and Clay Carver loses an hour at a roadside smithy.
-  [Field] Riderless horses wander the beach. 9 racers retired and 4 died. 476 remain.
-  [The Fallen] Nell Ketchum (killed by a rival, by Reese Carver) And 9 from the field.
+      · Andre Boom Boom finds a steady rhythm and makes good time.
+      · Quicksilver bogs down in the deep sand.
+      · Gyro Zeppeli hums a made-up song about cheese to pass the miles.
+      · Johnny Joestar spurs Slow Dancer into a final gallop toward the line.
+      · Clementine Finch finds a steady rhythm and makes good time.
+      · Buckshot bogs down in the deep sand.
+  [Field] Riderless horses wander the beach. 8 racers retired and 5 died. 475 remain.
+  [The Fallen] No named racers. And 10 from the field.
 
   STAGE 1 RESULTS
-     1. Opal Finch  +100
-     2. Reese Carver  +90
-     3. Bartholomew Goodnight [pack]  +80
-     4. Amos Sutter  +70
-     5. Ada Thorne  +60
-     6. Hot Pants  +50
-     7. Clementine Finch  +40
-     8. Shiloh Wilder  +30
-     9. Leopold Lindqvist [pack]  +20
-    10. Mabel Prescott  +10
+     1. Clementine Finch  +100
+     2. Urmd Avdul  +90
+     3. Wren Prescott  +80
+     4. Diego Brando  +70
+     5. Rowan Finch  +60
+     6. Shiloh Wilder  +50
+     7. Pocoloco  +40
+     8. Gyro Zeppeli  +30
+     9. Matilda Grimsby [pack]  +20
+    10. Pearl Wilder  +10
   STANDINGS
-    Opal Finch  110
-    Reese Carver  85
-    Bartholomew Goodnight  80
-    Amos Sutter  75
-    Ada Thorne  60
-    Hot Pants  50
+    Clementine Finch  100
+    Urmd Avdul  90
+    Wren Prescott  80
+    Diego Brando  70
+    Rowan Finch  60
+    Shiloh Wilder  50
 
 ======================================================================
 STAGE 2: ACROSS THE ARIZONA DESERT
@@ -115,124 +121,127 @@ Santa Maria Novella Church → Monument Valley
 ======================================================================
 
 --- Day 1 ---
-  Rowan Finch and Pearl Wilder agree to ride together.
-  Marlow Mercer catches up with Andre Boom Boom, and they fight. Andre Boom Boom fights with Tomb of the Boom 2. They fight to a standstill, and both ride off hurt.
-✝ Hester Dunmore challenges Mabel Prescott to a duel over a water hole. Mabel Prescott draws first, and Hester Dunmore drops into the dust.
-  Ada Thorne shares her last canteen with Shiloh Wilder, who was about to collapse.
-  Reese Carver runs until their legs give out and has to rest for hours.
+  Wren Prescott and Pearl Wilder agree to ride together.
+  Reese Carver catches up with Diego Brando, and they fight. Diego Brando turns the fight around and drives Reese Carver off.
+  Ada Thorne shares her last canteen with Ellis Hale, who was about to collapse.
+  Shiloh Wilder wins a mid-stage sprint and pockets the bonus.
+✝ Benjamin Boom Boom finds Josephine Sinclair dead of thirst beside her horse.
+✝ Oyecomova plants a bomb under a bridge. Henrietta Dunmore rides over it.
   -- Side stories --
     Meanwhile on the trail...
-      · Pocoloco uses Hey Ya! To lift an overturned wagon off the leg of Cornelius Blackwell.
-      · Clementine Finch stops to splint the arm of Dmitri McAllister, who was thrown from his horse.
-      · Ellis Hale stops to splint the arm of Seraphina Zamora, who was thrown from her horse.
-      · Norisuke Higashikata IV and Benjamin Boom Boom ride together for an afternoon, trading stories.
-      · Oyecomova finds a shallow ford and crosses the river dry.
-      · Wekapipo finds a steady rhythm and makes good time.
-      · Virgil Yates and Sandman ride together for an afternoon, trading stories.
-      · Amos Sutter is so saddle-sore he can barely sit.
-      · A whole town turns out to cheer Clay Carver through.
-      · Luther Mercer and Mountain Tim race neck and neck for miles until Luther Mercer edges ahead.
-      · Gyro Zeppeli finds a steady rhythm and makes good time.
-      · Gus Ridley and Diego Brando race neck and neck for miles until Gus Ridley edges ahead.
-      · L.A. Boom Boom waits out a sandstorm under his blanket.
-      · Marguerite Lindqvist waves for help by the trail. Boone Wilder rides straight past.
-      · Wren Prescott chases a mirage for an hour before they realize the lake isn't real.
-      · Opal Finch waits out a sandstorm under her blanket.
-  [Field] Vultures follow the field. 3 racers retired and 7 died. 466 remain.
+      · Virgil Yates finds a steady rhythm and makes good time.
+      · A whole town turns out to cheer Clementine Finch through.
+      · Hot Pants waits out a sandstorm under her blanket.
+      · Mabel Prescott takes the wrong fork and has to double back.
+      · Marlow Mercer hears whispers about the Devil's Palm and gives the dunes a wide berth.
+      · Nell Ketchum finds a steady rhythm and makes good time.
+      · Hickory throws a shoe, and Boone Wilder loses an hour at a roadside smithy.
+      · Luther Mercer finds a shallow ford and crosses the river dry.
+      · Clay Carver waits out a sandstorm under his blanket.
+      · Opal Finch and L.A. Boom Boom race neck and neck for miles until Opal Finch edges ahead.
+      · Gyro Zeppeli and Gus Ridley ride together for an afternoon, trading stories.
+      · Amos Sutter finds a shallow ford and crosses the river dry.
+      · Rowan Finch chases a mirage for an hour before they realize the lake isn't real.
+  [Field] 3 racers retired and 7 died. 465 remain.
 
 --- Night 1 ---
-  Clay Carver catches up with Bartholomew Goodnight, and they fight. Clay Carver beats Bartholomew Goodnight and lets him go.
-  Opal Finch shares her last canteen with Gus Ridley, who was about to collapse.
-✝ Shiloh Wilder finds Ines Nightingale dead of thirst beside her horse.
-  Ellis Hale steals Oyecomova's water while he sleeps and leaves him to the desert.
-  Adelaide Rourke tries to rob Ada Thorne at gunpoint. Ada Thorne knocks the gun away and lets her walk.
-  Cornelius Blackwell fires on Rowan Finch from a ridge. The bullet grazes their side.
+  Marlow Mercer catches up with Urmd Avdul, and they fight. They fight to a standstill, and both ride off hurt.
+  Blackmore ambushes Wren Prescott on the trail. Blackmore beats Wren Prescott and goes through their things.
+  Amos Sutter catches up with L.A. Boom Boom, and they fight. L.A. Boom Boom fights with Tomb of the Boom 3. Amos Sutter goes for the kill, but L.A. Boom Boom gets away, badly hurt.
+✝ Cornelius Castellanos creeps up to Reese Carver's camp to steal their water. Reese Carver wakes and shoots him dead.
+✝ Mabel Prescott slips into Diego Brando's camp while he sleeps and makes sure he never wakes.
+  Kit Everhart fires on Ellis Hale from a ridge. The bullet grazes their side.
+✝ Wolves circle Nell Ketchum's campfire all night. Nell Ketchum survives, but Matilda Grimsby, camped nearby, does not.
+  Ada Thorne follows a trapper's map down a shortcut and gains half a day.
+  Boone Wilder keeps watch so Oyecomova can sleep. Nobody bothers them.
   -- Side stories --
     Meanwhile on the trail...
-      · Benjamin Boom Boom stops to splint the arm of Philippa Dunmore, who was thrown from her horse.
-      · Wekapipo takes the wrong fork and has to double back.
-      · Amos Sutter finds a hidden spring and lets Shiloh drink his fill.
-      · Marlow Mercer waits out a sandstorm under their blanket.
-      · Luther Mercer sleeps under the stars.
-      · Josephine Ingram waves for help by the trail. Reese Carver rides straight past.
-      · Wren Prescott sleeps under the stars.
-      · Mabel Prescott and Diego Brando share a campfire and agree not to shoot each other tonight.
-      · Boone Wilder rides through the night while the others sleep.
-      · Virgil Yates takes the wrong fork and has to double back.
-      · Clementine Finch waits out a sandstorm under her blanket.
-      · Paloma throws a shoe, and L.A. Boom Boom loses an hour at a roadside smithy.
-      · Pearl Wilder finds a steady rhythm and makes good time.
-  [Field] 3 racers retired and 9 died. 454 remain.
-  [The Fallen] No named racers. And 16 from the field.
+      · Bandit throws a shoe, and Pearl Wilder loses an hour at a roadside smithy.
+      · Gus Ridley sleeps under the stars.
+      · Clay Carver finds a hidden spring and lets Sable drink his fill.
+      · Luther Mercer hears whispers about the Devil's Palm and gives the dunes a wide berth.
+      · Opal Finch finds a steady rhythm and makes good time.
+      · Virgil Yates finds a steady rhythm and makes good time.
+      · Gyro Zeppeli waits out a sandstorm under his blanket.
+      · Rowan Finch waits out a sandstorm under their blanket.
+      · Calico throws a shoe, and Shiloh Wilder loses an hour at a roadside smithy.
+      · Clementine Finch hears whispers about the Devil's Palm and gives the dunes a wide berth.
+      · Mountain Tim and Sandman share a campfire and agree not to shoot each other tonight.
+      · Andre Boom Boom sleeps under the stars.
+  [Field] 3 racers retired and 11 died. 451 remain.
+  [The Fallen] Diego Brando (murdered in camp, by Mabel Prescott) And 18 from the field.
 
 --- Day 2 ---
-✝ Shiloh Wilder walks into the Devil's Palm and never comes out.
-✝ Opal Finch walks into the Devil's Palm and never comes out.
-  Clementine Finch turns back at the edge of the Devil's Palm.
-  Mabel Prescott catches up with Wekapipo, and they fight. Wekapipo throws his Steel Balls. Wekapipo turns the fight around and drives Mabel Prescott off.
-  Amos Sutter catches up with Bartholomew Goodnight, and they fight. Bartholomew Goodnight turns and flees, and gets away.
-  Reese Carver catches up with Diego Brando, and they fight. Reese Carver beats Diego Brando and drives off Silver Bullet.
-  Pocoloco's foot catches in the stirrup and he is dragged until Rowan Finch cuts the strap.
-  Ellis Hale wins a mid-stage sprint and pockets the bonus.
-  Marlow Mercer draws on Boone Wilder and misses. Boone Wilder has them dead to rights, then lowers the gun.
-✝ Urmd Avdul finds Dakota Blackwell dead of thirst beside their horse.
-  Ada Thorne follows a trapper's map down a shortcut and gains half a day.
-  Marguerite Everhart draws on Gyro Zeppeli. A spinning steel ball knocks the gun away, and Gyro Zeppeli lets her go.
+  One of the Eleven Men ambushes Ellis Hale on the trail. They fight to a standstill, and both ride off hurt.
+  Clay Carver catches up with Andre Boom Boom, and they fight. Andre Boom Boom tries to flee, but Clay Carver runs him down. Andre Boom Boom fights with Tomb of the Boom 2. Clay Carver beats Andre Boom Boom and rides off with Juniper.
+✝ Marlow Mercer finds Leopold Jessup dead of thirst beside his horse.
+  Amos Sutter cuts Gus Ridley's cinch strap at a water stop. Gus Ridley loses an hour fixing it.
+  Norisuke Higashikata IV's foot catches in the stirrup and he is dragged until Urmd Avdul cuts the strap.
+  Boone Wilder shares his last canteen with Shiloh Wilder, who was about to collapse.
+✝ Mabel Prescott catches Nell Ketchum alone on the trail and kills her for her supplies.
   -- Side stories --
     Meanwhile on the trail...
-      · Hot Pants's Cream Starter bristles as Benjamin Boom Boom rides past. Neither of them stops.
       · Wren Prescott waits out a sandstorm under their blanket.
-      · A whole town turns out to cheer Oyecomova through.
-      · A whole town turns out to cheer Pearl Wilder through.
-      · Virgil Yates waits out a sandstorm under his blanket.
-      · Clay Carver is so saddle-sore he can barely sit.
-      · Luther Mercer takes the wrong fork and has to double back.
-      · Gus Ridley takes the wrong fork and has to double back.
-  [Field] Vultures follow the field. 4 racers retired and 10 died. 440 remain.
+      · Clementine Finch hears whispers about the Devil's Palm and gives the dunes a wide berth.
+      · Oyecomova's Boku no Rhythm wo Kiitekure bristles as Hot Pants rides past. Neither of them stops.
+      · Blaze throws a shoe, and Wekapipo loses an hour at a roadside smithy.
+      · Reese Carver and Luther Mercer ride together for an afternoon, trading stories.
+      · Rowan Finch and Mountain Tim ride together for an afternoon, trading stories.
+      · Opal Finch finds a steady rhythm and makes good time.
+      · Ada Thorne chases a mirage for an hour before she realizes the lake isn't real.
+      · A whole town turns out to cheer Johnny Joestar through.
+      · Buckshot throws a shoe, and Virgil Yates loses an hour at a roadside smithy.
+      · Pocoloco waits out a sandstorm under his blanket.
+      · Pearl Wilder finds a steady rhythm and makes good time.
+  [Field] The desert keeps what it takes. 3 racers retired and 8 died. 440 remain.
 
 --- Finish Line ---
-✝ Ellis Hale catches up with Mabel Prescott, and they fight. Mabel Prescott turns the fight around and kills Ellis Hale.
-  Clementine Finch waits out the sandstorm behind the rocks.
-  Augustus Barlow tries to rob Urmd Avdul at gunpoint. Urmd Avdul knocks the gun away and lets him walk.
-  Reese Carver lands badly on loose rock and tears a muscle in their leg.
-  A bullet meant for Pocoloco hits his hat instead. Pocoloco laughs and rides on.
-  Prudence Goodnight fires on Amos Sutter from a ridge. The bullet grazes his side.
-  Sandman leaps a canyon gap that no horse could cross and gains half a day.
+  Mabel Prescott catches up with Pocoloco, and they fight. Pocoloco tries to flee, but Mabel Prescott runs him down. Pocoloco fights with Hey Ya!. Mabel Prescott goes for the kill, but Pocoloco gets away, badly hurt.
+✝ The Pork Pie Hat Kid ambushes Marlow Mercer on the trail. Marlow Mercer turns the fight around and kills the Pork Pie Hat Kid.
+  Shiloh Wilder turns back at the edge of the Devil's Palm.
+  Rowan Finch turns back at the edge of the Devil's Palm.
+  L.A. Boom Boom watches Ottoline Thibodeaux walk into a Devil's Palm. At dawn she walks back out, silent.
+  Hot Pants reshapes her face with Cream Starter and slips past a knot of rivals unnoticed.
+  Johnny Joestar's foot catches in the stirrup and he is dragged until Clementine Finch cuts the strap.
+  Reese Carver takes the time bonus for leading the final mile.
+  Pearl Wilder follows a trapper's map down a shortcut and gains half a day.
+✝ Ellis Hale finds Seraphina Goodnight dead of thirst beside her horse.
   -- Side stories --
     Meanwhile on the trail...
-      · Rowan Finch settles into a long-distance stride.
-      · Clay Carver fades badly in the final miles.
-      · Dmitri McAllister waves for help by the trail. Wren Prescott rides straight past.
-      · Gus Ridley stops to splint the arm of Marguerite Everhart, who was thrown from her horse.
-      · Pearl Wilder spurs Bandit into a final gallop toward the line.
-      · Mrs. Robinson finds a hidden spring and lets El Condor Pasa drink his fill.
-      · Ada Thorne finds a steady rhythm and makes good time.
-      · Virgil Yates fades badly in the final miles.
-      · Boone Wilder and Wekapipo cross the line almost together, both claiming the better time.
-      · Luther Mercer finds a steady rhythm and makes good time.
-      · Marlow Mercer spurs Lady Luck into a final gallop toward the line.
-      · Dixie throws a shoe, and Mountain Tim loses an hour at a roadside smithy.
-  [Field] 7 racers died. No one else gave up. 433 remain.
-  [The Fallen] Shiloh Wilder (swallowed by the Devil's Palm); Opal Finch (swallowed by the Devil's Palm); Ellis Hale (killed by a rival, by Mabel Prescott) And 17 from the field.
+      · Opal Finch spurs Tumbleweed into a final gallop toward the line.
+      · Ada Thorne fades badly in the final miles.
+      · Andre Boom Boom waits out a sandstorm under his blanket.
+      · Amos Sutter is so saddle-sore he can barely sit.
+      · Virgil Yates finds a steady rhythm and makes good time.
+      · Wekapipo is so saddle-sore he can barely sit.
+      · Temperance Delacroix waves for help by the trail. Urmd Avdul rides straight past.
+      · Norisuke Higashikata IV spurs Maverick into a final gallop toward the line.
+      · Clay Carver takes the wrong fork and has to double back.
+      · Luther Mercer and Mountain Tim cross the line almost together, both claiming the better time.
+      · Gus Ridley takes the wrong fork and has to double back.
+      · Wren Prescott stops to splint the arm of Imogen Pemberton, who was thrown from her horse.
+      · Hickory throws a shoe, and Boone Wilder loses an hour at a roadside smithy.
+  [Field] Vultures follow the field. 1 racer retired and 11 died. 428 remain.
+  [The Fallen] Nell Ketchum (killed for supplies, by Mabel Prescott) And 19 from the field.
 
   STAGE 2 RESULTS
-     1. Ada Thorne  +100
-     2. Gyro Zeppeli  +90
-     3. Hot Pants  +80
-     4. Clay Carver  +70
-     5. Mortimer Prentiss [pack]  +60
-     6. Boone Wilder  +50
-     7. Gus Ridley  +40
-     8. Sandman  +30
-     9. Luther Mercer  +20
-    10. Leopold Lindqvist [pack]  +10
+     1. Luther Mercer  +100
+     2. Opal Finch  +90
+     3. Virgil Yates  +80
+     4. Ada Thorne  +70
+     5. Pearl Wilder  +60
+     6. Shiloh Wilder  +50
+     7. Amos Sutter  +40
+     8. Wren Prescott  +30
+     9. Clementine Finch  +20
+    10. Hot Pants  +10
   STANDINGS
-    Ada Thorne  170
-    Hot Pants  130
-    Opal Finch (dead)  115
-    Reese Carver  90
-    Gyro Zeppeli  90
-    Clay Carver  80
+    Clementine Finch  130
+    Wren Prescott  115
+    Shiloh Wilder  110
+    Luther Mercer  105
+    Urmd Avdul  100
+    Pearl Wilder  85
 
 ======================================================================
 STAGE 3: ROCKY MOUNTAIN BREAKDOWN
@@ -240,119 +249,120 @@ Monument Valley → Cañon City
 ======================================================================
 
 --- Day 1 ---
-  Mabel Prescott catches up with Mortimer Prentiss, and they fight. Mabel Prescott beats Mortimer Prentiss and lets him go.
-✝ Ada Thorne watches Bellamy Hartley pick a fight with the wrong stranger and fall in the dust.
-  Lane Blackwell fires on Clay Carver from a ridge. The bullet grazes his side.
-  Johnny Joestar pays a mountain man to guide him over the pass.
-  Luther Mercer cuts Amos Sutter's cinch strap at a water stop. Amos Sutter loses an hour fixing it.
-  Andre Boom Boom's foot catches in the stirrup and he is dragged until Pearl Wilder cuts the strap.
+✝ One of the Eleven Men ambushes Luther Mercer on the trail. Luther Mercer turns the fight around and kills one of the Eleven Men.
+  Marlow Mercer walks into the Devil's Palm and walks back out at dusk, silent.
+  Reese Carver catches up with Rowan Finch, and they fight. Reese Carver goes for the kill, but Rowan Finch gets away, badly hurt.
+✝ Shiloh Wilder walks into the Devil's Palm and never comes out.
+✝ Mabel Prescott catches up with Clementine Finch, and they fight. Clementine Finch turns the fight around and kills Mabel Prescott.
+  Amos Sutter loses feeling in his fingers and has to stop to thaw them.
+✝ Clay Carver watches Dakota Delacroix walk into a Devil's Palm. They never come out.
+  Benjamin Boom Boom wins a mid-stage sprint and pockets the bonus.
+  Boone Wilder draws on Gyro Zeppeli and misses. Gyro Zeppeli has him dead to rights, then lowers the gun.
+✝ Ottoline Thibodeaux challenges Pearl Wilder to a duel over a water hole. Pearl Wilder draws first, and Ottoline Thibodeaux drops into the dust.
   -- Side stories --
     Meanwhile on the trail...
-      · Rowan Finch's feet are raw and bleeding.
-      · Boone Wilder is so saddle-sore he can barely sit.
-      · A whole town turns out to cheer Clementine Finch through.
-      · Lady Luck throws a shoe, and Marlow Mercer loses an hour at a roadside smithy.
-      · A whole town turns out to cheer Reese Carver through.
-      · L.A. Boom Boom shows off Tomb of the Boom 3 to a crowd at the checkpoint. Nobody else can see it, so they just think he is strange.
-      · Wren Prescott finds a steady rhythm and makes good time.
-      · Blaze throws a shoe, and Wekapipo loses an hour at a roadside smithy.
-      · Obadiah Yardley waves for help by the trail. Mrs. Robinson rides straight past.
-      · Virgil Yates finds a shallow ford and crosses the river dry.
-      · Gus Ridley finds a steady rhythm and makes good time.
-      · Oyecomova finds a shallow ford and crosses the river dry.
-  [Field] 2 racers retired and 9 died. 422 remain.
+      · Norisuke Higashikata IV stops to splint the arm of Obadiah Delacroix, who was thrown from his horse.
+      · Gus Ridley is so saddle-sore he can barely sit.
+      · A whole town turns out to cheer Johnny Joestar through.
+      · L.A. Boom Boom uses Tomb of the Boom 3 to lift an overturned wagon off the leg of Yusuf Thibodeaux.
+      · Wren Prescott and Sandman ride together for an afternoon, trading stories.
+      · Ellis Hale finds a steady rhythm and makes good time.
+      · Opal Finch takes the wrong fork and has to double back.
+      · Apache Wind throws a shoe, and Oyecomova loses an hour at a roadside smithy.
+      · Virgil Yates stops to splint the arm of Kit Everhart, who was thrown from their horse.
+      · Ada Thorne and Pocoloco ride together for an afternoon, trading stories.
+  [Field] 5 racers retired and 12 died. 411 remain.
 
 --- Night 1 ---
-  Clay Carver catches up with Virgil Yates, and they fight. Virgil Yates turns and flees, and gets away.
-  Marlow Mercer slips on the goat path and twists their knee.
-  Boone Wilder walks into the Devil's Palm and walks back out at dusk, silent.
+  Amos Sutter's rival is gone.
   Johnny Joestar's fingernails start to spin.
-  Cornelius Coburn tries to rob Luther Mercer at gunpoint. Luther Mercer knocks the gun away and lets him walk.
-  Ada Thorne loses feeling in her fingers and has to stop to thaw them.
-  Clementine Finch catches Rosalind Pemberton going through her saddlebags and sends her off with a warning.
-✝ Urmd Avdul watches Ignatius Sinclair walk into a Devil's Palm. He never comes out.
-  Norisuke Higashikata IV keeps watch so L.A. Boom Boom can sleep. Nobody bothers them.
-  Mountain Tim lassoes Mrs. Robinson out of a flash flood.
-  Adelaide Rourke robs Reese Carver's camp in the night, taking food and water.
+  Wren Prescott catches Adelaide Crane going through their saddlebags and sends her off with a warning.
+  Hot Pants takes a fall on the rocks, sprays the wound closed, and doesn't slow down.
+✝ Jordan Pemberton creeps up to Virgil Yates's camp to steal his water. Virgil Yates wakes and shoots them dead.
+  Thaddeus Voss robs Gus Ridley's camp in the night, taking food and water.
+  Rowan Finch leaps a canyon gap that no horse could cross and gains half a day.
+  Clementine Finch keeps watch so Gyro Zeppeli can sleep. Nobody bothers them.
+  Amos Sutter follows a trapper's map down a shortcut and gains half a day.
+  Ignatius Voss fires on Clay Carver from a ridge. The bullet grazes his side.
+  Someone has been deemed worthy of the Saint.
   -- Side stories --
     Meanwhile on the trail...
-      · Mortimer Pemberton waves for help by the trail. Amos Sutter rides straight past.
-      · Wekapipo finds a steady rhythm and makes good time.
-      · Wren Prescott finds a steady rhythm and makes good time.
-      · Diego Brando reads the terrain like a jockey reads a track and finds the fastest line.
-      · Hot Pants shivers through a freezing night in the pass.
-      · Andre Boom Boom's Tomb of the Boom 2 bristles as Sandman rides past. Neither of them stops.
-      · Gus Ridley shivers through a freezing night in the pass.
-      · Benjamin Boom Boom is so saddle-sore he can barely sit.
-      · Mabel Prescott takes the wrong fork and has to double back.
-      · Rowan Finch's feet are raw and bleeding.
+      · Ada Thorne finds a steady rhythm and makes good time.
       · Bandit throws a shoe, and Pearl Wilder loses an hour at a roadside smithy.
-  [Field] Snow covers the passes. 3 racers retired and 16 died. 403 remain.
-  [The Fallen] No named racers. And 25 from the field.
+      · Pocoloco and L.A. Boom Boom share a campfire and agree not to shoot each other tonight.
+      · Opal Finch takes the wrong fork and has to double back.
+      · Marlow Mercer finds a steady rhythm and makes good time.
+      · Boone Wilder sleeps under the stars.
+      · Andre Boom Boom's Tomb of the Boom 2 bristles as Benjamin Boom Boom rides past. Neither of them stops.
+      · Luther Mercer shivers through a freezing night in the pass.
+      · Mrs. Robinson sleeps under the stars.
+      · Reese Carver settles into a long-distance stride.
+      · Ellis Hale takes the wrong fork and has to double back.
+  [Field] 1 racer retired and 13 died. 397 remain.
+  [The Fallen] Shiloh Wilder (swallowed by the Devil's Palm); Mabel Prescott (killed by a rival, by Clementine Finch) And 25 from the field.
 
 --- Day 2 ---
-  Clementine Finch attacks Mabel Prescott on the trail. They fight to a standstill, and both ride off hurt.
-  Diego Brando wakes from a fever with a taste for raw meat.
-  Reese Carver lands badly on loose rock and tears a muscle in their leg.
-  Gus Ridley pays a mountain man to guide him over the pass.
-  Pearl Wilder shares the last of her food with Rowan Finch, who rides with her.
-  Hot Pants finds Seraphina Grimsby bleeding out on the trail and seals the wound with Cream Starter.
-  Boone Wilder shows off Echoes Act 1 to a crowd at the checkpoint. Nobody else can see it, so they just think he is strange.
-✝ Wren Prescott watches Marguerite Thibodeaux walk into a Devil's Palm. She never comes out.
-  Johnny Joestar grips the reins with his legs useless beneath him and refuses to fall behind.
-  Marlow Mercer loses feeling in their fingers and has to stop to thaw them.
-  Virgil Yates falls in with Dmitri Castellanos, and the two agree to ride together for a while.
+  Luther Mercer catches up with L.A. Boom Boom, and they fight. L.A. Boom Boom fights with Tomb of the Boom 3. They fight to a standstill, and both ride off hurt.
+  Ada Thorne stops to splint the leg of Seraphina Coburn and gets her onto the road to town.
+  Elias Fairweather tries to rob Marlow Mercer at gunpoint. Marlow Mercer knocks the gun away and lets him walk.
+  Pearl Wilder follows a trapper's map down a shortcut and gains half a day.
+  Reese Carver runs until their legs give out and has to rest for hours.
+  Clementine Finch cuts Virgil Yates's cinch strap at a water stop. Virgil Yates loses an hour fixing it.
+✝ Adelaide Crane challenges Clay Carver to a duel over a water hole. Clay Carver draws first, and Adelaide Crane drops into the dust.
+  Lars McAllister fires on Opal Finch from a ridge. The bullet grazes her side.
   -- Side stories --
     Meanwhile on the trail...
-      · Luther Mercer stops to splint the arm of Imogen Kincaid, who was thrown from her horse.
-      · Mountain Tim uses Oh! Lonesome Me to lift an overturned wagon off the leg of Leopold Lindqvist.
-      · Amos Sutter and Norisuke Higashikata IV race neck and neck for miles until Amos Sutter edges ahead.
-      · Oyecomova's Boku no Rhythm wo Kiitekure bristles as L.A. Boom Boom rides past. Neither of them stops.
-      · Andre Boom Boom's Tomb of the Boom 2 smashes a path through a rockslide, and he rides on while the others dig.
-      · Clay Carver finds a steady rhythm and makes good time.
-      · Ada Thorne finds a steady rhythm and makes good time.
-  [Field] 5 racers retired and 9 died. 389 remain.
+      · Boone Wilder finds a steady rhythm and makes good time.
+      · Johnny Joestar finds a steady rhythm and makes good time.
+      · Rowan Finch finds a shallow ford and crosses the river dry.
+      · Amos Sutter and Sandman race neck and neck for miles until Amos Sutter edges ahead.
+      · Wekapipo stops to splint the arm of Ines Barlow, who was thrown from her horse.
+      · A whole town turns out to cheer Gus Ridley through.
+      · Wren Prescott finds a shallow ford and crosses the river dry.
+      · Temperance Delacroix waves for help by the trail. Hot Pants rides straight past.
+      · Ellis Hale and Benjamin Boom Boom race neck and neck for miles until Ellis Hale edges ahead.
+  [Field] 3 racers retired and 10 died. 384 remain.
 
 --- Finish Line ---
-  Reese Carver catches up with Mortimer Prentiss, and they fight. Reese Carver beats Mortimer Prentiss and lets him go.
-  Amos Sutter catches up with Benjamin Boom Boom, and they fight. Benjamin Boom Boom fights with Tomb of the Boom 1. Amos Sutter goes for the kill, but Benjamin Boom Boom gets away, badly hurt.
-  Luther Mercer catches up with Ada Thorne, and they fight. Ada Thorne tries to flee, but Luther Mercer runs her down. Luther Mercer goes for the kill, but Ada Thorne gets away, badly hurt.
-  Josephine Ingram draws on Gyro Zeppeli. A spinning steel ball knocks the gun away, and Gyro Zeppeli lets her go.
-  Marlow Mercer cuts Boone Wilder's cinch strap at a water stop. Boone Wilder loses an hour fixing it.
-  Jebediah Hawthorne tries to rob Gus Ridley at gunpoint. Gus Ridley knocks the gun away and lets him walk.
-  Hot Pants sprays Cream Starter over Mabel Prescott's wounds, and the flesh knits shut. Mabel Prescott can ride again.
-  Mortimer Prentiss fires on Pearl Wilder from a ridge. The bullet grazes her side.
-  Oyecomova draws on Wren Prescott and misses. Wren Prescott has him dead to rights, then lowers the gun.
+  Clay Carver catches up with Urmd Avdul, and they fight. Urmd Avdul turns and flees, and gets away.
+  Rowan Finch leaps a canyon gap that no horse could cross and gains half a day.
+  L.A. Boom Boom gathers iron sand with Tomb of the Boom 3 and binds the legs of Wekapipo for an hour.
+  Thaddeus Voss fires on Reese Carver from a ridge. The bullet grazes their side.
+  Pocoloco's foot catches in the stirrup and he is dragged until Gus Ridley cuts the strap.
   -- Side stories --
     Meanwhile on the trail...
-      · Virgil Yates stops to splint the arm of Silas Prentiss, who was thrown from his horse.
-      · Rowan Finch and Mrs. Robinson cross the line almost together, both claiming the better time.
-      · Clementine Finch takes the wrong fork and has to double back.
-      · Pocoloco is so saddle-sore he can barely sit.
-      · Sable throws a shoe, and Clay Carver loses an hour at a roadside smithy.
-      · Johnny Joestar and Diego Brando cross the line almost together, both claiming the better time.
-      · Bandits jump Mountain Tim at a water hole. Oh! Lonesome Me sends them running before a shot is fired.
-  [Field] 1 racer retired and 5 died. 383 remain.
-  [The Fallen] No named racers. And 14 from the field.
+      · Pearl Wilder fades badly in the final miles.
+      · Ada Thorne spurs Flint into a final gallop toward the line.
+      · Amos Sutter takes the wrong fork and has to double back.
+      · Ellis Hale spurs Cinder into a final gallop toward the line.
+      · Marlow Mercer takes the wrong fork and has to double back.
+      · Boone Wilder finds a steady rhythm and makes good time.
+      · Virgil Yates and Hot Pants cross the line almost together, both claiming the better time.
+      · Wren Prescott finds a steady rhythm and makes good time.
+      · Luther Mercer fades badly in the final miles.
+      · Matteo Jessup waves for help by the trail. Clementine Finch rides straight past.
+      · Opal Finch and Mountain Tim cross the line almost together, both claiming the better time.
+  [Field] 1 racer retired and 9 died. 374 remain.
+  [The Fallen] No named racers. And 19 from the field.
 
   STAGE 3 RESULTS
-     1. Johnny Joestar  +100
-     2. Wren Prescott  +90
-     3. Mountain Tim  +80
-     4. Gus Ridley  +70
-     5. Hot Pants  +60
-     6. Leopold Lindqvist [pack]  +50
-     7. Urmd Avdul  +40
-     8. Gyro Zeppeli  +30
-     9. Amos Sutter  +20
-    10. Marlow Mercer  +10
+     1. Boone Wilder  +100
+     2. Ada Thorne  +90
+     3. Wren Prescott  +80
+     4. Mountain Tim  +70
+     5. Johnny Joestar  +60
+     6. Clay Carver  +50
+     7. Amos Sutter  +40
+     8. Pearl Wilder  +30
+     9. Clementine Finch  +20
+    10. Rowan Finch  +10
   STANDINGS
-    Hot Pants  200
-    Ada Thorne  170
-    Gus Ridley  120
-    Gyro Zeppeli  120
-    Opal Finch (dead)  115
-    Johnny Joestar  105
+    Wren Prescott  195
+    Ada Thorne  175
+    Clementine Finch  145
+    Pearl Wilder  120
+    Boone Wilder  115
+    Shiloh Wilder (dead)  110
 
 ======================================================================
 STAGE 4: LITTLE TOMB ON THE WIDE, WIDE PRAIRIE
@@ -360,112 +370,117 @@ Cañon City → Kansas City
 ======================================================================
 
 --- Day 1 ---
-  Amos Sutter catches up with Clementine Finch, and they fight. Amos Sutter beats Clementine Finch and rides off with Clover.
-  Mabel Prescott catches up with Pearl Wilder, and they fight. Pearl Wilder tries to flee, but Mabel Prescott runs her down. Rowan Finch rides in to help Pearl Wilder. Pearl Wilder turns the fight around and drives Mabel Prescott off.
-  Reese Carver catches up with Norisuke Higashikata IV, and they fight. Norisuke Higashikata IV turns the fight around and drives Reese Carver off.
-  Corey McAllister fires on Virgil Yates from a ridge. The bullet grazes his side.
-✝ Luther Mercer catches Urmd Avdul alone on the trail and kills him for his supplies.
-✝ A bison stampede thunders across the prairie. Gus Ridley gets clear, but Silas Holloway goes under.
-  Pocoloco wins a mid-stage sprint and pockets the bonus.
-✝ Ingrid Yardley snipes at riders from the tall grass until Clay Carver circles around and ends it.
+  Opal Finch and Amos Sutter agree to ride together.
+  Ringo Roadagain ambushes Wren Prescott on the trail. Ringo Roadagain beats Wren Prescott and goes through their things.
+  Clay Carver catches up with Clementine Finch, and they fight. Clay Carver beats Clementine Finch and drives off Clover.
+  L.A. Boom Boom follows a trapper's map down a shortcut and gains half a day.
+  Hiroshi Lindqvist snipes at riders from the tall grass. Mountain Tim takes a bullet in the shoulder.
+✝ A bison stampede thunders across the prairie. Pearl Wilder gets clear, but Imogen Dunmore goes under.
+✝ Obadiah Coburn challenges Luther Mercer to a duel over a water hole. Luther Mercer draws first, and Obadiah Coburn drops into the dust.
   -- Side stories --
     Meanwhile on the trail...
-      · Lightning strikes the prairie beside Marlow Mercer. Lady Luck bolts for an hour.
-      · Wren Prescott finds a steady rhythm and makes good time.
-      · Ada Thorne gallops flat out across the open grass.
-      · Boone Wilder gallops flat out across the open grass.
-      · A whole town turns out to cheer Gyro Zeppeli through.
-      · Juniper throws a shoe, and Andre Boom Boom loses an hour at a roadside smithy.
-  [Field] 12 racers retired and 12 died. 359 remain.
+      · Virgil Yates stops at a lonely grave on the prairie to pay his respects.
+      · Blaze throws a shoe, and Wekapipo loses an hour at a roadside smithy.
+      · Marlow Mercer finds a shallow ford and crosses the river dry.
+      · Reese Carver and Boone Wilder ride together for an afternoon, trading stories.
+      · Ellis Hale finds a shallow ford and crosses the river dry.
+      · Rowan Finch settles into a long-distance stride.
+      · Andre Boom Boom takes the wrong fork and has to double back.
+      · Gus Ridley and Benjamin Boom Boom ride together for an afternoon, trading stories.
+      · Ada Thorne is so saddle-sore she can barely sit.
+  [Field] Nothing but grass to the horizon. 10 racers retired and 5 died. 359 remain.
 
 --- Night 1 ---
-  Luther Mercer's rival is gone.
-  Dusty is trampled in the stampede. Wren Prescott crawls clear, on foot.
-  Virgil Yates keeps to the trail.
-✝ A bison stampede thunders across the prairie. Clay Carver gets clear, but Temperance Thibodeaux goes under.
-✝ Augustus Moreau shares a bottle of whiskey with Marlow Mercer. It was poisoned.
-  A rattlesnake spooks Flint, and the horse goes down with a broken leg. Ada Thorne has to go on foot.
-✝ Clementine Finch slips into Norisuke Higashikata IV's camp while he sleeps and makes sure he never wakes.
-✝ Wolves circle L.A. Boom Boom's campfire all night. L.A. Boom Boom survives, but Augustus Jessup, camped nearby, does not.
-  Reese Carver lands badly on loose rock and tears a muscle in their leg.
+  Luther Mercer catches up with Urmd Avdul, and they fight. Urmd Avdul turns and flees, and gets away.
+  Axl RO ambushes Pearl Wilder on the trail. Pearl Wilder turns and flees, and gets away.
+  One of the Tattoo You men ambushes Virgil Yates on the trail. Virgil Yates turns and flees, and gets away.
+  Ada Thorne catches Tatum Delacroix going through her saddlebags and sends them off with a warning.
+✝ Temperance Underhill creeps up to Andre Boom Boom's camp to steal his water. Andre Boom Boom wakes and shoots her dead.
+  Hey Ya! Pipes up and tells Pocoloco that today is his lucky day. It is.
+✝ Ellis Hale watches Ignatius Voss pick a fight with the wrong stranger and fall in the dust.
+  Hot Pants's foot catches in the stirrup and she is dragged until Marlow Mercer cuts the strap.
+  Ezekiel Pemberton snipes at riders from the tall grass. Rowan Finch takes a bullet in the shoulder.
   -- Side stories --
     Meanwhile on the trail...
-      · Andre Boom Boom uses Tomb of the Boom 2 to lift an overturned wagon off the leg of Ingrid Hartley.
-      · Luther Mercer is so saddle-sore he can barely sit.
-      · Domino throws a shoe, and Pocoloco loses an hour at a roadside smithy.
-      · Mabel Prescott rides through the night while the others sleep.
-      · Pearl Wilder and Rowan Finch take turns keeping watch.
-      · Amos Sutter gallops flat out across the open grass.
-      · Gus Ridley rides through the night while the others sleep.
-      · Boone Wilder and Gyro Zeppeli share a campfire and agree not to shoot each other tonight.
-  [Field] Nothing but grass to the horizon. 13 racers retired and 6 died. 340 remain.
-  [The Fallen] Urmd Avdul (killed for supplies, by Luther Mercer); Marlow Mercer (poisoned, by Augustus Moreau); Norisuke Higashikata IV (murdered in camp, by Clementine Finch) And 18 from the field.
+      · Reese Carver settles into a long-distance stride.
+      · Opal Finch finds a steady rhythm and makes good time.
+      · Ignatius Jessup waves for help by the trail. L.A. Boom Boom rides straight past.
+      · Wren Prescott stops at a lonely grave on the prairie to pay their respects.
+      · Sandman sleeps under the stars.
+      · Adelaide Voss waves for help by the trail. Clay Carver rides straight past.
+      · Boone Wilder gallops flat out across the open grass.
+      · Amos Sutter takes the wrong fork and has to double back.
+      · Clementine Finch finds a steady rhythm and makes good time.
+      · Gus Ridley stops at a lonely grave on the prairie to pay his respects.
+  [Field] Nothing but grass to the horizon. 18 racers retired and 9 died. 332 remain.
+  [The Fallen] No named racers. And 14 from the field.
 
 --- Day 2 ---
-  Gus Ridley catches up with Benjamin Boom Boom, and they fight. Benjamin Boom Boom tries to flee, but Gus Ridley runs him down. Benjamin Boom Boom fights with Tomb of the Boom 1. Benjamin Boom Boom turns the fight around and drives Gus Ridley off.
-  Reese Carver follows a trapper's map down a shortcut and gains half a day.
-  Amos Sutter wins a mid-stage sprint and pockets the bonus.
-✝ Ada Thorne watches Wilhelmina Grimsby pick a fight with the wrong stranger and fall in the dust.
-✝ A bison stampede thunders across the prairie. Boone Wilder gets clear, but Paloma Everhart goes under.
-  Pocoloco cuts Oyecomova's cinch strap at a water stop. Oyecomova loses an hour fixing it.
+  Hiroshi Lindqvist tries to rob Wren Prescott at gunpoint. Wren Prescott knocks the gun away and lets him walk.
+✝ A bison stampede thunders across the prairie. Marlow Mercer gets clear, but Wilhelmina Grimsby goes under.
+  Boone Wilder cuts Gyro Zeppeli's cinch strap at a water stop. Gyro Zeppeli loses an hour fixing it.
+✝ Adelaide McAllister challenges Amos Sutter to a duel over a water hole. Amos Sutter draws first, and Adelaide McAllister drops into the dust.
+  Hot Pants sprays Cream Starter over Mountain Tim's wounds, and the flesh knits shut. Mountain Tim can ride again.
   -- Side stories --
     Meanwhile on the trail...
-      · Gyro Zeppeli finds a steady rhythm and makes good time.
-      · Mrs. Robinson is so saddle-sore he can barely sit.
-      · Clementine Finch and Clay Carver race neck and neck for miles until Clementine Finch edges ahead.
-      · Wekapipo takes the wrong fork and has to double back.
-      · Johnny Joestar pushes Tusk Act 1 too far and collapses from the strain.
-      · Pearl Wilder and Rowan Finch ride together for an afternoon, trading stories.
-      · Wren Prescott takes the wrong fork and has to double back.
-      · Mabel Prescott and L.A. Boom Boom ride together for an afternoon, trading stories.
-      · A whole town turns out to cheer Luther Mercer through.
-      · Diego Brando's Scary Monsters bristles as Sandman rides past. Neither of them stops.
-      · Andre Boom Boom and Hot Pants race neck and neck for miles until Andre Boom Boom edges ahead.
-      · Virgil Yates stops at a lonely grave on the prairie to pay his respects.
-  [Field] Nothing but grass to the horizon. 20 racers retired and 7 died. 313 remain.
+      · Clementine Finch and L.A. Boom Boom ride together for an afternoon, trading stories.
+      · Reese Carver settles into a long-distance stride.
+      · Delphine Jessup waves for help by the trail. Ellis Hale rides straight past.
+      · Hester Kincaid waves for help by the trail. Urmd Avdul rides straight past.
+      · Wekapipo and Clay Carver ride together for an afternoon, trading stories.
+      · A whole town turns out to cheer Johnny Joestar through.
+      · Rattler throws a shoe, and Gus Ridley loses an hour at a roadside smithy.
+      · Sandman takes the wrong fork and has to double back.
+      · Rowan Finch settles into a long-distance stride.
+      · Virgil Yates gallops flat out across the open grass.
+      · A whole town turns out to cheer Ada Thorne through.
+      · Opal Finch finds a shallow ford and crosses the river dry.
+      · Luther Mercer takes the wrong fork and has to double back.
+      · Andre Boom Boom pushes Tomb of the Boom 2 too far and collapses from the strain.
+      · Pearl Wilder stops at a lonely grave on the prairie to pay her respects.
+  [Field] Nothing but grass to the horizon. 11 racers retired and 3 died. 318 remain.
 
 --- Finish Line ---
-  Clay Carver catches up with Gyro Zeppeli, and they fight. Gyro Zeppeli throws his Steel Balls. They fight to a standstill, and both ride off hurt.
-✝ Mabel Prescott is found at dawn with a strange arrow through her chest.
-  Pearl Wilder passes Clara Jessup, who has collapsed a mile short of the finish.
-✝ Elias Holloway snipes at riders from the tall grass until Pocoloco circles around and ends it.
-  Clementine Finch crowds Reese Carver into the rail on the final turn.
-  Adelaide Rourke fires on Ada Thorne from a ridge. The bullet grazes her side.
-✝ A bison stampede thunders across the prairie. Boone Wilder gets clear, but Wilhelmina Grimsby goes under.
-  Hot Pants sprays Cream Starter over Johnny Joestar's wounds, and the flesh knits shut. Johnny Joestar can ride again.
+✝ Opal Finch is found at dawn with a strange arrow through her chest.
+  Marlow Mercer catches up with Ada Thorne, and they fight. They fight to a standstill, and both ride off hurt.
+  Pocoloco is thrown hard from the saddle and can't go on. His race is over.
+  Amos Sutter cuts Virgil Yates's cinch strap at a water stop. Virgil Yates loses an hour fixing it.
+  Wekapipo passes Elias Fairweather, who has collapsed a mile short of the finish.
+  Benjamin Boom Boom's foot catches in the stirrup and he is dragged until Pearl Wilder cuts the strap.
+  Seraphina Quigley fires on Wren Prescott from a ridge. The bullet grazes their side.
+✝ A bison stampede thunders across the prairie. Boone Wilder gets clear, but Matilda Hartley goes under.
+  Clementine Finch follows a trapper's map down a shortcut and gains half a day.
   -- Side stories --
     Meanwhile on the trail...
-      · L.A. Boom Boom finds a steady rhythm and makes good time.
-      · Gus Ridley fades badly in the final miles.
-      · Wekapipo spurs Blaze into a final gallop toward the line.
-      · Virgil Yates stops to splint the arm of Winifred Blackwell, who was thrown from her horse.
-      · Luther Mercer gallops flat out across the open grass.
-      · Rowan Finch finds a steady rhythm and makes good time.
-      · Andre Boom Boom stops to splint the arm of Silas Okafor, who was thrown from his horse.
-      · Wren Prescott stops at a lonely grave on the prairie to pay their respects.
-      · Sandman fades badly in the final miles.
-      · Amos Sutter gallops flat out across the open grass.
-  [Field] 10 racers retired and 3 died. 300 remain.
-  [The Fallen] Mabel Prescott (pierced by a strange arrow) And 10 from the field.
+      · Reese Carver finds a steady rhythm and makes good time.
+      · Clay Carver spurs Juniper into a final gallop toward the line.
+      · Luther Mercer takes the wrong fork and has to double back.
+      · Oyecomova finds a steady rhythm and makes good time.
+      · Gus Ridley gallops flat out across the open grass.
+      · Urmd Avdul and Hot Pants cross the line almost together, both claiming the better time.
+      · Ellis Hale is so saddle-sore they can barely sit.
+      · On the open flats, Rowan Finch watches rider after rider gallop away.
+  [Field] 18 racers retired and 4 died. 296 remain.
+  [The Fallen] Opal Finch (pierced by a strange arrow) And 7 from the field.
 
   STAGE 4 RESULTS
-     1. Amos Sutter  +100
-     2. Boone Wilder  +90
-     3. Rowan Finch  +80
-     4. Pocoloco  +70
-     5. Leopold Lindqvist [pack]  +60
-     6. Clay Carver  +50
-     7. Pearl Wilder  +40
-     8. Wekapipo  +30
-     9. Johnny Joestar  +20
-    10. Luther Mercer  +10
+     1. Clay Carver  +100
+     2. Oyecomova  +90
+     3. Reese Carver  +80
+     4. Johnny Joestar  +70
+     5. Ellis Hale  +60
+     6. L.A. Boom Boom  +50
+     7. Boone Wilder  +40
+     8. Gus Ridley  +30
+     9. Jordan Barlow [pack]  +20
+    10. Wekapipo  +10
   STANDINGS
-    Amos Sutter  215
-    Hot Pants  210
-    Ada Thorne  170
+    Wren Prescott  200
+    Ada Thorne  180
+    Clay Carver  160
+    Clementine Finch  150
     Boone Wilder  145
-    Clay Carver  140
-    Leopold Lindqvist  140
+    Pearl Wilder  135
 
 ======================================================================
 STAGE 5: ILLINOIS SKYLINE
@@ -473,85 +488,88 @@ Kansas City → Chicago
 ======================================================================
 
 --- Day 1 ---
-  Wren Prescott asks Sandman to ride together. Sandman turns them down.
-  Gus Ridley beats Obadiah Underhill to the checkpoint and takes the sprint bonus.
-✝ Clementine Finch catches up with Leopold Lindqvist, and they fight. Leopold Lindqvist turns the fight around and kills Clementine Finch.
-  Luther Mercer follows a trapper's map down a shortcut and gains half a day.
-  Thaddeus Ingram fires on Wren Prescott from a ridge. The bullet grazes their side.
-  Boone Wilder draws on Mountain Tim and misses. Mountain Tim has him dead to rights, then lowers the gun.
-  Fitzgerald Kincaid tries to rob Reese Carver at gunpoint. Reese Carver knocks the gun away and lets him walk.
-  Benjamin Boom Boom pulls the iron out of a broken stirrup with Tomb of the Boom 1 and reshapes it on the move.
-✝ Clay Carver watches Obadiah Yardley pick a fight with the wrong stranger and fall in the dust.
+  Luther Mercer catches up with Clay Carver, and they fight. Luther Mercer beats Clay Carver and drives off Juniper.
+  Axl RO ambushes Virgil Yates on the trail. Virgil Yates turns and flees, and gets away.
+✝ Reese Carver watches Ezekiel McAllister pick a fight with the wrong stranger and fall in the dust.
+  Matteo Underhill tries to rob Boone Wilder at gunpoint. Boone Wilder knocks the gun away and lets him walk.
+  Augustus Crane fires on Pearl Wilder from a ridge. The bullet grazes her side.
+  Rowan Finch runs until their legs give out and has to rest for hours.
+  Someone has fallen to the dark side.
   -- Side stories --
     Meanwhile on the trail...
-      · Mrs. Robinson is so saddle-sore he can barely sit.
-      · Clover throws a shoe, and Amos Sutter loses an hour at a roadside smithy.
-      · Virgil Yates finds a shallow ford and crosses the river dry.
-      · Wendell Kincaid lifts Rowan Finch's wallet on a crowded street.
-      · Horace Ingram lifts Hot Pants's wallet on a crowded street.
-      · Pocoloco and Ada Thorne race neck and neck for miles until Pocoloco edges ahead.
-      · Barnabas Quigley is swept off his feet at the ford. Johnny Joestar sends Tusk Act 1 in after him and hauls him out.
-      · Chicago's crowds slow Gyro Zeppeli to a walk.
-      · Pearl Wilder takes the wrong fork and has to double back.
-      · Chicago's crowds slow Andre Boom Boom to a walk.
-      · Wekapipo finds a steady rhythm and makes good time.
-  [Field] 16 racers retired and 4 died. 280 remain.
+      · A whole town turns out to cheer Ada Thorne through.
+      · Chicago's crowds slow Amos Sutter to a walk.
+      · Henrietta Quigley waves for help by the trail. Wren Prescott rides straight past.
+      · Pocoloco rides ahead as a scout, warning anyone who will listen about the trail ahead.
+      · Thaddeus Lindqvist lifts Ellis Hale's wallet on a crowded street.
+      · Andre Boom Boom takes the wrong fork and has to double back.
+      · A whole town turns out to cheer Marlow Mercer through.
+      · Gus Ridley is so saddle-sore he can barely sit.
+      · Clementine Finch finds a steady rhythm and makes good time.
+      · Mountain Tim takes the wrong fork and has to double back.
+  [Field] 16 racers retired and 3 died. 277 remain.
 
 --- Night 1 ---
-  Gus Ridley waits for the fire brigade to clear the street.
-  Reese Carver catches up with Clay Carver, and they fight. Reese Carver goes for the kill, but Clay Carver gets away, badly hurt.
-  Rowan Finch waits for the fire brigade to clear the street.
-  Boone Wilder sticks to the main avenue.
-  Gyro Zeppeli catches Winifred Quigley going through his saddlebags and sends her off with a warning.
-  Pearl Wilder keeps watch so Johnny Joestar can sleep. Nobody bothers them.
+✝ Reese Carver catches up with Jordan Barlow, and they fight. Jordan Barlow turns the fight around and kills Reese Carver.
+  Marlow Mercer catches up with Norisuke Higashikata IV, and they fight. Marlow Mercer fights with Surface. Marlow Mercer goes for the kill, but Norisuke Higashikata IV gets away, badly hurt.
+  Bartholomew Pemberton fires on Clementine Finch from a ridge. The bullet grazes her side.
+  Boone Wilder cuts Luther Mercer's cinch strap at a water stop. Luther Mercer loses an hour fixing it.
+  Amos Sutter follows a trapper's map down a shortcut and gains half a day.
+  Delphine Moreau robs Benjamin Boom Boom's camp in the night, taking food and water.
+✝ Cornelius Blackwell creeps up to Clay Carver's camp to steal his water. Clay Carver wakes and shoots him dead.
   -- Side stories --
     Meanwhile on the trail...
-      · Sandman finds a steady rhythm and makes good time.
-      · El Condor Pasa throws a shoe, and Mrs. Robinson loses an hour at a roadside smithy.
-      · Amos Sutter takes the wrong fork and has to double back.
-      · Virgil Yates and Dmitri Castellanos trade the lead all day and save their horses.
-      · Luther Mercer takes the wrong fork and has to double back.
-      · Wren Prescott rides through the night while the others sleep.
-      · Pocoloco sleeps in a real bed for once and rides out refreshed.
-      · Comet throws a shoe, and Ada Thorne loses an hour at a roadside smithy.
-  [Field] 18 racers retired and 3 died. 259 remain.
-  [The Fallen] Clementine Finch (killed by a rival, by Leopold Lindqvist) And 7 from the field.
+      · Ada Thorne sleeps in a real bed for once and rides out refreshed.
+      · Gus Ridley stops to splint the arm of Lane Gallagher, who was thrown from their horse.
+      · Dusty throws a shoe, and Wren Prescott loses an hour at a roadside smithy.
+      · Chicago's crowds slow Ellis Hale to a walk.
+      · Pocoloco trails the race, following the field's dust toward New York.
+      · Oyecomova and Pearl Wilder share a campfire and agree not to shoot each other tonight.
+      · Rowan Finch sleeps in a real bed for once and rides out refreshed.
+      · Virgil Yates takes the wrong fork and has to double back.
+  [Field] 11 racers retired and 3 died. 263 remain.
+  [The Fallen] Reese Carver (killed by a rival, by Jordan Barlow) And 6 from the field.
 
 --- Finish Line ---
-✝ Amos Sutter catches up with Ada Thorne, and they fight. Ada Thorne tries to flee, but Amos Sutter runs her down. Amos Sutter fights with Aerosmith. Ada Thorne begs for her life. Amos Sutter kills her anyway.
-  Luther Mercer catches up with Mountain Tim, and they fight. Mountain Tim fights with Oh! Lonesome Me. They fight to a standstill, and both ride off hurt.
-  Clay Carver catches up with Oyecomova, and they fight. Oyecomova turns and flees, and gets away.
-  Hot Pants sprays Cream Starter over Wren Prescott's wounds, and the flesh knits shut. Wren Prescott can ride again.
-✝ Gus Ridley catches Reese Carver alone on the trail and kills them for their supplies.
-  Virgil Yates crowds Rowan Finch into the rail on the final turn.
+✝ Ellis Hale rides past Matilda Crane. Nobody else stops for her either.
+  Amos Sutter catches up with Ada Thorne, and they fight. Ada Thorne turns the fight around and drives Amos Sutter off.
+  Mike O. Ambushes Boone Wilder on the trail. Boone Wilder fights with Beach Boy. Mike O. Beats Boone Wilder and goes through his things.
+  Clementine Finch is clipped by a streetcar and limps away bruised.
+  Wren Prescott passes Hester Vandermeer, who has collapsed a mile short of the finish.
+  Gus Ridley's foot catches in the stirrup and he is dragged until Luther Mercer cuts the strap.
+  Virgil Yates crowds Benjamin Boom Boom into the rail on the final turn.
   -- Side stories --
     Meanwhile on the trail...
-      · Boone Wilder spurs Hickory into a final gallop toward the line.
-      · Mrs. Robinson fades badly in the final miles.
-      · Ezekiel Zamora waves for help by the trail. Benjamin Boom Boom rides straight past.
+      · Harper Castellanos lifts Johnny Joestar's wallet on a crowded street.
+      · Oyecomova shows off Boku no Rhythm wo Kiitekure to a crowd at the checkpoint. Nobody else can see it, so they just think he is strange.
       · Chicago's crowds slow Pearl Wilder to a walk.
-      · Andre Boom Boom finds a steady rhythm and makes good time.
-  [Field] 13 racers retired and 3 died. 243 remain.
-  [The Fallen] Ada Thorne (killed by a rival, by Amos Sutter); Reese Carver (killed for supplies, by Gus Ridley) And 3 from the field.
+      · Clay Carver finds a steady rhythm and makes good time.
+      · Wekapipo finds a steady rhythm and makes good time.
+      · Dakota Fairweather lifts Mountain Tim's wallet on a crowded street.
+      · Urmd Avdul and Gyro Zeppeli cross the line almost together, both claiming the better time.
+      · Marlow Mercer spurs Lady Luck into a final gallop toward the line.
+      · Andre Boom Boom and Rowan Finch cross the line almost together, both claiming the better time.
+  [Field] 12 racers retired and 2 died. 249 remain.
+  [The Fallen] No named racers. And 2 from the field.
 
   STAGE 5 RESULTS
-     1. Virgil Yates  +100
-     2. Boone Wilder  +90
-     3. Leopold Lindqvist [pack]  +80
-     4. Pocoloco  +70
-     5. Amos Sutter  +60
-     6. Wren Prescott  +50
-     7. Wekapipo  +40
-     8. Pearl Wilder  +30
-     9. Benjamin Boom Boom  +20
-    10. Gus Ridley  +10
+     1. Marlow Mercer  +100
+     2. Hot Pants  +90
+     3. Luther Mercer  +80
+     4. Sandman  +70
+     5. Virgil Yates  +60
+     6. Pearl Wilder  +50
+     7. Rupert Ashcroft [pack]  +40
+     8. Jordan Barlow [pack]  +30
+     9. L.A. Boom Boom  +20
+    10. Wendell Goodnight [pack]  +10
   STANDINGS
-    Amos Sutter  280
-    Boone Wilder  235
-    Leopold Lindqvist  225
-    Hot Pants  215
-    Pocoloco  160
-    Gus Ridley  145
+    Wren Prescott  200
+    Pearl Wilder  185
+    Clay Carver  165
+    Boone Wilder  140
+    Johnny Joestar  140
+    Luther Mercer  135
 
 ======================================================================
 STAGE 6: MICHIGAN LAKELINE
@@ -559,103 +577,111 @@ Chicago → Mackinaw City
 ======================================================================
 
 --- Day 1 ---
-  Wren Prescott digs in and waits out the blizzard.
-  Clay Carver attacks Mountain Tim on the trail. Mountain Tim fights with Oh! Lonesome Me. They fight to a standstill, and both ride off hurt.
-  Luther Mercer pushes Yankee too hard, and the horse drops dead under him. Luther Mercer is on foot.
-  Oyecomova follows a trapper's map down a shortcut and gains half a day.
-  Sandman cuts Wekapipo's cinch strap at a water stop. Wekapipo loses an hour fixing it.
-  Andre Boom Boom flicks a drop of blood onto Johnny Joestar's saddle. Thanks to Tomb of the Boom 2, every fence post on the trail drags at his gear.
-✝ Horace Ingram challenges Amos Sutter to a duel over a water hole. Amos Sutter draws first, and Horace Ingram drops into the dust.
-✝ Gus Ridley watches Ingrid Vandermeer pick a fight with the wrong stranger and fall in the dust.
+  Clementine Finch asks Wren Prescott to ride together, but Wren Prescott already rides with someone.
+  Blackmore ambushes Pearl Wilder on the trail. Pearl Wilder tries to flee, but Blackmore runs her down. Pearl Wilder fights with Cream. Blackmore beats Pearl Wilder and goes through her things.
+  Ada Thorne asks Luther Mercer to ride together. Luther Mercer turns her down.
+  Amos Sutter asks Clay Carver to ride together. Clay Carver turns him down.
+  Boone Wilder uses Beach Boy to lift an overturned wagon off the leg of Ignatius Delacroix.
+✝ Ezekiel Grimsby challenges Gus Ridley to a duel over a water hole. Gus Ridley draws first, and Ezekiel Grimsby drops into the dust.
+  Someone has been deemed worthy of the Saint.
   -- Side stories --
     Meanwhile on the trail...
-      · Silas Okafor waves for help by the trail. Virgil Yates rides straight past.
-      · Gyro Zeppeli follows the lakeshore at a steady clip.
-      · Mrs. Robinson takes the wrong fork and has to double back.
-      · Fog rolls off the lake and Pearl Wilder loses the trail for hours.
-      · Boone Wilder finds a steady rhythm and makes good time.
-      · Fog rolls off the lake and Rowan Finch loses the trail for hours.
-      · Beatrix Okafor waves for help by the trail. Hot Pants rides straight past.
-  [Field] The ice on the Straits groans under the field. 14 racers retired and 2 died. 227 remain.
+      · Rowan Finch settles into a long-distance stride.
+      · Fog rolls off the lake and Marlow Mercer loses the trail for hours.
+      · Buckshot throws a shoe, and Virgil Yates loses an hour at a roadside smithy.
+      · Norisuke Higashikata IV finds a steady rhythm and makes good time.
+      · Benjamin Boom Boom and Mountain Tim ride together for an afternoon, trading stories.
+      · Henrietta Quigley waves for help by the trail. Clementine Finch rides straight past.
+      · Philippa Coburn waves for help by the trail. Ellis Hale rides straight past.
+      · Wren Prescott finds a shallow ford and crosses the river dry.
+  [Field] The ice on the Straits groans under the field. 20 racers retired and 4 died. 225 remain.
 
 --- Night 1 ---
-  Luther Mercer's rival is gone.
-  Wren Prescott stops to splint the leg of Ingrid Nightingale and gets her onto the road to town.
-✝ Amos Sutter rides past Beatrix Oakes. By morning, the snow has covered her.
-  Mountain Tim keeps watch so Oyecomova can sleep. Nobody bothers them.
-  Virgil Yates cuts Benjamin Boom Boom's cinch strap at a water stop. Benjamin Boom Boom loses an hour fixing it.
-  Gyro Zeppeli shares his cheese and dried meat with Luther Mercer.
-  Jebediah Okafor fires on Pocoloco from a ridge. The bullet grazes his side.
-✝ Pearl Wilder hears the ice crack behind her and turns to see Lucinda Ingram disappear.
+  Clay Carver catches up with Wren Prescott, and they fight. Wren Prescott turns and flees, and gets away.
+  Magent Magent ambushes Virgil Yates on the trail. Virgil Yates tries to flee, but Magent Magent runs him down. Virgil Yates fights with The Hand. Magent Magent beats Virgil Yates and goes through his things.
+  Ada Thorne and Ellis Hale agree to ride together.
+  Marlow Mercer catches up with Jordan Barlow, and they fight. Marlow Mercer fights with Surface. Marlow Mercer goes for the kill, but Jordan Barlow gets away, badly hurt.
+  Urmd Avdul follows a trapper's map down a shortcut and gains half a day.
+  Thaddeus Moreau robs Sandman's camp in the night, taking food and water.
+  Gyro Zeppeli shares his cheese and dried meat with L.A. Boom Boom.
+  Someone has fallen to the dark side.
   -- Side stories --
     Meanwhile on the trail...
-      · Clay Carver rides through the night while the others sleep.
-      · Rowan Finch rides through the night while the others sleep.
-      · Juniper throws a shoe, and Andre Boom Boom loses an hour at a roadside smithy.
-      · Johnny Joestar and Diego Brando share a campfire and agree not to shoot each other tonight.
-      · Gus Ridley sleeps under the stars.
-      · Mesquite throws a shoe, and Boone Wilder loses an hour at a roadside smithy.
-  [Field] 13 racers retired and 4 died. 210 remain.
-  [The Fallen] No named racers. And 6 from the field.
+      · Amos Sutter follows the lakeshore at a steady clip.
+      · Benjamin Boom Boom follows the lakeshore at a steady clip.
+      · Oyecomova rides through the night while the others sleep.
+      · Lucinda Goodnight waves for help by the trail. Rowan Finch rides straight past.
+      · Luther Mercer finds a steady rhythm and makes good time.
+      · Fog rolls off the lake and Pearl Wilder loses the trail for hours.
+      · Mountain Tim uses Oh! Lonesome Me to lift an overturned wagon off the leg of Finley Oakes.
+      · Pinto throws a shoe, and Clementine Finch loses an hour at a roadside smithy.
+      · Boone Wilder finds a steady rhythm and makes good time.
+      · Gus Ridley takes the wrong fork and has to double back.
+  [Field] 6 racers retired and 1 died. 218 remain.
+  [The Fallen] No named racers. And 5 from the field.
 
 --- Day 2 ---
-  Clay Carver's rival is gone.
-  Boone Wilder attacks Oyecomova on the trail. Boone Wilder fights with Sex Pistols. Oyecomova fights with Boku no Rhythm wo Kiitekure. Boone Wilder beats Oyecomova and drives off Apache Wind.
-  Clay Carver takes the long shore road around the ice.
-  Amos Sutter catches up with Virgil Yates, and they fight. Virgil Yates tries to flee, but Amos Sutter runs him down. Amos Sutter fights with Aerosmith. Amos Sutter beats Virgil Yates and drives off Nugget.
-  Sandman falls through the ice, and Andre Boom Boom hauls him out by the collar.
-  Wren Prescott follows a trapper's map down a shortcut and gains half a day.
-  Johnny Joestar's foot catches in the stirrup and he is dragged until Pocoloco cuts the strap.
-  Paloma Jessup tries to rob Gus Ridley at gunpoint. Gus Ridley knocks the gun away and lets her walk.
+✝ Luther Mercer catches up with Sandman, and they fight. Sandman fights with In a Silent Way. Luther Mercer kills Sandman.
+  Boone Wilder cuts Mountain Tim's cinch strap at a water stop. Mountain Tim loses an hour fixing it.
+  Gus Ridley wins a mid-stage sprint and pockets the bonus.
+  Amos Sutter shows off Echoes Act 3 to a crowd at the checkpoint. Nobody else can see it, so they just think he is strange.
+✝ Aiyana Gallagher challenges Oyecomova to a duel over a water hole. Oyecomova draws first, and Aiyana Gallagher drops into the dust.
+  Pearl Wilder falls through the ice, and Clementine Finch hauls her out by the collar.
+✝ Ada Thorne hears the ice crack behind her and turns to see Barnabas Holloway disappear.
   -- Side stories --
     Meanwhile on the trail...
+      · Marlow Mercer finds a steady rhythm and makes good time.
+      · Wekapipo and Gyro Zeppeli ride together for an afternoon, trading stories.
+      · Virgil Yates follows the lakeshore at a steady clip.
+      · Ellis Hale is so saddle-sore they can barely sit.
+      · Norisuke Higashikata IV finds a steady rhythm and makes good time.
+      · Mrs. Robinson, out of the race, watches the leaders pass from a saloon porch.
+      · Rowan Finch takes the wrong fork and has to double back.
+      · Clay Carver and Andre Boom Boom race neck and neck for miles until Clay Carver edges ahead.
+      · Wren Prescott follows the lakeshore at a steady clip.
       · L.A. Boom Boom takes the wrong fork and has to double back.
-      · Clara Dunmore waves for help by the trail. Rowan Finch rides straight past.
-      · Hot Pants takes the wrong fork and has to double back.
-      · Luther Mercer and Mountain Tim race neck and neck for miles until Luther Mercer edges ahead.
-      · Pearl Wilder follows the lakeshore at a steady clip.
-  [Field] 15 racers retired. No one in the field died. 195 remain.
+  [Field] The ice on the Straits groans under the field. 11 racers retired and 5 died. 202 remain.
 
 --- Finish Line ---
-  Boone Wilder rides past Rupert Hawthorne and keeps his blanket.
-  Amos Sutter pushes Clover too hard, and the horse drops dead under him. Amos Sutter is on foot.
-  Luther Mercer attacks Pocoloco on the trail. Pocoloco fights with Hey Ya!. Luther Mercer goes for the kill, but Pocoloco gets away, badly hurt.
-  Wren Prescott digs in and waits out the blizzard.
-  Diego Brando follows a trapper's map down a shortcut and gains half a day.
-  Harper Voss fires on Clay Carver from a ridge. The bullet grazes his side.
-  Pearl Wilder takes the time bonus for leading the final mile.
-✝ Silas Lockhart ambushes Hot Pants and opens a gash in her arm. Hot Pants seals it with Cream Starter, then fills Silas Lockhart's throat with flesh spray. Silas Lockhart doesn't get up.
+  A rider in a dark hat ambushes Hot Pants on the trail. Hot Pants fights with Cream Starter. They fight to a standstill, and both ride off hurt.
+  Ellis Hale passes Ignatius Prentiss, who has collapsed a mile short of the finish.
+  Percival Faraday is swept off his feet at the ford. Clementine Finch sends Echoes Act 1 in after him and hauls him out.
+  Benjamin Boom Boom's foot catches in the stirrup and he is dragged until Rowan Finch cuts the strap.
+  Clay Carver takes the time bonus for leading the final mile.
+✝ Ada Thorne hears the ice crack behind her and turns to see Ines Zamora disappear.
+  Amos Sutter uses Echoes Act 3 to lift an overturned wagon off the leg of Hiroshi Lindqvist.
+  Boone Wilder follows a trapper's map down a shortcut and gains half a day.
   -- Side stories --
     Meanwhile on the trail...
-      · Mrs. Robinson finds a steady rhythm and makes good time.
-      · Gyro Zeppeli stops to splint the arm of Mortimer Pemberton, who was thrown from his horse.
-      · Elias Quigley waves for help by the trail. Sandman rides straight past.
-      · Andre Boom Boom finds a steady rhythm and makes good time.
-      · Augustus Pemberton is swept off his feet at the ford. Johnny Joestar sends Tusk Act 1 in after him and hauls him out.
-      · Tatum McAllister waves for help by the trail. Virgil Yates rides straight past.
-      · Rowan Finch and Gus Ridley cross the line almost together, both claiming the better time.
-      · L.A. Boom Boom pushes Tomb of the Boom 3 too far and collapses from the strain.
-  [Field] The ice on the Straits groans under the field. 10 racers retired and 1 died. 184 remain.
-  [The Fallen] No named racers. And 1 from the field.
+      · L.A. Boom Boom fades badly in the final miles.
+      · Gus Ridley spurs Starlight into a final gallop toward the line.
+      · Luther Mercer fades badly in the final miles.
+      · Norisuke Higashikata IV stops to splint the arm of Imogen Crane, who was thrown from her horse.
+      · Pocoloco, out of the race, watches the leaders pass from a saloon porch.
+      · Pearl Wilder takes the wrong fork and has to double back.
+      · Virgil Yates takes the wrong fork and has to double back.
+      · Matteo Grimsby waves for help by the trail. Wren Prescott rides straight past.
+  [Field] The ice on the Straits groans under the field. 9 racers retired and 3 died. 190 remain.
+  [The Fallen] Sandman (killed by a rival, by Luther Mercer) And 8 from the field.
 
   STAGE 6 RESULTS
-     1. Gyro Zeppeli  +100
+     1. Boone Wilder  +100
      2. Wren Prescott  +90
-     3. Pearl Wilder  +80
-     4. Wekapipo  +70
+     3. Wendell Goodnight [pack]  +80
+     4. Amos Sutter  +70
      5. Rowan Finch  +60
-     6. Andre Boom Boom  +50
-     7. Boone Wilder  +40
-     8. Hot Pants  +30
-     9. Remy Barlow [pack]  +20
-    10. Lucinda Gallagher [pack]  +10
+     6. Norisuke Higashikata IV  +50
+     7. Johnny Joestar  +40
+     8. Ada Thorne  +30
+     9. Marlow Mercer  +20
+    10. Gus Ridley  +10
   STANDINGS
-    Amos Sutter  285
-    Hot Pants  245
-    Gyro Zeppeli  230
-    Leopold Lindqvist (retired)  225
-    Boone Wilder  205
-    Wren Prescott  205
+    Boone Wilder  240
+    Wren Prescott  220
+    Pearl Wilder  190
+    Johnny Joestar  180
+    Marlow Mercer  160
+    Rowan Finch  160
 
 ======================================================================
 STAGE 7: PHILADELPHIA TRIANGLE
@@ -663,75 +689,86 @@ Mackinaw City → Philadelphia
 ======================================================================
 
 --- Day 1 ---
-  Amos Sutter catches up with Hot Pants, and they fight. Hot Pants turns and flees, and gets away.
-  Ambrose Pemberton jumps Rowan Finch on the trail. Pearl Wilder rides in to help Rowan Finch. They fight to a standstill, and both ride off hurt.
-  Wren Prescott follows a trapper's map down a shortcut and gains half a day.
-  Gus Ridley pushes The Hand too far and collapses from the strain.
-  Gyro Zeppeli wins a mid-stage sprint and pockets the bonus.
-  A bandit fires at Boone Wilder. Sex Pistols kick the bullet into his hat instead.
-✝ Seraphina Oakes challenges Luther Mercer to a duel over a water hole. Luther Mercer draws first, and Seraphina Oakes drops into the dust.
-✝ Benjamin Boom Boom catches Johnny Joestar alone on the trail and kills him for his supplies.
-  A rider in a dark hat ambushes L.A. Boom Boom on a forest road. L.A. Boom Boom barely escapes.
-  Wekapipo warns Pocoloco about an ambush ahead.
+  Marlow Mercer catches up with Oyecomova, and they fight. Marlow Mercer fights with Surface. Oyecomova fights with Boku no Rhythm wo Kiitekure. Oyecomova turns the fight around and drives Marlow Mercer off.
+  Clementine Finch and Virgil Yates agree to ride together.
+  Wekapipo warns Johnny Joestar about an ambush ahead.
+  Rowan Finch draws on Amos Sutter and misses. Amos Sutter has them dead to rights, then lowers the gun.
+✝ Ambrose Zamora challenges Clay Carver to a duel over a water hole. Clay Carver draws first, and Ambrose Zamora drops into the dust.
+✝ Luther Mercer catches Pearl Wilder alone on the trail and kills her for her supplies.
+  Hot Pants finds Jordan Oakes bleeding out on the trail and seals the wound with Cream Starter.
   -- Side stories --
     Meanwhile on the trail...
-      · Dixie throws a shoe, and Mountain Tim loses an hour at a roadside smithy.
-      · Virgil Yates finds a shallow ford and crosses the river dry.
-      · Diego Brando finds a steady rhythm and makes good time.
-      · A whole town turns out to cheer Clay Carver through.
-  [Field] 6 racers retired and 1 died. 177 remain.
+      · Gus Ridley rides through dense forest toward Philadelphia.
+      · Andre Boom Boom finds a steady rhythm and makes good time.
+      · Wren Prescott finds a steady rhythm and makes good time.
+      · Ada Thorne and Boone Wilder race neck and neck for miles until Ada Thorne edges ahead.
+      · Urmd Avdul rides through dense forest toward Philadelphia.
+      · Ellis Hale stops to splint the arm of Dakota Yardley, who was thrown from their horse.
+      · Norisuke Higashikata IV stops to splint the arm of Adelaide Delacroix, who was thrown from her horse.
+  [Field] 7 racers retired and 1 died. 182 remain.
 
 --- Night 1 ---
-  Boone Wilder catches up with Hot Pants, and they fight. Boone Wilder fights with Sex Pistols. Hot Pants fights with Cream Starter. Hot Pants turns the fight around and drives Boone Wilder off.
-  Luther Mercer catches up with Pearl Wilder, and they fight. Pearl Wilder tries to flee, but Luther Mercer runs her down. Luther Mercer goes for the kill, but Pearl Wilder gets away, badly hurt.
-✝ Amos Sutter attacks Wekapipo on the trail. Amos Sutter fights with Aerosmith. Wekapipo throws his Steel Balls. Amos Sutter kills Wekapipo.
-  Harper Castellanos robs Rowan Finch's camp in the night, taking food and water.
-  Clay Carver falls in with Elias Quigley, and the two agree to ride together for a while.
-  Gus Ridley sleeps soundly while The Hand keeps watch over the camp.
-✝ Wolves circle Wren Prescott's campfire all night. Wren Prescott survives, but Silas Barlow, camped nearby, does not.
+  Amos Sutter catches up with Luther Mercer, and they fight. Amos Sutter fights with Echoes Act 3. Amos Sutter beats Luther Mercer and goes through his things.
+  Norisuke Higashikata IV keeps watch so Gus Ridley can sleep. Nobody bothers them.
+  A rider in a dark hat ambushes Boone Wilder on a forest road. Boone Wilder barely escapes.
+  Yusuf Goodnight robs Clementine Finch's camp in the night, taking food and water.
+✝ Marguerite Ashcroft creeps up to Urmd Avdul's camp to steal his water. Urmd Avdul wakes and shoots her dead.
+  Ellis Hale cuts Virgil Yates's cinch strap at a water stop. Virgil Yates loses an hour fixing it.
+  Benjamin Boom Boom pulls the iron out of a broken stirrup with Tomb of the Boom 1 and reshapes it on the move.
+✝ Wolves circle Rowan Finch's campfire all night. Rowan Finch survives, but Matilda Lockhart, camped nearby, does not.
   -- Side stories --
     Meanwhile on the trail...
-      · Pocoloco and Mountain Tim share a campfire and agree not to shoot each other tonight.
-      · Andre Boom Boom finds a steady rhythm and makes good time.
-      · Virgil Yates finds a steady rhythm and makes good time.
-  [Field] 8 racers retired and 3 died. 166 remain.
-  [The Fallen] Johnny Joestar (killed for supplies, by Benjamin Boom Boom); Wekapipo (killed on the trail, by Amos Sutter) And 4 from the field.
+      · Clay Carver rides through the night while the others sleep.
+      · Mrs. Robinson, out of the race, watches the leaders pass from a saloon porch.
+      · Andre Boom Boom sleeps under the stars.
+      · Marlow Mercer finds a steady rhythm and makes good time.
+      · Wren Prescott rides through the night while the others sleep.
+      · Oyecomova finds a steady rhythm and makes good time.
+      · Wekapipo rides through dense forest toward Philadelphia.
+      · Ada Thorne stops to splint the arm of Leopold Kincaid, who was thrown from his horse.
+  [Field] 12 racers retired and 4 died. 166 remain.
+  [The Fallen] Pearl Wilder (killed for supplies, by Luther Mercer) And 5 from the field.
 
 --- Finish Line ---
-  Rowan Finch waits for the river to drop.
-  Gus Ridley waves Rupert Hawthorne on and keeps his own pace.
-  Clay Carver catches up with Andre Boom Boom, and they fight. Andre Boom Boom fights with Tomb of the Boom 2. They fight to a standstill, and both ride off hurt.
-  Benjamin Boom Boom crowds Virgil Yates into the rail on the final turn.
-  Philippa Yardley fires on L.A. Boom Boom from a ridge. The bullet grazes his side.
-  Boone Wilder is thrown hard from the saddle and can't go on. His race is over.
+  Clay Carver fords the river just before the flood hits.
+  Clementine Finch rides on and leaves Virgil Yates under the horse.
+  Wren Prescott walks Ghost for an afternoon and lets the horse recover.
+  Ada Thorne walks Sorrel for an afternoon and lets the horse recover.
+  Gus Ridley fords the river just before the flood hits.
+  Lars McAllister jumps Ellis Hale on the trail. Ellis Hale turns the fight around and drives Lars McAllister off.
+  A rider in a dark hat ambushes L.A. Boom Boom on the trail. L.A. Boom Boom fights with Tomb of the Boom 3. L.A. Boom Boom turns the fight around and drives the rider in the dark hat off.
+  Hot Pants finds Hester Everhart bleeding out on the trail and seals the wound with Cream Starter.
+  A rider in a dark hat ambushes Rowan Finch on a forest road. Rowan Finch barely escapes.
+  Mountain Tim's foot catches in the stirrup and he is dragged until Wekapipo cuts the strap.
+  Luther Mercer passes Henrietta Yardley, who has collapsed a mile short of the finish.
   -- Side stories --
     Meanwhile on the trail...
-      · Pearl Wilder takes the wrong fork and has to double back.
-      · Luther Mercer fades badly in the final miles.
-      · Amos Sutter takes the wrong fork and has to double back.
-      · Zephyr throws a shoe, and Wren Prescott loses an hour at a roadside smithy.
-      · El Condor Pasa throws a shoe, and Mrs. Robinson loses an hour at a roadside smithy.
-  [Field] 5 racers retired and 2 died. 159 remain.
-  [The Fallen] No named racers. And 2 from the field.
+      · Shiloh throws a shoe, and Amos Sutter loses an hour at a roadside smithy.
+      · Oyecomova stops to splint the arm of Delphine Jessup, who was thrown from her horse.
+      · Boone Wilder takes the wrong fork and has to double back.
+      · Pocoloco, out of the race, watches the leaders pass from a saloon porch.
+      · Johnny Joestar finds a steady rhythm and makes good time.
+  [Field] 8 racers retired and 1 died. 157 remain.
+  [The Fallen] No named racers. And 1 from the field.
 
   STAGE 7 RESULTS
-     1. Imogen Delacroix [pack]  +100
-     2. Gyro Zeppeli  +90
-     3. Hot Pants  +80
-     4. Wren Prescott  +70
-     5. Benjamin Boom Boom  +60
-     6. Andre Boom Boom  +50
-     7. Mrs. Robinson  +40
-     8. Mortimer Prentiss [pack]  +30
-     9. Lucius Ingram [pack]  +20
-    10. Sandman  +10
+     1. Gus Ridley  +100
+     2. Clay Carver  +90
+     3. Ada Thorne  +80
+     4. Gyro Zeppeli  +70
+     5. Oyecomova  +60
+     6. Wren Prescott  +50
+     7. Mountain Tim  +40
+     8. Kit Moreau [pack]  +30
+     9. L.A. Boom Boom  +20
+    10. Luther Mercer  +10
   STANDINGS
-    Hot Pants  330
-    Gyro Zeppeli  330
-    Amos Sutter  285
-    Wren Prescott  280
-    Leopold Lindqvist (retired)  225
-    Boone Wilder (retired)  205
+    Wren Prescott  270
+    Boone Wilder  240
+    Ada Thorne  235
+    Clay Carver  200
+    Pearl Wilder (dead)  190
+    Johnny Joestar  185
 
 ======================================================================
 STAGE 8: BOTH SIDES NOW
@@ -739,68 +776,81 @@ Philadelphia → Union Beach
 ======================================================================
 
 --- Day 1 ---
-  Virgil Yates drags Dmitri Castellanos clear and loses an hour doing it.
-  Luther Mercer attacks Clay Carver on the trail. Elias Quigley rides in to help Clay Carver. They fight to a standstill, and both ride off hurt.
-  Riders laugh as they pass Sandman. By evening, Sandman has caught every one of them.
-✝ Aiyana Whitaker challenges Amos Sutter to a duel over a water hole. Amos Sutter draws first, and Aiyana Whitaker drops into the dust.
+  Amos Sutter asks L.A. Boom Boom to ride together. L.A. Boom Boom turns him down.
+  Clay Carver catches up with Boone Wilder, and they fight. Boone Wilder fights with Beach Boy. They fight to a standstill, and both ride off hurt.
+  Wren Prescott wins a mid-stage sprint and pockets the bonus.
+  Virgil Yates uses The Hand to lift an overturned wagon off the leg of Percival Hawthorne.
+  Marlow Mercer cuts Gyro Zeppeli's cinch strap at a water stop. Gyro Zeppeli loses an hour fixing it.
   -- Side stories --
     Meanwhile on the trail...
-      · Rowan Finch finds a steady rhythm and makes good time.
-      · Andre Boom Boom finds a steady rhythm and makes good time.
-      · Benjamin Boom Boom and Hot Pants ride together for an afternoon, trading stories.
-      · Pearl Wilder fords a river mouth near Union Beach as the tide comes in.
-      · Wren Prescott finds a shallow ford and crosses the river dry.
-      · Rosie throws a shoe, and Gus Ridley loses an hour at a roadside smithy.
-  [Field] 9 racers retired and 1 died. 149 remain.
+      · Rowan Finch's feet are raw and bleeding.
+      · Ada Thorne and Ellis Hale trade the lead all day and save their horses.
+      · Benjamin Boom Boom takes the wrong fork and has to double back.
+      · Lane Gallagher waves for help by the trail. Amos Sutter rides straight past.
+      · Oyecomova is so saddle-sore he can barely sit.
+      · Luther Mercer and Norisuke Higashikata IV ride together for an afternoon, trading stories.
+      · Delphine Barlow waves for help by the trail. Clementine Finch rides straight past.
+      · Gus Ridley races along the coast road at full speed.
+      · Urmd Avdul fords a river mouth near Union Beach as the tide comes in.
+  [Field] 6 racers retired. No one in the field died. 151 remain.
 
 --- Night 1 ---
-✝ Amos Sutter catches up with Clay Carver, and they fight. Clay Carver tries to flee, but Amos Sutter runs him down. Amos Sutter fights with Aerosmith. Clay Carver begs for his life. Amos Sutter kills him anyway.
-✝ Philippa Ashcroft offers to ride with Luther Mercer, then tries to push him off a bridge. Luther Mercer kills her instead.
-✝ Bartholomew Faraday ambushes Andre Boom Boom from behind a rock. Andre Boom Boom never sees the shot coming.
-  Mortimer McAllister robs Wren Prescott's camp in the night, taking food and water.
-  Gus Ridley catches Paloma Tanaka going through his saddlebags and sends her off with a warning.
-✝ Kofi Oakes shares a bottle of whiskey with L.A. Boom Boom. It was poisoned.
+  Gus Ridley waits for the river to drop.
+  A rider in a dark hat ambushes Urmd Avdul on the trail. The rider in the dark hat beats Urmd Avdul and goes through his things.
+  Virgil Yates uses The Hand to lift an overturned wagon off the leg of Lucinda Goodnight.
+  Rowan Finch catches Hiroshi Everhart going through their saddlebags and sends him off with a warning.
+  Wren Prescott keeps watch so Ellis Hale can sleep. Nobody bothers them.
+  A rattlesnake spooks Sorrel, and the horse goes down with a broken leg. Ada Thorne has to go on foot.
   -- Side stories --
     Meanwhile on the trail...
-      · Virgil Yates and Mountain Tim share a campfire and agree not to shoot each other tonight.
-      · Pocoloco sleeps under the stars.
-      · Oyecomova takes the wrong fork and has to double back.
-      · Pearl Wilder is so saddle-sore she can barely sit.
-      · Rowan Finch stops to splint the arm of Silas Okafor, who was thrown from his horse.
-      · Boone Wilder trails the race, following the field's dust toward New York.
-  [Field] 4 racers retired and 2 died. 143 remain.
-  [The Fallen] Clay Carver (killed by a rival, by Amos Sutter); Andre Boom Boom (shot from ambush, by Bartholomew Faraday); L.A. Boom Boom (poisoned, by Kofi Oakes) And 3 from the field.
+      · Hot Pants pushes Cream Starter too far and collapses from the strain.
+      · L.A. Boom Boom and Amos Sutter share a campfire and agree not to shoot each other tonight.
+      · Luther Mercer and Norisuke Higashikata IV share a campfire and agree not to shoot each other tonight.
+      · Boone Wilder rides through the night while the others sleep.
+      · Wekapipo finds a steady rhythm and makes good time.
+      · Clay Carver takes the wrong fork and has to double back.
+      · Clementine Finch sleeps under the stars.
+  [Field] 7 racers retired and 1 died. 143 remain.
+  [The Fallen] No named racers. And 1 from the field.
 
 --- Finish Line ---
-  Luther Mercer catches up with Mortimer Prentiss, and they fight. Mortimer Prentiss turns and flees, and gets away.
-  Philippa Dunmore jumps Rowan Finch on the trail. Pearl Wilder rides in to help Rowan Finch. Rowan Finch turns the fight around and drives Philippa Dunmore off.
-  Gus Ridley is pinned against a fence when the crowd surges onto the track at the finish.
+  Virgil Yates leaves the road and takes the long way round.
+  Ringo Roadagain ambushes Ellis Hale on the trail. Ringo Roadagain goes for the kill, but Ellis Hale gets away, badly hurt.
+  Luther Mercer catches up with Gus Ridley, and they fight. Gus Ridley gives up without a fight. Luther Mercer beats Gus Ridley and drives off Starlight.
+  Boone Wilder crowds Amos Sutter into the rail on the final turn.
+  Andre Boom Boom strings wire across the trail. Mountain Tim's horse goes down hard.
+  Wren Prescott uses Scary Monsters to lift an overturned wagon off the leg of Paloma Kincaid.
+  Rowan Finch runs until their legs give out and has to rest for hours.
+✝ Imogen Crane offers to ride with Clementine Finch, then tries to push her off a bridge. Clementine Finch kills her instead.
+  L.A. Boom Boom draws on Ada Thorne and misses. Ada Thorne has him dead to rights, then lowers the gun.
   -- Side stories --
     Meanwhile on the trail...
-      · Wren Prescott fades badly in the final miles.
-      · Hot Pants takes the wrong fork and has to double back.
-      · Amos Sutter is so saddle-sore he can barely sit.
-      · Virgil Yates finds a steady rhythm and makes good time.
-  [Field] 7 racers retired. No one in the field died. 136 remain.
+      · Benjamin Boom Boom stops to splint the arm of Silas Goodnight, who was thrown from his horse.
+      · Wekapipo takes the wrong fork and has to double back.
+      · Urmd Avdul finds a steady rhythm and makes good time.
+      · Clay Carver takes the wrong fork and has to double back.
+      · Marlow Mercer finds a steady rhythm and makes good time.
+  [Field] 5 racers retired and 2 died. 136 remain.
+  [The Fallen] No named racers. And 2 from the field.
 
   STAGE 8 RESULTS
-     1. Wren Prescott  +100
-     2. Mrs. Robinson  +90
-     3. Pocoloco  +80
-     4. Mountain Tim  +70
-     5. Gus Ridley  +60
-     6. Diego Brando  +50
-     7. Rupert Ingram [pack]  +40
-     8. Amos Sutter  +30
-     9. Benjamin Boom Boom  +20
-    10. Mortimer Prentiss [pack]  +10
+     1. Marlow Mercer  +100
+     2. Kit Moreau [pack]  +90
+     3. Johnny Joestar  +80
+     4. Rupert Ashcroft [pack]  +70
+     5. Clementine Finch  +60
+     6. Wren Prescott  +50
+     7. Rowan Finch  +40
+     8. L.A. Boom Boom  +30
+     9. Urmd Avdul  +20
+    10. Ellis Hale  +10
   STANDINGS
-    Wren Prescott  380
-    Hot Pants  335
-    Gyro Zeppeli  335
-    Pocoloco  260
-    Amos Sutter  250
-    Leopold Lindqvist (retired)  225
+    Wren Prescott  335
+    Johnny Joestar  265
+    Marlow Mercer  250
+    Ada Thorne  240
+    Rowan Finch  205
+    Clay Carver  200
 
 ======================================================================
 STAGE 9: MANHATTAN RHAPSODY
@@ -808,102 +858,105 @@ Union Beach → Trinity Church
 ======================================================================
 
 --- Day 1 ---
-  Rowan Finch catches up with Gyro Zeppeli, and they fight. Gyro Zeppeli throws his Steel Balls. They fight to a standstill, and both ride off hurt.
-  Amos Sutter catches up with Benjamin Boom Boom, and they fight. Benjamin Boom Boom turns and flees, and gets away.
-  Luther Mercer catches up with Mortimer Prentiss, and they fight. Mortimer Prentiss tries to flee, but Luther Mercer runs him down. They fight to a standstill, and both ride off hurt.
-  Bandits jump Gus Ridley at a water hole. The Hand sends them running before a shot is fired.
-  Pocoloco wins a mid-stage sprint and pockets the bonus.
+  Rowan Finch asks L.A. Boom Boom to ride together. L.A. Boom Boom turns them down.
+  Clay Carver catches up with Kit Moreau, and they fight. Kit Moreau turns the fight around and drives Clay Carver off.
+  Marlow Mercer catches up with Ada Thorne, and they fight. Marlow Mercer fights with Surface. Ada Thorne turns the fight around and drives Marlow Mercer off.
+✝ Beatrix Sinclair challenges Amos Sutter to a duel over a water hole. Amos Sutter draws first, and Beatrix Sinclair drops into the dust.
+  Bandits jump Wren Prescott at a water hole. Scary Monsters sends them running before a shot is fired.
+  Hot Pants draws on Gus Ridley and misses. Gus Ridley has her dead to rights, then lowers the gun.
+✝ Boone Wilder catches Clementine Finch alone on the trail and kills her for her supplies.
   -- Side stories --
     Meanwhile on the trail...
-      · Pearl Wilder finds a steady rhythm and makes good time.
-      · Virgil Yates finds a steady rhythm and makes good time.
-      · Wren Prescott is so saddle-sore they can barely sit.
-      · Boone Wilder rides ahead as a scout, warning anyone who will listen about the trail ahead.
-      · Pepper throws a shoe, and Hot Pants loses an hour at a roadside smithy.
-  [Field] New York is in sight. 7 racers retired and 1 died. 128 remain.
+      · Urmd Avdul stops to splint the arm of Finley Oakes, who was thrown from their horse.
+      · Luther Mercer finds a steady rhythm and makes good time.
+      · Ellis Hale takes the wrong fork and has to double back.
+      · Virgil Yates catches the ferry across to Manhattan just as it pulls away.
+      · Seraphina Quigley waves for help by the trail. Rowan Finch rides straight past.
+  [Field] New York is in sight. 3 racers retired and 3 died. 130 remain.
 
 --- Night 1 ---
-  Pearl Wilder drags Rowan Finch clear and loses an hour doing it.
-  Gus Ridley walks Rosie for an afternoon and lets the horse recover.
-  Wren Prescott walks Buckshot for an afternoon and lets the horse recover.
-  Amos Sutter cuts through the back alleys and comes out three blocks ahead.
+  Dr. Ferdinand ambushes Clay Carver on the trail. Clay Carver turns and flees, and gets away.
+  Amos Sutter catches up with Virgil Yates, and they fight. Virgil Yates turns and flees, and gets away.
+  Ringo Roadagain ambushes Wekapipo on the trail. Wekapipo throws his Steel Balls. Wekapipo turns the fight around and drives Ringo Roadagain off.
+  Luther Mercer cuts Gus Ridley's cinch strap at a water stop. Gus Ridley loses an hour fixing it.
+  Percival Faraday draws on Gyro Zeppeli. A spinning steel ball knocks the gun away, and Gyro Zeppeli lets him go.
+  Benjamin Boom Boom's foot catches in the stirrup and he is dragged until Rowan Finch cuts the strap.
   -- Side stories --
     Meanwhile on the trail...
-      · Mrs. Robinson takes the wrong fork and has to double back.
-      · Virgil Yates sleeps under the stars.
-      · Luther Mercer takes the wrong fork and has to double back.
-  [Field] 6 racers retired and 1 died. 121 remain.
-  [The Fallen] No named racers. And 2 from the field.
+      · Oyecomova pushes Boku no Rhythm wo Kiitekure too far and collapses from the strain.
+      · Marlow Mercer and Wren Prescott share a campfire and agree not to shoot each other tonight.
+      · Lane Everhart waves for help by the trail. Ellis Hale rides straight past.
+      · Mountain Tim gallops through the streets of Manhattan as crowds scatter.
+      · Boone Wilder stops to splint the arm of Hester Barlow, who was thrown from her horse.
+      · Ada Thorne finds a steady rhythm and makes good time.
+  [Field] New York is in sight. 7 racers retired. No one in the field died. 123 remain.
+  [The Fallen] Clementine Finch (killed for supplies, by Boone Wilder) And 3 from the field.
 
 --- Finish Line ---
-  Benjamin Boom Boom takes the time bonus for leading the final mile.
-  Aiyana Hartley tries to rob Hot Pants at gunpoint. Hot Pants knocks the gun away and lets her walk.
-  Rowan Finch follows a trapper's map down a shortcut and gains half a day.
-✝ Oyecomova watches Beatrix Dunmore pick a fight with the wrong stranger and fall in the dust.
+  Luther Mercer catches up with Johnny Joestar, and they fight. Johnny Joestar fights with Tusk Act 1. Luther Mercer beats Johnny Joestar and rides off with Slow Dancer.
+  Ringo Roadagain ambushes Wren Prescott on the trail. Wren Prescott fights with Scary Monsters. Wren Prescott turns the fight around and drives Ringo Roadagain off.
+  A rider in a dark hat ambushes Ada Thorne on the trail. Ellis Hale rides in to help Ada Thorne. The rider in the dark hat beats Ada Thorne and drives off Starlight.
+  A rider in a dark hat ambushes Mountain Tim on the trail. Mountain Tim fights with Oh! Lonesome Me. They fight to a standstill, and both ride off hurt.
+  Ringo Roadagain ambushes Wekapipo on the trail. Wekapipo throws his Steel Balls. Ringo Roadagain beats Wekapipo and goes through his things.
+  A rattlesnake spooks Clover, and the horse goes down with a broken leg. Gus Ridley has to go on foot.
+✝ Boone Wilder watches Adelaide Lindqvist pick a fight with the wrong stranger and fall in the dust.
+  Apache Wind's heart gives out within sight of the finish line. Oyecomova walks the rest.
+  Rowan Finch passes Lucinda Lindqvist, who has collapsed a mile short of the finish.
+  Gyro Zeppeli falls in with Dakota Lockhart, and the two agree to ride together for a while.
+✝ Barnabas Lockhart ambushes Hot Pants and opens a gash in her arm. Hot Pants seals it with Cream Starter, then fills Barnabas Lockhart's throat with flesh spray. Barnabas Lockhart doesn't get up.
   -- Side stories --
     Meanwhile on the trail...
-      · Amos Sutter catches the ferry across to Manhattan just as it pulls away.
-      · Virgil Yates catches the ferry across to Manhattan just as it pulls away.
-      · Luther Mercer is so saddle-sore he can barely sit.
-      · Pearl Wilder gallops through the streets of Manhattan as crowds scatter.
-      · Mrs. Robinson fades badly in the final miles.
-      · Cornelius Everhart waves for help by the trail. Gyro Zeppeli rides straight past.
-      · Harper Voss waves for help by the trail. Wren Prescott rides straight past.
-      · Gus Ridley gallops through the streets of Manhattan as crowds scatter.
-  [Field] 6 racers retired and 1 died. 114 remain.
-  [The Fallen] No named racers. And 1 from the field.
+      · Buckshot throws a shoe, and Virgil Yates loses an hour at a roadside smithy.
+      · Andre Boom Boom finds a steady rhythm and makes good time.
+      · Clay Carver finds a steady rhythm and makes good time.
+      · Maverick throws a shoe, and Norisuke Higashikata IV loses an hour at a roadside smithy.
+  [Field] New York is in sight. 6 racers retired and 2 died. 115 remain.
+  [The Fallen] No named racers. And 2 from the field.
 
   STAGE 9 RESULTS
      1. Gyro Zeppeli  +100
-     2. Pocoloco  +90
-     3. Diego Brando  +80
-     4. Benjamin Boom Boom  +70
-     5. Mrs. Robinson  +60
-     6. Remy Barlow [pack]  +50
-     7. Rupert Ingram [pack]  +40
-     8. Horace Dunmore [pack]  +30
-     9. Pearl Wilder  +20
-    10. Amos Sutter  +10
+     2. Virgil Yates  +90
+     3. Kit Moreau [pack]  +80
+     4. Wren Prescott  +70
+     5. Rowan Finch  +60
+     6. Mountain Tim  +50
+     7. Leopold Thibodeaux [pack]  +40
+     8. Luther Mercer  +30
+     9. Hot Pants  +20
+    10. Delphine Holloway [pack]  +10
   STANDINGS
-    Gyro Zeppeli  435
-    Pocoloco  360
-    Hot Pants  340
-    Wren Prescott  315
-    Amos Sutter  265
-    Leopold Lindqvist (retired)  225
+    Wren Prescott  405
+    Rowan Finch  275
+    Johnny Joestar  265
+    Marlow Mercer  250
+    Virgil Yates  240
+    Clay Carver  205
 
 ======================================================================
 NEW YORK · TRINITY CHURCH
 ======================================================================
-  3rd: Hot Pants  340 points
-  2nd: Pocoloco  360 points
-  1st: Gyro Zeppeli  435 points   <-- WINNER
+  3rd: Johnny Joestar  265 points
+  2nd: Rowan Finch  275 points
+  1st: Wren Prescott  405 points   <-- WINNER
 
   AWARDS
-    Most Kills: Amos Sutter (5 kills)
-    Most Merciful: Gus Ridley (spared 4 riders)
-    Best Runner: Rowan Finch (180 points on foot)
-    Biggest Comeback: Pocoloco (from 29th to 2nd)
+    Most Kills: Luther Mercer (4 kills)
+    Most Merciful: Ada Thorne (spared 5 riders)
+    Best Runner: Rowan Finch (275 points on foot)
+    Biggest Comeback: Gyro Zeppeli (from 29th to 7th)
 
-  REACHED NEW YORK (16 named, plus 114 from the field)
-    Gyro Zeppeli, Pocoloco, Hot Pants, Wren Prescott, Amos Sutter, Mrs. Robinson, Benjamin Boom Boom, Mountain Tim, Rowan Finch, Gus Ridley, Pearl Wilder, Diego Brando, Sandman, Virgil Yates, Luther Mercer, Oyecomova
+  REACHED NEW YORK (22 named, plus 115 from the field)
+    Wren Prescott, Rowan Finch, Johnny Joestar, Marlow Mercer, Virgil Yates, Clay Carver, Gyro Zeppeli, Luther Mercer, Mountain Tim, Ada Thorne, Oyecomova, Boone Wilder, Hot Pants, Urmd Avdul, L.A. Boom Boom, Amos Sutter, Gus Ridley, Norisuke Higashikata IV, Ellis Hale, Wekapipo, Benjamin Boom Boom, Andre Boom Boom
 
-  THE FALLEN (16)
-    ✝ Nell Ketchum: killed by a rival, by Reese Carver (Stage 1, Day 1)
-    ✝ Shiloh Wilder: swallowed by the Devil's Palm (Stage 2, Day 2)
-    ✝ Opal Finch: swallowed by the Devil's Palm (Stage 2, Day 2)
-    ✝ Ellis Hale: killed by a rival, by Mabel Prescott (Stage 2, Finish Line)
-    ✝ Urmd Avdul: killed for supplies, by Luther Mercer (Stage 4, Day 1)
-    ✝ Marlow Mercer: poisoned, by Augustus Moreau (Stage 4, Night 1)
-    ✝ Norisuke Higashikata IV: murdered in camp, by Clementine Finch (Stage 4, Night 1)
-    ✝ Mabel Prescott: pierced by a strange arrow (Stage 4, Finish Line)
-    ✝ Clementine Finch: killed by a rival, by Leopold Lindqvist (Stage 5, Day 1)
-    ✝ Ada Thorne: killed by a rival, by Amos Sutter (Stage 5, Finish Line)
-    ✝ Reese Carver: killed for supplies, by Gus Ridley (Stage 5, Finish Line)
-    ✝ Johnny Joestar: killed for supplies, by Benjamin Boom Boom (Stage 7, Day 1)
-    ✝ Wekapipo: killed on the trail, by Amos Sutter (Stage 7, Night 1)
-    ✝ Clay Carver: killed by a rival, by Amos Sutter (Stage 8, Night 1)
-    ✝ Andre Boom Boom: shot from ambush, by Bartholomew Faraday (Stage 8, Night 1)
-    ✝ L.A. Boom Boom: poisoned, by Kofi Oakes (Stage 8, Night 1)
+  THE FALLEN (9)
+    ✝ Diego Brando: murdered in camp, by Mabel Prescott (Stage 2, Night 1)
+    ✝ Nell Ketchum: killed for supplies, by Mabel Prescott (Stage 2, Day 2)
+    ✝ Shiloh Wilder: swallowed by the Devil's Palm (Stage 3, Day 1)
+    ✝ Mabel Prescott: killed by a rival, by Clementine Finch (Stage 3, Day 1)
+    ✝ Opal Finch: pierced by a strange arrow (Stage 4, Finish Line)
+    ✝ Reese Carver: killed by a rival, by Jordan Barlow (Stage 5, Night 1)
+    ✝ Sandman: killed by a rival, by Luther Mercer (Stage 6, Day 2)
+    ✝ Pearl Wilder: killed for supplies, by Luther Mercer (Stage 7, Day 1)
+    ✝ Clementine Finch: killed for supplies, by Boone Wilder (Stage 9, Day 1)
 
-(30 rounds · reveals at Normal speed: ~45 min, or ~35 min skipping side stories)
+(30 rounds · reveals at Normal speed: ~48 min, or ~37 min skipping side stories)

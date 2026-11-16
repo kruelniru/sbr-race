@@ -261,9 +261,12 @@ export default {
     // Rewards: agents never attack; relay horses; a free Stand (Arrow odds, no
     // death risk) if Standless; an errand each stage; endingBonus if the
     // President ends with more parts than every racer combined.
-    relay: 0,                  // placement every remaining stage
+    relay: 1,                  // placement every remaining stage
     errandBonus: 8,            // agent backup in the errand fight
-    endingBonus: 25,
+    endingBonus: 50,
+    // Sim check: joiners' share of race wins over their share of PCs still racing
+    // at the start of Stage 4 (offers only reach them), on 4,500 games.
+    joinerWinLimit: 1.3,
   },
 
   // ---------------------------------------------------------------- choices

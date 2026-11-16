@@ -234,7 +234,7 @@ function renderCard(state, card) {
       return h('div', { class: 'card card-events' + (card.side ? ' card-side' : '') },
         sideLabel,
         h('ul', { class: 'event-list' }, card.lines.map((e, i) =>
-          h('li', { class: 'event-line' + (e.death ? ' death' : ''), style: `animation-delay:${i * 0.35}s` },
+          h('li', { class: 'event-line' + (e.death ? ' death' : '') + (e.announce ? ' announce' : ''), style: `animation-delay:${i * 0.35}s` },
             h('div', { class: 'event-faces' }, e.ids.map((id) => face(state, id))),
             h('p', {}, highlightNames(e.text, e.names)),
           ))),

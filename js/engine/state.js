@@ -19,6 +19,7 @@ import { Rng } from './rng.js';
 import { ITEM_KINDS, canUse } from './items.js';
 import { myOffer, tradeTargets } from './trades.js';
 import { hasHorse } from './horses.js';
+import RULES from '../../data/rules.js';
 
 export const PHASE = Object.freeze({
   LOBBY: 'lobby',
@@ -181,6 +182,12 @@ export function privateView(state, playerId) {
       horse: hasHorse(p) ? tradeTargets(state, p, 'horse') : [],
     } : null,
     canAskHorse: p.mount === 'horse' && !!p.onFoot,
+    // Milestone 5b: only the joiner's own phone knows (the M6 secrets reveal tells everyone).
+    valentine: p.valentine?.joined ? {
+      errand: (state.race?.errands ?? []).some((e) => e.from === p.id && !e.done) ? 'next round' : null,
+      bonus: RULES.valentine.endingBonus,
+      relay: RULES.valentine.relay,
+    } : null,
     // Kept Stand Arrows and Rokakaka. Usable while a choice window is open.
     // Corpse parts are items too (secret, like Stands): hidden ones can be held later.
     items: (state.items ?? []).filter((i) => i.owner === p.id).map((i) => ({
@@ -203,7 +210,7 @@ export function promptView(state, playerId) {
   const x = c.prompts.find((pr) => pr.playerId === playerId);
   if (!x) return null;
   return {
-    id: x.id, kind: x.kind, title: x.title, text: x.text, star: x.star,
+    id: x.id, kind: x.kind, title: x.title, text: x.text, star: x.star, secret: !!x.secret,
     options: x.options.map((o) => ({ id: o.id, label: o.label, hint: o.hint, needsTarget: !!o.needsTarget })),
     targets: x.targets?.map((t) => ({ id: t.id, name: t.name, tier: t.tier })) ?? null,
     answer: x.answer && x.answer.by === 'player' ? { optionId: x.answer.optionId, targetId: x.answer.targetId ?? null } : null,

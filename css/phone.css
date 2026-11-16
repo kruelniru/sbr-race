@@ -203,3 +203,16 @@ legend { margin-bottom: 8px; }
 .offer-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .item-actions { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
 .offer-horse { margin-left: 8px; }
+
+/* ---------------------------------------------------------------- milestone 5b: corpse parts, Valentine, secret prompts */
+.parts-card { background: linear-gradient(160deg, #2b2416, var(--panel)); border: 1px solid #8a6d2f; border-radius: var(--radius); padding: 14px 16px; margin: 0 0 16px; }
+.parts-card h3 { margin: 0 0 8px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; color: var(--gold-2); }
+.parts-count { font-size: .85rem; color: var(--muted); font-weight: 400; }
+.item.hidden-part .item-name::after { content: ' · hidden'; color: var(--muted); font-weight: 400; }
+.valentine-card { background: #1c1622; border: 1px solid #6c4d86; border-radius: var(--radius); padding: 14px 16px; margin: 0 0 16px; }
+.valentine-card h3 { margin: 0 0 8px; color: #d9b8ff; }
+.valentine-card ul { margin: 0 0 8px; padding-left: 18px; }
+.valentine-card li { margin: 2px 0; }
+.valentine-errand { color: #d9b8ff; margin: 6px 0; }
+.choice.secret { border-color: #6c4d86; }
+.secret-note { margin: 0 0 8px; font-size: .85rem; color: #d9b8ff; }

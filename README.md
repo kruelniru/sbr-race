@@ -89,6 +89,9 @@ js/engine/           pure game logic, no DOM (Node can import it)
   horses.js          horse quality, losing/taking/buying horses, the trader (M5)
   alliances.js       one ally at a time, canon fit, ride double, breaking up (M5)
   trades.js          secret trade offers, answered in the next window (M5)
+  corpse.js          the Saint's Corpse: parts, finds, merging, rejection, the President (M5b)
+  agents.js          Valentine's agents' ambushes and Funny Valentine (M5b)
+  valentine.js       the secret Valentine offer, its rewards and errands (M5b)
   finale-sections.js extra finale cards (Stands awakened)
   plans.js           Stage Plan lookups
   reveal.js          round result -> host cards + text-based timing (shared with the sim)
@@ -103,6 +106,7 @@ data/                game content, separate from the engine
   stands.js          the Stand pool, banned list, canon Stands
   stages.js          the 9 stages: rounds, terrain, NPC attrition
   canon-racers.js    the 15 canon racers (each a host toggle)
+  corpse.js          corpse part names, Valentine's agents, announcement lines (M5b)
   events/            event templates; see data/events/README.md
   horse-names.js, npc-names.js, ai-names.js, personalities.js, pronouns.js
 sim/simulate.js      headless balance simulator

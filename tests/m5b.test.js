@@ -231,7 +231,9 @@ test('joining Valentine: −30, an anonymous announcement, a Stand if Standless,
   assert.deepEqual(lines.map((l) => l.text), [PART_LINES.darkSide]);
   assert.deepEqual(lines[0].ids, []);
   // Secret everywhere but their own phone (M6 reveals it).
-  for (const v of [publicView(state), hostScreenView(state), privateView(state, state.players[1].id)]) assert.doesNotMatch(JSON.stringify(v), /valentine/i);
+  for (const v of [publicView(state), hostScreenView(state)]) assert.doesNotMatch(JSON.stringify(v), /valentine/i);
+  assert.equal(privateView(state, state.players[1].id).valentine, null);
+  assert.ok(privateView(state, a.id).valentine, 'their own phone knows');
   // Relay horses (reward 2) follow rules.valentine.relay.
   const plain = placementScore({ ...a, valentine: null, pace: 0, injured: false }, { terrain: [] }, new Rng('x'));
   const joined = placementScore({ ...a, pace: 0, injured: false }, { terrain: [] }, new Rng('x'));

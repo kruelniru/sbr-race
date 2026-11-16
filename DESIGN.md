@@ -170,7 +170,7 @@ Players make one Stage Plan per stage, plus sub events when something happens to
 - A window closes when the timer runs out, when every connected player has answered, or when the host clicks **End now**. Anyone unanswered (timed out or disconnected) gets their ★ option. AI racers answer instantly by personality.
 - **Pause timer** freezes the countdown on the host and every phone ("Paused by the host") so the host can talk; **Resume** restarts it.
 - Answers can be changed until the window closes. Everything resolves together; sub event results lead the round's Main Story.
-- **Secret prompts:** a sub event can be marked secret. Secret prompts are never named or counted on the host screen; if every pending prompt is secret, the host just says "Decisions are being made…". Valentine's offer (milestone 5) uses this.
+- **Secret prompts:** a sub event can be marked secret. Secret prompts are never named or counted on the host screen; if every pending prompt is secret, the host just says "Decisions are being made…". The phone marks them "Only you see this." Secret in milestone 5: Stand Arrows, Rokakaka, trade offers, corpse finds, a chance to steal, Valentine's offer and errands.
 
 **Personality hint:** on every choice, the option your personality would pick is marked "★ In character." Personality also nudges which random events you get (Honorable gets more helping and sparing events, Ruthless more kills and sabotage). Canon racers add their own leanings on top: they rarely start kills and often help.
 
@@ -183,7 +183,7 @@ Players make one Stage Plan per stage, plus sub events when something happens to
 | Hunt a rival | A guaranteed fight with your pick | You might lose it, or worse; −5 placement | M3 (a real fight from M5) |
 | Lay low | Very safe | Bad placement | M3 |
 | Seek the Devil's Palm (Stages 2–3) | A guaranteed Edge of the Devil's Palm that stage | Low Worthiness can kill you; −5 placement | M4 |
-| Hunt a corpse part | Better odds of finding one | Valentine's agents notice you | M5 |
+| Hunt a corpse part | Better odds of finding one (×3) | Valentine's agents notice you (×2); −5 placement | M5b |
 | Ally up (only while you ride alone) | Ride with someone (they accept or refuse) | They might betray you | M5 |
 
 Plans whose systems don't exist yet are hidden, not greyed out. The numbers live in `data/plans.js`; the sim checks that no plan dominates (`--plans random`, `--plans <id>`, `--plans star`).
@@ -205,7 +205,7 @@ In milestone 3 (`data/sub-events.js`):
 
 In milestone 4:
 
-- **Edge of the Devil's Palm** (Stages 2–3): go in or turn back. It comes up at random for racers without a Stand, and once that stage for anyone on "Seek the Devil's Palm" (a Stand holder can pick that plan; the card warns "You already have a Stand; the Palm has nothing more to give you" until corpse parts arrive in M5).
+- **Edge of the Devil's Palm** (Stages 2–3): go in or turn back. It comes up at random for racers without a Stand, and once that stage for anyone on "Seek the Devil's Palm". A Stand holder can pick that plan; since M5b the card says "You have a Stand, but the Palm may still hold a corpse part."
 - **Found a Stand Arrow** (secret): pierce yourself now, keep it, or leave it. A Stand holder only sees keep it / leave it.
 - **Found a Rokakaka** (secret, human PCs only): eat it now (only if you have a Stand), keep it, or leave it.
 
@@ -222,13 +222,16 @@ In milestone 5a:
 
 There is no separate "Won a fight" window: fights ask "If you win:" in the same prompt (decision 57), so a fight never needs a second round of choices.
 
-In milestone 5b:
+In milestone 5b (`data/sub-events.js`, resolved in `js/engine/corpse.js`, `agents.js`, `valentine.js`):
 
-- **Found a part:** keep it, hide it, or give it to someone.
-- **Ambushed by agents:** fight, flee, or hand over a part to live.
-- **Valentine's offer (Stages 4–6 only):** join him or refuse.
+- **You found a corpse part** (secret): keep it (it merges with you), hide it on you, or give it to someone (pick who; +15).
+- **A chance to steal** (secret, Night rounds): a holder is asleep and something in their pack glows. Take it (−8; 75% it works, otherwise they wake and you back off) or leave it. Only the thief learns who holds a part.
+- **Ambushed by agents:** fight back to kill, fight back and let them go, flee, or **let them search you** (they take a part if you carry one and ride off; you're roughed up if you don't). Not secret: agents also ambush racers holding nothing, so the stream learns nothing.
+- **Funny Valentine** (Stages 8–9): face him or avoid him (lose time).
+- **A man in a dark hat** (Valentine's offer, secret, Stages 4–6): join Valentine or refuse.
+- **Valentine's errand** (secret, joiners only): pick a racer; next round you ambush them masked. Their prompt is **Someone is coming for you** (a rider in a dark hat): the agent-ambush options.
 
-**PC vs PC fights:** both players choose at once. The attacker chooses what happens if they win (kill, let them go, take their horse; a corpse part in M5b); the defender chooses fight back to kill, fight back and let them go, or flee (hand over a part in M5b). Both choices combine into the result. The sim checks it's a real gamble: an attacker with equal skill wins about half the decided PC vs PC fights.
+**PC vs PC fights:** both players choose at once. The attacker chooses what happens if they win (kill, let them go, take their horse, or **search them**: take a corpse part if they carry one; the stream line is the same either way, "goes through their things"). The defender chooses fight back to kill, fight back and let them go, flee, or **give up without a fight** (the attacker gets their choice; a kill on someone who gave up counts as cruel, −12). Both choices combine into the result. The sim checks it's a real gamble: an attacker with equal skill wins about half the decided PC vs PC fights.
 
 **Spares:** sparing someone you beat is tracked for every racer and feeds the **Most Merciful** award. A few "lets them go" events record spares, and fights use the same counter.
 
@@ -254,7 +257,7 @@ Worthiness is a hidden 0–100 stat. PCs start by personality (Honorable 60, Cau
 
 | Action | Change | Active |
 | --- | --- | --- |
-| Give away a corpse part | +15 | M5 |
+| Give away a corpse part for nothing (found, or offered from the phone) | +15 (instead of +8) | M5b |
 | Spare someone you beat | +12 | M4 |
 | Save a life (help tagged `save`) | +10 (instead of +8) | M4 |
 | Help someone | +8 | M4 |
@@ -264,9 +267,10 @@ Worthiness is a hidden 0–100 stat. PCs start by personality (Honorable 60, Cau
 | Sabotage or cheat (cut a cinch, crowd into the rail, steal water) | −8 | M4 |
 | Any kill you started: you attacked, hunted or ambushed | −8 | M4 |
 | Kill someone helpless, fleeing or asleep | −12 (instead of −8) | M4 |
-| Steal a corpse part | −8 | M5 |
+| Steal a corpse part (asleep, or by searching someone you beat) | −8 | M5b |
+| Take a part from the body of someone you killed | 0 | M5b |
 | Abandon an ally | −12 | M5 |
-| Join Valentine | −30 | M5 |
+| Join Valentine | −30 | M5b |
 
 **Diminishing gains:** above 80, every gain is halved (rounded down), so a spare is +6 and the Palm +2; losses always count in full. Everything clamps to 0–100. A kill changes the Worthiness of the racer with the kill credit. Every kill event carries exactly one tag, `kill-defense`, `kill-started` or `kill-cruel`, and the content linter fails if one is missing. A Hunt a rival showdown that ends in a kill counts as started; showdowns can't kill yet, so this applies once milestone 5 fights can.
 
@@ -285,7 +289,7 @@ Every event that hurts another racer without killing them (pace loss, injury, a 
 
 **Hints on your phone:** key moments add a private line under "Only you know", such as "A strange calm settles over you as you leave the Palm." They arrive with the round's private update, after the stream has shown the round.
 
-**Anonymous announcements on the host screen:** "Someone has been deemed worthy of the Saint" when a PC merges with a corpse part, and "Someone has fallen to the dark side" when a PC joins Valentine. Neither names the player.
+**Anonymous announcements on the host screen:** "Someone has been deemed worthy of the Saint." when a PC merges with a corpse part, and "Someone has fallen to the dark side." when a PC joins Valentine. Neither names the player; they come at the end of that round's Main Story, in gold italics, with no faces.
 
 ## Stands
 
@@ -369,6 +373,18 @@ Nine parts of the Saint's Corpse surface over the race, one per stage. Holding o
 - More parts, more agent ambushes.
 - The parts count toward the Corpse ending (see Points, winning and endings).
 
+**How it works (milestone 5b, `js/engine/corpse.js`, numbers in `rules.corpse`):**
+
+- **One part a stage**, in order: the Left Arm, the Heart, the Eyes, the Spine, the Ears, the Right Arm, the Legs, the Torso, the Head. Each surfaces on a seeded Day or Night round of its stage and lies **loose** on the trail.
+- **Finding:** each round a loose part is found 90% of the time. Who finds it is weighted by Worthiness (0.5 + Worthiness ÷ 50, so the corpse chooses the worthy): ×3 on "Hunt a corpse part", ×0.5 for retired racers, canon ×0.6 (Johnny and Gyro ×2 on top), and the whole NPC field counts as one weight of 4. A PC gets the secret "You found a corpse part" prompt; canon racers and NPCs keep theirs (an NPC finder becomes a named breakout, within the cap).
+- **The Devil's Palm** (Stages 2–3): 25% of the time that stage's part waits in the Palm, and the first racer to walk out alive comes out holding it. If nobody has by the stage's last Day or Night round, it surfaces normally.
+- **Merging:** every part that comes to a racer merges with them, whether found and kept, given, traded, stolen, searched for, or taken from a body. The only exception is a part they chose to **hide on them**: wrapped, it can't touch them (no Stand, no rejection) and agents notice it half as much. A hidden part can be held later from the phone (Corpse parts → **Hold it**). A merge resolves at the end of the **next** round, so a rejection never lands right after the line where the part changed hands.
+- **Rejection,** rolled once per merge by Worthiness: 75+ 0%, 60–74 3%, 45–59 8%, 25–44 18%, below 25 35%. Two thirds of rejections kill (the stream says "there's only sand", "vanishes from the trail" or "drops dead in the middle of the trail"; the Fallen cause is just as vague, and the real cause is kept for the M6 reveal). The rest just lose the part, which goes back onto the trail.
+- **A merge that holds:** a Standless PC or NPC awakens a Stand on the corpse odds (40/60/0, never Common); canon racers keep their own story. A PC's merge shows "Someone has been deemed worthy of the Saint." on the host.
+- **Death:** a holder's killer takes what they carried (0 Worthiness; agents take it to the President). A holder who dies any other way drops it back onto the trail.
+- **The President:** anything still loose at a Finish Line is recovered by his agents, and so is every part handed or taken by agents, Valentine or an errand. His count is kept for M6 (`corpseSummary`).
+- **Secret, like Stands:** a part is an item that only its holder's phone sees, in a **The Saint's Corpse** card with Offer (trade it, or give it: +15) and Hold it. No stream line ever names a part or a holder. `state.corpse.log` records every change of hands for the M6 Final Stage and secrets reveal.
+
 ## Horses, fights and Valentine
 
 **Horses:** every Rider gets a named horse (canon horses where known: Slow Dancer, Valkyrie, Silver Bullet; Avdul rides his camel). Some deadly events kill the horse instead of the rider, leaving them on foot with much worse placements (−40).
@@ -404,15 +420,28 @@ Runners never have, buy, catch or receive a horse.
 - **Worthiness:** a kill you started −8 (hunting a rival counts); killing a loser who fled −12 (cruel); a defender's kill 0 (self-defense); letting go someone you beat +12, but only +4 if you started the fight (attacking and sparing isn't mercy); a failed kill attempt costs nothing.
 - Canon racers can't die in Stage 1 fights.
 
-**Valentine's agents** (Ringo Roadagain, Blackmore, Magent Magent and others) attack as events, not as racers. They mainly target corpse holders. **Funny Valentine** appears in Stages 8–9; a strong, worthy Stand user can beat him for a large bonus.
+**Valentine's agents** (Ringo Roadagain, Blackmore, Magent Magent, Mike O., Dr. Ferdinand, Axl RO, the Pork Pie Hat Kid, the Tattoo You men, the Eleven Men) attack as events, not racers (`js/engine/agents.js`, `rules.agents`). Their Stands stay banned and are never named.
 
-**Joining Valentine** (Stages 4–6 only) is a secret:
+- **Ambush chance per racer per round:** 4% + 6% per part carried (3% for a hidden one) for holders; 1.5% for PCs holding nothing, so an ambush proves nothing. ×2 on "Hunt a corpse part". Canon and NPC holders at half the rate (nobody controls them, and they can't hide a part or plan). **Joiners are never ambushed.**
+- **The fight:** an agent fights at their own skill (57–66), with no bonus. If they win they search you (a part if you carry one) or try to kill. Let them search you and they never kill. A PC can kill an agent; dead agents stay dead.
+- A PC's ambush is a sub event prompt; canon and NPC holders are ambushed inside the round.
 
-- The host screen announces only "Someone has fallen to the dark side."
-- The agent's attacks show as an unnamed attacker ("A rider in a dark hat ambushes Johnny").
-- Agents don't attack them, but their Worthiness drops hard.
+**Funny Valentine** (Stages 8–9): "Face him / Avoid him", offered once to a PC with a Rare or Legendary Stand and Worthiness 60+, never to a joiner (20% a round while eligible). He fights at 77 before the roll, so a Legendary user wins about 30%. Driving him off: +50 points and pace. Losing: he takes every part you carry, or kills you on a clear win. He can never be killed. Avoiding him costs time.
+
+**Joining Valentine** (Stages 4–6 only) is a secret (`js/engine/valentine.js`, `rules.valentine`):
+
+- **Who's offered:** 1–2 PCs a stage on a seeded round, a secret "A man in a dark hat" prompt. Worthiness under 40 doubles your chance, Ruthless or Opportunist ×1.5; once per PC.
+- **The cost:** Worthiness −30, and the host screen announces only "Someone has fallen to the dark side."
+- **The rewards:**
+  1. Agents never ambush you.
+  2. Relay horses: +1 placement every remaining stage.
+  3. If you're Standless, a free Stand on the Arrow odds with no risk.
+  4. Once a stage, a secret **Valentine's errand**: pick a racer, and next round you ambush them as "a rider in a dark hat" with agent backup (+8). Win and a part they carry goes to the President; with nothing to find, you take their horse. No name, no Stand, no ally on stream, unless they kill you, which unmasks you ("It was Kruel."). It can target your own ally.
+  5. If the President ends with more parts than every racer combined, every joiner gets +50 points (before the podium).
+- **Your phone** shows a "You ride for Valentine" card; nobody else knows. A joiner can stay in an alliance and their ally sees nothing.
+- **The balance check** (sim, 4,500 games): offers only reach PCs still racing in Stages 4–6, so joiners are judged against PCs racing at the start of Stage 4. Their share of those PCs' race wins must stay under 1.3× their share of those PCs. Against all PCs, even the PCs who refused score about 1.6×, so that test only measured survival.
 - The host's browser holds every secret, so a host who also plays shouldn't go digging.
-- It's revealed in the finale's secrets reveal.
+- It's revealed in the finale's secrets reveal (M6).
 
 ## Dead players
 
@@ -482,6 +511,10 @@ In the manga, points come only from stage placements, plus a time bonus for fini
 - Works in Safari on iPhone and Chrome on Android, with nothing to install.
 - Game content (events, stages, canon racers, names, rules) lives in `data/`, apart from the engine. Events are templates with role and pronoun tokens.
 - A seeded random generator, so games can be replayed, and a headless sim (`sim/simulate.js`) for balance.
+
+**Open questions for milestone 6:**
+
+- **Love Train never triggers.** With nine parts spread over many holders (and the President), the top racer ends with about 1.7 parts; nobody reaches 5 in the sim. Lower the threshold (for example "the most parts, at least 3"), let parts gather (allies pooling, holders drawn to each other), or both.
 
 **Ideas for later:**
 
@@ -559,3 +592,12 @@ Decisions made after the original design, in the order they came up:
 64. Trading: secret offer from the phone, answered in the receiver's next window, resolved with that round; one open offer at a time; a gift counts as help, a trade as nothing.
 65. Runner flat modifier −6 → −7, since Riders now spend points on horses. Personality leans retuned again for fights (Glory-Seeker ends near 65, accepted).
 66. The sim's old "reversals" figure counted every fight, including NPC ambushes that PCs usually win; PC vs PC fights are about even (attackers win about half the decided ones).
+67. Corpse parts (M5b) are items only their holder sees; every stream line about them is vague ("goes through their things"). One a stage; found 90% of rounds while loose, weighted by Worthiness; unclaimed at a Finish Line, they go to the President.
+68. Every part that comes to a racer merges, except one they hide on them (no Stand, no rejection, agents notice it half as much; it can be held later). Rejection by Worthiness band (0 / 3 / 8 / 18 / 35%), two thirds of rejections deadly, rolled at the end of the next round so it never follows the line where the part changed hands. Vague Fallen causes; the real cause is kept for M6.
+69. Fights gain "search them" (take a part if they carry one, −8) and "give up without a fight" (the attacker gets their choice; a kill counts as cruel). Giving up to agents never gets you killed. A killer takes the parts from the body (0).
+70. A secret "A chance to steal" prompt (Night rounds): only the thief learns who holds a part.
+71. Agents: 4% + 6% per part (3% hidden) per round for holders, 1.5% for PCs holding nothing, ×2 on Hunt a corpse part, half for canon and NPC holders, no fight bonus; never joiners. Tuned so the President ends with the most parts in about two thirds of games and more than every racer combined in about one in six (the first build gave him the bad ending in half of all games).
+72. Funny Valentine: 77 before the roll (a Legendary user wins about 30%), +50 and pace for driving him off, takes every part on a win, can't die; never offered to joiners.
+73. Valentine errands take two rounds (pick a target secretly, strike next round), so a PC target gets their own "Someone is coming for you" prompt. Masked on stream unless the joiner dies in it.
+74. Joiner balance is judged against PCs still racing at the start of Stage 4 (limit 1.3×), because offers only reach them; against all PCs even the refusers score about 1.6×. Rewards restored in order to just under the limit: relay horses +1, ending bonus +50. Original rewards (+3, +100) were too strong on the same test.
+75. Love Train (5+ parts) never happens in the sim; an open question for M6.

@@ -23,14 +23,16 @@ export function trader(prompt, onFoot, onPick) {
 export function offerForm(you, offering, onDone) {
   const targets = offering.give === 'horse' ? you.tradeTargets.horse : you.tradeTargets.item;
   const sel = h('select', { class: 'offer-to' }, targets.map((t) => h('option', { value: t.id }, t.name)));
-  const asks = [['', 'Nothing: a gift'], ['arrow', 'A Stand Arrow'], ['rokakaka', 'A Rokakaka fruit']];
+  const asks = [['', 'Nothing: a gift'], ['arrow', 'A Stand Arrow'], ['rokakaka', 'A Rokakaka fruit'], ['part', 'A corpse part']];
   if (you.canAskHorse && offering.give !== 'horse') asks.push(['horse', 'Their horse']);
   const ask = h('select', { class: 'offer-ask' }, asks.map(([v, l]) => h('option', { value: v }, l)));
   return h('section', { class: 'offer-card' },
     h('h3', {}, `Offer ${offering.label}`),
     h('label', { class: 'field' }, h('span', {}, 'To'), sel),
     h('label', { class: 'field' }, h('span', {}, 'For'), ask),
-    h('p', { class: 'item-hint' }, "It's secret. They answer in their next decision, and it happens with that round. A gift counts as a good deed."),
+    h('p', { class: 'item-hint' }, offering.kind === 'part'
+      ? "It's secret. They answer in their next decision. Giving a corpse part away for nothing is a great deed."
+      : "It's secret. They answer in their next decision, and it happens with that round. A gift counts as a good deed."),
     h('div', { class: 'offer-actions' },
       h('button', { type: 'button', class: 'btn btn-primary', onclick: () => onDone({ give: offering.give, to: sel.value, ask: ask.value || null }) }, 'Send offer'),
       h('button', { type: 'button', class: 'btn btn-quiet', onclick: () => onDone(null) }, 'Cancel')));

@@ -207,3 +207,7 @@
 .tier-badge.tier-rare { background: #9fb4ff; color: #121a33; }
 .tier-badge.tier-common { background: #ffffff22; color: var(--text); }
 @media (max-width: 800px) { .stand-list { columns: 1; } }
+
+/* milestone 5b: anonymous announcements ("Someone has been deemed worthy of the Saint.") */
+.event-line.announce { justify-content: center; }
+.event-line.announce p { font-style: italic; color: var(--gold-2, #f3d58a); letter-spacing: .02em; text-align: center; }

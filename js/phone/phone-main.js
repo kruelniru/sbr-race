@@ -11,7 +11,7 @@ import { h, $, mount, avatar, store } from '../ui/dom.js';
 import { characterForm } from './character-form.js';
 import { MiniFeed } from './feed.js';
 import { keepAwake } from './wake-lock.js';
-import { worthinessBar, standCard, itemsCard, hintsCard } from './secrets.js';
+import { worthinessBar, standCard, itemsCard, hintsCard, partsCard, valentineCard } from './secrets.js';
 import { trader, offerForm, pendingOffer } from './trade.js';
 
 // Storage keys. Tabs in one browser share localStorage, so to test several
@@ -355,9 +355,9 @@ function renderRacing() {
       r ? statusCard(r) : null,
       offering ? offerSheet() : you?.offer ? offerPending(you.offer) : null,
       r && r.status !== 'dead' ? standCard(r) : null,
-      itemsCard(you, (itemId) => {
-        if (!net.send(msg(TO_HOST.USE_ITEM, { itemId }))) choiceError = 'Not connected. Try again in a moment.';
-      }, canOffer('item') ? (it) => { offering = { give: it.id, label: it.label }; renderScreen(); } : null),
+      itemsCard(you, useItem, canOffer('item') ? offerItem : null),
+      partsCard(you, useItem, canOffer('item') ? offerItem : null),
+      r && r.status !== 'dead' ? valentineCard(you?.valentine) : null,
       r?.hints?.length ? hintsCard(r.hints) : null,
       r?.status === 'dead'
         ? h('p', { class: 'waiting fallen' }, 'You can still follow the race below. Dead riders get to vote on the living in a later update.')
@@ -399,6 +399,10 @@ function sendChoice(prompt, optionId, targetId) {
   renderScreen();
 }
 
+// What the target picker says for each option that needs a racer.
+const PICK_TITLE = { ally: 'Who do you want to ride with?', give: 'Who gets it?', ride: 'Whose things does the President want?' };
+const PICK_VERB = { ally: 'Asking', give: 'Giving it to', ride: 'Riding against' };
+
 /** The decision card: title, situation, options with ★ In character, timer. */
 function choiceCard(prompt) {
   const chosen = prompt.answer ?? (sent?.promptId === prompt.id ? sent : null);
@@ -420,11 +424,11 @@ function choiceCard(prompt) {
     h('span', { class: 'opt-label' }, o.label,
       prompt.star === o.id ? h('span', { class: 'star' }, '★ In character') : null),
     o.hint && h('span', { class: 'opt-hint' }, o.hint),
-    isChosen && o.needsTarget && targetName(chosen.targetId) ? h('span', { class: 'opt-target' }, `${o.id === 'ally' ? 'Asking' : 'Hunting'} ${targetName(chosen.targetId)}`) : null);
+    isChosen && o.needsTarget && targetName(chosen.targetId) ? h('span', { class: 'opt-target' }, `${PICK_VERB[o.id] ?? 'Hunting'} ${targetName(chosen.targetId)}`) : null);
   }));
 
   const targets = picking?.promptId === prompt.id && h('div', { class: 'target-pick' },
-    h('h3', {}, picking?.optionId === 'ally' ? 'Who do you want to ride with?' : 'Who are you hunting?'),
+    h('h3', {}, PICK_TITLE[picking?.optionId] ?? 'Who are you hunting?'),
     h('div', { class: 'target-list' }, (prompt.targets ?? []).map((t) =>
       h('button', { type: 'button', class: 'btn target-btn', onclick: () => sendChoice(prompt, picking.optionId, t.id) },
         t.name, t.tier !== 'pc' ? h('span', { class: 'ai-tag' }, t.tier === 'canon' ? 'canon' : 'NPC') : null))),
@@ -438,13 +442,16 @@ function choiceCard(prompt) {
         ? h('p', { class: 'choice-status' }, 'Sending…')
         : h('p', { class: 'choice-status' }, "If time runs out, you'll go with ★ In character.");
 
-  const card = h('section', { class: 'choice' + (paused ? ' paused' : '') },
+  // Secret prompts say so (the host never shows them).
+  const secretNote = prompt.secret ? h('p', { class: 'secret-note' }, 'Only you see this. The host screen never shows it.') : null;
+  const card = h('section', { class: 'choice' + (paused ? ' paused' : '') + (prompt.secret ? ' secret' : '') },
     h('div', { class: 'choice-head' },
       h('h2', {}, prompt.title),
       h('span', { class: 'choice-clock', 'data-countdown': '' }, ''),
     ),
     h('div', { class: 'countdown-bar' }, h('div', { class: 'countdown-fill', 'data-countdown-bar': '' })),
     paused && h('p', { class: 'paused-note' }, 'Paused by the host'),
+    secretNote,
     h('p', { class: 'choice-text' }, prompt.text),
     options,
     targets,
@@ -458,6 +465,15 @@ function choiceCard(prompt) {
 // ---------------------------------------------------------------- milestone 5a: horses, alliances, trading
 
 const QUALITY = { nag: 'Nag', sound: 'Sound', fine: 'Fine', thoroughbred: 'Thoroughbred' };
+
+function useItem(itemId) {
+  if (!net.send(msg(TO_HOST.USE_ITEM, { itemId }))) choiceError = 'Not connected. Try again in a moment.';
+}
+
+function offerItem(it) {
+  offering = { give: it.id, label: it.kind === 'part' ? 'a corpse part' : it.label, kind: it.kind };
+  renderScreen();
+}
 
 function canOffer(kind) {
   if (!you?.tradeTargets || you.offer || offering) return false;

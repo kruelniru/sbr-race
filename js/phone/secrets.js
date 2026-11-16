@@ -44,7 +44,7 @@ export function standCard(r) {
  * with that round. `onUse(itemId)` sends the request (again to cancel).
  */
 export function itemsCard(you, onUse, onOffer = null) {
-  const items = you?.items ?? [];
+  const items = (you?.items ?? []).filter((it) => it.kind !== 'part');
   if (!items.length) return null;
   const open = !!you.choiceOpen;
   return h('section', { class: 'items-card' },
@@ -65,6 +65,45 @@ export function itemsCard(you, onUse, onOffer = null) {
           onOffer && !it.pending ? h('button', { type: 'button', class: 'btn btn-small btn-quiet item-offer', onclick: () => onOffer(it) }, 'Offer') : null));
     })),
     h('p', { class: 'item-hint' }, open ? 'It happens with this round.' : 'You can use items while a decision is open.'));
+}
+
+/**
+ * Corpse parts you carry (milestone 5b). Secret, like your Stand. A hidden
+ * part can be held later ("Hold it": it merges with you this round).
+ */
+export function partsCard(you, onUse, onOffer = null) {
+  const parts = (you?.items ?? []).filter((it) => it.kind === 'part');
+  if (!parts.length) return null;
+  const open = !!you.choiceOpen;
+  return h('section', { class: 'parts-card' },
+    h('h3', {}, "The Saint's Corpse", h('span', { class: 'parts-count' }, `${parts.length} ${parts.length === 1 ? 'part' : 'parts'}`)),
+    h('ul', { class: 'item-list' }, parts.map((it) => h('li', { class: 'item part' + (it.hidden ? ' hidden-part' : '') + (it.pending ? ' pending' : '') },
+      h('div', { class: 'item-text' },
+        h('div', { class: 'item-name' }, it.label),
+        h('div', { class: 'item-blurb' }, it.hidden
+          ? "Wrapped, so it can't touch you: no Stand, no rejection, and agents notice it less."
+          : 'It has merged with you. Agents hunt whoever carries one.')),
+      h('div', { class: 'item-actions' },
+        it.hidden ? h('button', {
+          type: 'button', class: 'btn btn-small item-use' + (it.pending ? ' btn-primary' : ''), disabled: !(open && (it.usable || it.pending)),
+          onclick: () => onUse(it.id),
+        }, it.pending ? 'Holding it this round · tap to cancel' : 'Hold it') : null,
+        onOffer && !it.pending ? h('button', { type: 'button', class: 'btn btn-small btn-quiet item-offer', onclick: () => onOffer(it) }, 'Offer') : null)))),
+    h('p', { class: 'item-hint' }, 'Only you know. Whoever holds the most going into the Final Stage matters. So does the President, who is gathering them too.'));
+}
+
+/** You ride for Valentine (milestone 5b): only your phone knows, until the finale. */
+export function valentineCard(v) {
+  if (!v) return null;
+  return h('section', { class: 'valentine-card' },
+    h('h3', {}, 'You ride for Valentine'),
+    h('ul', {},
+      h('li', {}, "His agents leave you alone."),
+      v.relay ? h('li', {}, `Fresh relay horses: a little better placement every stage (+${v.relay}).`) : null,
+      h('li', {}, 'Once a stage, he may send you on an errand.'),
+      v.bonus ? h('li', {}, `If the President ends with more corpse parts than every racer combined, you get +${v.bonus} points.`) : null),
+    v.errand ? h('p', { class: 'valentine-errand' }, 'Your errand rides next round, in a dark hat.') : null,
+    h('p', { class: 'item-hint' }, 'Nobody else knows. The finale will tell them.'));
 }
 
 export function hintsCard(hints) {
