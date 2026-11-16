@@ -60,7 +60,7 @@ export const ICE_SERVERS = [
 // The secret cheat menu (testing). Only a SHA-256 of the PIN lives here, never
 // the PIN. Set it by running:  node tools/set-cheat-pin.js
 // An empty value means the cheat menu can never open.
-export const CHEAT_PIN_HASH = '585a0e83714e88690dc16461d6dde83a079ef759dd68a6689c2c89e73706a7c3';
+export const CHEAT_PIN_HASH = '9c9b1ebf6d4e87fd5ac261054955d9fc1cee230c725c1dc11d406293387f442a';
 
 // Lobby limits from DESIGN.md: 12–18 players, max 24. The minimum is a host
 // setting (in the lobby); this is its default.
