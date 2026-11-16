@@ -103,8 +103,14 @@ export function mortal(ctx, who) {
   return !(who.tier === 'canon' && RULES.canonImmuneStages.includes(ctx.stage?.id));
 }
 
-function die(ctx, who, cause, killer) {
+function die(ctx, who, cause, killer, masked = false) {
   killer.kills = (killer.kills ?? 0) + 1;
+  if (masked) {
+    // A Valentine errand: the Fallen screen says "a rider in a dark hat" (the M6 reveal unmasks it).
+    killRacer(ctx, who, cause, { ...killer, name: 'a rider in a dark hat' });
+    if (who.death) who.death.secretBy = killer.name;
+    return;
+  }
   if (who.tier === 'agent') { who.status = 'dead'; (ctx.state.race.agentLog ??= []).push({ event: 'died', agent: who.id, stage: ctx.stage?.id }); }
   else if (who.tier === 'npc') npcDies(ctx, who, killer);
   else killRacer(ctx, who, cause, killer);
@@ -213,7 +219,7 @@ export function resolveFight(ctx, spec) {
         outcome = 'kill';
         death = true;
         text += cruel ? LINES.killFled : LINES.kill;
-        die(ctx, y, spec.cause ?? 'killed in a fight', x);
+        die(ctx, y, spec.cause ?? 'killed in a fight', x, masked && y.tier !== 'npc');
         addWorthiness(x, cruel ? W.killCruel : W.killStarted, ctx);
       }
     } else if (choice === 'part' || choice === 'searched') {

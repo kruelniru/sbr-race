@@ -95,6 +95,7 @@ js/engine/           pure game logic, no DOM (Node can import it)
   dead.js            dead players' vote: Hazard, Ambush, Blessing (M6a)
   final-stage.js     the boss, Love Train, Bring them down, Funny Valentine's last stand (M6b)
   endings.js         the main ending and epilogues (M6b)
+  secrets.js         the secrets reveal and each player's story (M6c)
   finale-sections.js extra finale cards (Stands awakened)
   plans.js           Stage Plan lookups
   reveal.js          round result -> host cards + text-based timing (shared with the sim)

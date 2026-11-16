@@ -34,7 +34,7 @@ export default {
   canonEventChance: 0.4,   // a canon racer gets their own event this often
   retiredEventChance: 0.25,// a retired racer gets an event this often
   // How likely an event that would kill this tier is (weight multiplier).
-  deathOdds: { pc: 0.46, canon: 0.35, npc: 1 },
+  deathOdds: { pc: 0.95, canon: 0.35, npc: 1 },
   canonImmuneStages: [1],  // canon racers can't die in these stages
 
   // Personality nudges: multiply an event's weight by tag for the FOCUS racer.
@@ -246,7 +246,7 @@ export default {
     huntMult: 2,               // "Hunt a corpse part"
     canonNonHolder: 0.005,
     othersMult: 0.5,           // canon and NPC holders (nobody controls them; they can't hide a part or plan)
-    bonus: -8,                 // in a fight (their banned Stands are never used on stream; tuned so the President's bad ending stays near 15–20%)
+    bonus: -2,                 // in a fight (their banned Stands are never used on stream; tuned so the President's bad ending stays near 15–20%)
     // What they do if they win: search for a part, or kill.
     wins: { holder: { part: 7, kill: 3 }, none: { part: 6, kill: 4 } },
   },
@@ -277,7 +277,8 @@ export default {
     // A joiner who merges with a part loses the agents' protection until they
     // deliver it ("Deliver it to the President", secret, any choice window).
     deliverPoints: 10,         // per part delivered
-    aiDeliver: 0.15,           // AI joiners deliver a carried part this often per window
+    aiDeliver: 0.15,           // AI joiners deliver a carried part this often per window...
+    aiDeliverGreedy: 0.05,     // ...Ruthless and Opportunist joiners (they'd rather keep it)
     // Sim check: joiners' share of race wins over their share of PCs still racing
     // at the start of Stage 4 (offers only reach them), on 4,500 games.
     joinerWinLimit: 1.3,
@@ -287,10 +288,12 @@ export default {
   finale: {
     bossMin: 3,                // parts to become the boss going into the Final Stage
     loveTrain: 5,              // ...and Love Train
-    bossPlacement: 6,          // the boss's Final Stage placement bonus
+    bossPlacement: 6,          // the boss's Final Stage placement bonus...
+    loveTrainPlacement: 30,    // ...with Love Train (5+ parts)
+    holderNoHuntPenalty: true, // "Hunt a corpse part" costs no placement once you carry 3+ parts
     corpseBonus: 50,           // the boss reaches New York holding the Corpse (3+ parts)...
-    loveTrainBonus: 100,       // ...with Love Train (5+)
-    bloodbath: 3,              // this many named racers or fewer reach New York
+    loveTrainBonus: 200,       // ...chosen with Love Train (5+) and still holding 3+ (tuned: a Love Train holder wins about 35–40%)
+    bloodbathShare: 0.22,      // the Bloodbath: fewer than this share of the PCs who started reach New York
     canonShare: 0.4,           // a part unclaimed at a Finish Line goes to Johnny or Gyro (if racing) this often
     // "Bring down": team = mean fight skill + perJoiner x joiners + roll, vs the boss + bonus.
     // Tuned (sim prints it) so a Love Train holder loses to 2 / 3 / 4 joiners ~35 / 50 / 65%.

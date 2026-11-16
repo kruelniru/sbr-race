@@ -499,7 +499,9 @@ In the manga, points come only from stage placements, plus a time bonus for fini
 
 **How it works (milestone 6b, `js/engine/final-stage.js`, `js/engine/endings.js`, numbers in `rules.finale`):**
 
-- **The boss:** when the Final Stage's Stage Plans close, the racing racer (PC, canon or NPC) holding the most parts, at least 3, becomes the boss. Ties go to higher Worthiness, then points. The stream announces only that ("The Saint's Corpse has chosen Kruel."), plus "Love Train" at 5+ parts; nothing else about who holds parts. The boss gets +6 placement in the Final Stage.
+- **The boss:** when the Final Stage's Stage Plans close, the racing racer (PC, canon or NPC) holding the most parts, at least 3, becomes the boss. Ties go to higher Worthiness, then points. The stream announces only that ("The Saint's Corpse has chosen Kruel."), plus "Love Train" at 5+ parts; nothing else about who holds parts. The boss gets +6 placement in the Final Stage, a Love Train holder +30.
+- **Holding the Corpse pays:** "Hunt a corpse part" costs no placement once you carry 3+ parts.
+- **Love Train is a real shot at winning:** Love Train holders go into the Final Stage around 8th place, 200+ points behind; with the +30 placement and the +200 bonus, a Love Train holder wins the race about 40% of the time (a boss of any size about 18%).
 - **Love Train (5+ parts):** nothing can kill the holder (no deadly event picks them; the Palm, an Arrow and rejection can't kill them). A fight that would kill them kills a random nearby racer instead ("misfortune slides off Kruel and onto…").
 - **Bring them down:** in every Day and Night round of the Final Stage, up to 4 random living PCs (never Valentine joiners) get "Bring them down": ride with the others, or stay out. Everyone who says yes fights the boss in one combined fight: the team fights at its average fight skill + 6.5 per rider, the boss at their own fight score + 19.5 with Love Train (+4.5 without). Equal riders: a Love Train holder loses to 2 / 3 / 4 riders about 35 / 51 / 65% of the time; a 3–4-part boss about 70 / 81 / 90%. Win: each rider takes one part, the rest come loose, the boss is hurt. Lose: one rider is hurt, or killed on a clear loss. It works the same against a canon or NPC boss.
 - **The boss dies or retires in the Final Stage:** no Corpse ending; their parts come loose (or go to their killer) as usual.
@@ -511,8 +513,8 @@ In the manga, points come only from stage placements, plus a time bonus for fini
 1. **The President is dead:** he was killed in the Final Stage. Joiners: "The President is dead. You rode for a dead man." No joiner bonus.
 2. **The President takes the Corpse:** he holds more parts than every racer combined. The podium becomes "First across the line"; joiners get their bonus.
 3. **The Double-Cross:** the boss is a Valentine joiner who reaches New York still holding the Corpse. "The President's own rider has betrayed him." The traitor gets the Corpse ending's bonus; other joiners get nothing.
-4. **Holder of the Saint's Corpse:** the boss reaches New York holding 3+ parts: +50 points (+100 with 5+, Love Train).
-5. **The Bloodbath:** 3 or fewer named racers reach New York. "The Steel Ball Run ends in silence."
+4. **Holder of the Saint's Corpse:** the boss reaches New York holding 3+ parts: +50 points, or +200 for a boss chosen with Love Train who still holds 3+ (a fight may have taken a part or two).
+5. **The Bloodbath:** fewer than 22% of the PCs who started reach New York (canon racers don't count; with 18 PCs that's 3 or fewer). "The Steel Ball Run ends in silence."
 6. Otherwise, a normal ending (no card).
 
 The race winner is still whoever has the most points (except that in the President's ending the podium is only "first across the line").
@@ -526,7 +528,19 @@ The race winner is still whoever has the most points (except that in the Preside
 3. **Awards:** Most Kills, Most Merciful (spares), Best Runner, Biggest Comeback (most places climbed from a racer's worst standing to the final one), then **Stands awakened**: every racer who gained a Stand during the race, with the Stand and its tier (✝ if they fell, "gave it up" after a Rokakaka), never its source. **Corpse Holder** (most parts at the end, plus the President's count; milestone 6b). Later: Breakout Racers, and others.
 4. **Reached New York:** every survivor with their points, plus how many from the field finished.
 5. **In memory of the Fallen:** everyone who died, how, by whom, and when.
-6. **The secrets reveal** (later milestones), the last and biggest moment: who joined Valentine, everyone's Worthiness bar, and who held which corpse parts.
+6. **The secrets reveal** (milestone 6c, `js/engine/secrets.js`), the last and biggest moment, card by card after the memorial:
+   - "The secrets of the Steel Ball Run."
+   - **Valentine's riders:** who joined, in which stage, how it ended for them (the winning side, the losing side, a dead man, betrayed, or the traitor), parts delivered; every rider in the dark hat unmasked ("The rider in the dark hat who ambushed Johnny Joestar in Stage 6 was Kruel."), and who rode at Valentine's side in the Final Stage.
+   - **Worthiness:** every PC's bar and word, highest first, no numbers.
+   - **The Saint's Corpse** (two cards): each part's journey ("found by Kruel (Stage 2) → stolen by Gus Shaw in the night → taken by agents → the President").
+   - **Where the Stands came from:** the Devil's Palm, a Stand Arrow, a corpse part, Valentine's gift, or awakened on the trail.
+   - **How they really died:** every vague death's real cause ("dropped dead on the trail" → rejected by a corpse part; Love Train's redirected misfortune; a dark-hat killing and who did it).
+   - **The finale's secrets:** the main ending, who the Corpse chose (and whether they secretly rode for Valentine), D4C and Valentine's death if they happened, the Corpse Holder's story (how they came by each part), and the President's count.
+   - Then the final standings.
+
+   **On each phone,** after the last reveal: "Your Steel Ball Run", the player's own story (how they finished, best stage, kills, spares and helps, their Stand and its source, the parts they held, Valentine, their final Worthiness word, the ending).
+
+   The Fallen screen never names a masked killer ("by a rider in a dark hat"); the reveal does.
 7. Final standings.
 
 ## Settings, tech and later ideas
@@ -660,3 +674,9 @@ Decisions made after the original design, in the order they came up:
 90. One main ending per game, in priority: the President is dead > the President takes the Corpse > the Double-Cross > Holder of the Saint's Corpse (+50, +100 with Love Train) > the Bloodbath (3 or fewer named racers reach New York) > normal. A dead or retired boss gets no Corpse ending.
 91. Johnny and Gyro get 40% of parts still loose at a Finish Line (if racing), so they hold some again without costing PC hunters.
 92. Epilogue cards after the podium from `data/epilogues.js` (Saint Smiles, Devil's Champion, On Foot to Glory, Ride Together, canon champions in character).
+93. The Bloodbath counts PCs only: fewer than 22% of the PCs who started reach New York (3 or fewer of 18).
+94. Love Train as a real shot at winning: no "Hunt a corpse part" penalty once you carry 3+ parts, +30 Final Stage placement with Love Train, and +200 for a boss chosen with Love Train who reaches New York still holding 3+. A Love Train holder wins about 40% (+350 with +40 gave 54%).
+95. Sim joiners keep parts more often when Ruthless or Opportunist (they deliver 5% of windows instead of 15%), so the Double-Cross happens.
+96. The secrets reveal (M6c): Valentine's riders and the dark hats unmasked, Worthiness, each part's journey, Stand sources, the real causes of vague deaths, the finale's secrets; then final standings. Each phone gets its own story after the last reveal.
+97. The Fallen screen shows "by a rider in a dark hat" for a masked errand kill (it used to name the joiner); the reveal unmasks it.
+98. Survival retune: PC death odds 0.46 → 0.95 brings PCs reaching New York to about 38%; agents −8 → −2 keeps the President's ending near 15–20% (joiners keeping parts had lowered it).

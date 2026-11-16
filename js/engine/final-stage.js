@@ -99,7 +99,8 @@ export function isLoveTrain(state, r) {
 
 /** Placement bonus for the boss in the Final Stage. */
 export function bossPlacement(state, r) {
-  return state.race?.stageIdx === FINAL_STAGE() - 1 && isBoss(state, r) ? F().bossPlacement : 0;
+  if (state.race?.stageIdx !== FINAL_STAGE() - 1 || !isBoss(state, r)) return 0;
+  return isLoveTrain(state, r) ? F().loveTrainPlacement : F().bossPlacement;
 }
 
 /**
@@ -111,6 +112,7 @@ export function redirectMisfortune(ctx, holder, killer) {
   const z = ctx.rng.pick(pool);
   if (!z) return null;
   killRacer(ctx, z, 'struck down by misfortune', null);
+  if (z.death) z.death.secretCause = `Love Train: misfortune meant for ${holder.name}`;
   ctx.assigned?.add(z.id);
   log(ctx.state, { event: 'redirect', to: z.tier });
   return render(' But misfortune slides off {a} and onto {b}, who falls instead.', displayRoles({ a: holder, b: z }));
@@ -184,6 +186,7 @@ export function valentineBeaten(ctx, beater) {
   fv.beaten++;
   if (fv.beaten === 1) {
     fv.rematch = { due: ctx.state.race.roundNo + 1, beaterId: beater.id };
+    fv.beatenBy = beater.id;
     log(ctx.state, { event: 'fv-beaten' });
     return ' Dirty Deeds Done Dirt Cheap: another Valentine steps out from between two flags. This isn\'t over.';
   }
@@ -235,6 +238,7 @@ export function resolveValentineHunt(ctx, riderIds) {
   const V = F().valentine;
   const opp = valentineFighter();
   const riders = riderIds.map((id) => findRacerAnywhere(ctx.state, id)).filter((r) => r && r.status === 'racing');
+  fv.riders = riders.map((r) => r.id); // secret: the M6 reveal names them
   const a = fightScore(ctx, opp, V.huntBonus + V.riderBonus * riders.length).score;
   const d = fightScore(ctx, holder, F().bring.loveTrainBonus).score;
   let text = render('Funny Valentine comes for {a} and the Corpse.', displayRoles({ a: holder }));

@@ -14,7 +14,37 @@ import { nextRoundHeader } from '../engine/race.js';
  * Renderers for extra finale sections registered in js/engine/finale.js
  * (e.g. the secrets reveal). Later milestones add: FINALE_RENDERERS.secrets = (state, data) => element
  */
+const BAR = (level) => h('div', { class: 'worth-bar' }, Array.from({ length: 10 }, (_, i) => {
+  const fill = Math.max(0, Math.min(1, (level - i * 2) / 2));
+  return h('span', { class: 'worth-seg', style: `--fill:${fill}` });
+}));
+const secretsCard = (title, ...body) => h('div', { class: 'card card-finale card-secrets' }, h('div', { class: 'label' }, 'The secrets of the Steel Ball Run'), h('h2', {}, title), ...body);
+
 export const FINALE_RENDERERS = {
+  // ---- milestone 6c: the secrets reveal
+  'secrets-title': () => h('div', { class: 'card card-finale card-title card-secrets' },
+    h('div', { class: 'label' }, 'One last thing'),
+    h('h2', { class: 'card-big' }, 'The secrets of the Steel Ball Run'),
+    h('p', { class: 'hint' }, 'Everything the stream never saw.')),
+  'secrets-valentine': (state, d) => secretsCard("Valentine's riders",
+    h('ul', { class: 'secret-list' }, d.joiners.map((j) => h('li', {}, face(state, j.id),
+      h('div', {}, h('strong', {}, j.name, j.dead ? ' ✝' : ''), h('div', { class: 'hint' }, `Joined in Stage ${j.stage}, and ${j.outcome}${j.delivered ? ` · delivered ${j.delivered} ${j.delivered === 1 ? 'part' : 'parts'}` : ''}.`))))),
+    d.unmasked.length ? h('ul', { class: 'unmasked' }, d.unmasked.map((t) => h('li', {}, t))) : null),
+  'secrets-worthiness': (state, d) => secretsCard('Worthiness',
+    h('ul', { class: 'secret-list worth-list' }, d.racers.map((r) => h('li', {}, face(state, r.id),
+      h('div', { class: 'worth-who' }, h('strong', {}, r.name, r.dead ? ' ✝' : ''), h('div', { class: 'worth' }, BAR(r.level), h('span', { class: 'worth-word' }, r.word))))))),
+  'secrets-corpse-1': (state, d) => secretsCard("The Saint's Corpse", partList(d)),
+  'secrets-corpse-2': (state, d) => secretsCard("The Saint's Corpse (continued)", partList(d)),
+  'secrets-stands': (state, d) => secretsCard('Where the Stands came from',
+    h('ul', { class: 'secret-list' }, d.users.map((u) => h('li', { class: `tier-${u.tier}` }, face(state, u.id),
+      h('div', {}, h('strong', {}, u.name), h('div', { class: 'hint' }, `${u.stand}, from ${u.source}`)),
+      h('span', { class: `tier-badge tier-${u.tier}` }, u.tier))))),
+  'secrets-deaths': (state, d) => secretsCard('How they really died',
+    h('ul', { class: 'secret-list' }, d.rows.map((r) => h('li', {}, face(state, r.id),
+      h('div', {}, h('strong', {}, r.name), h('div', { class: 'hint' }, `"${r.shown}"`), h('div', {}, r.real)))))),
+  'secrets-finale': (state, d) => secretsCard(d.ending,
+    h('ul', { class: 'unmasked' }, d.lines.map((t) => h('li', {}, t)))),
+
   // Milestone 4: every Stand awakened during the race, with its tier. Never its source.
   stands: (state, data) => h('div', { class: 'card card-finale card-stands' },
     h('h2', {}, 'Stands awakened'),
@@ -27,6 +57,10 @@ export const FINALE_RENDERERS = {
         h('span', { class: `tier-badge tier-${u.standTier}` }, u.standTier)))),
   ),
 };
+
+function partList(d) {
+  return h('ul', { class: 'part-list' }, d.parts.map((p) => h('li', {}, h('strong', {}, p.name), h('span', {}, p.story))));
+}
 
 /**
  * @param {object} state

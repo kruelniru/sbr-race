@@ -224,3 +224,18 @@
 .card-ending.ending-bloodbath h2 { color: #ffb4a8; }
 .card-ending.ending-corpse h2, .card-ending.ending-president-dead h2 { color: var(--gold-2, #f3d58a); }
 .card-epilogue h2 { color: var(--gold-2, #f3d58a); margin: 0; }
+
+/* milestone 6c: the secrets reveal */
+.card-secrets { border-color: #6c4d86; }
+.card-secrets h2 { color: #d9b8ff; }
+.secret-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 10px 24px; }
+.secret-list li { display: flex; align-items: center; gap: 12px; font-size: clamp(.95rem, 1.3vw, 1.2rem); }
+.secret-list .hint { font-size: .9em; }
+.unmasked { margin: 14px 0 0; padding-left: 20px; font-size: clamp(1rem, 1.5vw, 1.3rem); line-height: 1.45; }
+.unmasked li + li { margin-top: 6px; }
+.part-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; font-size: clamp(.95rem, 1.35vw, 1.2rem); line-height: 1.4; }
+.part-list strong { color: var(--gold-2, #f3d58a); margin-right: 10px; }
+.worth-list .worth { display: flex; align-items: center; gap: 10px; }
+.worth-bar { display: inline-flex; gap: 3px; }
+.worth-seg { width: 14px; height: 10px; border-radius: 2px; background: linear-gradient(90deg, var(--gold, #d9a441) calc(var(--fill) * 100%), #ffffff22 0); }
+.worth-word { font-size: .85em; color: var(--muted, #b9a88f); }

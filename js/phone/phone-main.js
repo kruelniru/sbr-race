@@ -11,7 +11,7 @@ import { h, $, mount, avatar, store } from '../ui/dom.js';
 import { characterForm } from './character-form.js';
 import { MiniFeed } from './feed.js';
 import { keepAwake } from './wake-lock.js';
-import { worthinessBar, standCard, itemsCard, hintsCard, partsCard, valentineCard } from './secrets.js';
+import { worthinessBar, standCard, itemsCard, hintsCard, partsCard, valentineCard, storyCard } from './secrets.js';
 import { trader, offerForm, pendingOffer } from './trade.js';
 import { deadCard } from './dead.js';
 
@@ -352,6 +352,7 @@ function renderRacing() {
       head && (head.over
         ? h('div', { class: 'race-where' }, 'The race is over: New York!')
         : h('div', { class: 'race-where' }, `Stage ${head.stageId} · ${head.stageName}`, h('span', { class: 'race-round' }, head.label))),
+      storyCard(r?.story),
       you?.prompt ? choiceCard(you.prompt) : null,
       r?.status === 'dead' && !you?.isAI ? deadCard(you.deadVote, {
         picking: deadPicking,

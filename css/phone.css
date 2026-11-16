@@ -246,3 +246,9 @@ legend { margin-bottom: 8px; }
 .dead-card { background: linear-gradient(160deg, #1b1a24, var(--panel)); border: 1px solid #5d6a8a; border-radius: var(--radius); padding: 16px; margin: 0 0 16px; }
 .dead-card h2 { margin: 0 0 6px; color: #c9d4ff; }
 .dead-intro, .dead-wait { color: var(--muted); margin: 0 0 12px; }
+
+/* milestone 6c: your story at the end */
+.story-card { background: linear-gradient(160deg, #2b2416, var(--panel)); border: 1px solid var(--gold); border-radius: var(--radius); padding: 16px; margin: 0 0 16px; }
+.story-card h2 { margin: 0 0 8px; color: var(--gold-2); }
+.story-card ul { margin: 0; padding-left: 18px; }
+.story-card li { margin: 4px 0; line-height: 1.4; }

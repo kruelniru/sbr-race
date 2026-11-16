@@ -126,6 +126,14 @@ export function valentineCard(v) {
     h('p', { class: 'item-hint' }, 'Nobody else knows. The finale will tell them.'));
 }
 
+/** Your own story, at the very end (milestone 6c). */
+export function storyCard(story) {
+  if (!story) return null;
+  return h('section', { class: 'story-card' },
+    h('h2', {}, 'Your Steel Ball Run'),
+    h('ul', {}, story.lines.map((t) => h('li', {}, t))));
+}
+
 export function hintsCard(hints) {
   return h('section', { class: 'hints-card' },
     h('h3', {}, 'Only you know'),

@@ -671,7 +671,7 @@ function simPeopleUseItems(state, rng) {
     if (it.kind === 'arrow' && !p.stand && rng.chance(0.6)) useItem(state, p.id, it.id);
     if (it.kind === 'rokakaka' && p.stand?.tier === 'common' && rng.chance(0.25)) useItem(state, p.id, it.id);
     if (it.kind === 'part' && it.hidden && rng.chance(0.1)) useItem(state, p.id, it.id); // hold a hidden part after all
-    if (it.kind === 'part' && it.merged && p.valentine?.joined && !it.pendingDeliver && rng.chance(RULES.valentine.aiDeliver)) useItem(state, p.id, it.id, 'deliver'); // joiners deliver like AI joiners
+    if (it.kind === 'part' && it.merged && p.valentine?.joined && !it.pendingDeliver && rng.chance(['ruthless', 'opportunist'].includes(p.personality) ? RULES.valentine.aiDeliverGreedy : RULES.valentine.aiDeliver)) useItem(state, p.id, it.id, 'deliver'); // joiners deliver like AI joiners
   }
 }
 

@@ -94,7 +94,13 @@ export function cardSeconds(card, speed = 'normal') {
     case 'awards': s = B.page * pause + card.awards.length * B.award * pause; break;
     case 'survivors': s = B.page * pause + card.survivors.length * T.perName * 0.5; break;
     case 'memorial': s = B.page * pause + card.fallen.reduce((t, f) => t + T.perName + read(f.cause), 0); break;
-    case 'extra': s = B.page * pause + (card.data?.users?.length ?? 0) * T.perName; break;
+    case 'extra': {
+      const d = card.data ?? {};
+      const n = (d.users?.length ?? 0) + (d.racers?.length ?? 0) + (d.joiners?.length ?? 0) + (d.rows?.length ?? 0);
+      const text = [...(d.unmasked ?? []), ...(d.lines ?? []), ...(d.parts ?? []).map((p) => p.story)].join(' ');
+      s = B.page * pause + n * T.perName * 0.5 + read(text);
+      break;
+    }
     default: s = B.page * pause;
   }
   return Math.round(s * 10) / 10;

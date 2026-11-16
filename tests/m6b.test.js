@@ -160,11 +160,13 @@ test('endings: one main ending, in priority order; the Double-Cross; the Corpse 
   toFinalStage(state);
   chooseBoss(state);
   assert.equal(decideEnding(state).id, 'president');
-  // Bloodbath: 3 or fewer named racers left.
-  state = setup('e5', { players: 3, humans: 3 });
-  for (const c of state.canon) c.status = 'dead';
+  // Bloodbath: fewer than a quarter of the PCs who started reach New York (canon racers don't count).
+  state = setup('e5', { players: 8, humans: 8 });
+  for (const p of state.players.slice(0, 6)) p.status = 'dead';
   state.race.boss = null;
-  assert.equal(decideEnding(state).id, 'bloodbath');
+  assert.equal(decideEnding(state).id, 'normal', '2 of 8 is a quarter: not yet');
+  state.players[6].status = 'dead';
+  assert.equal(decideEnding(state).id, 'bloodbath', '1 of 8');
 });
 
 test('epilogues: canon champions (Hot Pants), a Runner, the Saint Smiles', () => {

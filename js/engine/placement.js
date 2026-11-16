@@ -18,6 +18,7 @@ import { standMods } from './stands.js';
 import { horseMod } from './horses.js';
 import { ridesDouble } from './alliances.js';
 import { bossPlacement } from './final-stage.js';
+import { carried } from './corpse.js';
 
 export function runnerTerrainBonus(stage) {
   let bonus = RULES.runner.base ?? 0;
@@ -33,7 +34,9 @@ export function placementScore(racer, stage, rng, state = null) {
   if (racer.mount === 'horse' && racer.onFoot) score -= P.onFootPenalty;
   if (racer.mount === 'runner') score += runnerTerrainBonus(stage);
   score += racer.luck ?? 0;
-  score += planOf(racer)?.placement ?? 0; // Stage Plan
+  // Stage Plan. Optionally, hunting costs nothing once you carry 3+ parts (rules.finale.holderNoHuntPenalty).
+  const plan = planOf(racer);
+  if (!(plan?.id === 'corpse' && RULES.finale.holderNoHuntPenalty && state && carried(state, racer).length >= RULES.finale.bossMin)) score += plan?.placement ?? 0;
   // Stand tier (rules.standTier). Canon racers' own Stands are already in their skill.
   if (racer.stand && !['canon', 'awaken'].includes(racer.stand.source)) score += standMods(racer).placement;
   // Horse quality (milestone 5); on foot with an ally on a horse, you ride double.

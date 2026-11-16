@@ -26,6 +26,7 @@ import { displayRoles } from './events.js';
 import { render } from './text.js';
 import { buildFinale } from './finale.js';
 import './finale-sections.js'; // registers milestone 4+ finale sections
+import { storyFor } from './secrets.js'; // registers the secrets reveal (milestone 6c)
 import { initField, fieldAttrition, fieldReportText } from './field.js';
 import { runMainEvent } from './events.js';
 import { placeStage, standings } from './placement.js';
@@ -381,6 +382,8 @@ export function syncShown(state) {
       settling,            // a corpse part is merging: the Stand card says so
       injured,
       nextTrader: p.mount === 'horse' && p.onFoot ? nextTraderText(state) : null,
+      // Milestone 6c: your own story, once the last round has been revealed.
+      story: race.over ? storyFor(state, p) : null,
     };
     if (prev && race) addAlerts(state, p, prev, p.shown);
     p.shown.alerts = (p.alerts ?? []).slice(-6);

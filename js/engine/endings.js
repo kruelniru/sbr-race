@@ -6,7 +6,7 @@
 //   2. president       He holds more parts than every racer combined.
 //   3. double-cross    The boss is a Valentine joiner, reaches New York, and keeps the Corpse.
 //   4. corpse          The boss reaches New York holding the Corpse (3+ parts).
-//   5. bloodbath       3 or fewer named racers reach New York.
+//   5. bloodbath       fewer than a quarter of the PCs who started reach New York.
 //   6. normal
 //
 // The boss's bonus (corpse / double-cross) is paid before the podium. The
@@ -37,18 +37,22 @@ export function decideEnding(state) {
   const boss = race.boss ? findRacerAnywhere(state, race.boss.id) : null;
   const bossParts = boss ? carried(state, boss).length : 0;
   const bossHolds = boss && boss.status === 'racing' && bossParts >= F.bossMin;
-  const reachedNY = namedRacers(state).filter((r) => r.status === 'racing').length;
+  // The Bloodbath counts PCs only (15 canon racers would always keep it from happening).
+  const pcs = state.players.filter((p) => p.hasCharacter);
+  const reachedNY = pcs.filter((p) => p.status === 'racing').length;
   let id = 'normal';
   if (valentineDead(state)) id = 'president-dead';
   else if (pres > held) id = 'president';
   else if (bossHolds && isJoiner(boss)) id = 'double-cross';
   else if (bossHolds) id = 'corpse';
-  else if (reachedNY <= F.bloodbath) id = 'bloodbath';
+  else if (reachedNY < pcs.length * F.bloodbathShare) id = 'bloodbath';
   const ending = { id, president: pres, racers: held, reachedNY };
   if (['corpse', 'double-cross'].includes(id)) {
-    const bonus = bossParts >= F.loveTrain ? F.loveTrainBonus : F.corpseBonus;
+    // Love Train's bonus goes to a boss chosen with Love Train who still holds the Corpse (3+), even if a fight took a part or two.
+    const lt = !!race.boss.loveTrain;
+    const bonus = lt ? F.loveTrainBonus : F.corpseBonus;
     boss.points += bonus;
-    Object.assign(ending, { bossId: boss.id, bossName: boss.name, parts: bossParts, bonus, loveTrain: bossParts >= F.loveTrain });
+    Object.assign(ending, { bossId: boss.id, bossName: boss.name, parts: bossParts, bonus, loveTrain: lt });
     addHint(boss, `You reached New York holding the Saint's Corpse. +${bonus} points.`, { stage: { id: 9 }, roundLabel: 'end' });
   }
   if (id === 'president-dead') ending.killers = (race.fv?.killers ?? []).map((k) => findRacerAnywhere(state, k)?.name).filter(Boolean);

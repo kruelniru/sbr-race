@@ -599,7 +599,8 @@ function aiUseItems(state, rng) {
   for (const it of state.items ?? []) {
     const owner = readyPlayers(state).find((x) => x.id === it.owner);
     // AI joiners hand parts to the President now and then.
-    if (owner?.isAI && it.kind === 'part' && it.merged && isJoiner(owner) && owner.status === 'racing' && !it.pendingDeliver && rng.chance(RULES.valentine.aiDeliver)) {
+    if (owner?.isAI && it.kind === 'part' && it.merged && isJoiner(owner) && owner.status === 'racing' && !it.pendingDeliver
+      && rng.chance(['ruthless', 'opportunist'].includes(owner.personality) ? RULES.valentine.aiDeliverGreedy : RULES.valentine.aiDeliver)) {
       it.pendingDeliver = true; it.pendingUse = false; continue;
     }
     if (!owner?.isAI || it.pendingUse || !canUse(it, owner)) continue;
@@ -816,7 +817,7 @@ function finalePrompts(state, rng, stage, roundNo, type, busy, prompts) {
   }
   const boss = bossRacer(state);
   // Valentine comes for the Love Train holder (joiners may ride with him, secretly).
-  if (fv?.hunt && fv.hunt.due <= roundNo && boss) {
+  if (fv?.hunt && fv.hunt.due <= roundNo && boss && !busy.has(boss.id)) { // (busy: next round)
     const riders = free().filter((p) => isJoiner(p) && p.id !== boss.id);
     ask(VALENTINE_RIDE, riders, `hunt-${roundNo}`, render(VALENTINE_RIDE.text, display({ b: boss })));
     busy.add(boss.id);
@@ -1189,7 +1190,7 @@ function resolveErrand(ctx, errandId, defend) {
     kind: 'errand', attacker: x, defender: y, win: 'part', defend: d, bonusA: RULES.valentine.errandBonus,
     masked: true, partTo: 'president', fallback: 'horse', cause: 'killed on the trail',
   });
-  logValentine(ctx, { event: 'errand', outcome: f.outcome, targetTier: y.tier });
+  logValentine(ctx, { event: 'errand', outcome: f.outcome, targetTier: y.tier, from: x.id, to: y.id });
   const hints = {
     part: "You hand the President's man what you took. He nods.",
     horse: 'Nothing to take for the President, so you take the horse.',
