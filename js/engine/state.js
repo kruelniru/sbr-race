@@ -16,7 +16,7 @@ import PRONOUNS from '../../data/pronouns.js';
 import CANON from '../../data/canon-racers.js';
 import { NAME_MAX, GENDER_MAX, PICTURE_MAX_BYTES, FEED_KEEP, DEFAULT_MIN_PLAYERS } from '../config.js';
 import { Rng } from './rng.js';
-import { ITEM_KINDS } from './items.js';
+import { ITEM_KINDS, canUse } from './items.js';
 import { myOffer, tradeTargets } from './trades.js';
 import { hasHorse } from './horses.js';
 
@@ -25,7 +25,7 @@ export const PHASE = Object.freeze({
   RACING: 'racing', // lobby is locked from here on; only reconnects get in
 });
 
-export const STATE_VERSION = 6; // bump when the saved shape changes (old host saves are ignored)
+export const STATE_VERSION = 7; // bump when the saved shape changes (old host saves are ignored)
 
 export function createGameState(seed) {
   return {
@@ -182,11 +182,13 @@ export function privateView(state, playerId) {
     } : null,
     canAskHorse: p.mount === 'horse' && !!p.onFoot,
     // Kept Stand Arrows and Rokakaka. Usable while a choice window is open.
+    // Corpse parts are items too (secret, like Stands): hidden ones can be held later.
     items: (state.items ?? []).filter((i) => i.owner === p.id).map((i) => ({
-      id: i.id, kind: i.kind, label: ITEM_KINDS[i.kind]?.label ?? i.kind, blurb: ITEM_KINDS[i.kind]?.blurb ?? '',
+      id: i.id, kind: i.kind, label: i.kind === 'part' ? `${cap(i.label)} (corpse part)` : ITEM_KINDS[i.kind]?.label ?? i.kind, blurb: ITEM_KINDS[i.kind]?.blurb ?? '',
       pending: !!i.pendingUse,
-      usable: p.status === 'racing' && (ITEM_KINDS[i.kind]?.needs === 'noStand' ? !p.stand : !!p.stand),
-      why: p.status !== 'racing' ? '' : ITEM_KINDS[i.kind]?.needs === 'noStand' && p.stand ? 'You already have a Stand.' : ITEM_KINDS[i.kind]?.needs === 'stand' && !p.stand ? 'You have no Stand to give up.' : '',
+      hidden: i.kind === 'part' ? !!i.hidden : undefined,
+      usable: canUse(i, p),
+      why: p.status !== 'racing' ? '' : i.kind === 'part' ? (i.hidden ? '' : 'It has merged with you.') : ITEM_KINDS[i.kind]?.needs === 'noStand' && p.stand ? 'You already have a Stand.' : ITEM_KINDS[i.kind]?.needs === 'stand' && !p.stand ? 'You have no Stand to give up.' : '',
     })),
   };
 }
@@ -259,6 +261,8 @@ export function hostScreenView(state) {
 }
 
 // ---------------------------------------------------------------- helpers
+
+const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
 function cleanText(v, max) {
   if (typeof v !== 'string') return '';

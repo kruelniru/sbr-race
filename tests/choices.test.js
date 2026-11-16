@@ -53,8 +53,8 @@ test('Stage Plans: AI answers at once, humans get ★ when the timer runs out', 
   assert.equal(p1.plan, 'laylow');
   assert.equal(p2.plan, w.prompts.find((x) => x.playerId === 'p2').star, 'timed out -> ★ plan');
   assert.ok(!needsStagePlans(state));
-  // Hidden plans never appear.
-  for (const x of w.prompts) for (const o of x.options) assert.ok(!['palm', 'corpse'].includes(o.id));
+  // Stage 1: the Palm plan isn't offered (Stages 2–3 only); Hunt a corpse part is (milestone 5b).
+  for (const x of w.prompts) assert.ok(!x.options.some((o) => o.id === 'palm') && x.options.some((o) => o.id === 'corpse'));
 });
 
 test('rival targets: racing named racers only, never yourself', () => {

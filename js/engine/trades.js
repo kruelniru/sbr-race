@@ -2,11 +2,13 @@
 //
 // A player offers an item (Stand Arrow, Rokakaka) or their horse to another
 // racing PC from the phone, for nothing (a gift) or for one thing back
-// (`ask`: 'arrow' | 'rokakaka' | 'horse'). The receiver gets a SECRET prompt
+// (`ask`: 'arrow' | 'rokakaka' | 'horse' | 'part'). The receiver gets a SECRET prompt
 // in their next sub-event window; the swap resolves with that round. If
 // either side no longer has what was offered, it quietly falls through.
 //
-// A gift counts as help (Worthiness +8). A trade counts as nothing.
+// A gift counts as help (Worthiness +8); a corpse part given for nothing +15
+// instead (milestone 5b). A trade counts as nothing. A part that changes
+// hands merges with its new holder (corpse.js).
 //
 // state.trades: [{ id, from, to, give: itemId | 'horse', ask: null | kind,
 //                  status: 'pending' | 'asked' | 'done' | 'refused' | 'failed' | 'cancelled' }]
@@ -16,17 +18,19 @@ import { readyPlayers } from './state.js';
 import { addWorthiness, addHint } from './racers.js';
 import { ITEM_KINDS, itemsOf } from './items.js';
 import { hasHorse, canHaveHorse, loseHorse, giveHorse, QUALITY_LABEL } from './horses.js';
+import { takePart, partGiftWorthiness } from './corpse.js';
 
-const ASKS = ['arrow', 'rokakaka', 'horse'];
+const ASKS = ['arrow', 'rokakaka', 'horse', 'part'];
 
 const pc = (state, id) => readyPlayers(state).find((p) => p.id === id);
 
 function giveLabel(state, t) {
   if (t.give === 'horse') return `${pc(state, t.from)?.horse ?? 'their horse'} (a ${QUALITY_LABEL[t.giveQuality] ?? 'horse'})`;
   const it = (state.items ?? []).find((i) => i.id === t.give);
+  if (it?.kind === 'part') return `a corpse part (${it.label})`;
   return `a ${ITEM_KINDS[it?.kind]?.label ?? 'thing'}`;
 }
-const askLabel = (ask) => (ask === 'horse' ? 'your horse' : ask ? `a ${ITEM_KINDS[ask]?.label ?? ask}` : null);
+const askLabel = (ask) => (ask === 'horse' ? 'your horse' : ask === 'part' ? 'a corpse part' : ask ? `a ${ITEM_KINDS[ask]?.label ?? ask}` : null);
 
 /** Who can receive this: racing PCs (no Runners or riders with a horse for a horse gift). */
 export function tradeTargets(state, from, give) {
@@ -76,6 +80,7 @@ function value(state, who, kind) {
   if (kind === 'horse') return who.onFoot ? V.horse : V.horseMounted;
   if (kind === 'arrow') return who.stand ? V.arrowHasStand : V.arrow;
   if (kind === 'rokakaka') return who.stand ? V.rokakakaHasStand : V.rokakaka;
+  if (kind === 'part') return V.part;
   return 0;
 }
 
@@ -124,6 +129,7 @@ export function resolveTrade(ctx, t, accepted) {
     return log('failed');
   }
   // Swap.
+  t.giveKind = t.give === 'horse' ? 'horse' : (state.items ?? []).find((i) => i.id === t.give)?.kind;
   move(ctx, from, to, t.give === 'horse' ? 'horse' : t.give);
   if (t.ask) {
     const back = t.ask === 'horse' ? 'horse' : itemsOf(state, to.id).find((i) => i.kind === t.ask).id;
@@ -131,9 +137,10 @@ export function resolveTrade(ctx, t, accepted) {
   }
   t.status = 'done';
   if (!t.ask) {
-    // A gift with nothing back is help.
+    // A gift with nothing back is help (a corpse part: +15 instead).
     from.helps = (from.helps ?? 0) + 1;
-    addWorthiness(from, RULES.worthiness.help, ctx);
+    if (t.giveKind === 'part') partGiftWorthiness(ctx, from);
+    else addWorthiness(from, RULES.worthiness.help, ctx);
   }
   addHint(to, t.ask ? `The trade with ${from.name} is done.` : `${from.name}'s gift is yours.`, ctx);
   addHint(from, t.ask ? `The trade with ${to.name} is done.` : `${to.name} takes your gift.`, ctx);
@@ -146,6 +153,7 @@ function move(ctx, from, to, what) {
     if (lost) giveHorse(to, lost.name, lost.quality);
   } else {
     const it = ctx.state.items.find((i) => i.id === what);
-    if (it) { it.owner = to.id; it.pendingUse = false; }
+    if (it?.kind === 'part') takePart(ctx, it, to, 'traded', from, { quiet: true });
+    else if (it) { it.owner = to.id; it.pendingUse = false; }
   }
 }

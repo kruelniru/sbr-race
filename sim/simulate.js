@@ -12,6 +12,7 @@
 //   node sim/simulate.js --choice-times log.json replay answer times from a real game
 //   node sim/simulate.js --freq high             sub event frequency (low/normal/high)
 //   node sim/simulate.js --humans 12             how many PCs are people (default: all)
+//   node sim/simulate.js --set valentine.relay=1  try a rules.js number (comma-separate several)
 //
 // Tune numbers in data/rules.js, data/stages.js and event weights in data/events.
 
@@ -25,6 +26,7 @@ import { needsStagePlans, openStagePlans, openSubEvents, closeChoices, starOptio
 import { aiBuys } from '../js/engine/horses.js';
 import { fightScore } from '../js/engine/fights.js';
 import { offerTrade } from '../js/engine/trades.js';
+import { corpseSummary } from '../js/engine/corpse.js';
 import PLANS from '../data/plans.js';
 import PERSONALITIES from '../data/personalities.js';
 import { readFileSync } from 'node:fs';
@@ -34,6 +36,13 @@ import { buildCards, cardsSeconds, cardSeconds } from '../js/engine/reveal.js';
 
 // ---------------------------------------------------------------- args
 const args = parseArgs(process.argv.slice(2));
+// --set a.b.c=value (repeatable, comma-separated): try a rules.js number without editing it.
+for (const kv of String(args.set ?? '').split(',').filter(Boolean)) {
+  const [path, v] = kv.split('=');
+  const keys = path.split('.');
+  const obj = keys.slice(0, -1).reduce((o, k) => o[k], RULES);
+  obj[keys.at(-1)] = Number(v);
+}
 const HORSE_VALUE = {}; // ridden at the Finish Line -> { n, pts }
 const GAMES = args.verbose ? 1 : Number(args.games ?? 100);
 const PLAYERS = Number(args.players ?? 18);
@@ -74,6 +83,7 @@ function playGame(seed) {
   const palm = { offers: 0, in: 0 };
   const standShare = [];
   const horseValue = HORSE_VALUE;
+  const partsByStage = []; // at each Finish Line: who holds the parts
   while (!state.race.over) {
     if (needsStagePlans(state)) {
       const w = openStagePlans(state);
@@ -123,13 +133,14 @@ function playGame(seed) {
         b.n++; b.pts += pl.points;
       }
     }
+    if (res.placements) partsByStage.push(partsSnapshot(state, res.stage.id));
     // Stand holders among PCs at the end of Stages 3, 6 and 9.
     if (res.placements && [3, 6, 9].includes(res.stage.id)) {
       const living = state.players.filter((x) => x.status !== 'dead');
       standShare.push({ stage: res.stage.id, ofAll: living.filter((x) => x.stand).length / state.players.length, ofLiving: living.filter((x) => x.stand).length / (living.length || 1) });
     }
   }
-  return { state, results, stageLog, windows, timeRng, palm, standShare };
+  return { state, results, stageLog, windows, timeRng, palm, standShare, partsByStage };
 }
 
 /** Sim plan modes: random, star, or one fixed plan for everyone. */
@@ -215,9 +226,10 @@ function newStats() {
   };
 }
 
-function collect(S, { state, results, stageLog, windows, timeRng, palm, standShare }) {
+function collect(S, { state, results, stageLog, windows, timeRng, palm, standShare, partsByStage }) {
   collectStands(S, state, results, palm);
   collectM5a(S, state);
+  collectM5b(S, state, results, partsByStage);
   for (const x of standShare) (S.st.share[x.stage] ??= []).push(x);
   S.games++;
   const racers = namedRacers(state);
@@ -385,6 +397,7 @@ function printStats(S) {
 
   printStands(S);
   printM5a(S);
+  printM5b(S);
 
   console.log('\nChecks');
   console.log(`  canon deaths in Stage 1: ${S.canonStage1Deaths} ${S.canonStage1Deaths ? 'FAIL' : 'ok'}`);
@@ -472,7 +485,7 @@ function newStandStats() {
     gained: {}, // source -> tier -> n
     arrows: { found: 0, pierce: 0, keep: 0, leave: 0, used: 0, stand: 0, died: 0, already: 0, tiers: {} },
     roka: { found: 0, foundHuman: 0, gamesUnder2: 0, eaten: 0, kept: 0, left: 0, before: {}, after: {} },
-    worth: {}, // personality -> [end worthiness]
+    worth: {}, worthNoJoin: {}, // personality -> [end worthiness]
     arrowBands: {}, // band min -> { stand, died }
     deeds: {}, // personality -> { n, helps, spares } (PCs, whole game)
     holders: {}, // tier|none -> { n, points, ny, pc }
@@ -524,6 +537,7 @@ function collectStands(S, state, results, palm) {
     (T.roka.why ??= []).push(drops);
   }
   for (const p of state.players) (T.worth[p.personality] ??= []).push(p.worthiness);
+  for (const p of state.players) if (!p.valentine?.joined) (T.worthNoJoin[p.personality] ??= []).push(p.worthiness);
   for (const p of state.players) { const d = (T.deeds[p.personality] ??= { n: 0, helps: 0, spares: 0 }); d.n++; d.helps += p.helps ?? 0; d.spares += p.spares ?? 0; }
   // Stand holders (the Stand they held at the end, or when they died) vs non-holders.
   const named = [...state.players, ...state.canon];
@@ -590,6 +604,7 @@ function printStands(S) {
     return [k, RULES.worthiness.byPersonality[k], f1(avg(a)), `${q(0.1)}–${q(0.9)}`, pct(a.filter((x) => x >= 100).length, a.length), pct(a.filter((x) => x < 25).length, a.length)];
   }));
 
+  console.log('  without Valentine joiners (joining costs −30): ' + Object.entries(T.worthNoJoin).map(([k, a]) => `${k} ${f1(avg(a))} (below 25: ${pct(a.filter((x) => x < 25).length, a.length)})`).join(' · '));
   console.log('  helps and spares per PC per game: ' + Object.entries(T.deeds).map(([k, d]) => `${k} ${f1(d.helps / d.n)} + ${f1(d.spares / d.n)} = ${f1((d.helps + d.spares) / d.n)}`).join(' · '));
   console.log('\nStand holders vs non-holders (Stand at the end of the race; PCs + canon)');
   const order = ['legendary', 'rare', 'common', 'none'];
@@ -636,6 +651,7 @@ function simPeopleUseItems(state, rng) {
     if (!p || p.isAI || it.pendingUse || p.status !== 'racing') continue;
     if (it.kind === 'arrow' && !p.stand && rng.chance(0.6)) useItem(state, p.id, it.id);
     if (it.kind === 'rokakaka' && p.stand?.tier === 'common' && rng.chance(0.25)) useItem(state, p.id, it.id);
+    if (it.kind === 'part' && it.hidden && rng.chance(0.1)) useItem(state, p.id, it.id); // hold a hidden part after all
   }
 }
 
@@ -646,7 +662,7 @@ function collectM5a(S, state) {
   for (const f of state.race.fightLog ?? []) {
     bump(T.fights, f.kind);
     bump(T.fights, `${f.kind}:${f.outcome}`);
-    const who = ['kill', 'kill-missed', 'spare', 'horse'].includes(f.outcome) ? 'attacker' : f.outcome.startsWith('reversal') ? 'defender' : f.outcome;
+    const who = ['kill', 'kill-missed', 'spare', 'horse', 'part', 'searched'].includes(f.outcome) ? 'attacker' : f.outcome.startsWith('reversal') ? 'defender' : f.outcome;
     if (f.pvp) { T.pvp++; bump((T.pvpOut ??= {}), who); }
     bump((T.allOut ??= {}), `${f.kind}:${who}`);
     if (f.outcome.startsWith('reversal')) T.reversals++;
@@ -676,8 +692,8 @@ function printM5a(S) {
   const F = T.fights;
   console.log('\nFights (per game)');
   for (const kind of ['rival', 'strike', 'attacked']) {
-    const outs = ['kill', 'kill-missed', 'spare', 'horse', 'escape', 'both-hurt', 'reversal-kill', 'reversal-spare'];
-    console.log(`  ${kind.padEnd(9)} ${per(F[kind])}: ` + outs.map((o) => `${o} ${per(F[`${kind}:${o}`])}`).join(' · '));
+    const outs = ['kill', 'kill-missed', 'spare', 'horse', 'part', 'searched', 'escape', 'both-hurt', 'reversal-kill', 'reversal-spare'];
+    console.log(`  ${kind.padEnd(9)} ${per(F[kind])}: ` + outs.filter((o) => F[`${kind}:${o}`]).map((o) => `${o} ${per(F[`${kind}:${o}`])}`).join(' · '));
   }
   const O = T.pvpOut ?? {};
   const aw = O.attacker ?? 0, dw = O.defender ?? 0;
@@ -715,4 +731,134 @@ function printM5a(S) {
   console.log(`  formed ${per((A['formed:pc'] ?? 0) + (A['formed:canon'] ?? 0) + (A['formed:npc'] ?? 0) + (A['formed:event'] ?? 0))} (PC+PC ${per(A['formed:pc'])}, PC+canon ${per(A['formed:canon'])}, PC+NPC ${per((A['formed:npc'] ?? 0) + (A['formed:event'] ?? 0))}) · refused ${per(A.refused)} · abandoned ${per(A.abandoned)} · betrayed ${per(A.betrayed)} · ended by a death ${per(A.ended)}`);
   console.log('\nTrades (per game, sim people only)');
   console.log('  ' + (Object.entries(T.trades).map(([k, v]) => `${k} ${per(v)}`).join(' · ') || 'none'));
+}
+
+// ---------------------------------------------------------------- milestone 5b: corpse parts, agents, Valentine
+function partsSnapshot(state, stage) {
+  const by = { pc: 0, canon: 0, npc: 0, president: 0, loose: 0 };
+  for (const p of state.corpse.parts) {
+    if (p.status === 'president') by.president++;
+    else if (p.status === 'loose' || p.status === 'finding') by.loose++;
+  }
+  for (const it of (state.items ?? []).filter((i) => i.kind === 'part')) {
+    const r = [...state.players, ...state.canon].find((x) => x.id === it.owner);
+    by[r ? r.tier : 'npc']++;
+  }
+  return { stage, ...by };
+}
+
+function collectM5b(S, state, results, partsByStage) {
+  const T = (S.m5b ??= {
+    games: 0, byStage: {}, flow: {}, bands: {}, presMost: 0, presAll: 0, loveTrain: 0, maxHolder: [], pres: [],
+    ambush: { holder: 0, none: 0, holderRounds: 0, hidden: 0 }, ambushOut: {}, agentDeaths: 0,
+    fv: {}, offers: 0, joins: 0, joinBy: {}, offerBy: {}, joiners: { n: 0, ny: 0, points: 0, stands: 0, wins: 0, bonus: 0, worth: 0 },
+    others: { n: 0, ny: 0, points: 0 }, pcN: 0, pcWins: 0, at4: 0, at4Wins: 0, refusers: { n: 0, ny: 0, points: 0, wins: 0 }, triggered: 0, errands: {}, holdersPc: 0, pcHeld: 0,
+  });
+  T.games++;
+  for (const x of partsByStage) {
+    const b = (T.byStage[x.stage] ??= { pc: 0, canon: 0, npc: 0, president: 0, loose: 0 });
+    for (const k of Object.keys(b)) b[k] += x[k];
+  }
+  for (const e of state.corpse.log) {
+    if (['found', 'given', 'palm', 'stolen', 'fight', 'from-body', 'traded'].includes(e.event)) bump(T.flow, `${e.event}:${e.toTier}`);
+    if (e.event === 'president') bump(T.flow, `president:${e.how}`);
+    if (e.event === 'loose') bump(T.flow, `loose:${e.how}`);
+    if (e.event === 'found' && e.hidden) bump(T.flow, 'hidden');
+    if (['merged', 'rejected-death', 'rejected-lost'].includes(e.event)) {
+      const b = (T.bands[e.band] ??= { merged: 0, 'rejected-death': 0, 'rejected-lost': 0, pc: 0 });
+      b[e.event]++;
+      if (e.toTier === 'pc') b.pc++;
+    }
+  }
+  const sum = corpseSummary(state);
+  const top = sum.holders[0]?.parts.length ?? 0;
+  const held = sum.holders.reduce((t, h) => t + h.parts.length, 0);
+  T.pres.push(sum.president); T.maxHolder.push(top);
+  if (sum.president > top) T.presMost++;
+  if (sum.president > held) T.presAll++;
+  if (top >= 5) T.loveTrain++;
+  const pcHolders = sum.holders.filter((h) => h.tier === 'pc');
+  T.holdersPc += pcHolders.length;
+  T.pcHeld += pcHolders.reduce((t, h) => t + h.parts.length, 0);
+  for (const a of state.race.agentLog ?? []) {
+    if (a.event === 'ambush') { if (a.holder) T.ambush.holder++; else T.ambush.none++; }
+    else if (a.event === 'died') T.agentDeaths++;
+    else if (a.event === 'valentine') bump(T.fv, a.outcome);
+  }
+  for (const f of state.race.fightLog ?? []) if (['agents', 'errand', 'valentine'].includes(f.kind)) bump(T.ambushOut, `${f.kind}:${f.outcome}:${f.d.holder ? 'holder' : 'none'}`);
+  // Holder-rounds for PCs (rough exposure: parts held at each Finish Line by PCs).
+  for (const v of state.race.valentineLog ?? []) {
+    if (v.event === 'offered') { T.offers++; bump(T.offerBy, v.personality); }
+    if (v.event === 'joined') { T.joins++; bump(T.joinBy, v.personality); }
+    if (v.event === 'errand') bump(T.errands, v.outcome);
+    if (v.event === 'errand-picked') bump(T.errands, 'picked');
+    if (v.event === 'errand-missed') bump(T.errands, 'missed');
+  }
+  if (state.race.valentineEnding?.triggered) T.triggered++;
+  const winner = results.at(-1).finale.podium[0];
+  for (const p of state.players) {
+    T.pcN++;
+    const j = !!p.valentine?.joined;
+    const b = j ? T.joiners : T.others;
+    b.n++; b.points += p.points; if (p.status === 'racing') b.ny++;
+    if (j) {
+      if (state.stands.log.some((e) => e.racerId === p.id && e.source === 'valentine')) T.joiners.stands++;
+      if (p.valentine.bonus) T.joiners.bonus++;
+      T.joiners.worth += p.worthiness;
+    }
+    if (winner?.id === p.id) { T.pcWins++; if (j) T.joiners.wins++; }
+    // Survivorship: offers only reach PCs still racing in Stages 4–6.
+    const out = (p.death && p.death.stage < 4) || (p.retiredAt && p.retiredAt.stage < 4);
+    if (!out) { T.at4++; if (winner?.id === p.id) T.at4Wins++; }
+    if (p.valentineOffered && !j) { const R = T.refusers; R.n++; R.points += p.points; if (p.status === 'racing') R.ny++; if (winner?.id === p.id) R.wins++; }
+  }
+}
+
+function printM5b(S) {
+  const T = S.m5b;
+  const g = T.games;
+  const f1 = (n) => n.toFixed(1);
+  const f2 = (n) => n.toFixed(2);
+  const per = (n) => f1((n ?? 0) / g);
+  const pct = (n, d) => `${((100 * n) / (d || 1)).toFixed(0)}%`;
+  const avg = (a) => a.reduce((x, y) => x + y, 0) / (a.length || 1);
+
+  console.log('\nCorpse parts: who holds them at each Finish Line (average parts per game)');
+  table(['Stage', 'PCs', 'canon', 'NPCs', 'President', 'loose'], Object.entries(T.byStage).map(([st, b]) => [st, f1(b.pc / g), f1(b.canon / g), f1(b.npc / g), f1(b.president / g), f1(b.loose / g)]));
+  const F = T.flow;
+  const sumTier = (ev) => ['pc', 'canon', 'npc'].map((t) => `${t} ${per(F[`${ev}:${t}`])}`).join(', ');
+  console.log(`  found: ${sumTier('found')} (hidden by PCs ${per(F.hidden)}) · out of the Palm: ${sumTier('palm')}`);
+  console.log(`  given: ${sumTier('given')} · traded: ${sumTier('traded')} · stolen: ${sumTier('stolen')} · taken in fights: ${sumTier('fight')} · taken from a body: ${sumTier('from-body')}`);
+  console.log(`  to the President: unclaimed at a Finish Line ${per(F['president:unclaimed'])} · from agents in fights ${per(F['president:fight'])} · from bodies ${per(F['president:from-body'])} · back on the trail: holder died alone ${per(F['loose:dropped'])}, rejected ${per(F['loose:rejected'])}`);
+  console.log(`  end of race: President ${f1(avg(T.pres))} parts avg · the top racer holds ${f1(avg(T.maxHolder))} · PC holders ${per(T.holdersPc)} per game holding ${per(T.pcHeld)} parts`);
+  console.log(`  President holds the most (more than any one racer): ${pct(T.presMost, g)} of games · more than every racer combined (the bad ending; joiners +100): ${pct(T.presAll, g)} · a racer with 5+ parts (Love Train): ${pct(T.loveTrain, g)}`);
+
+  console.log('\nRejections (every merge, everyone; rule: 75+ 0%, 60+ 3%, 45+ 8%, 25+ 18%, below 25 35%)');
+  table(['Worthiness band', 'merges/game', 'PC share', 'accepted', 'rejected', 'died', 'lost the part'], Object.entries(T.bands).sort((a, b) => b[0] - a[0]).map(([band, b]) => {
+    const n = b.merged + b['rejected-death'] + b['rejected-lost'];
+    return [`${band}+`, f1(n / g), pct(b.pc, n), pct(b.merged, n), pct(b['rejected-death'] + b['rejected-lost'], n), pct(b['rejected-death'], n), pct(b['rejected-lost'], n)];
+  }));
+
+  console.log('\nAgent ambushes (per game)');
+  console.log(`  on holders ${per(T.ambush.holder)} · on racers holding nothing ${per(T.ambush.none)} (share on holders ${pct(T.ambush.holder, T.ambush.holder + T.ambush.none)}) · agents killed ${per(T.agentDeaths)}`);
+  const O = T.ambushOut;
+  for (const kind of ['agents', 'errand', 'valentine']) {
+    const rows = Object.entries(O).filter(([k]) => k.startsWith(kind + ':'));
+    if (rows.length) console.log(`  ${kind}: ` + rows.sort((a, b) => b[1] - a[1]).map(([k, n]) => `${k.slice(kind.length + 1)} ${per(n)}`).join(' · '));
+  }
+
+  console.log('\nFunny Valentine (Stages 8–9; Rare+ Stand, Worthiness 60+, never joiners)');
+  const fv = T.fv;
+  const faced = Object.entries(fv).filter(([k]) => k !== 'avoided').reduce((t, [, n]) => t + n, 0);
+  console.log(`  encounters ${per(faced + (fv.avoided ?? 0))} per game · faced ${per(faced)}, avoided ${per(fv.avoided)} · of those who faced him: drove him off ${pct(fv['reversal-spare'] ?? 0, faced)}, killed ${pct(fv.kill ?? 0, faced)}, lost their parts ${pct(fv.part ?? 0, faced)}, got away hurt ${pct((fv['kill-missed'] ?? 0) + (fv['both-hurt'] ?? 0) + (fv.searched ?? 0) + (fv.spare ?? 0), faced)}`);
+
+  console.log('\nThe Valentine offer (Stages 4–6, secret)');
+  console.log(`  offers ${per(T.offers)} per game · joins ${per(T.joins)} (${pct(T.joins, T.offers)}) · by personality: ` + Object.keys(T.offerBy).map((k) => `${k} ${T.joinBy[k] ?? 0}/${T.offerBy[k]}`).join(', '));
+  const J = T.joiners, N = T.others;
+  const share = J.n / T.pcN, winShare = J.wins / (T.pcWins || 1);
+  console.log(`  joiners: reach NY ${pct(J.ny, J.n)} (others ${pct(N.ny, N.n)}) · avg points ${f1(J.points / (J.n || 1))} (others ${f1(N.points / (N.n || 1))}) · Stand from Valentine ${pct(J.stands, J.n)} · end Worthiness ${f1(J.worth / (J.n || 1))}`);
+  console.log(`  joiners win ${pct(J.wins, T.pcWins)} of PC race wins vs ${pct(J.n, T.pcN)} of PCs = ${f2(winShare / (share || 1))}x (limit 1.5x)${winShare / (share || 1) > 1.5 ? ' FAIL' : ''} · the +100 triggered in ${pct(T.triggered, g)} of games (${pct(J.bonus, J.n)} of joiners got it)`);
+  const R = T.refusers;
+  console.log(`  for comparison (offers only reach PCs still racing in Stage 4): joiners vs PCs racing at the start of Stage 4 = ${f2(winShare / ((J.n / (T.at4 || 1)) || 1) * (T.at4Wins / (T.pcWins || 1)))}x · PCs who refused: reach NY ${pct(R.ny, R.n)}, avg points ${f1(R.points / (R.n || 1))}, win ${pct(R.wins, T.pcWins)} of PC wins vs ${pct(R.n, T.pcN)} of PCs = ${f2((R.wins / (T.pcWins || 1)) / ((R.n / T.pcN) || 1))}x`);
+  console.log('  errands per game: ' + Object.entries(T.errands).map(([k, n]) => `${k} ${per(n)}`).join(' · '));
 }

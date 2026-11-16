@@ -72,9 +72,9 @@ export default {
     killDefense: 0,   // 'kill-defense': they attacked you (or an accident)
     killStarted: -8,  // 'kill-started': you attacked, hunted or ambushed
     killCruel: -12,   // 'kill-cruel': helpless, fleeing or asleep (instead of -8)
-    // Milestone 5 (recorded now, not used yet):
-    givePart: 15,     // give away a corpse part
-    stealPart: -8,    // steal a part
+    // Milestone 5:
+    givePart: 15,     // give a corpse part away for nothing
+    stealPart: -8,    // steal a part (asleep, or taken after a fight)
     abandonAlly: -12, // abandon an ally
     joinValentine: -30,
     hintAt: 8,        // a change this big gives the phone a private hint line
@@ -202,7 +202,68 @@ export default {
   // ---------------------------------------------------------------- trading (milestone 5)
   trading: {
     // How much AI racers value things when deciding on a trade.
-    value: { horse: 5, horseMounted: 1, arrow: 3, arrowHasStand: 0, rokakaka: 1, rokakakaHasStand: 2 },
+    value: { horse: 5, horseMounted: 1, arrow: 3, arrowHasStand: 0, rokakaka: 1, rokakakaHasStand: 2, part: 4 },
+  },
+
+  // ---------------------------------------------------------------- corpse parts (milestone 5b)
+  // One part surfaces per stage (data/corpse.js PARTS). While it's loose,
+  // someone finds it each round with findChance; still loose at the Finish
+  // Line, Valentine's agents recover it for the President.
+  corpse: {
+    findChance: 0.9,
+    palmStages: [2, 3],
+    palmChance: 0.25,          // that stage's part waits in the Devil's Palm for whoever walks out
+    // Who finds it: weight = base + Worthiness * perWorthiness (the corpse chooses).
+    find: {
+      base: 0.5, perWorthiness: 1 / 50,
+      huntMult: 3,             // "Hunt a corpse part" Stage Plan
+      retired: 0.5,            // retired racers still hunt, at this weight
+      canon: 0.6, canonSeekers: { johnny: 2, gyro: 2 }, // x canon on top of canon
+      npcField: 4,             // the whole NPC field, as one weight
+    },
+    // Rejected when a part merges with you (%), by Worthiness band.
+    rejection: [{ min: 75, p: 0 }, { min: 60, p: 3 }, { min: 45, p: 8 }, { min: 25, p: 18 }, { min: 0, p: 35 }],
+    rejectionDeath: 2 / 3,     // the rest just lose the part (it goes back into play)
+    steal: { chance: 0.25, success: 0.75 }, // a sleeping holder, Night rounds (secret)
+  },
+
+  // ---------------------------------------------------------------- Valentine's agents (milestone 5b)
+  // Ambush chance per racer per round: perHolder + perPart for each part they
+  // carry (perHidden for a hidden one); nonHolder for everyone else, so an
+  // ambush never proves anything. Joiners are never ambushed.
+  agents: {
+    nonHolder: 0.015, perHolder: 0.04, perPart: 0.06, perHidden: 0.03,
+    huntMult: 2,               // "Hunt a corpse part"
+    canonNonHolder: 0.005,
+    othersMult: 0.5,           // canon and NPC holders (nobody controls them; they can't hide a part or plan)
+    bonus: 0,                  // their (banned) Stands, in a fight
+    // What they do if they win: search for a part, or kill.
+    wins: { holder: { part: 7, kill: 3 }, none: { part: 6, kill: 4 } },
+  },
+
+  // ---------------------------------------------------------------- Funny Valentine (milestone 5b)
+  // Stages 8–9: "Face him / Avoid him" for Rare+ Stand users with Worthiness
+  // 60+, never joiners; once per racer. He can't be killed.
+  funnyValentine: {
+    stages: [8, 9], minWorthiness: 60, tiers: ['rare', 'legendary'],
+    chance: 0.2,               // per eligible PC per round
+    score: 77,                 // his fight score before noise (a Legendary user wins about 30%)
+    winPoints: 50, winPace: 2,
+    wins: { holder: { part: 1, kill: 1 }, none: { kill: 1, spare: 1 } }, // part: takes every part you carry
+  },
+
+  // ---------------------------------------------------------------- the Valentine offer (milestone 5b)
+  valentine: {
+    offerStages: [4, 5, 6],
+    perStage: [1, 2],          // PCs offered per stage
+    lowWorthiness: 40, lowMult: 2,
+    personalityMult: { ruthless: 1.5, opportunist: 1.5 },
+    // Rewards: agents never attack; relay horses; a free Stand (Arrow odds, no
+    // death risk) if Standless; an errand each stage; endingBonus if the
+    // President ends with more parts than every racer combined.
+    relay: 0,                  // placement every remaining stage
+    errandBonus: 8,            // agent backup in the errand fight
+    endingBonus: 25,
   },
 
   // ---------------------------------------------------------------- choices

@@ -7,6 +7,12 @@ import { readyPlayers } from './state.js';
 import { STAND_BY_ID } from '../../data/stands.js';
 import { standOwnerDied } from './stands.js';
 
+/**
+ * Called on every death (named racers and NPCs): (ctx, who, killer | null).
+ * Milestone 5b: a holder's corpse parts go to their killer or back onto the trail.
+ */
+export const DEATH_HOOKS = [];
+
 /** Fields every named racer has during a race. */
 function raceFields({ tier, skill, mount, horse, worthiness }) {
   return {
@@ -144,6 +150,7 @@ export function killRacer(ctx, who, cause, killer) {
   ctx.state.race.fallenSince.push(fallen);
   ctx.state.race.memorial.push(fallen);
   standOwnerDied(ctx.state, who);
+  for (const hook of DEATH_HOOKS) hook(ctx, who, killer);
   // An alliance ends quietly with a death.
   if (who.ally) {
     const other = findRacerAnywhere(ctx.state, who.ally);

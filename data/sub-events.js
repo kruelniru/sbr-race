@@ -22,8 +22,7 @@
 // can't happen (a horse death for a Runner) are skipped. Deaths and horse
 // deaths are scaled by rules.deathOdds and the racer's Stage Plan.
 //
-// Kill or spare, corpse parts, agents, the Devil's Palm and Valentine's offer
-// arrive with their milestones (4–5) as new entries here.
+// Corpse parts, agents and Valentine (milestone 5b) are at the end of this file.
 
 const L = (honorable, ruthless, cautious, glory, opportunist) => ({ honorable, ruthless, cautious, glory, opportunist });
 
@@ -301,11 +300,15 @@ export const FIGHT_WIN = [
   { id: 'kill', label: 'Kill them if you win', hint: 'Worthiness drops', lean: L(0.1, 4, 0.4, 1.2, 2) },
   { id: 'spare', label: 'Let them go if you win', hint: 'Mercy', lean: L(4, 0.5, 3, 2, 1.5) },
   { id: 'horse', label: 'Take their horse if you win', hint: 'They go on foot', lean: L(0.6, 2, 0.8, 1, 3), needsHorse: true },
+  // Milestone 5b: you never know if they carry one. Same line on stream either way.
+  { id: 'part', label: 'Search them if you win', hint: 'Take a corpse part if they carry one', lean: L(0.2, 1.2, 0.3, 0.6, 1.6) },
 ];
 export const FIGHT_DEFEND = [
   { id: 'fight-kill', label: 'Fight back, to kill', hint: 'Self-defense', lean: L(0.3, 4, 0.5, 2, 2) },
   { id: 'fight-spare', label: 'Fight back, then let them go', hint: 'Mercy if you win', lean: L(4, 0.6, 1.5, 2.5, 1.5) },
   { id: 'flee', label: 'Flee', hint: 'Often gets away; caught, you fight at a disadvantage', lean: L(1, 0.4, 4, 0.3, 2) },
+  // Milestone 5b: they get what they chose if they'd won (a kill counts as cruel).
+  { id: 'surrender', label: 'Give up without a fight', hint: 'They get what they came for', lean: L(0.2, 0.05, 0.6, 0.05, 0.3) },
 ];
 
 // Hunt a rival (Stage Plan): a guaranteed fight with the target, started by
@@ -394,7 +397,7 @@ export const TRADE = {
 export const PALM = {
   id: 'sub-palm', title: "The edge of the Devil's Palm", special: 'palm', weight: 7,
   text: "The ground ahead drops away into a Devil's Palm. People say it gives some riders a gift, and swallows the rest.",
-  textHasStand: "You've found a Devil's Palm. You already have a Stand; the Palm has nothing more to give you.",
+  textHasStand: "You've found a Devil's Palm. You already have a Stand, but they say the Palm sometimes hides a corpse part.",
   cast: { a: { is: 'focus', hasStand: false } }, when: { stages: [2, 3] },
   options: [
     { id: 'in', label: 'Go in', hint: 'A Stand, nothing, lost, or death. Worthiness decides.', lean: L(1.2, 2, 0.3, 3, 2.5) },
@@ -432,4 +435,74 @@ export const ROKAKAKA = {
     { id: 'keep', label: 'Keep it', hint: 'Use it from your phone in any decision', lean: L(2, 2, 2, 2, 3) },
     { id: 'leave', label: 'Leave it', hint: 'Walk away', lean: L(1, 1, 1, 1, 1) },
   ],
+};
+
+// ------------------------------------------------------------ milestone 5b: corpse parts
+// Resolved in code (js/engine/corpse.js). Finds and steals are SECRET.
+export const FOUND_PART = {
+  id: 'found-part', title: 'You found a corpse part', secret: true,
+  text: "Something lies half-buried by the trail: {part} of the Saint's Corpse. It's warm to the touch.",
+  options: [
+    { id: 'keep', label: 'Keep it', hint: 'It merges with you: maybe a Stand, maybe rejection. Agents hunt holders.', lean: L(1.5, 3, 0.8, 3, 3) },
+    { id: 'hide', label: 'Hide it on you', hint: "Wrapped, it can't touch you: no Stand, no rejection. Agents notice it less.", lean: L(1.5, 1, 4, 0.8, 1.5) },
+    { id: 'give', label: 'Give it to someone', hint: 'A good deed. Pick who.', lean: L(3, 0.1, 0.8, 0.3, 0.3), needsTarget: true },
+  ],
+};
+
+export const STEAL_PART = {
+  id: 'steal-part', title: 'A chance to steal', secret: true,
+  text: '{b} is asleep by the fire. Something in {b.their} pack glows faintly.',
+  options: [
+    { id: 'take', label: 'Take it', hint: 'Worthiness drops. They might wake.', lean: L(0.1, 3, 0.5, 1, 3) },
+    { id: 'leave', label: 'Leave it', hint: 'Let them sleep', lean: L(4, 0.5, 2, 1.5, 1) },
+  ],
+};
+
+// ------------------------------------------------------------ milestone 5b: Valentine
+// Agents ambush holders (and sometimes anyone). Not secret: the stream sees
+// the ambush, never whether a part changed hands.
+export const AMBUSH = {
+  id: 'agent-ambush', title: 'Ambushed by agents',
+  text: "{b} steps into the trail ahead of {a}. \"The President would like a word.\"",
+  options: FIGHT_DEFEND.map((o) => o.id === 'surrender'
+    ? { ...o, label: 'Let them search you', hint: 'They take a corpse part if you carry one, then ride off', lean: L(1.5, 0.3, 3, 0.3, 1.5) }
+    : o),
+};
+
+export const FUNNY_VALENTINE = {
+  id: 'funny-valentine', title: 'Funny Valentine',
+  text: 'The President himself is waiting on the road, alone. "Hand over what belongs to America."',
+  options: [
+    { id: 'face', label: 'Face him', hint: 'Win and drive him off: +50 points. Lose, and you may die or lose every part you carry.', lean: L(1, 2, 0.2, 4, 0.8) },
+    { id: 'avoid', label: 'Avoid him', hint: 'Take the long way round. Lose time.', lean: L(2, 1, 4, 0.5, 3) },
+  ],
+  lines: {
+    open: '{y} stands {y.their} ground against Funny Valentine.',
+    win: ' {y} drives the President off!',
+    avoid: '{a} leaves the road and takes the long way round.',
+  },
+};
+
+export const VALENTINE_OFFER = {
+  id: 'valentine-offer', title: 'A man in a dark hat', secret: true,
+  text: 'A man in a dark hat rides beside you for a mile. "The President could use someone like you. Fresh horses at every relay, his agents off your back, and when he holds the Corpse, a share of the glory."',
+  options: [
+    { id: 'join', label: 'Join Valentine', hint: 'Secret. Agents never attack you, relay horses, a Stand if you have none, errands. Worthiness drops hard.', lean: L(0.05, 3, 0.4, 1, 3) },
+    { id: 'refuse', label: 'Refuse', hint: 'He tips his hat and is gone', lean: L(5, 0.6, 3, 1.5, 0.8) },
+  ],
+};
+
+export const ERRAND = {
+  id: 'valentine-errand', title: "Valentine's errand", secret: true,
+  text: 'A note under your saddle: "Bring me what they carry." Next round, you ride out in a dark hat with two agents at your back.',
+  options: [
+    { id: 'ride', label: 'Ride the errand', hint: 'Ambush them, masked. Win and take a corpse part for the President, or their horse.', lean: L(0.3, 3, 0.5, 2, 3), needsTarget: true },
+    { id: 'skip', label: 'Not this time', hint: 'Nothing happens', lean: L(4, 0.5, 3, 1, 0.8) },
+  ],
+};
+
+export const ERRAND_TARGET = {
+  id: 'errand-target', title: 'Someone is coming for you',
+  text: 'A rider in a dark hat is closing in on you, with two more riders close behind.',
+  options: AMBUSH.options,
 };

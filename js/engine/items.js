@@ -4,11 +4,14 @@
 // resolves with that round. Holding an item is private: items appear only in
 // their owner's privateView.
 //
-// state.items = [{ id, kind: 'arrow' | 'rokakaka', owner, found: { stage, round }, pendingUse }]
+// state.items = [{ id, kind: 'arrow' | 'rokakaka' | 'part', owner, found: { stage, round }, pendingUse }]
+// Corpse parts (milestone 5b, corpse.js) are items too: { partId, label, hidden, merged }.
 
 export const ITEM_KINDS = {
   arrow: { label: 'Stand Arrow', blurb: 'Pierce yourself to awaken a Stand. Worthiness decides if you survive.', needs: 'noStand' },
   rokakaka: { label: 'Rokakaka fruit', blurb: 'Eat it and your Stand leaves you, for good.', needs: 'stand' },
+  // A corpse part: usable only while hidden ("Hold it": it merges with you, maybe a Stand, maybe rejection).
+  part: { label: 'Corpse part', blurb: "A part of the Saint's Corpse. Agents hunt whoever carries one.", needs: 'hidden' },
 };
 
 export function addItem(state, kind, owner, found) {
@@ -30,5 +33,6 @@ export function removeItem(state, id) {
 export function canUse(item, racer) {
   if (!racer || racer.status !== 'racing') return false;
   const needs = ITEM_KINDS[item.kind]?.needs;
+  if (needs === 'hidden') return !!item.hidden;
   return needs === 'noStand' ? !racer.stand : needs === 'stand' ? !!racer.stand : false;
 }

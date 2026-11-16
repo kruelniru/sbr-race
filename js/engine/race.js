@@ -30,6 +30,9 @@ import { initField, fieldAttrition, fieldReportText } from './field.js';
 import { runMainEvent } from './events.js';
 import { placeStage, standings } from './placement.js';
 import { prepareRound, resolveSubEvents } from './choices.js';
+import { initCorpse, processMerges, corpseFinishLine, announcements } from './corpse.js';
+import { initAgents } from './agents.js';
+import { scheduleOffers, valentineEnding } from './valentine.js';
 
 /** Round types for a stage with n rounds: Day/Night alternate, last is the Finish Line. */
 export function roundTypes(n) {
@@ -87,6 +90,10 @@ export function startRace(state) {
     reveal: null, // host-side: { cards, index }
   };
   scheduleStandEvents(state, rng);
+  // Milestone 5b: the Saint's Corpse, Valentine's agents, the Valentine offer.
+  initCorpse(state, rng, plan);
+  initAgents(state);
+  scheduleOffers(state, rng, plan);
   state.rngState = rng.getState();
 }
 
@@ -213,6 +220,12 @@ export function runRound(state) {
     if (line) result.events.push(line);
   }
 
+  // 2b. Corpse parts that came to someone this round merge (or reject them).
+  result.events.push(...processMerges(ctx, { all: type === 'finish' && race.stageIdx === STAGES.length - 1 }));
+  if (type === 'finish') corpseFinishLine(ctx);
+  // Anonymous host lines ("Someone has been deemed worthy of the Saint.").
+  result.events.push(...announcements(state));
+
   // 3. Field report (includes NPCs who died or retired in events).
   fieldAttrition(ctx);
   result.fieldReport = {
@@ -250,6 +263,7 @@ export function runRound(state) {
     if (race.stageIdx >= STAGES.length) {
       race.over = true;
       result.over = true;
+      valentineEnding(state); // reward 5: before the podium
       result.finale = buildFinale(state);
     }
   }

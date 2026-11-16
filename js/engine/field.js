@@ -11,7 +11,7 @@
 
 import RULES from '../../data/rules.js';
 import NPC_NAMES from '../../data/npc-names.js';
-import { startWorthiness } from './racers.js';
+import { startWorthiness, DEATH_HOOKS } from './racers.js';
 
 export function initField(state, rng) {
   state.field = { racing: RULES.fieldSize, retired: 0, dead: 0, packLeaders: [], kept: [], nextId: 1 };
@@ -77,8 +77,10 @@ export function keepNpc(state, npc) {
   state.field.kept.push(npc);
 }
 
-export function npcDies(ctx, npc) {
+export function npcDies(ctx, npc, killer = null) {
   const f = ctx.state.field;
+  if (npc.status === 'dead') return;
+  for (const hook of DEATH_HOOKS) hook(ctx, npc, killer);
   // An alliance with a named racer ends with the NPC.
   if (npc.ally) {
     for (const r of [...ctx.state.players, ...(ctx.state.canon ?? []), ...f.kept]) if (r.ally === npc.id) r.ally = null;

@@ -28,7 +28,8 @@
 // unanswered at close (timer ran out, disconnected) gets the ★ option.
 
 import RULES from '../../data/rules.js';
-import { SUB_EVENTS, RIVAL, PALM, ARROW, ROKAKAKA, ATTACKED, STRIKE, FIGHT_WIN, FIGHT_DEFEND, HORSE_TWO, ALLY_INVITE, TRADE } from '../../data/sub-events.js';
+import { SUB_EVENTS, RIVAL, PALM, ARROW, ROKAKAKA, ATTACKED, STRIKE, FIGHT_WIN, FIGHT_DEFEND, HORSE_TWO, ALLY_INVITE, TRADE,
+  FOUND_PART, STEAL_PART, AMBUSH, FUNNY_VALENTINE, VALENTINE_OFFER, ERRAND, ERRAND_TARGET } from '../../data/sub-events.js';
 import { EFFECTS } from './effects.js';
 import { render } from './text.js';
 import { Rng } from './rng.js';
@@ -45,6 +46,10 @@ import { resolveFight, npcWin, npcDefend, LINES as FIGHT_LINES } from './fights.
 import { hasHorse, townStage, shopOffers, buyHorse, aiBuys } from './horses.js';
 import { allyOf, formAlliance, canonAccepts, log as logAlly } from './alliances.js';
 import { pendingFor, tradePromptText, tradeLeans, resolveTrade } from './trades.js';
+import { looseParts, pickFinder, markFinding, resolveFind, resolveOtherFind, carried, takePart, holdHidden } from './corpse.js';
+import { ambushChance, pickAgent, resolveAmbush, otherAmbushes, canFaceValentine, resolveValentine, log as logAgents } from './agents.js';
+import { isJoiner, dueOffers, joinValentine, refuseValentine, log as logValentine } from './valentine.js';
+import { PART_HINTS } from '../../data/corpse.js';
 
 export const SUBS = [...SUB_EVENTS, PALM, ATTACKED, STRIKE].map((s) => ({ ...normalizeEvent({ ...s, when: s.when ?? {}, effects: {} }), options: s.options, secret: !!s.secret, special: s.special, fightKind: s.fightKind, leanTag: s.leanTag, targetText: s.targetText }));
 const PALM_SUB = SUBS.find((s) => s.id === PALM.id);
@@ -74,6 +79,7 @@ export function findAnyRacer(state, id) {
   return namedRacers(state).find((r) => r.id === id)
     ?? state.field?.packLeaders.find((n) => n.id === id)
     ?? state.field?.kept.find((n) => n.id === id)
+    ?? state.agents?.find((a) => a.id === id)
     ?? null;
 }
 
@@ -141,7 +147,7 @@ export function openStagePlans(state) {
       text: `${stage.name}: ${stage.from} → ${stage.to}. How will you ride it?`,
       options: options.map((pl) => ({
         id: pl.id, label: pl.label, needsTarget: !!pl.needsTarget,
-        hint: pl.id === 'palm' && p.stand ? 'You already have a Stand; the Palm has nothing more to give you.' : `${pl.upside}. ${pl.downside}.`,
+        hint: pl.id === 'palm' && p.stand ? 'You have a Stand, but the Palm may still hold a corpse part.' : `${pl.upside}. ${pl.downside}.`,
       })),
       targets: targets.map(({ id, name, tier, points }) => ({ id, name, tier, points })),
       star: starOption(options, p.personality).id,
@@ -326,6 +332,9 @@ export function openSubEvents(state) {
   }
   aiUseItems(state, rng);
 
+  // 3b. Milestone 5b: corpse parts, agents, Valentine.
+  corpsePrompts(state, rng, stage, roundNo, roundsLeft, type, busy, prompts);
+
   // 4. Random sub events by the host's frequency setting; at least one PC per round.
   const eligible = racingPcs(state).filter((p) => !busy.has(p.id));
   // Rival showdowns and the prompts above count toward the round's target.
@@ -348,9 +357,107 @@ export function openSubEvents(state) {
     prompts.push(...[].concat(got));
   }
 
-  race.choice = { kind: 'sub', stageId: stage.id, roundNo, closed: false, prompts, notes };
+  race.choice = { kind: 'sub', stageId: stage.id, roundNo, closed: false, prompts, notes, finds: race.pendingFinds ?? [], errands: race.autoErrands ?? [] };
+  race.pendingFinds = [];
+  race.autoErrands = [];
   state.rngState = rng.getState();
   return race.choice;
+}
+
+/**
+ * Milestone 5b prompts for this window (all but the ambush and Funny
+ * Valentine are SECRET): corpse finds, agent ambushes, a chance to steal a
+ * part, Valentine's offer, errands (pick a target; the masked ambush comes
+ * next round), and Funny Valentine in Stages 8–9.
+ */
+function corpsePrompts(state, rng, stage, roundNo, roundsLeft, type, busy, prompts) {
+  const race = state.race;
+  const free = () => racingPcs(state).filter((x) => !busy.has(x.id));
+  race.pendingFinds = [];
+  race.autoErrands = [];
+
+  // Finds: each loose part may be found this round.
+  for (const part of looseParts(state, roundNo)) {
+    const who = pickFinder(state, rng);
+    if (!who) continue;
+    if (who === 'npc' || who.tier !== 'pc' || who.status !== 'racing') {
+      markFinding(part, who === 'npc' ? 'npc' : who.id);
+      race.pendingFinds.push({ partId: part.id, finder: who === 'npc' ? 'npc' : who.id });
+      continue;
+    }
+    if (busy.has(who.id)) continue; // still loose: maybe next round
+    busy.add(who.id);
+    markFinding(part, who.id);
+    const prompt = specialPrompt(rng, state, FOUND_PART, who, roundNo, { a: who.id }, FOUND_PART.text.replace('{part}', part.name), null, rivalTargets(state, who));
+    prompt.partId = part.id;
+    prompts.push(prompt);
+  }
+
+  // Errands decided last round strike now (the target defends if they're a PC).
+  for (const e of (race.errands ?? []).filter((x) => !x.done && x.due <= roundNo)) {
+    const x = findAnyRacer(state, e.from);
+    const y = findAnyRacer(state, e.to);
+    if (!x || !y || x.status !== 'racing' || y.status !== 'racing' || x.id === y.id) { e.done = true; continue; }
+    if (busy.has(x.id) || busy.has(y.id)) {
+      if (roundNo - e.due >= 1) { e.done = true; logValentine({ state, stage }, { event: 'errand-missed' }); }
+      continue;
+    }
+    busy.add(x.id).add(y.id);
+    if (y.tier === 'pc') {
+      const tp = specialPrompt(rng, state, ERRAND_TARGET, y, roundNo, { a: y.id, b: x.id }, render(ERRAND_TARGET.text, display({ a: y })));
+      tp.errandId = e.id;
+      prompts.push(tp);
+    } else {
+      race.autoErrands.push(e.id);
+    }
+  }
+
+  // Agent ambushes (never a joiner).
+  for (const p of free()) {
+    if (!rng.chance(ambushChance(state, p))) continue;
+    const agent = pickAgent(rng, state);
+    if (!agent) break;
+    busy.add(p.id);
+    const options = AMBUSH.options.map((o) => ({ ...o }));
+    prompts.push(specialPrompt(rng, state, { ...AMBUSH, options }, p, roundNo, { a: p.id, b: agent.id }, render(AMBUSH.text, display({ a: p, b: agent }))));
+  }
+
+  // A chance to steal a part from a sleeping holder (Night rounds).
+  if (type === 'night' && rng.chance(RULES.corpse.steal.chance)) {
+    const thief = rng.pick(free());
+    const f = state.field;
+    const holders = [...namedRacers(state), ...f.kept].filter((r) => r.status !== 'dead' && thief && r.id !== thief.id && carried(state, r).length && r.name);
+    const mark = rng.pick(holders);
+    if (thief && mark) {
+      busy.add(thief.id);
+      prompts.push(specialPrompt(rng, state, STEAL_PART, thief, roundNo, { a: thief.id, b: mark.id }, render(STEAL_PART.text, display({ a: thief, b: mark }))));
+    }
+  }
+
+  // The Valentine offer (Stages 4–6).
+  for (const p of dueOffers(state, rng, roundNo, stage.id, free())) {
+    busy.add(p.id);
+    prompts.push(specialPrompt(rng, state, VALENTINE_OFFER, p, roundNo, { a: p.id }, VALENTINE_OFFER.text));
+    logValentine({ state, stage }, { event: 'offered', id: p.id, personality: p.personality, worthiness: p.worthiness });
+  }
+
+  // Errands: once a stage after joining; the ambush itself is next round.
+  for (const p of free().filter((x) => isJoiner(x) && x.valentine.errandStage !== stage.id && roundsLeft > 1)) {
+    if (!(roundsLeft <= 2 || rng.chance(1 / (roundsLeft - 1)))) continue;
+    p.valentine.errandStage = stage.id;
+    const targets = rivalTargets(state, p);
+    if (!targets.length) continue;
+    busy.add(p.id);
+    prompts.push(specialPrompt(rng, state, ERRAND, p, roundNo, { a: p.id }, ERRAND.text, null, targets));
+  }
+
+  // Funny Valentine (Stages 8–9): Rare+ Stand users with Worthiness 60+, never joiners, once.
+  for (const p of free().filter((x) => canFaceValentine(x, stage.id))) {
+    if (!rng.chance(RULES.funnyValentine.chance)) continue;
+    p.facedValentine = true;
+    busy.add(p.id);
+    prompts.push(specialPrompt(rng, state, FUNNY_VALENTINE, p, roundNo, { a: p.id }, FUNNY_VALENTINE.text));
+  }
 }
 
 /** "If you win" options: no "take their horse" if they have none. */
@@ -359,7 +466,7 @@ function winOptions(target, extra = []) {
 }
 
 /** A prompt with fixed options (horse-two, ally-invite, trade). */
-function specialPrompt(rng, state, def, pc, roundNo, roles, text, leans = null) {
+function specialPrompt(rng, state, def, pc, roundNo, roles, text, leans = null, targets = null) {
   const options = def.options.map((o) => ({ ...o, lean: leans?.[o.id] ?? o.lean }));
   const prompt = {
     id: `${def.id}-${roundNo}-${pc.id}`,
@@ -368,13 +475,17 @@ function specialPrompt(rng, state, def, pc, roundNo, roles, text, leans = null) 
     secret: !!def.secret,
     title: def.title,
     text,
-    options: options.map(({ id, label, hint }) => ({ id, label, hint })),
+    options: options.map(({ id, label, hint, needsTarget }) => ({ id, label, hint, ...(needsTarget ? { needsTarget: true } : {}) })),
     star: starOption(options, pc.personality).id,
     answer: null,
     special: def.id,
     roles,
   };
-  autoAnswerIfAi(rng, state, prompt, options, pc.personality);
+  if (targets) prompt.targets = targets;
+  // A target-picking option with nobody to pick can't be chosen.
+  if (!targets?.length) prompt.options = prompt.options.filter((o) => !o.needsTarget);
+  if (!prompt.options.some((o) => o.id === prompt.star)) prompt.star = prompt.options[0].id;
+  autoAnswerIfAi(rng, state, prompt, options.filter((o) => prompt.options.some((x) => x.id === o.id)), pc.personality);
   return prompt;
 }
 
@@ -442,7 +553,7 @@ function aiUseItems(state, rng) {
   for (const it of state.items ?? []) {
     const owner = readyPlayers(state).find((x) => x.id === it.owner);
     if (!owner?.isAI || it.pendingUse || !canUse(it, owner)) continue;
-    if (rng.chance(RULES.arrows.aiUseChance)) it.pendingUse = true;
+    if (rng.chance(it.kind === 'part' ? 0.1 : RULES.arrows.aiUseChance)) it.pendingUse = true;
   }
 }
 
@@ -593,6 +704,23 @@ export function resolveSubEvents(ctx, choice) {
       if (line) lines.push(line);
     }
   }
+  // Milestone 5b: finds by canon racers and the field, errands against racers
+  // nobody controls, and agents ambushing canon and named NPCs.
+  for (const f of choice.finds ?? []) {
+    const part = ctx.state.corpse?.parts.find((x) => x.id === f.partId);
+    if (!part || part.status !== 'finding') continue;
+    const who = f.finder === 'npc' ? 'npc' : findAnyRacer(ctx.state, f.finder);
+    if (who && who !== 'npc' && who.tier === 'pc') {
+      // A retired PC: no prompt; they keep it.
+      resolveFind(ctx, part.id, who, 'keep');
+      addHint(who, PART_HINTS.found.replace('{part}', part.name), ctx);
+    } else resolveOtherFind(ctx, part, who ?? 'npc');
+  }
+  for (const id of choice.errands ?? []) {
+    const line = resolveErrand(ctx, id, null);
+    if (line) lines.push(line);
+  }
+  lines.push(...otherAmbushes(ctx));
   return lines;
 }
 
@@ -635,12 +763,12 @@ function lineFor(ctx, eventId, text, roles, { death = false, tags = [] } = {}) {
   for (const who of Object.values(roles)) if (who.stand && text.includes(who.stand.name)) who.stand.revealed = true;
   for (const who of Object.values(roles)) {
     if (who.tier === 'npc') keepNpc(ctx.state, who);
-    else { ctx.assigned.add(who.id); ids.push(who.id); }
+    else if (who.tier !== 'agent') { ctx.assigned.add(who.id); ids.push(who.id); }
   }
   ctx.eventCounts[eventId] = (ctx.eventCounts[eventId] ?? 0) + 1;
   return {
     eventId, text, ids, choice: true,
-    names: Object.values(roles).filter((w) => w.tier !== 'npc').map((w) => ({ name: w.name, tier: w.tier })),
+    names: Object.values(roles).filter((w) => w.tier === 'pc' || w.tier === 'canon').map((w) => ({ name: w.name, tier: w.tier })),
     minor: false, death, tags, side: false,
   };
 }
@@ -653,6 +781,31 @@ function resolveSub(ctx, prompt, targetPrompt = null) {
     if (t) resolveTrade(ctx, t, prompt.answer.optionId === 'accept');
     return null; // secret
   }
+  if (prompt.special === FOUND_PART.id) {
+    const a = findAnyRacer(ctx.state, prompt.roles.a);
+    resolveFind(ctx, prompt.partId, a, prompt.answer.optionId, prompt.answer.targetId);
+    return null; // secret
+  }
+  if (prompt.special === STEAL_PART.id) return resolveSteal(ctx, prompt);
+  if (prompt.special === AMBUSH.id) return resolveAgentAmbush(ctx, prompt);
+  if (prompt.special === FUNNY_VALENTINE.id) return resolveFunnyValentine(ctx, prompt);
+  if (prompt.special === VALENTINE_OFFER.id) {
+    const a = findAnyRacer(ctx.state, prompt.roles.a);
+    if (a && a.status === 'racing') (prompt.answer.optionId === 'join' ? joinValentine : refuseValentine)(ctx, a);
+    return null; // secret
+  }
+  if (prompt.special === ERRAND.id) {
+    const a = findAnyRacer(ctx.state, prompt.roles.a);
+    if (a && a.status === 'racing' && prompt.answer.optionId === 'ride' && prompt.answer.targetId) {
+      const race = ctx.state.race;
+      race.errands ??= [];
+      race.errands.push({ id: `e${race.errands.length + 1}`, from: a.id, to: prompt.answer.targetId, stage: ctx.stage.id, due: race.roundNo + 1, done: false });
+      addHint(a, 'You take the dark hat. You ride next round.', ctx);
+      logValentine(ctx, { event: 'errand-picked' });
+    }
+    return null; // secret
+  }
+  if (prompt.special === ERRAND_TARGET.id) return resolveErrand(ctx, prompt.errandId, prompt.answer.optionId);
   if (prompt.special) return resolveItemFind(ctx, prompt);
   const sub = SUBS.find((s) => s.id === prompt.subId);
   if (sub?.special === 'palm') return resolvePalm(ctx, prompt);
@@ -829,6 +982,7 @@ function resolveItems(ctx) {
     const a = findAnyRacer(ctx.state, it.owner);
     it.pendingUse = false;
     if (!a || !canUse(it, a)) continue;
+    if (it.kind === 'part') { holdHidden(ctx, it); continue; } // a hidden part, held after all: it merges this round
     removeItem(ctx.state, it.id);
     if (it.kind === 'arrow') {
       log(ctx, 'arrowLog', { event: 'used' });
@@ -839,4 +993,82 @@ function resolveItems(ctx) {
     }
   }
   return lines;
+}
+
+// ------------------------------------------------------------ milestone 5b: corpse parts, agents, Valentine
+
+/** A sleeping holder: take it (−8; they might wake) or leave it. Secret. */
+function resolveSteal(ctx, prompt) {
+  const a = findAnyRacer(ctx.state, prompt.roles.a);
+  const b = findAnyRacer(ctx.state, prompt.roles.b);
+  if (!a || !b || a.status !== 'racing' || b.status === 'dead') return null;
+  const items = carried(ctx.state, b);
+  if (prompt.answer.optionId !== 'take' || !items.length) return null;
+  const it = ctx.rng.pick(items);
+  const name = it.label;
+  if (ctx.rng.chance(RULES.corpse.steal.success)) {
+    takePart(ctx, it, a, 'stolen', b, { quiet: true });
+    addWorthiness(a, RULES.worthiness.stealPart, ctx);
+    addHint(a, PART_HINTS.stoleIt.replace('{part}', name), ctx);
+    addHint(b, PART_HINTS.stolen.replace('{part}', name), ctx);
+  } else {
+    addHint(a, PART_HINTS.stealMiss.replace('{b}', b.name), ctx);
+    addHint(b, PART_HINTS.stealFail, ctx);
+  }
+  return null; // secret
+}
+
+/** Ambushed by agents: fight, flee, or let them search you. */
+function resolveAgentAmbush(ctx, prompt) {
+  const roles = rolesFor(ctx, prompt);
+  if (!roles || roles.a.status !== 'racing') return null;
+  const f = resolveAmbush(ctx, roles.b, roles.a, prompt.answer.optionId);
+  return lineFor(ctx, AMBUSH.id, f.text, f.roles, { death: f.death, tags: ['fight'] });
+}
+
+/** Face Funny Valentine, or take the long way round. */
+function resolveFunnyValentine(ctx, prompt) {
+  const a = findAnyRacer(ctx.state, prompt.roles.a);
+  if (!a || a.status !== 'racing') return null;
+  if (prompt.answer.optionId !== 'face') {
+    a.pace -= 1;
+    logAgents(ctx, { event: 'valentine', outcome: 'avoided', tier: a.stand?.tier });
+    return quiet(lineFor(ctx, 'funny-valentine:avoid', render(FUNNY_VALENTINE.lines.avoid, display({ a })), { a }), prompt);
+  }
+  const f = resolveValentine(ctx, a);
+  return lineFor(ctx, 'funny-valentine:face', f.text, { a }, { death: f.death, tags: ['fight'] });
+}
+
+/**
+ * A Valentine errand: the joiner ambushes their target masked, with agent
+ * backup. A part goes to the President; otherwise they take the horse.
+ * `defend`: the target's answer (null: they decide by tier).
+ */
+function resolveErrand(ctx, errandId, defend) {
+  const e = (ctx.state.race.errands ?? []).find((x) => x.id === errandId);
+  if (!e || e.done) return null;
+  e.done = true;
+  const x = findAnyRacer(ctx.state, e.from);
+  const y = findAnyRacer(ctx.state, e.to);
+  if (!x || !y || x.status !== 'racing' || y.status !== 'racing') return null;
+  ctx.assigned.add(x.id);
+  const d = defend ?? (y.tier === 'pc' ? starOption(AMBUSH.options, y.personality).id : npcDefend(ctx.rng, y));
+  const f = resolveFight(ctx, {
+    kind: 'errand', attacker: x, defender: y, win: 'part', defend: d, bonusA: RULES.valentine.errandBonus,
+    masked: true, partTo: 'president', fallback: 'horse', cause: 'killed on the trail',
+  });
+  logValentine(ctx, { event: 'errand', outcome: f.outcome, targetTier: y.tier });
+  const hints = {
+    part: "You hand the President's man what you took. He nods.",
+    horse: 'Nothing to take for the President, so you take the horse.',
+    searched: 'They carried nothing the President wants.',
+    escape: 'They got away.',
+    'both-hurt': 'You both ride off hurt. Nobody saw your face.',
+    'reversal-spare': 'They drove you off. Nobody saw your face.',
+  };
+  if (hints[f.outcome]) addHint(x, hints[f.outcome], ctx);
+  // The stream never learns who wore the hat, unless they died in it.
+  const shown = f.outcome === 'reversal-kill' ? f.roles : Object.fromEntries(Object.entries(f.roles).filter(([, w]) => w !== x));
+  const line = lineFor(ctx, 'valentine-errand', f.text, shown, { death: f.death, tags: ['fight'] });
+  return line;
 }

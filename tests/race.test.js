@@ -62,7 +62,7 @@ test('game invariants over many seeds', () => {
       // Each named racer appears in at most one event per round.
       const seen = new Set();
       for (const e of res.events) {
-        if (e.note) continue; // "X's rival is gone": the hunter still gets an event
+        if (e.note || e.after) continue; // "X's rival is gone"; a corpse rejection after their event
         for (const id of e.ids) {
           assert.ok(!seen.has(id), `round ${res.roundNo}: ${id} in two events`);
           seen.add(id);

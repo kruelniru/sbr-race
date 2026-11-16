@@ -3,8 +3,15 @@
 // PC vs PC, and (M5b) agents and Funny Valentine.
 //
 // Both sides commit before the fight:
-//   attacker `win`:    'kill' | 'spare' | 'horse'           ("If you win: ...")
-//   defender `defend`: 'fight-kill' | 'fight-spare' | 'flee'
+//   attacker `win`:    'kill' | 'spare' | 'horse' | 'part'  ("If you win: ...")
+//   defender `defend`: 'fight-kill' | 'fight-spare' | 'flee' | 'surrender'
+// 'part' searches the loser: a corpse part if they carry one (the stream
+// line is the same either way). 'surrender' skips the fight: the attacker
+// gets their choice, and a kill counts as cruel.
+//
+// Milestone 5b: agents (tier 'agent', state.agents) and Funny Valentine
+// (immortal) fight here too, and a Valentine errand fights masked
+// ("a rider in a dark hat": no name, no Stand, no ally on stream).
 // Racers nobody controls choose by tier (rules.fights.*Wins / *Defends).
 //
 // score = skill (NPCs rules.fights.npcSkill) + Stand fightBonus + Spin
@@ -26,6 +33,7 @@ import { npcDies } from './field.js';
 import { standMods } from './stands.js';
 import { allyOf } from './alliances.js';
 import { hasHorse, takeHorse } from './horses.js';
+import { carried, takePart } from './corpse.js';
 
 const F = () => RULES.fights;
 
@@ -34,6 +42,8 @@ export const LINES = {
     rival: '{x} catches up with {y}, and they fight.',
     strike: '{x} attacks {y} on the trail.',
     attacked: '{x} jumps {y} on the trail.',
+    agents: '{x} ambushes {y} on the trail.',
+    errand: 'A rider in a dark hat ambushes {y} on the trail.',
   },
   stand: ' {w} fights with {w.stand}.',
   spin: ' {w} throws {w.their} Steel Balls.',
@@ -47,18 +57,23 @@ export const LINES = {
   spare: ' {x} beats {y} and lets {y.them} go.',
   horse: ' {x} beats {y} and rides off with {y.horse}.',
   horseDrive: ' {x} beats {y} and drives off {y.horse}.',
+  part: ' {x} beats {y} and goes through {y.their} things.',
+  surrender: ' {y} gives up without a fight.',
+  searched: ' {x} goes through {y.their} things and rides off.',
+  unmasked: ' {y} turns the fight around and kills the rider in the dark hat. It was {xr}.',
   reversalKill: ' {y} turns the fight around and kills {x}.',
   reversalSpare: ' {y} turns the fight around and drives {x} off.',
   leave: '{x} thinks better of it and rides on.',
 };
 
 /** Fight score for one side (see header). Returns { score, notes: [template keys] }. */
-export function fightScore(ctx, r, bonus = 0) {
+export function fightScore(ctx, r, bonus = 0, { masked = false } = {}) {
   let score = (r.tier === 'npc' ? F().npcSkill : r.skill) + bonus;
   const notes = [];
-  if (r.stand) { score += standMods(r).fightBonus ?? 0; notes.push(['stand', r]); }
+  // A masked rider still fights with their Stand, but the stream never sees it.
+  if (r.stand) { score += standMods(r).fightBonus ?? 0; if (!masked) notes.push(['stand', r]); }
   if (r.canonId && F().spinUsers.includes(r.canonId)) { score += F().spin; notes.push(['spin', r]); }
-  const ally = allyOf(ctx.state, r);
+  const ally = masked ? null : allyOf(ctx.state, r);
   if (ally && ally.status === 'racing' && !ctx.assigned?.has(ally.id) && !ctx.inPrompts?.has(ally.id) && ctx.rng.chance(F().allyChance)) {
     ctx.assigned?.add(ally.id);
     score += F().ally;
@@ -79,30 +94,38 @@ export function npcDefend(rng, r) {
 }
 
 /** Can this racer die right now? (Canon racers can't in Stage 1.) */
-function mortal(ctx, who) {
+export function mortal(ctx, who) {
+  if (who.immortal) return false; // Funny Valentine
   return !(who.tier === 'canon' && RULES.canonImmuneStages.includes(ctx.stage?.id));
 }
 
 function die(ctx, who, cause, killer) {
   killer.kills = (killer.kills ?? 0) + 1;
-  if (who.tier === 'npc') npcDies(ctx, who);
+  if (who.tier === 'agent') { who.status = 'dead'; (ctx.state.race.agentLog ??= []).push({ event: 'died', agent: who.id, stage: ctx.stage?.id }); }
+  else if (who.tier === 'npc') npcDies(ctx, who, killer);
   else killRacer(ctx, who, cause, killer);
 }
 
 /**
  * Resolve one fight. Returns { text, death, roles, outcome }.
- * spec: { kind: 'rival' | 'strike' | 'attacked' | ..., attacker, defender,
- *         win, defend, bonusA?, bonusD?, cause?, open? (template override) }
+ * spec: { kind: 'rival' | 'strike' | 'attacked' | 'agents' | 'valentine' | 'errand',
+ *         attacker, defender, win, defend, bonusA?, bonusD?, cause?,
+ *         open? (template override), masked? (attacker shown as "a rider in a dark hat"),
+ *         partTo? ('president': a part taken goes to him), takeAll? (every part they carry),
+ *         fallback? ('horse': 'part' with nothing to find takes their horse),
+ *         noSpareCredit?, reversalLine? (template for a defender's win without a kill) }
  */
 export function resolveFight(ctx, spec) {
   const { attacker: x, defender: y, kind } = spec;
   const W = RULES.worthiness;
   const roles = { x, y };
+  const masked = !!spec.masked;
   let text = spec.open ?? LINES.open[kind] ?? LINES.open.strike;
   let outcome;
   let death = false;
   x.fights = (x.fights ?? 0) + 1;
   y.fights = (y.fights ?? 0) + 1;
+  const carriedBefore = carried(ctx.state, y).length;
 
   const addNotes = (notes) => {
     for (const [k, w, z] of notes) {
@@ -112,6 +135,13 @@ export function resolveFight(ctx, spec) {
       if (z) roles[`ally${Object.keys(roles).length}`] = z;
     }
   };
+
+  // Giving up: the attacker gets their choice without a fight.
+  if (spec.defend === 'surrender') {
+    text += LINES.surrender;
+    win(F().killMargin, true);
+    return finish();
+  }
 
   let fled = spec.defend === 'flee';
   let caught = false;
@@ -125,7 +155,7 @@ export function resolveFight(ctx, spec) {
     text += LINES.caught;
   }
 
-  const a = fightScore(ctx, x, spec.bonusA ?? 0);
+  const a = fightScore(ctx, x, spec.bonusA ?? 0, { masked });
   const d = fightScore(ctx, y, (spec.bonusD ?? 0) - (caught ? F().caughtPenalty : 0));
   addNotes([...a.notes, ...d.notes]);
   const margin = a.score - d.score;
@@ -135,11 +165,36 @@ export function resolveFight(ctx, spec) {
     x.injured = true; y.injured = true;
     text += LINES.close;
   } else if (margin > 0) {
-    // The attacker wins: their choice happens.
-    let win = spec.win;
-    if (win === 'horse' && !hasHorse(y)) win = 'spare';
-    if (win === 'kill') {
-      if (margin < F().killMargin || ctx.rng.chance(F().killEscape) || !mortal(ctx, y)) {
+    win(margin, caught);
+  } else {
+    // Reversal: the defender wins.
+    if (spec.defend === 'fight-kill' && -margin >= F().killMargin && mortal(ctx, x)) {
+      outcome = 'reversal-kill';
+      death = true;
+      text += masked ? LINES.unmasked : LINES.reversalKill;
+      die(ctx, x, spec.cause ?? 'killed in a fight', y);
+      addWorthiness(y, W.killDefense, ctx);
+    } else {
+      outcome = 'reversal-spare';
+      x.injured = true;
+      text += spec.reversalLine ?? LINES.reversalSpare;
+      if (!spec.noSpareCredit) {
+        y.spares = (y.spares ?? 0) + 1;
+        addWorthiness(y, W.spare, ctx);
+      }
+    }
+    if (kind === 'rival') { y.points += F().winPoints; y.pace += F().winPace; x.pace -= 1; }
+  }
+  return finish();
+
+  /** The attacker won (or the defender gave up): their choice happens. */
+  function win(m, cruel) {
+    let choice = spec.win;
+    if (choice === 'horse' && !hasHorse(y)) choice = 'spare';
+    // Agents you give up to never kill: they search you and ride off.
+    if (spec.defend === 'surrender' && x.tier === 'agent' && !x.immortal) choice = 'searched';
+    if (choice === 'kill') {
+      if (m < F().killMargin || ctx.rng.chance(F().killEscape) || !mortal(ctx, y)) {
         outcome = 'kill-missed';
         y.injured = true;
         text += LINES.killMissed;
@@ -147,48 +202,61 @@ export function resolveFight(ctx, spec) {
       } else {
         outcome = 'kill';
         death = true;
-        text += caught ? LINES.killFled : LINES.kill;
+        text += cruel ? LINES.killFled : LINES.kill;
         die(ctx, y, spec.cause ?? 'killed in a fight', x);
-        addWorthiness(x, caught ? W.killCruel : W.killStarted, ctx);
+        addWorthiness(x, cruel ? W.killCruel : W.killStarted, ctx);
       }
-    } else if (win === 'horse') {
+    } else if (choice === 'part' || choice === 'searched') {
+      // Search them. The stream line is the same whether there was anything to find.
+      const got = takeParts(ctx, x, y, spec);
+      outcome = got ? 'part' : 'searched';
+      if (!got && spec.fallback === 'horse' && hasHorse(y) && choice === 'part') {
+        outcome = 'horse';
+        const lost = takeHorse(ctx, x, y);
+        text += lost && x.horse === lost.name && !x.onFoot ? LINES.horse : LINES.horseDrive;
+      } else {
+        text += choice === 'searched' ? LINES.searched : LINES.part;
+        if (!got && choice === 'searched') y.injured = true; // roughed up, quietly
+      }
+      if (got && x.tier !== 'agent' && !x.immortal) addWorthiness(x, W.stealPart, ctx);
+    } else if (choice === 'horse') {
       outcome = 'horse';
       const lost = takeHorse(ctx, x, y);
       text += lost && x.horse === lost.name && !x.onFoot ? LINES.horse : LINES.horseDrive;
     } else {
       outcome = 'spare';
       text += LINES.spare;
-      x.spares = (x.spares ?? 0) + 1;
-      addWorthiness(x, W.spareStarted, ctx);
+      if (x.tier !== 'agent') {
+        x.spares = (x.spares ?? 0) + 1;
+        addWorthiness(x, W.spareStarted, ctx);
+      }
     }
     if (kind === 'rival') { x.points += F().winPoints; x.pace += F().winPace; y.pace -= 1; }
-  } else {
-    // Reversal: the defender wins.
-    if (spec.defend === 'fight-kill' && -margin >= F().killMargin && mortal(ctx, x)) {
-      outcome = 'reversal-kill';
-      death = true;
-      text += LINES.reversalKill;
-      die(ctx, x, spec.cause ?? 'killed in a fight', y);
-      addWorthiness(y, W.killDefense, ctx);
-    } else {
-      outcome = 'reversal-spare';
-      x.injured = true;
-      text += LINES.reversalSpare;
-      y.spares = (y.spares ?? 0) + 1;
-      addWorthiness(y, W.spare, ctx);
-    }
-    if (kind === 'rival') { y.points += F().winPoints; y.pace += F().winPace; x.pace -= 1; }
   }
-  return finish();
 
   function finish() {
-    const rendered = render(text, displayRoles(roles));
+    const shown = displayRoles(roles);
+    if (masked) {
+      shown.xr = shown.x;
+      shown.x = { name: 'the rider in the dark hat', pronouns: 'they' };
+    }
+    const rendered = render(text, shown);
     (ctx.state.race.fightLog ??= []).push({
       kind, outcome, stage: ctx.stage?.id,
       pvp: x.tier === 'pc' && y.tier === 'pc',
-      a: { tier: x.tier, personality: x.personality, ai: !!x.isAI }, d: { tier: y.tier, personality: y.personality },
+      a: { tier: x.tier, personality: x.personality, ai: !!x.isAI, id: x.id }, d: { tier: y.tier, personality: y.personality, id: y.id, holder: carriedBefore },
       win: spec.win, defend: spec.defend,
     });
     return { text: rendered, death, roles, outcome };
   }
+}
+
+/** The winner takes one corpse part (or every one, `takeAll`) the loser carries. Returns how many. */
+function takeParts(ctx, winner, loser, spec) {
+  const items = carried(ctx.state, loser);
+  if (!items.length) return 0;
+  const list = spec.takeAll ? items : [ctx.rng.pick(items)];
+  const to = spec.partTo === 'president' || winner.tier === 'agent' || winner.immortal ? 'president' : winner;
+  for (const it of list) takePart(ctx, it, to, 'fight', loser);
+  return list.length;
 }

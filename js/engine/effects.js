@@ -25,7 +25,7 @@ export const EFFECTS = {
     apply: (ctx, who, cause, roles, effects) => {
       const killer = effects.by ? roles[effects.by] : null;
       if (killer) killer.kills = (killer.kills ?? 0) + 1;
-      if (who.tier === 'npc') npcDies(ctx, who);
+      if (who.tier === 'npc') npcDies(ctx, who, killer);
       else killRacer(ctx, who, cause, killer);
     },
   },

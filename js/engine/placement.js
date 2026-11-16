@@ -38,6 +38,8 @@ export function placementScore(racer, stage, rng, state = null) {
   // Horse quality (milestone 5); on foot with an ally on a horse, you ride double.
   score += horseMod(racer);
   if (racer.mount === 'horse' && racer.onFoot && state && ridesDouble(state, racer)) score += P.onFootPenalty * (1 - RULES.horses.doubleRide);
+  // Valentine's relay horses (milestone 5b; a joiner's reward, secret).
+  if (racer.valentine?.joined) score += RULES.valentine.relay;
   return score + rng.normal(0, P.noiseSd);
 }
 

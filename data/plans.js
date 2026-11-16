@@ -9,7 +9,7 @@
 //   subEventMult: multiplies this racer's chance of a sub event each round
 //   lean:       how much each personality likes this plan; the highest is
 //               marked "★ In character", and AI racers pick by it
-//   needsTarget: the player also picks a racer (Hunt a rival)
+//   needsTarget: the player also picks a racer (Hunt a rival, Ally up)
 //
 // Tune with: node sim/simulate.js --games 500 --plans random
 export default [
@@ -55,7 +55,7 @@ export default [
     id: 'corpse', label: 'Hunt a corpse part', upside: 'Better odds of finding one', downside: "Valentine's agents notice you",
     placement: -5, eventMult: {}, deathMult: 1, horseMult: 1, subEventMult: 1,
     lean: { honorable: 1, ruthless: 1.5, cautious: 0.3, glory: 1.5, opportunist: 2.5 },
-    enabled: false, // milestone 5: part-finding ×3, agent ambushes ×2
+    enabled: true, // milestone 5b: part-finding x3 (rules.corpse.find.huntMult), agent ambushes x2 (rules.agents.huntMult)
   },
   {
     id: 'ally', label: 'Ally up', upside: 'Ride with someone (they accept or refuse)', downside: 'They might betray you',

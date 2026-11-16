@@ -11,6 +11,7 @@ import RULES from '../../data/rules.js';
 import { addWorthiness, retireRacer, addHint } from './racers.js';
 import { awakenStand } from './stands.js';
 import { keepNpc } from './field.js';
+import { palmPart } from './corpse.js';
 
 export function palmBand(worthiness = 50) {
   return RULES.palm.bands.find((b) => worthiness >= b.min) ?? RULES.palm.bands.at(-1);
@@ -59,6 +60,9 @@ export function palmExit(ctx, who, outcome) {
   }
   logPalm(ctx, who, got ? 'stand' : 'nothing');
   addWorthiness(who, RULES.worthiness.palmSurvive, ctx);
+  // Milestone 5b: in a Palm stage, that stage's corpse part may be waiting inside (its own hint).
+  const part = palmPart(ctx, who);
+  if (part && !got) return got;
   addHint(who, got
     ? 'A strange calm settles over you as you leave the Palm. Something walks out with you.'
     : who.stand
