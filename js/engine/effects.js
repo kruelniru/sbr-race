@@ -14,6 +14,8 @@ import RULES from '../../data/rules.js';
 import { killRacer, retireRacer, addWorthiness } from './racers.js';
 import { npcDies, npcRetires } from './field.js';
 import { palmBand, palmExit, palmLost, logPalm } from './palm.js';
+import { loseHorse, giveHorse, canHaveHorse, hasHorse, takeHorse, newHorseName, log as logHorse } from './horses.js';
+import { formAlliance, breakAlliance, allyOf } from './alliances.js';
 
 export const EFFECTS = {
   // dies: '<cause shown on the Fallen screen>'. Pair with by: '<role>' for kill credit.
@@ -100,9 +102,36 @@ export const EFFECTS = {
     fits: (ctx, who) => who.tier === 'npc' || (who.mount === 'horse' && !who.onFoot),
     apply: (ctx, who) => {
       if (who.tier === 'npc') return;
-      who.onFoot = true;
-      who.lostHorse = who.horse;
+      loseHorse(ctx, who);
     },
+  },
+
+  // getHorse: 'riderless'. An on-foot Rider catches a horse (a dead racer's).
+  getHorse: {
+    fits: (ctx, who) => who.tier !== 'npc' && canHaveHorse(who) && who.onFoot,
+    apply: (ctx, who) => {
+      const q = ctx.rng.weighted(Object.entries(RULES.horses.riderless), ([, w]) => w)[0];
+      giveHorse(who, newHorseName(ctx.state, ctx.rng), q);
+      logHorse(ctx.state, { event: 'riderless', id: who.id, tier: who.tier });
+    },
+  },
+
+  // breakAlly: 'abandoned' | 'betrayed'. This racer ends their alliance (−12 Worthiness).
+  breakAlly: {
+    fits: (ctx, who) => !!who.ally,
+    apply: (ctx, who, kind) => breakAlliance(ctx, who, kind),
+  },
+
+  // stolenBy: '<role>'. That racer takes this racer's horse.
+  stolenBy: {
+    fits: (ctx, who) => who.tier !== 'npc' && hasHorse(who),
+    apply: (ctx, who, role, roles) => takeHorse(ctx, roles[role], who),
+  },
+
+  // ally: '<role>'. This racer and that one now ride together (alliances.js).
+  ally: {
+    fits: (ctx, who, role) => !who.ally,
+    apply: (ctx, who, role, roles) => formAlliance(ctx, who, roles[role], 'event'),
   },
 };
 

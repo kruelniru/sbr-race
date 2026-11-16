@@ -54,7 +54,7 @@ test('Stage Plans: AI answers at once, humans get ★ when the timer runs out', 
   assert.equal(p2.plan, w.prompts.find((x) => x.playerId === 'p2').star, 'timed out -> ★ plan');
   assert.ok(!needsStagePlans(state));
   // Hidden plans never appear.
-  for (const x of w.prompts) for (const o of x.options) assert.ok(!['palm', 'corpse', 'ally'].includes(o.id));
+  for (const x of w.prompts) for (const o of x.options) assert.ok(!['palm', 'corpse'].includes(o.id));
 });
 
 test('rival targets: racing named racers only, never yourself', () => {

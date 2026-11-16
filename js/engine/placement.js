@@ -15,6 +15,8 @@ import { namedRacers } from './racers.js';
 import { npcName, keepNpc } from './field.js';
 import { planOf } from './plans.js';
 import { standMods } from './stands.js';
+import { horseMod } from './horses.js';
+import { ridesDouble } from './alliances.js';
 
 export function runnerTerrainBonus(stage) {
   let bonus = RULES.runner.base ?? 0;
@@ -22,7 +24,7 @@ export function runnerTerrainBonus(stage) {
   return bonus;
 }
 
-export function placementScore(racer, stage, rng) {
+export function placementScore(racer, stage, rng, state = null) {
   const P = RULES.placement;
   let score = racer.tier === 'npc' ? RULES.packLeaderSkill : racer.skill;
   score += racer.pace * P.paceWeight;
@@ -33,7 +35,9 @@ export function placementScore(racer, stage, rng) {
   score += planOf(racer)?.placement ?? 0; // Stage Plan
   // Stand tier (rules.standTier). Canon racers' own Stands are already in their skill.
   if (racer.stand && !['canon', 'awaken'].includes(racer.stand.source)) score += standMods(racer).placement;
-  // Horse quality (milestone 5) plugs in here.
+  // Horse quality (milestone 5); on foot with an ally on a horse, you ride double.
+  score += horseMod(racer);
+  if (racer.mount === 'horse' && racer.onFoot && state && ridesDouble(state, racer)) score += P.onFootPenalty * (1 - RULES.horses.doubleRide);
   return score + rng.normal(0, P.noiseSd);
 }
 
@@ -42,7 +46,7 @@ export function placeStage(state, rng, stage) {
   const named = namedRacers(state).filter((r) => r.status === 'racing');
   const pack = state.field.packLeaders.filter((n) => n.status === 'racing');
   const scored = [...named, ...pack]
-    .map((r) => ({ r, score: placementScore(r, stage, rng) }))
+    .map((r) => ({ r, score: placementScore(r, stage, rng, state) }))
     .sort((a, b) => b.score - a.score);
 
   const placements = scored.map(({ r }, i) => {

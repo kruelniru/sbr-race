@@ -268,37 +268,119 @@ export const SUB_EVENTS = [
         outcomes: [{ weight: 1, text: '{a} decides {a.their} race is over and retires.', effects: { a: { retires: true } } }] },
     ],
   },
+
+  // ------------------------------------------------------------ milestone 5: alliances
+  {
+    id: 'sub-ally-trouble', title: 'Your ally is in trouble', weight: 2,
+    text: '{b} is pinned under a fallen horse, and the rest of the field is closing in.',
+    cast: { a: 'focus', b: 'ally' },
+    options: [
+      { id: 'help', label: 'Stop and help', hint: 'Lose time', lean: L(5, 0.6, 2, 1.5, 1.2), tags: ['help'],
+        outcomes: [{ weight: 1, text: '{a} drags {b} clear and loses an hour doing it.', effects: { a: { pace: -1 } } }] },
+      { id: 'abandon', label: 'Ride on without them', hint: 'Keep your pace; the alliance ends', lean: L(0.1, 2.5, 0.6, 1.5, 2),
+        outcomes: [{ weight: 1, text: '{a} rides on and leaves {b} under the horse.', effects: { a: { breakAlly: 'abandoned' }, b: { injured: true, pace: -1 } } }] },
+    ],
+  },
+  {
+    id: 'sub-ally-betray', title: 'A chance to betray', weight: 1.2,
+    text: '{b} is fast asleep, and {b.their} horse is tied right next to you.',
+    cast: { a: 'focus', b: { is: 'ally', hasHorse: true } },
+    options: [
+      { id: 'betray', label: 'Take their horse and go', hint: 'The alliance ends', lean: L(0.05, 3, 0.2, 0.5, 2.5),
+        outcomes: [{ weight: 1, text: '{a} slips away in the night on {b.horse}, leaving {b} on foot.', effects: { a: { breakAlly: 'betrayed' }, b: { stolenBy: 'a' } } }] },
+      { id: 'stay', label: 'Stay loyal', hint: 'Nothing changes', lean: L(4, 0.6, 3, 2, 1),
+        outcomes: [{ weight: 1, text: '{a} keeps watch while {b} sleeps.', effects: {}, minor: true }] },
+    ],
+  },
 ];
 
-// Hunt a rival (Stage Plan): a guaranteed sprint showdown with the target.
-// Both choose if both are PCs. The engine scores it as a contest (skill +
-// option bonus + randomness). Milestone 5 turns it into a real fight.
-// Showdowns don't kill yet. When milestone 5 fights can end in a kill, the
-// hunter's kill counts as 'kill-started' (rules.worthiness.killStarted).
+// ------------------------------------------------------------ milestone 5: fights
+// Every fight asks both sides at once (js/engine/fights.js). The attacker
+// says what happens "If you win"; the defender fights back or flees.
+export const FIGHT_WIN = [
+  { id: 'kill', label: 'Kill them if you win', hint: 'Worthiness drops', lean: L(0.1, 4, 0.4, 1.2, 2) },
+  { id: 'spare', label: 'Let them go if you win', hint: 'Mercy', lean: L(4, 0.5, 3, 2, 1.5) },
+  { id: 'horse', label: 'Take their horse if you win', hint: 'They go on foot', lean: L(0.6, 2, 0.8, 1, 3), needsHorse: true },
+];
+export const FIGHT_DEFEND = [
+  { id: 'fight-kill', label: 'Fight back, to kill', hint: 'Self-defense', lean: L(0.3, 4, 0.5, 2, 2) },
+  { id: 'fight-spare', label: 'Fight back, then let them go', hint: 'Mercy if you win', lean: L(4, 0.6, 1.5, 2.5, 1.5) },
+  { id: 'flee', label: 'Flee', hint: 'Often gets away; caught, you fight at a disadvantage', lean: L(1, 0.4, 4, 0.3, 2) },
+];
+
+// Hunt a rival (Stage Plan): a guaranteed fight with the target, started by
+// the hunter (a kill costs Worthiness −8, rules.worthiness.killStarted).
+// A PC target chooses at the same time; canon and NPC targets by tier.
 export const RIVAL = {
   killKind: 'kill-started',
   title: 'Rival showdown',
-  hunterText: '{a} has finally caught up with {b}. Time to settle it.',
+  hunterText: '{a} has finally caught up with {b}. It comes to a fight.',
   targetText: '{a} has been hunting you, and now {a.they} {a:is/are} right beside you.',
-  hunter: [
-    { id: 'all-out', label: 'Go all out', hint: 'Best odds to win, risk injury', bonus: 8, risk: 0.15, lean: L(1, 3, 0.4, 4, 2) },
-    { id: 'smart', label: 'Ride smart', hint: 'Safer, lower odds', bonus: 0, risk: 0, lean: L(2, 1, 4, 1, 2.2) },
-  ],
-  target: [
-    { id: 'race', label: 'Race them', hint: 'Win +5 points', bonus: 4, risk: 0.08, lean: L(2, 3, 0.8, 4, 1.5) },
-    { id: 'refuse', label: "Don't take the bait", hint: 'They gain a little time on you', bonus: 0, risk: 0, lean: L(1.5, 0.3, 4, 0.1, 2) },
-  ],
-  contestSd: 12,
-  win: { points: 5, pace: 1 },   // plain sprint challenges keep +10
-  lose: { pace: -1 },
+  hunter: FIGHT_WIN,
+  target: FIGHT_DEFEND,
   lines: {
-    win: '{a} hunts down {b} and beats {b.them} in a sprint showdown.',
-    lose: '{a} hunts down {b}, but {b} wins the sprint showdown.',
-    refused: '{a} catches up with {b}, but {b} refuses to race. {a} rides on ahead.',
-    hurt: ' {x} pushes too hard and gets hurt.',
     gone: "{a}'s rival is gone.",
     missed: '{a} never catches up with {b} this stage.',
   },
+};
+
+// Attacked on the trail: the PC defends. The attacker is an NPC.
+export const ATTACKED = {
+  id: 'sub-attacked', title: 'Attacked on the trail', special: 'fight', fightKind: 'attacked',
+  cast: { a: 'focus', b: 'npc' }, weight: 2.2,
+  text: '{b} rides at {a} out of nowhere, knife drawn.',
+  options: FIGHT_DEFEND,
+};
+
+// A chance to strike: the PC may attack. A PC target answers at the same time.
+export const STRIKE = {
+  id: 'sub-strike', title: 'A chance to strike', special: 'fight', fightKind: 'strike', leanTag: 'kill',
+  cast: { a: 'focus', b: { is: 'named', notAlly: true } }, weight: 1.6,
+  text: "{b} is alone at a water hole and hasn't seen {a} yet.",
+  targetText: '{a} is riding up on you at the water hole, hand on {a.their} gun.',
+  options: [
+    ...FIGHT_WIN,
+    { id: 'leave', label: 'Leave them be', hint: 'Ride on', lean: L(4, 0.2, 3, 1, 1.2) },
+  ],
+};
+
+// ------------------------------------------------------------ milestone 5: horses
+export const HORSE_TWO = {
+  id: 'horse-two', title: 'Your second horse is gone',
+  text: "You've lost two horses now. You can go on, on foot, far behind the pack, or retire with your life.",
+  options: [
+    { id: 'foot', label: 'Go on, on foot', hint: 'Much worse placements', lean: L(2, 3, 1, 4, 2) },
+    { id: 'retire', label: 'Retire', hint: 'Out of the points race, alive', lean: L(0.3, 0.1, 1.2, 0.05, 0.4) },
+  ],
+  lines: {
+    foot: '{a} loses a second horse and goes on, on foot.',
+    retire: '{a} loses a second horse and retires from the race.',
+  },
+};
+
+// ------------------------------------------------------------ milestone 5: alliances
+export const ALLY_INVITE = {
+  id: 'ally-invite', title: 'Ride together?',
+  text: '{b} asks to ride with you. Allies help in fights, share food, and let each other ride double.',
+  options: [
+    { id: 'accept', label: 'Ride together', hint: 'One ally at a time', lean: L(2.5, 0.6, 2, 1, 1.5) },
+    { id: 'refuse', label: 'Ride alone', hint: 'Turn them down', lean: L(0.6, 1.5, 1, 1.2, 1) },
+  ],
+  lines: {
+    formed: '{a} and {b} agree to ride together.',
+    refused: '{b} asks {a} to ride together. {a} turns {b.them} down.',
+    busy: '{b} asks {a} to ride together, but {a} already rides with someone.',
+  },
+};
+
+// ------------------------------------------------------------ milestone 5: trading
+// Secret: the stream never hears about it. The receiver answers in their next window.
+export const TRADE = {
+  id: 'trade', title: 'A trade offer', secret: true,
+  options: [
+    { id: 'accept', label: 'Accept', hint: 'It happens with this round' },
+    { id: 'refuse', label: 'Refuse', hint: 'Nothing changes' },
+  ],
 };
 
 // ------------------------------------------------------------ milestone 4: Stands

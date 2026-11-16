@@ -28,12 +28,12 @@
 // unanswered at close (timer ran out, disconnected) gets the ★ option.
 
 import RULES from '../../data/rules.js';
-import { SUB_EVENTS, RIVAL, PALM, ARROW, ROKAKAKA } from '../../data/sub-events.js';
+import { SUB_EVENTS, RIVAL, PALM, ARROW, ROKAKAKA, ATTACKED, STRIKE, FIGHT_WIN, FIGHT_DEFEND, HORSE_TWO, ALLY_INVITE, TRADE } from '../../data/sub-events.js';
 import { EFFECTS } from './effects.js';
 import { render } from './text.js';
 import { Rng } from './rng.js';
 import { readyPlayers } from './state.js';
-import { namedRacers, addWorthiness, killRacer } from './racers.js';
+import { namedRacers, addWorthiness, killRacer, retireRacer } from './racers.js';
 import { castNpc, keepNpc } from './field.js';
 import { normalizeEvent, whenFits, roleFits, castRoles, deathWeight, displayRoles } from './events.js';
 import { awakenStand, removeStand } from './stands.js';
@@ -41,8 +41,12 @@ import { rollPalm, palmExit, palmLost, logPalm, addHint } from './palm.js';
 import { addItem, itemsOf, removeItem, canUse } from './items.js';
 import { getPlan, planOf, plansFor } from './plans.js';
 import STAGES from '../../data/stages.js';
+import { resolveFight, npcWin, npcDefend, LINES as FIGHT_LINES } from './fights.js';
+import { hasHorse, townStage, shopOffers, buyHorse, aiBuys } from './horses.js';
+import { allyOf, formAlliance, canonAccepts, log as logAlly } from './alliances.js';
+import { pendingFor, tradePromptText, tradeLeans, resolveTrade } from './trades.js';
 
-export const SUBS = [...SUB_EVENTS, PALM].map((s) => ({ ...normalizeEvent({ ...s, when: s.when ?? {}, effects: {} }), options: s.options, secret: !!s.secret }));
+export const SUBS = [...SUB_EVENTS, PALM, ATTACKED, STRIKE].map((s) => ({ ...normalizeEvent({ ...s, when: s.when ?? {}, effects: {} }), options: s.options, secret: !!s.secret, special: s.special, fightKind: s.fightKind, leanTag: s.leanTag, targetText: s.targetText }));
 const PALM_SUB = SUBS.find((s) => s.id === PALM.id);
 
 // ------------------------------------------------------------ personality picks
@@ -127,7 +131,7 @@ export function openStagePlans(state) {
   const prompts = [];
   for (const p of racingPcs(state)) {
     const targets = rivalTargets(state, p).map((t) => ({ ...t, points: findAnyRacer(state, t.id)?.points ?? 0 }));
-    const options = plans.filter((pl) => !pl.needsTarget || targets.length);
+    const options = plans.filter((pl) => (!pl.needsTarget || targets.length) && !(pl.id === 'ally' && allyOf(state, p)));
     const prompt = {
       id: `plan-${stage.id}-${p.id}`,
       playerId: p.id,
@@ -143,6 +147,14 @@ export function openStagePlans(state) {
       star: starOption(options, p.personality).id,
       answer: null,
     };
+    // The horse trader (town stages): on foot, or able to trade up.
+    if (townStage(stage)) {
+      const offers = shopOffers(p);
+      if (offers.length) {
+        prompt.shop = offers;
+        prompt.buy = p.isAI ? aiBuys(p, rng) : null;
+      }
+    }
     autoAnswerIfAi(rng, state, prompt, options.map((pl) => ({ ...pl })), p.personality);
     prompts.push(prompt);
   }
@@ -160,11 +172,53 @@ function applyStagePlans(state, choice, rng) {
     p.plan = optionId;
     p.rival = null;
     p.palmQuest = optionId === 'palm' ? { done: false } : null;
-    if (getPlan(optionId)?.needsTarget && targetId) p.rival = { targetId, done: false };
+    if (optionId === 'rival' && targetId) p.rival = { targetId, done: false };
+    if (optionId === 'ally' && targetId) askToAlly(state, rng, choice.stageId, p, targetId);
+    if (prompt.buy) buyHorse(state, rng, p, prompt.buy);
+  }
+  // Canon racers on foot buy a horse in town if they can.
+  if (townStage(STAGES.find((x) => x.id === choice.stageId))) {
+    for (const c of state.canon ?? []) {
+      if (c.status === 'racing' && c.onFoot) { const q = shopOffers(c)[0]?.quality; if (q) buyHorse(state, rng, c, q); }
+    }
   }
   // Everyone else (canon, retired PCs) rides with no plan this stage.
   for (const r of namedRacers(state)) if (!choice.prompts.some((x) => x.playerId === r.id)) { r.plan = null; r.rival = null; r.palmQuest = null; }
   state.race.plansFor = choice.stageId;
+}
+
+/**
+ * Ally up: a canon racer answers by character fit, a named NPC by chance,
+ * and a PC in their next sub-event window (an "ally-invite" prompt).
+ */
+function askToAlly(state, rng, stageId, asker, targetId) {
+  const target = findAnyRacer(state, targetId);
+  const ctx = { state, rng, stage: STAGES.find((x) => x.id === stageId), roundLabel: 'start' };
+  const L = ALLY_INVITE.lines;
+  const note = (tpl, roles) => (state.race.pendingNotes ??= []).push(noteLine(tpl, roles));
+  if (!target || target.status !== 'racing' || target.ally || asker.ally) {
+    if (target) note(L.busy, { a: target, b: asker });
+    logAlly(state, { event: 'refused', why: 'busy', stage: stageId });
+    return;
+  }
+  if (target.tier === 'pc') {
+    (state.race.allyInvites ??= []).push({ from: asker.id, to: target.id, stage: stageId });
+    return;
+  }
+  const yes = target.tier === 'canon' ? canonAccepts(state, rng, target, asker) : rng.chance(RULES.alliances.npcAccept);
+  if (yes) { formAlliance(ctx, asker, target, target.tier); note(L.formed, { a: target, b: asker }); }
+  else { note(L.refused, { a: target, b: asker }); logAlly(state, { event: 'refused', why: target.tier, stage: stageId }); }
+}
+
+/** The phone picks a horse at the trader (or null to cancel), during the Stage Plan window. */
+export function chooseHorse(state, playerId, quality) {
+  const choice = state.race?.choice;
+  if (!choice || choice.closed || choice.kind !== 'plan') return { ok: false, error: 'The trader is only open while you plan a stage in town.' };
+  const prompt = choice.prompts.find((x) => x.playerId === playerId);
+  if (!prompt?.shop) return { ok: false, error: 'no trader here' };
+  if (quality != null && !prompt.shop.some((o) => o.quality === quality)) return { ok: false, error: 'no such horse' };
+  prompt.buy = quality ?? null;
+  return { ok: true };
 }
 
 // ------------------------------------------------------------ sub events
@@ -182,6 +236,8 @@ export function openSubEvents(state) {
   const prompts = [];
   const notes = [];
   const busy = new Set(); // racers already in a prompt this round
+  notes.push(...(race.pendingNotes ?? []));
+  race.pendingNotes = [];
 
   // 1. Hunt a rival: the showdown fires once per stage, at most one per target per round.
   for (const hunter of rng.shuffle(racingPcs(state).filter((p) => p.rival && !p.rival.done))) {
@@ -205,10 +261,34 @@ export function openSubEvents(state) {
     busy.add(hunter.id).add(target.id);
     const key = `rival-${roundNo}-${hunter.id}`;
     const roles = { a: hunter, b: target };
-    prompts.push(rivalPrompt(rng, state, key, 'rival-hunter', hunter, render(RIVAL.hunterText, display(roles)), RIVAL.hunter, roles));
+    prompts.push(rivalPrompt(rng, state, key, 'rival-hunter', hunter, render(RIVAL.hunterText, display(roles)), winOptions(target), roles));
     if (target.tier === 'pc') {
       prompts.push(rivalPrompt(rng, state, key, 'rival-target', target, render(RIVAL.targetText, display(roles)), RIVAL.target, roles));
     }
+  }
+
+  // 1b. Milestone 5: a second lost horse, invitations to ride together, trade offers.
+  for (const p of racingPcs(state).filter((x) => x.secondHorseDecision && !busy.has(x.id))) {
+    busy.add(p.id);
+    prompts.push(specialPrompt(rng, state, HORSE_TWO, p, roundNo, { a: p.id }, HORSE_TWO.text));
+  }
+  for (const inv of (race.allyInvites ?? []).filter((x) => !x.placed)) {
+    const to = findAnyRacer(state, inv.to);
+    const from = findAnyRacer(state, inv.from);
+    if (!to || !from || to.status !== 'racing' || from.status !== 'racing') { inv.placed = roundNo; continue; }
+    if (busy.has(to.id) || busy.has(from.id)) continue; // next window
+    inv.placed = roundNo;
+    busy.add(to.id).add(from.id);
+    prompts.push(specialPrompt(rng, state, ALLY_INVITE, to, roundNo, { a: to.id, b: from.id }, render(ALLY_INVITE.text, display({ a: to, b: from }))));
+  }
+  for (const p of racingPcs(state).filter((x) => !busy.has(x.id))) {
+    const t = pendingFor(state, p.id)[0];
+    if (!t) continue;
+    t.status = 'asked';
+    busy.add(p.id);
+    const prompt = specialPrompt(rng, state, TRADE, p, roundNo, { a: p.id }, tradePromptText(state, t), tradeLeans(state, t));
+    prompt.tradeId = t.id;
+    prompts.push(prompt);
   }
 
   // 2. Seek the Devil's Palm: the Edge of the Palm comes once that stage.
@@ -261,15 +341,41 @@ export function openSubEvents(state) {
     if (pick) chosen.push(pick);
   }
   for (const p of chosen) {
-    const prompt = subPrompt(ctx, p, roundNo, busy);
-    if (!prompt) continue;
+    if (busy.has(p.id)) continue; // cast into someone else's fight this round
+    const got = subPrompt(ctx, p, roundNo, busy);
+    if (!got) continue;
     p.lastSubRound = roundNo;
-    prompts.push(prompt);
+    prompts.push(...[].concat(got));
   }
 
   race.choice = { kind: 'sub', stageId: stage.id, roundNo, closed: false, prompts, notes };
   state.rngState = rng.getState();
   return race.choice;
+}
+
+/** "If you win" options: no "take their horse" if they have none. */
+function winOptions(target, extra = []) {
+  return [...FIGHT_WIN.filter((o) => !o.needsHorse || hasHorse(target)), ...extra];
+}
+
+/** A prompt with fixed options (horse-two, ally-invite, trade). */
+function specialPrompt(rng, state, def, pc, roundNo, roles, text, leans = null) {
+  const options = def.options.map((o) => ({ ...o, lean: leans?.[o.id] ?? o.lean }));
+  const prompt = {
+    id: `${def.id}-${roundNo}-${pc.id}`,
+    playerId: pc.id,
+    kind: 'sub',
+    secret: !!def.secret,
+    title: def.title,
+    text,
+    options: options.map(({ id, label, hint }) => ({ id, label, hint })),
+    star: starOption(options, pc.personality).id,
+    answer: null,
+    special: def.id,
+    roles,
+  };
+  autoAnswerIfAi(rng, state, prompt, options, pc.personality);
+  return prompt;
 }
 
 function rivalPrompt(rng, state, key, kind, who, text, options, roles) {
@@ -360,13 +466,14 @@ function subPrompt(ctx, pc, roundNo, busy) {
   for (const id of busy) ctx.assigned.add(id);
   let candidates = SUBS.filter((s) => whenFits(s, ctx) && roleFits(ctx, s, s.focusKey, pc));
   for (let tries = 0; tries < 8 && candidates.length; tries++) {
-    const s = rng.weighted(candidates, (x) => x.weight);
+    const s = rng.weighted(candidates, (x) => x.weight * (x.leanTag ? RULES.personalityLean[pc.personality]?.[x.leanTag] ?? 1 : 1));
     const roles = castRoles(ctx, s, pc);
     if (!roles) { candidates = candidates.filter((c) => c !== s); continue; }
     for (const who of Object.values(roles)) {
       if (who.tier === 'npc') keepNpc(ctx.state, who);
       else busy.add(who.id);
     }
+    const options = s.fightKind === 'strike' ? winOptions(roles.b, s.options.filter((o) => o.id === 'leave')) : s.options;
     const prompt = {
       id: `sub-${roundNo}-${pc.id}`,
       playerId: pc.id,
@@ -374,13 +481,23 @@ function subPrompt(ctx, pc, roundNo, busy) {
       secret: s.secret,
       title: s.title,
       text: render(s.text, display(roles)),
-      options: s.options.map(({ id, label, hint }) => ({ id, label, hint })),
-      star: starOption(s.options, pc.personality).id,
+      options: options.map(({ id, label, hint }) => ({ id, label, hint })),
+      star: starOption(options, pc.personality).id,
       answer: null,
       subId: s.id,
       roles: Object.fromEntries(Object.entries(roles).map(([k, w]) => [k, w.id])),
     };
-    autoAnswerIfAi(rng, ctx.state, prompt, s.options, pc.personality);
+    autoAnswerIfAi(rng, ctx.state, prompt, options, pc.personality);
+    // PC vs PC: the target answers at the same time.
+    if (s.fightKind === 'strike' && roles.b.tier === 'pc') {
+      prompt.pairKey = prompt.id;
+      const def = { id: `${s.id}-target`, title: 'Someone is coming for you', options: FIGHT_DEFEND };
+      const tp = specialPrompt(rng, ctx.state, def, roles.b, roundNo, prompt.roles, render(s.targetText, display(roles)));
+      tp.special = null;
+      tp.pairKey = prompt.id;
+      tp.kind = 'fight-target';
+      return [prompt, tp];
+    }
     return prompt;
   }
   return null;
@@ -455,6 +572,8 @@ export function prepareRound(state) {
 /** Resolve the closed sub-event window. Returns lines for the Main Story. */
 export function resolveSubEvents(ctx, choice) {
   const lines = [...choice.notes, ...resolveItems(ctx)];
+  // Racers in any prompt this round (an ally can't ride in from their own decision).
+  ctx.inPrompts = new Set(choice.prompts.flatMap((x) => [x.playerId, ...Object.values(x.roles ?? {})]));
   const done = new Set();
   for (const prompt of ctx.rng.shuffle([...choice.prompts])) {
     if (prompt.rivalKey) {
@@ -462,6 +581,12 @@ export function resolveSubEvents(ctx, choice) {
       done.add(prompt.rivalKey);
       const pair = choice.prompts.filter((x) => x.rivalKey === prompt.rivalKey);
       const line = resolveRival(ctx, pair);
+      if (line) lines.push(line);
+    } else if (prompt.pairKey) {
+      if (done.has(prompt.pairKey)) continue;
+      done.add(prompt.pairKey);
+      const pair = choice.prompts.filter((x) => x.pairKey === prompt.pairKey);
+      const line = resolveSub(ctx, pair.find((x) => x.kind === 'sub'), pair.find((x) => x.kind === 'fight-target'));
       if (line) lines.push(line);
     } else {
       const line = resolveSub(ctx, prompt);
@@ -507,6 +632,7 @@ function applyEffects(ctx, effects, roles) {
 
 function lineFor(ctx, eventId, text, roles, { death = false, tags = [] } = {}) {
   const ids = [];
+  for (const who of Object.values(roles)) if (who.stand && text.includes(who.stand.name)) who.stand.revealed = true;
   for (const who of Object.values(roles)) {
     if (who.tier === 'npc') keepNpc(ctx.state, who);
     else { ctx.assigned.add(who.id); ids.push(who.id); }
@@ -519,10 +645,18 @@ function lineFor(ctx, eventId, text, roles, { death = false, tags = [] } = {}) {
   };
 }
 
-function resolveSub(ctx, prompt) {
+function resolveSub(ctx, prompt, targetPrompt = null) {
+  if (prompt.special === HORSE_TWO.id) return resolveHorseTwo(ctx, prompt);
+  if (prompt.special === ALLY_INVITE.id) return resolveAllyInvite(ctx, prompt);
+  if (prompt.special === TRADE.id) {
+    const t = (ctx.state.trades ?? []).find((x) => x.id === prompt.tradeId);
+    if (t) resolveTrade(ctx, t, prompt.answer.optionId === 'accept');
+    return null; // secret
+  }
   if (prompt.special) return resolveItemFind(ctx, prompt);
   const sub = SUBS.find((s) => s.id === prompt.subId);
   if (sub?.special === 'palm') return resolvePalm(ctx, prompt);
+  if (sub?.special === 'fight') return resolveFightSub(ctx, sub, prompt, targetPrompt);
   const roles = sub && rolesFor(ctx, prompt);
   if (!roles || roles.a.status !== 'racing') return null;
   const option = sub.options.find((o) => o.id === prompt.answer.optionId) ?? sub.options[0];
@@ -543,7 +677,7 @@ function resolveSub(ctx, prompt) {
   return line;
 }
 
-/** Hunt a rival showdown: a contest between hunter (a) and target (b). */
+/** Hunt a rival showdown: a real fight, started by the hunter (a) against the target (b). */
 function resolveRival(ctx, pair) {
   const hp = pair.find((x) => x.kind === 'rival-hunter');
   const roles = rolesFor(ctx, hp);
@@ -551,30 +685,53 @@ function resolveRival(ctx, pair) {
   const { a, b } = roles;
   if (b.status !== 'racing') return lineFor(ctx, 'rival-gone', render(RIVAL.lines.gone, display({ a })), { a });
   const tp = pair.find((x) => x.kind === 'rival-target');
-  const hOpt = RIVAL.hunter.find((o) => o.id === hp.answer.optionId) ?? RIVAL.hunter[0];
-  // Canon and NPC targets choose by personality (NPCs always race).
-  const tOpt = tp
-    ? RIVAL.target.find((o) => o.id === tp.answer.optionId) ?? RIVAL.target[0]
-    : b.tier === 'npc' ? RIVAL.target[0] : starOption(RIVAL.target, b.personality);
-  const d = display(roles);
-  let text;
-  if (tOpt.id === 'refuse') {
-    text = render(RIVAL.lines.refused, d);
-    a.pace += 1;
-  } else {
-    const score = (r, o) => (r.tier === 'npc' ? RULES.packLeaderSkill : r.skill) + r.pace * 3 + o.bonus + ctx.rng.normal(0, RIVAL.contestSd);
-    const hunterWins = score(a, hOpt) >= score(b, tOpt);
-    const [winner, loser] = hunterWins ? [a, b] : [b, a];
-    text = render(hunterWins ? RIVAL.lines.win : RIVAL.lines.lose, d);
-    applyEffects(ctx, { w: { points: RIVAL.win.points, pace: RIVAL.win.pace }, l: { pace: RIVAL.lose.pace } }, { w: winner, l: loser });
+  const defend = tp ? tp.answer.optionId : b.tier === 'pc' ? starOption(FIGHT_DEFEND, b.personality).id : npcDefend(ctx.rng, b);
+  const f = resolveFight(ctx, { kind: 'rival', attacker: a, defender: b, win: hp.answer.optionId, defend, cause: 'killed by a rival' });
+  return lineFor(ctx, 'rival-showdown', f.text, f.roles, { death: f.death, tags: ['fight'] });
+}
+
+/** Attacked on the trail (the PC defends) / A chance to strike (the PC may attack). */
+function resolveFightSub(ctx, sub, prompt, targetPrompt) {
+  const roles = rolesFor(ctx, prompt);
+  if (!roles || roles.a.status !== 'racing') return null;
+  const { a, b } = roles;
+  if (sub.fightKind === 'attacked') {
+    const f = resolveFight(ctx, { kind: 'attacked', attacker: b, defender: a, win: npcWin(ctx.rng, b, a), defend: prompt.answer.optionId, cause: 'killed on the trail' });
+    return lineFor(ctx, sub.id, f.text, f.roles, { death: f.death, tags: ['fight'] });
   }
-  for (const [who, o] of [[a, hOpt], [b, tOpt]]) {
-    if (o.risk && ctx.rng.chance(o.risk)) {
-      who.injured = true;
-      text += render(RIVAL.lines.hurt, { x: d[who === a ? 'a' : 'b'] });
-    }
+  // A chance to strike.
+  if (prompt.answer.optionId === 'leave' || b.status !== 'racing') {
+    const line = lineFor(ctx, `${sub.id}:leave`, render(FIGHT_LINES.leave, display({ x: a, y: b })), { a });
+    if (prompt.answer.by !== 'player' && !targetPrompt) Object.assign(line, { minor: true, side: true });
+    return line;
   }
-  return lineFor(ctx, 'rival-showdown', text, roles, { tags: ['sprint'] });
+  const defend = targetPrompt ? targetPrompt.answer.optionId : b.tier === 'pc' ? starOption(FIGHT_DEFEND, b.personality).id : npcDefend(ctx.rng, b);
+  const f = resolveFight(ctx, { kind: 'strike', attacker: a, defender: b, win: prompt.answer.optionId, defend, cause: 'killed on the trail' });
+  return lineFor(ctx, sub.id, f.text, f.roles, { death: f.death, tags: ['fight'] });
+}
+
+function resolveHorseTwo(ctx, prompt) {
+  const a = findAnyRacer(ctx.state, prompt.roles.a);
+  if (!a) return null;
+  a.secondHorseDecision = false;
+  if (a.status !== 'racing') return null;
+  const retire = prompt.answer.optionId === 'retire';
+  if (retire) retireRacer(ctx, a);
+  return lineFor(ctx, `horse-two:${prompt.answer.optionId}`, render(HORSE_TWO.lines[retire ? 'retire' : 'foot'], display({ a })), { a });
+}
+
+function resolveAllyInvite(ctx, prompt) {
+  const a = findAnyRacer(ctx.state, prompt.roles.a);
+  const b = findAnyRacer(ctx.state, prompt.roles.b);
+  if (!a || !b || a.status !== 'racing' || b.status !== 'racing') return null;
+  const L = ALLY_INVITE.lines;
+  if (a.ally || b.ally) return lineFor(ctx, 'ally:busy', render(L.busy, display({ a, b })), { a, b });
+  if (prompt.answer.optionId === 'accept') {
+    formAlliance(ctx, a, b, 'pc');
+    return lineFor(ctx, 'ally:formed', render(L.formed, display({ a, b })), { a, b });
+  }
+  logAlly(ctx.state, { event: 'refused', why: 'pc', stage: ctx.stage.id });
+  return lineFor(ctx, 'ally:refused', render(L.refused, display({ a, b })), { a, b });
 }
 
 // ------------------------------------------------------------ milestone 4: Palm, Arrows, Rokakaka, items

@@ -30,6 +30,14 @@ function raceFields({ tier, skill, mount, horse, worthiness }) {
     rival: null, // Hunt a rival: { targetId, done }
     palmQuest: null, // Seek the Devil's Palm: { done }
     stand: null, // see stands.js; never in a public view until revealed
+    // milestone 5
+    horseQuality: null, // 'nag' | 'sound' | 'fine' | 'thoroughbred' (horses.js)
+    horseBase: null,    // canon: their first horse's quality (already in their skill)
+    horsesLost: 0,
+    secondHorseDecision: false, // lost a second horse: retire or go on? (next window)
+    ally: null,         // id of the one racer they ride with (alliances)
+    fights: 0,
+    helps: 0,
   };
 }
 
@@ -136,6 +144,13 @@ export function killRacer(ctx, who, cause, killer) {
   ctx.state.race.fallenSince.push(fallen);
   ctx.state.race.memorial.push(fallen);
   standOwnerDied(ctx.state, who);
+  // An alliance ends quietly with a death.
+  if (who.ally) {
+    const other = findRacerAnywhere(ctx.state, who.ally);
+    if (other?.ally === who.id) other.ally = null;
+    who.ally = null;
+    (ctx.state.race.allyLog ??= []).push({ event: 'ended', tier: who.tier, stage: ctx.stage?.id });
+  }
 }
 
 export function retireRacer(ctx, who) {

@@ -29,10 +29,10 @@ export default [
     enabled: true,
   },
   {
-    id: 'rival', label: 'Hunt a rival', upside: 'A guaranteed sprint showdown with your pick', downside: 'You might lose it',
+    id: 'rival', label: 'Hunt a rival', upside: 'A guaranteed fight with your pick', downside: 'You might lose it, or worse',
     placement: -5,
-    eventMult: { kill: 1.3 }, deathMult: 1.45, horseMult: 1, subEventMult: 0.8,
-    lean: { honorable: 0.8, ruthless: 3, cautious: 0.3, glory: 2, opportunist: 3.2 },
+    eventMult: { kill: 1.3 }, deathMult: 1, horseMult: 1, subEventMult: 0.8,
+    lean: { honorable: 0.5, ruthless: 3, cautious: 0.2, glory: 1.2, opportunist: 1.4 }, // milestone 5: a real fight
     needsTarget: true,
     enabled: true,
   },
@@ -62,6 +62,6 @@ export default [
     placement: 0, eventMult: {}, deathMult: 0.8, horseMult: 1, subEventMult: 1,
     needsTarget: true,
     lean: { honorable: 2, ruthless: 0.5, cautious: 2, glory: 0.5, opportunist: 1.5 },
-    enabled: false, // milestone 5: alliances
+    enabled: true, // milestone 5: alliances (one ally at a time)
   },
 ];

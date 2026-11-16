@@ -10,9 +10,10 @@ import { castNpc, keepNpc } from './field.js';
 import { planOf } from './plans.js';
 import { standMods } from './stands.js';
 import { palmBand } from './palm.js';
+import { allyOf } from './alliances.js';
 
 const ROUND_TYPES = ['day', 'night', 'finish'];
-const ROLE_KINDS = ['focus', 'named', 'npc'];
+const ROLE_KINDS = ['focus', 'named', 'npc', 'ally'];
 
 // ------------------------------------------------------------ normalizing
 
@@ -148,6 +149,8 @@ export function roleFits(ctx, e, key, racer) {
   // Canon racers who may walk into the Devil's Palm (and NPCs).
   if (spec.palm && !(racer.tier === 'npc' || racer.palm)) return false;
   if (spec.notSide && racer.side === spec.notSide) return false;
+  // Alliances (milestone 5): the focus has / hasn't an ally; a role isn't the focus's ally.
+  if (spec.hasAlly != null && !!allyOf(ctx.state, racer) !== spec.hasAlly) return false;
   for (const [effKey, value] of Object.entries(e.effects[key] ?? {})) {
     if (!EFFECTS[effKey].fits(ctx, racer, value)) return false;
   }
@@ -195,10 +198,13 @@ export function castRoles(ctx, e, focus) {
     let who = null;
     if (spec.is === 'named') {
       const pool = namedRacers(ctx.state).filter(
-        (r) => !used.has(r.id) && !ctx.assigned.has(r.id) && roleFits(ctx, e, key, r),
+        (r) => !used.has(r.id) && !ctx.assigned.has(r.id) && !(spec.notAlly && r.id === focus.ally) && roleFits(ctx, e, key, r),
       );
       const dies = !!e.effects[key]?.dies;
       who = ctx.rng.weighted(pool, (r) => (dies ? deathWeight(r, isHazard(e)) : 1));
+    } else if (spec.is === 'ally') {
+      const a = allyOf(ctx.state, focus);
+      who = a && !used.has(a.id) && !ctx.assigned.has(a.id) && roleFits(ctx, e, key, a) ? a : null;
     } else if (spec.is === 'npc') {
       who = castNpc(ctx);
       if (who && !roleFits(ctx, e, key, who)) who = null;

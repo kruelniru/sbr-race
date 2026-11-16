@@ -34,7 +34,7 @@ export default [
   { id: 'common-waterhole-duel', text: '{b} challenges {a} to a duel over a water hole. {a} draws first, and {b} drops into the dust.',
     cast: { a: 'focus', b: 'npc' }, effects: { b: { dies: 'shot in a duel', by: 'a' } }, tags: ['kill', 'kill-defense'], when: { rounds: ['day'] }, weight: 2 },
   { id: 'common-ambushed-killed', text: '{b} ambushes {a} from behind a rock. {a} never sees the shot coming.',
-    cast: { a: 'focus', b: 'npc' }, effects: { a: { dies: 'shot from ambush', by: 'b' } }, tags: ['hazard', 'kill-started'], weight: 0.9 },
+    cast: { a: 'focus', b: 'npc' }, effects: { a: { dies: 'shot from ambush', by: 'b' } }, tags: ['hazard', 'kill-started'], weight: 0.6 },
   { id: 'common-ambush-wounded', text: '{b} fires on {a} from a ridge. The bullet grazes {a.their} side.',
     cast: { a: 'focus', b: 'npc' }, effects: { a: { injured: true } }, tags: ['hazard'], weight: 1.5 },
   { id: 'common-snake-horse', text: 'A rattlesnake spooks {a.horse}, and the horse goes down with a broken leg. {a} has to go on foot.',

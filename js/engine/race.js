@@ -15,6 +15,7 @@
 import RULES from '../../data/rules.js';
 import STAGES from '../../data/stages.js';
 import HORSES from '../../data/horse-names.js';
+import { startQuality, canonQuality } from './horses.js';
 import { Rng } from './rng.js';
 import { readyPlayers } from './state.js';
 import { initPcRacer, makeCanonRacer, canonDefs, namedRacers, findRacer, startWorthiness, canonStartingStand } from './racers.js';
@@ -58,6 +59,9 @@ export function startRace(state) {
 
   for (const p of readyPlayers(state)) initPcRacer(p, p.mount === 'runner' ? null : nextHorse(), startWorthiness(rng, 'pc', p.personality));
   state.canon = defs.map((d) => makeCanonRacer(d, d.mount === 'runner' ? null : d.horse ?? nextHorse(), startWorthiness(rng, 'canon')));
+  // Horse quality (milestone 5): PCs roll theirs; canon horses are already in their skill.
+  for (const p of readyPlayers(state)) if (p.mount === 'horse') p.horseQuality = startQuality(rng);
+  for (const c of state.canon) if (c.mount === 'horse' && c.horse) { c.horseQuality = canonQuality(c); c.horseBase = c.horseQuality; }
 
   initField(state, rng);
 

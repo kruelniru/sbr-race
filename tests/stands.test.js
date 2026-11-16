@@ -118,7 +118,7 @@ test('Arrow and Rokakaka prompts are secret, with Stand-dependent options; Rokak
   while (!state.race.over) {
     if (!state.race.choice && state.race.roundIdx === 0 && state.race.plansFor !== state.race.stageIdx + 1) { openStagePlans(state); closeChoices(state); }
     const w = openSubEvents(state);
-    for (const pr of w.prompts.filter((x) => x.special)) {
+    for (const pr of w.prompts.filter((x) => ['arrow', 'rokakaka'].includes(x.special))) {
       const p = state.players.find((x) => x.id === pr.playerId);
       assert.equal(pr.secret, true);
       const ids = pr.options.map((o) => o.id);

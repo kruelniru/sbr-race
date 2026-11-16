@@ -22,6 +22,8 @@ import { Rng } from '../js/engine/rng.js';
 import { makeAiCharacter } from '../js/engine/roster.js';
 import { startRace, runRound } from '../js/engine/race.js';
 import { needsStagePlans, openStagePlans, openSubEvents, closeChoices, starOption, answerLikeAi, useItem } from '../js/engine/choices.js';
+import { aiBuys } from '../js/engine/horses.js';
+import { offerTrade } from '../js/engine/trades.js';
 import PLANS from '../data/plans.js';
 import PERSONALITIES from '../data/personalities.js';
 import { readFileSync } from 'node:fs';
@@ -31,6 +33,7 @@ import { buildCards, cardsSeconds, cardSeconds } from '../js/engine/reveal.js';
 
 // ---------------------------------------------------------------- args
 const args = parseArgs(process.argv.slice(2));
+const HORSE_VALUE = {}; // ridden at the Finish Line -> { n, pts }
 const GAMES = args.verbose ? 1 : Number(args.games ?? 100);
 const PLAYERS = Number(args.players ?? 18);
 const RUNNERS = args.runners != null ? Number(args.runners) : null;
@@ -69,12 +72,15 @@ function playGame(seed) {
   const timeRng = new Rng(seed + ':time');
   const palm = { offers: 0, in: 0 };
   const standShare = [];
+  const horseValue = HORSE_VALUE;
   while (!state.race.over) {
     if (needsStagePlans(state)) {
       const w = openStagePlans(state);
       const pcsById = Object.fromEntries(state.players.map((x) => [x.id, x]));
       for (const pr of w.prompts) if (!pr.answer) answerLikeAi(timeRng, pr, pcsById[pr.playerId].personality, 'player');
       for (const pr of w.prompts) overrideAnswer(pr, timeRng);
+      // Sim people shop like AI racers at the horse trader.
+      for (const pr of w.prompts) if (pr.shop && pr.buy == null && !pcsById[pr.playerId].isAI) pr.buy = aiBuys(pcsById[pr.playerId], timeRng);
       const humanIds = new Set(state.players.slice(0, HUMANS).map((x) => x.id));
       // Stage Plans open on the stage results card, so the results and
       // standings cards cover part of the window (none before Stage 1).
@@ -92,6 +98,7 @@ function playGame(seed) {
     }
     const w = openSubEvents(state);
     simPeopleUseItems(state, timeRng);
+    simPeopleTrade(state, timeRng);
     const humanIds = new Set(state.players.slice(0, HUMANS).map((x) => x.id));
     const pcsById = Object.fromEntries(state.players.map((x) => [x.id, x]));
     for (const pr of w.prompts) {
@@ -105,6 +112,16 @@ function playGame(seed) {
     closeChoices(state);
     const res = runRound(state);
     results.push(res);
+    // Horse value: stage points for racing PCs by what they ride at the Finish Line.
+    if (res.placements) {
+      for (const pl of res.placements) {
+        const pc = state.players.find((x) => x.id === pl.id);
+        if (!pc || pc.mount !== 'horse') continue;
+        const k = pc.onFoot ? 'on foot' : pc.horseQuality;
+        const b = (horseValue[k] ??= { n: 0, pts: 0 });
+        b.n++; b.pts += pl.points;
+      }
+    }
     // Stand holders among PCs at the end of Stages 3, 6 and 9.
     if (res.placements && [3, 6, 9].includes(res.stage.id)) {
       const living = state.players.filter((x) => x.status !== 'dead');
@@ -199,6 +216,7 @@ function newStats() {
 
 function collect(S, { state, results, stageLog, windows, timeRng, palm, standShare }) {
   collectStands(S, state, results, palm);
+  collectM5a(S, state);
   for (const x of standShare) (S.st.share[x.stage] ??= []).push(x);
   S.games++;
   const racers = namedRacers(state);
@@ -365,6 +383,7 @@ function printStats(S) {
   console.log(`Never used: ${never.length ? never.join(', ') : 'none'}`);
 
   printStands(S);
+  printM5a(S);
 
   console.log('\nChecks');
   console.log(`  canon deaths in Stage 1: ${S.canonStage1Deaths} ${S.canonStage1Deaths ? 'FAIL' : 'ok'}`);
@@ -592,6 +611,23 @@ function printStands(S) {
 }
 
 /** Sim assumption for people: use a kept Arrow when Standless (35% a window), eat a kept Rokakaka when holding a Common Stand (25%). */
+/**
+ * Sim people trade a little: an Arrow they can't use (they have a Stand) is
+ * gifted to a racing PC without one; on foot, they offer an item for a horse.
+ */
+function simPeopleTrade(state, rng) {
+  const racing = state.players.filter((x) => x.status === 'racing');
+  for (const p of state.players.slice(0, HUMANS)) {
+    if (p.status !== 'racing' || !rng.chance(0.3)) continue;
+    const mine = (state.items ?? []).filter((i) => i.owner === p.id && !i.pendingUse);
+    const arrow = mine.find((i) => i.kind === 'arrow');
+    if (arrow && p.stand) {
+      const to = rng.pick(racing.filter((x) => x.id !== p.id && !x.stand));
+      if (to) offerTrade(state, p.id, { give: arrow.id, to: to.id });
+    }
+  }
+}
+
 function simPeopleUseItems(state, rng) {
   for (const it of state.items ?? []) {
     const p = state.players.find((x) => x.id === it.owner);
@@ -599,4 +635,60 @@ function simPeopleUseItems(state, rng) {
     if (it.kind === 'arrow' && !p.stand && rng.chance(0.6)) useItem(state, p.id, it.id);
     if (it.kind === 'rokakaka' && p.stand?.tier === 'common' && rng.chance(0.25)) useItem(state, p.id, it.id);
   }
+}
+
+// ---------------------------------------------------------------- milestone 5a: fights, horses, alliances, trading
+function collectM5a(S, state) {
+  const T = (S.m5a ??= { games: 0, fights: {}, byPers: {}, pvp: 0, reversals: 0, horse: {}, spent: 0, onFoot: 0, onFootPc: 0, ally: {}, trades: {}, rivalKills: 0 });
+  T.games++;
+  for (const f of state.race.fightLog ?? []) {
+    bump(T.fights, f.kind);
+    bump(T.fights, `${f.kind}:${f.outcome}`);
+    if (f.pvp) T.pvp++;
+    if (f.outcome.startsWith('reversal')) T.reversals++;
+    // Kills vs spares for PCs who won as the attacker, or won defending.
+    const side = f.outcome.startsWith('reversal') ? f.d : f.a;
+    if (side.tier === 'pc' && ['kill', 'spare', 'horse', 'kill-missed', 'reversal-kill', 'reversal-spare'].includes(f.outcome)) {
+      const k = (T.byPers[side.personality] ??= { kill: 0, spare: 0, horse: 0 });
+      if (f.outcome.includes('kill')) k.kill++; else if (f.outcome.includes('spare')) k.spare++; else k.horse++;
+    }
+  }
+  for (const h of state.race.horseLog ?? []) {
+    bump(T.horse, `${h.event}:${h.tier}`);
+    if (h.event === 'bought') T.spent += h.price;
+  }
+  for (const r of [...state.players, ...state.canon]) {
+    if (r.status === 'racing' && r.mount === 'horse' && r.onFoot) { T.onFoot++; if (r.tier === 'pc') T.onFootPc++; }
+  }
+  for (const a of state.race.allyLog ?? []) bump(T.ally, a.event === 'formed' ? `formed:${a.how}` : a.event);
+  for (const t of state.race.tradeLog ?? []) bump(T.trades, `${t.gift ? 'gift' : 'trade'}:${t.outcome}`);
+}
+
+function printM5a(S) {
+  const T = S.m5a;
+  const g = T.games;
+  const f1 = (n) => n.toFixed(1);
+  const per = (n) => f1((n ?? 0) / g);
+  const F = T.fights;
+  console.log('\nFights (per game)');
+  for (const kind of ['rival', 'strike', 'attacked']) {
+    const outs = ['kill', 'kill-missed', 'spare', 'horse', 'escape', 'both-hurt', 'reversal-kill', 'reversal-spare'];
+    console.log(`  ${kind.padEnd(9)} ${per(F[kind])}: ` + outs.map((o) => `${o} ${per(F[`${kind}:${o}`])}`).join(' · '));
+  }
+  console.log(`  PC vs PC fights ${per(T.pvp)} · reversals ${per(T.reversals)}`);
+  console.log('  PCs who won a fight chose (whole sim): ' + Object.entries(T.byPers).map(([k, v]) => {
+    const n = v.kill + v.spare + v.horse || 1;
+    return `${k} kill ${Math.round((100 * v.kill) / n)}% / spare ${Math.round((100 * v.spare) / n)}% / horse ${Math.round((100 * v.horse) / n)}%`;
+  }).join(' · '));
+  const H = T.horse;
+  console.log('\nHorses (per game)');
+  console.log(`  lost: PCs ${per(H['lost:pc'])}, canon ${per(H['lost:canon'])} · bought: PCs ${per(H['bought:pc'])}, canon ${per(H['bought:canon'])} (${per(T.spent)} points spent; ${f1(T.spent / ((H['bought:pc'] ?? 0) + (H['bought:canon'] ?? 0) || 1))} per horse)`);
+  console.log(`  riderless horses caught ${per((H['riderless:pc'] ?? 0) + (H['riderless:canon'] ?? 0))} · taken in fights or betrayals ${per((H['taken:pc'] ?? 0) + (H['taken:canon'] ?? 0) + (H['taken:npc'] ?? 0))}`);
+  console.log(`  Riders on foot at the end: ${per(T.onFoot)} (PCs ${per(T.onFootPc)})`);
+  console.log('  stage points by what a PC rides: ' + ['on foot', 'nag', 'sound', 'fine', 'thoroughbred'].filter((k) => HORSE_VALUE[k]).map((k) => `${k} ${f1(HORSE_VALUE[k].pts / HORSE_VALUE[k].n)}`).join(' · '));
+  const A = T.ally;
+  console.log('\nAlliances (per game)');
+  console.log(`  formed ${per((A['formed:pc'] ?? 0) + (A['formed:canon'] ?? 0) + (A['formed:npc'] ?? 0) + (A['formed:event'] ?? 0))} (PC+PC ${per(A['formed:pc'])}, PC+canon ${per(A['formed:canon'])}, PC+NPC ${per((A['formed:npc'] ?? 0) + (A['formed:event'] ?? 0))}) · refused ${per(A.refused)} · abandoned ${per(A.abandoned)} · betrayed ${per(A.betrayed)} · ended by a death ${per(A.ended)}`);
+  console.log('\nTrades (per game, sim people only)');
+  console.log('  ' + (Object.entries(T.trades).map(([k, v]) => `${k} ${per(v)}`).join(' · ') || 'none'));
 }

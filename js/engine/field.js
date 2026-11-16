@@ -79,6 +79,11 @@ export function keepNpc(state, npc) {
 
 export function npcDies(ctx, npc) {
   const f = ctx.state.field;
+  // An alliance with a named racer ends with the NPC.
+  if (npc.ally) {
+    for (const r of [...ctx.state.players, ...(ctx.state.canon ?? []), ...f.kept]) if (r.ally === npc.id) r.ally = null;
+    npc.ally = null;
+  }
   if (npc.status === 'racing') f.racing--;
   else if (npc.status === 'retired') f.retired--;
   npc.status = 'dead';

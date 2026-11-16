@@ -196,6 +196,9 @@ export function promptView(state, playerId) {
     options: x.options.map((o) => ({ id: o.id, label: o.label, hint: o.hint, needsTarget: !!o.needsTarget })),
     targets: x.targets?.map((t) => ({ id: t.id, name: t.name, tier: t.tier })) ?? null,
     answer: x.answer && x.answer.by === 'player' ? { optionId: x.answer.optionId, targetId: x.answer.targetId ?? null } : null,
+    // The horse trader (town stages, Stage Plan window): what you can buy, and your pick.
+    shop: x.shop?.map((o) => ({ quality: o.quality, label: o.label, price: o.price })) ?? null,
+    buy: x.shop ? x.buy ?? null : null,
   };
 }
 

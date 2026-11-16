@@ -17,7 +17,7 @@ export default {
 
   // Runners (no horse, ever). Terrain modifiers add up per stage terrain tag.
   runner: {
-    base: -6,              // flat modifier every stage (calibrate with the sim)
+    base: -7,              // flat modifier every stage (calibrate with the sim)
     terrain: { rough: 6, flat: -8 },
     aiRunnerChance: 0.15, // share of AI racers who pick Runner
   },
@@ -34,7 +34,7 @@ export default {
   canonEventChance: 0.4,   // a canon racer gets their own event this often
   retiredEventChance: 0.25,// a retired racer gets an event this often
   // How likely an event that would kill this tier is (weight multiplier).
-  deathOdds: { pc: 0.56, canon: 0.35, npc: 1 },
+  deathOdds: { pc: 0.46, canon: 0.35, npc: 1 },
   canonImmuneStages: [1],  // canon racers can't die in these stages
 
   // Personality nudges: multiply an event's weight by tag for the FOCUS racer.
@@ -42,11 +42,11 @@ export default {
     // 'kill' = kills they start (kill-started / kill-cruel events). Tuned so
     // end-of-race Worthiness lands near Honorable 80, Cautious 75, Glory 60,
     // Opportunist 60, Ruthless 35 (sim).
-    honorable: { help: 1.2, spare: 1.15, kill: 0.45, sabotage: 0.3, cold: 1.3 },
-    ruthless: { kill: 3, sabotage: 2.6, cold: 2, help: 0.4, spare: 0.3 },
-    cautious: { risky: 0.5, kill: 0.7, hazard: 0.8, help: 0.8, spare: 0.8 },
-    glory: { risky: 1.8, sprint: 2, pace: 1.3, cold: 1.8, help: 0.7 },
-    opportunist: { sabotage: 2, kill: 1.6, cold: 1.4, sprint: 1.2 },
+    honorable: { help: 0.9, spare: 1.15, kill: 0.45, sabotage: 0.3, cold: 1.3 },
+    ruthless: { kill: 2.2, sabotage: 2.4, cold: 2, help: 0.4, spare: 0.3 },
+    cautious: { risky: 0.5, kill: 0.7, hazard: 0.8, help: 0.72, spare: 0.72 },
+    glory: { risky: 1.8, sprint: 2, pace: 1.3, cold: 2.4, help: 0.5, sabotage: 1.3 },
+    opportunist: { sabotage: 2.4, kill: 1.6, cold: 2, sprint: 1.2, help: 0.7 },
   },
   // Canon racers rarely start kills and often help (on top of personality).
   canonLean: { kill: 0.35, help: 1.6, sabotage: 0.4, spare: 1.5 },
@@ -61,7 +61,8 @@ export default {
     start: { pc: [50, 50], canon: [50, 80], npc: [5, 30] }, // pc: fallback only
     help: 8,          // help someone (events / choices tagged 'help')
     save: 10,         // save a life (tagged 'help' + 'save'); instead of help, not on top
-    spare: 12,        // spare someone you beat (sparedBy)
+    spare: 12,        // spare someone you beat (sparedBy; a defender who drives off the attacker)
+    spareStarted: 4,  // ...but in a fight you started yourself (attacking and sparing isn't mercy)
     palmSurvive: 5,   // walk out of the Devil's Palm alive
     ridePast: -3,     // ride past someone who needs help (tagged 'cold'; sub event 'Ride past')
     sabotage: -8,     // sabotage or cheat (tagged 'sabotage'; see KILL_KINDS / HARM_KINDS)
@@ -95,9 +96,9 @@ export default {
   // What a Stand does for its user, by tier. No Stand ever wins a fight or a
   // race outright: these shift odds, and randomness stays on top.
   standTier: {
-    common: { placement: 1, hazardDeath: 0.92, fightBonus: 4 },
-    rare: { placement: 1, hazardDeath: 0.85, fightBonus: 8 },
-    legendary: { placement: 1.5, hazardDeath: 0.88, fightBonus: 12 }, // fightBonus: hook for milestone 5
+    common: { placement: 1, hazardDeath: 0.92, fightBonus: 2 },
+    rare: { placement: 1, hazardDeath: 0.85, fightBonus: 4 },
+    legendary: { placement: 1, hazardDeath: 0.88, fightBonus: 5 }, // fightBonus: added to fight scores (milestone 5)
   },
   standEventWeight: 1.5,     // weight multiplier on Stand events for Stand users
 
@@ -132,6 +133,70 @@ export default {
     guaranteed: 2,          // always found by human PCs, by the end of lastStage
     thirdChance: 0.35,      // a third may drop
     stages: [2, 6],
+  },
+
+  // ---------------------------------------------------------------- fights (milestone 5)
+  // score = skill (NPCs npcSkill) + Stand fightBonus + Spin + ally + noise.
+  // Nobody wins automatically: noise sd 12 keeps a Legendary Stand user at
+  // about 75% against an equal racer without one.
+  fights: {
+    npcSkill: 50,
+    sd: 12,
+    spin: 6,                   // Gyro and Wekapipo
+    spinUsers: ['gyro', 'wekapipo'],
+    ally: 5,                   // your ally rides in to help...
+    allyChance: 0.5,           // ...this often
+    close: 4,                  // a margin under this: both get hurt
+    fleeEscape: 0.55,          // a defender who flees gets away this often
+    caughtPenalty: 6,          // ...and fights at this minus if caught
+    killEscape: 0.15,          // a loser the winner tries to kill still gets away (hurt)
+    killMargin: 14,            // a kill needs a clear win; closer, the loser gets away hurt (or is driven off)
+    winPoints: 5, winPace: 1,  // a rival showdown won (plain sprint challenges keep +10)
+    // What racers nobody controls do when they win: weights for kill / spare / horse.
+    npcWins: { kill: 6, spare: 2, horse: 2 },
+    canonWins: { kill: 1, spare: 8, horse: 1 },
+    // What they do when attacked: fight-kill / fight-spare / flee.
+    npcDefends: { 'fight-kill': 5, 'fight-spare': 2, flee: 3 },
+    canonDefends: { 'fight-kill': 1, 'fight-spare': 7, flee: 2 },
+  },
+
+  // ---------------------------------------------------------------- horses (milestone 5)
+  horses: {
+    // Placement modifier by quality. Canon racers' own horses are already in
+    // their skill, so a canon racer's modifier counts from their first horse.
+    quality: { nag: -4, sound: 0, fine: 3, thoroughbred: 6 },
+    start: { nag: 20, sound: 60, fine: 20 },          // PCs' first horse (%)
+    canonThoroughbreds: ['Slow Dancer', 'Valkyrie', 'Silver Bullet'], // other canon horses are fine
+    // The horse trader, in the Stage Plan window of stages that start in a town.
+    townStages: [5, 6, 8, 9],  // leaving Kansas City, Chicago, Philadelphia, Union Beach
+    prices: { sound: 40, fine: 70 },
+    riderless: { nag: 30, sound: 55, fine: 15 },       // a dead racer's horse (%)
+    doubleRide: 0.5,           // on foot with an ally on a horse: this share of the on-foot penalty
+  },
+
+  // ---------------------------------------------------------------- alliances (milestone 5)
+  alliances: {
+    npcAccept: 0.6,            // a named NPC agrees to ride with you
+    // Canon racers by character fit: accept if Worthiness >= min, with this chance.
+    canon: {
+      gyro: { min: 60, p: 0.9 },
+      johnny: { min: 55, p: 0.8 },
+      diego: { min: 0, p: 0.1, topFive: 0.4 },  // rarely, unless you're near the top
+      hotpants: { min: 65, p: 0.6 },
+      sandman: { min: 50, p: 0.5 },
+      mountaintim: { min: 50, p: 0.8 },
+      pocoloco: { min: 0, p: 0.8 },
+      wekapipo: { min: 60, p: 0.6 },
+      norisuke: { min: 40, p: 0.7 },
+      avdul: { min: 40, p: 0.6 },
+      default: { min: 0, p: 0.15 },             // Valentine's side, Mrs. Robinson...
+    },
+  },
+
+  // ---------------------------------------------------------------- trading (milestone 5)
+  trading: {
+    // How much AI racers value things when deciding on a trade.
+    value: { horse: 5, horseMounted: 1, arrow: 3, arrowHasStand: 0, rokakaka: 1, rokakakaHasStand: 2 },
   },
 
   // ---------------------------------------------------------------- choices
