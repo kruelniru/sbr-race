@@ -25,6 +25,7 @@ import { startRace, runRound, syncShown, nextRoundHeader } from '../engine/race.
 import { buildCards, cardSeconds } from '../engine/reveal.js';
 import { needsStagePlans, openStagePlans, openSubEvents, closeChoices, answerPrompt, useItem, chooseHorse } from '../engine/choices.js';
 import { offerTrade, cancelTrade } from '../engine/trades.js';
+import { castDeadVote, deadVoters } from '../engine/dead.js';
 import { getPlayer } from '../engine/state.js';
 
 export class RaceHost {
@@ -48,6 +49,7 @@ export class RaceHost {
     lobby.onBuyHorse = (player, quality) => this.buyHorse(player, quality);
     lobby.onOffer = (player, offer) => this.offer(player, offer);
     lobby.onCancelOffer = (player) => this.cancelOffer(player);
+    lobby.onDeadVote = (player, v) => this.deadVote(player, v);
     lobby.timerView = () => this.timerView();
   }
 
@@ -141,6 +143,8 @@ export class RaceHost {
     const seen = this.race.fightLog?.length ?? 0;
     const result = runRound(this.state);
     if (this.debug) logFights(this.state.race.fightLog?.slice(seen) ?? []);
+    // The dead's vote for the next round opens now: tell only the dead (nothing else is spoiled).
+    for (const p of deadVoters(this.state)) this.lobby.sendPrivate(p.id);
     this.race.reveal = {
       cards: buildCards(result),
       index: -1,
@@ -304,6 +308,13 @@ export class RaceHost {
   offer(player, o) {
     const res = offerTrade(this.state, player.id, o);
     this.lobby.sendPrivate(player.id, res.ok ? 'Offer sent. They answer in their next decision.' : res.error);
+    if (res.ok) this.onChange();
+  }
+
+  /** A dead player's vote for the next round (milestone 6a). Private; the host never shows it. */
+  deadVote(player, v) {
+    const res = castDeadVote(this.state, player.id, v);
+    this.lobby.sendPrivate(player.id, res.ok ? null : res.error);
     if (res.ok) this.onChange();
   }
 

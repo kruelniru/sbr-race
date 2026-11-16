@@ -18,6 +18,7 @@ import { NAME_MAX, GENDER_MAX, PICTURE_MAX_BYTES, FEED_KEEP, DEFAULT_MIN_PLAYERS
 import { Rng } from './rng.js';
 import { ITEM_KINDS, canUse } from './items.js';
 import { myOffer, tradeTargets } from './trades.js';
+import { deadVoteView } from './dead.js';
 import { hasHorse } from './horses.js';
 import RULES from '../../data/rules.js';
 
@@ -43,6 +44,7 @@ export function createGameState(seed) {
       effects: true,         // stage-themed particle effects on the host
       subEventFreq: 'normal', // 'low' | 'normal' | 'high'
       choiceTimer: 30,       // seconds per choice window
+      fieldSize: 500,        // NPC racers at the start (200 / 350 / 500 / 750)
     },
     players: [],
     feed: [],
@@ -182,6 +184,8 @@ export function privateView(state, playerId) {
       horse: hasHorse(p) ? tradeTargets(state, p, 'horse') : [],
     } : null,
     canAskHorse: p.mount === 'horse' && !!p.onFoot,
+    // Milestone 6a: the dead's vote (dead human players only).
+    deadVote: deadVoteView(state, p.id),
     // Milestone 5b: only the joiner's own phone knows (the M6 secrets reveal tells everyone).
     valentine: p.valentine?.joined ? {
       errand: (state.race?.errands ?? []).some((e) => e.from === p.id && !e.done) ? 'next round' : null,

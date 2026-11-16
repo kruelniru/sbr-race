@@ -27,6 +27,7 @@ import { aiBuys } from '../js/engine/horses.js';
 import { fightScore } from '../js/engine/fights.js';
 import { offerTrade } from '../js/engine/trades.js';
 import { corpseSummary } from '../js/engine/corpse.js';
+import { castDeadVote, deadVoteView } from '../js/engine/dead.js';
 import PLANS from '../data/plans.js';
 import PERSONALITIES from '../data/personalities.js';
 import { readFileSync } from 'node:fs';
@@ -133,6 +134,7 @@ function playGame(seed) {
     closeChoices(state);
     const res = runRound(state);
     results.push(res);
+    simDeadVote(state, timeRng);
     // Horse value: stage points for racing PCs by what they ride at the Finish Line.
     if (res.placements) {
       for (const pl of res.placements) {
@@ -241,6 +243,7 @@ function collect(S, { state, results, stageLog, windows, timeRng, palm, standSha
   collectM5a(S, state);
   collectM5b(S, state, results, partsByStage);
   collectHunts(S, state, stageLog);
+  collectDead(S, state);
   for (const x of standShare) (S.st.share[x.stage] ??= []).push(x);
   S.games++;
   const racers = namedRacers(state);
@@ -410,6 +413,7 @@ function printStats(S) {
   printM5a(S);
   printM5b(S);
   printHunts(S);
+  printDead(S);
 
   console.log('\nChecks');
   console.log(`  canon deaths in Stage 1: ${S.canonStage1Deaths} ${S.canonStage1Deaths ? 'FAIL' : 'ok'}`);
@@ -925,4 +929,41 @@ function printHunts(S) {
   const mean = Object.values(F).reduce((t, f) => t + f.prompts, 0) / (Object.values(F).reduce((t, f) => t + f.rounds, 0) || 1);
   console.log('  ' + Object.entries(rates).map(([k, r]) => `${k} ${r.toFixed(2)} (${r > mean * 1.2 ? 'OVER +20%' : `${((r / mean - 1) * 100).toFixed(0)}%`})`).join(' · ') + ` · average ${mean.toFixed(2)}`);
   console.log('  Valentine-only prompts per living PC per round: ' + Object.entries(F).map(([k, f]) => `${k} ${(f.valentine / (f.rounds || 1)).toFixed(3)}`).join(' · '));
+}
+
+// ---------------------------------------------------------------- milestone 6a: the dead vote
+/** Sim people who are dead vote 70% of rounds, by personality. */
+function simDeadVote(state, rng) {
+  const lean = {
+    ruthless: { ambush: 6, hazard: 3, blessing: 1 }, opportunist: { ambush: 4, hazard: 3, blessing: 3 },
+    glory: { hazard: 5, ambush: 3, blessing: 2 }, cautious: { blessing: 6, hazard: 2, ambush: 2 }, honorable: { blessing: 8, hazard: 1, ambush: 1 },
+  };
+  for (const p of state.players.slice(0, HUMANS)) {
+    const v = deadVoteView(state, p.id);
+    if (!v || !rng.chance(0.7)) continue;
+    const category = rng.weighted(Object.entries(lean[p.personality]), ([, w]) => w)[0];
+    const t = rng.pick(v.targets);
+    if (category === 'blessing' && !t) continue;
+    castDeadVote(state, p.id, { category, targetId: t?.id });
+  }
+}
+
+function collectDead(S, state) {
+  const T = (S.dead ??= { games: 0, by: {}, voters: 0, acts: 0, ambushDeaths: 0, ambushPc: 0, firstRound: [] });
+  T.games++;
+  const log = state.race.deadLog ?? [];
+  for (const e of log) {
+    bump(T.by, e.category); T.acts++; T.voters += e.voters;
+    if (e.category === 'ambush') { if (e.death) T.ambushDeaths++; if (e.targetTier === 'pc') T.ambushPc++; bump(T.by, `ambush:${e.outcome}`); }
+  }
+  if (log.length) T.firstRound.push(log[0].stage);
+}
+
+function printDead(S) {
+  const T = S.dead, g = T.games;
+  if (!T) return;
+  const per = (n) => ((n ?? 0) / g).toFixed(1);
+  console.log('\nThe dead vote (sim people who are dead vote 70% of rounds, by personality)');
+  console.log(`  the dead act ${per(T.acts)} times per game (avg ${(T.voters / (T.acts || 1)).toFixed(1)} voters): hazard ${per(T.by.hazard)} · ambush ${per(T.by.ambush)} · blessing ${per(T.by.blessing)} · first act in Stage ${(T.firstRound.reduce((a, b) => a + b, 0) / (T.firstRound.length || 1)).toFixed(1)} on average`);
+  console.log(`  ambushes: on PCs ${per(T.ambushPc)} · kills ${per(T.ambushDeaths)} per game · outcomes: ` + Object.entries(T.by).filter(([k]) => k.startsWith('ambush:')).map(([k, n]) => `${k.slice(7)} ${per(n)}`).join(' · '));
 }

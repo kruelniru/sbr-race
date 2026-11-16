@@ -13,6 +13,7 @@ export const TO_HOST = Object.freeze({
   BUY_HORSE: 'buy_horse', // { quality | null }  pick a horse at the trader (Stage Plan window, town stages)
   OFFER: 'offer',         // { give: itemId | 'horse', to, ask: null | 'arrow' | 'rokakaka' | 'horse' }  secret trade offer
   CANCEL_OFFER: 'cancel_offer', // {}
+  DEAD_VOTE: 'dead_vote', // { category: 'hazard' | 'ambush' | 'blessing', targetId? }  a dead player's vote for the next round
   VOTE: 'vote',           // { promptId, optionId }        (milestone 6)
   PING: 'ping',           // {}
 });

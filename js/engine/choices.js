@@ -50,6 +50,7 @@ import { looseParts, pickFinder, markFinding, resolveFind, resolveOtherFind, car
 import { ambushChance, pickAgent, resolveAmbush, otherAmbushes, canFaceValentine, resolveValentine, log as logAgents } from './agents.js';
 import { isJoiner, dueOffers, joinValentine, refuseValentine, deliver, log as logValentine } from './valentine.js';
 import { PART_HINTS } from '../../data/corpse.js';
+import { blessed } from './dead.js';
 
 export const SUBS = [...SUB_EVENTS, PALM, ATTACKED, STRIKE].map((s) => ({ ...normalizeEvent({ ...s, when: s.when ?? {}, effects: {} }), options: s.options, secret: !!s.secret, special: s.special, fightKind: s.fightKind, leanTag: s.leanTag, targetText: s.targetText }));
 const PALM_SUB = SUBS.find((s) => s.id === PALM.id);
@@ -955,6 +956,7 @@ function resolvePalm(ctx, prompt) {
   if (prompt.answer.optionId !== 'in') return quiet(lineFor(ctx, 'sub-palm:back', render(PALM.lines.back, d), { a }), prompt);
   let outcome = rollPalm(ctx.rng, a.worthiness);
   if (outcome === 'stand' && a.stand) outcome = 'nothing'; // one Stand per racer
+  if (outcome === 'dies' && blessed(ctx, a)) outcome = 'lost'; // the dead's Blessing
   if (outcome === 'dies') {
     logPalm(ctx, a, 'dies');
     killRacer(ctx, a, "swallowed by the Devil's Palm", null);
@@ -981,7 +983,7 @@ function pierce(ctx, a) {
   }
   const w = a.worthiness ?? 50;
   const p = RULES.arrows.survive.find((b) => w >= b.min)?.p ?? 50;
-  if (!ctx.rng.chance(p / 100)) {
+  if (!ctx.rng.chance(p / 100) && !blessed(ctx, a)) {
     log(ctx, 'arrowLog', { outcome: 'died', worthiness: w });
     killRacer(ctx, a, ARROW.deathCause, null);
     return lineFor(ctx, 'arrow:died', render(ARROW.deathLine, display({ a })), { a }, { death: true });

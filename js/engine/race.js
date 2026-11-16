@@ -33,6 +33,7 @@ import { prepareRound, resolveSubEvents } from './choices.js';
 import { initCorpse, processMerges, corpseFinishLine, announcements } from './corpse.js';
 import { initAgents } from './agents.js';
 import { scheduleOffers, valentineEnding } from './valentine.js';
+import { resolveDeadVote, openDeadVote } from './dead.js';
 
 /** Round types for a stage with n rounds: Day/Night alternate, last is the Finish Line. */
 export function roundTypes(n) {
@@ -207,6 +208,8 @@ export function runRound(state) {
 
   // 1. Sub events (and Hunt a rival showdowns) resolve first and lead the
   //    Main Story. A sub event counts as that racer's event this round.
+  // 0. The dead act first (their vote from the last reveal), so a Blessing covers this round.
+  result.events.push(...resolveDeadVote(ctx));
   result.events.push(...resolveSubEvents(ctx, choice));
   result.events.push(...canonAwakenings(ctx));
   race.choice = null;
@@ -267,6 +270,8 @@ export function runRound(state) {
       result.finale = buildFinale(state);
     }
   }
+  // The dead vote on the next round while this one is revealed.
+  openDeadVote(state);
   state.rngState = rng.getState();
   return result;
 }

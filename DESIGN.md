@@ -462,7 +462,16 @@ Dead players keep playing: each round they vote on what happens to the living. T
 | Ambush | That an ambush happens | A random target among PCs and named NPCs, so it can hit a former ally |
 | Blessing | Who gets blessed, by an individual vote | Breaks a tie on the target |
 
-Example: 5 players are dead and 4 vote Blessing, so Blessing wins. All 5 then vote on who gets it; if that vote ties, the game picks.
+**How it works (milestone 6a, `js/engine/dead.js`, numbers in `rules.dead`):**
+
+- **Who votes:** dead human players. AI racers who die don't.
+- **When:** the vote opens on dead players' phones when a round's reveal starts and closes when the host starts the next round; it applies to that round. Nobody waits for it. If no one votes, nothing happens. The dead act at most once a round.
+- **One card:** Hazard / Ambush / Blessing, and choosing Blessing also picks which living PC gets it (no second vote). Most votes wins, the game breaks ties; the Blessing goes to the PC most Blessing voters picked (ties broken by the game).
+- **Hazard:** a hazard from the stage's list sweeps the trail. Three random racing named racers lose 1 pace and one of them is hurt; a few riders from the field die. No named racer dies.
+- **Ambush:** a rider "with the dead's fury" (NPC skill +6) attacks a random PC or named NPC, so it can hit a former ally. A normal fight; a PC defends by their ★ choice (there's no window left to ask). It can kill, but a PC usually wins.
+- **Blessing:** the chosen PC is healed, gets +2 pace, and is protected that round: no deadly event, fight, Palm, Arrow or corpse rejection can kill them.
+- **On stream:** one anonymous line in that round's story ("The dead stir. A sandstorm sweeps the trail…", "The dead stir. A rider rides out of the dust at Kruel…", "The dead have chosen a blessing for Kruel."). Never who voted what.
+- **The phone:** a "You're dead, but you're not done" card with the vote, then the final status, and their own Stand, parts and hints (still only their own).
 
 ## Points, winning and endings
 
@@ -509,7 +518,7 @@ In the manga, points come only from stage placements, plus a time bonus for fini
 - Skip side stories automatically (default **on**)
 - Background effects (default on)
 - Sub event frequency: Low, Normal (about 2–3 per round), High (also on the race controls)
-- NPC field size (default ~500)
+- NPC field size: 200, 350, 500 (default) or 750, set in the lobby (milestone 6a)
 - Choice timer (default 30 seconds; 15–60, also on the race controls)
 
 **Tech plan:**
@@ -619,3 +628,6 @@ Decisions made after the original design, in the order they came up:
 80. Hunting corpse parts: each hunter rolls 90% a stage (±0.2% per Worthiness point, +15% pity per dry hunting stage) for first claim on that stage's part; normal finds 80% a round, weighted 1 + Worthiness ÷ 100. Hunters find a part in about 37% of stages; when many hunt at once, supply is the limit (one part a stage). More parts in circulation is the next lever if that should be higher.
 81. Stand Arrows 8–10 a game (was 6–8), and a human-controlled PC is twice as likely as an AI racer to find one.
 82. Sub event fairness between living PCs: random sub events and agent ambushes lean toward whoever has had fewer prompts per round; prompts a player's own plan guarantees count half toward the round's number. Valentine-only prompts are excluded.
+83. Dead players (M6a): one vote card a round (Hazard / Ambush / Blessing, the Blessing's target on the same card), open from a round's reveal until the next round starts, applied to that round; no votes, nothing happens; the game breaks ties. Only dead humans vote.
+84. The dead's strengths: Hazard = 3 named racers −1 pace, one hurt, a few field riders die, no named deaths; Ambush = an NPC at +6 against a random PC or named NPC (a PC defends by ★); Blessing = heal, +2 pace, can't die that round. One anonymous line on stream.
+85. NPC field size is a lobby setting (200 / 350 / 500 / 750), fixed once the race starts.

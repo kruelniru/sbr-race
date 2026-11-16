@@ -13,6 +13,7 @@ import { MiniFeed } from './feed.js';
 import { keepAwake } from './wake-lock.js';
 import { worthinessBar, standCard, itemsCard, hintsCard, partsCard, valentineCard } from './secrets.js';
 import { trader, offerForm, pendingOffer } from './trade.js';
+import { deadCard } from './dead.js';
 
 // Storage keys. Tabs in one browser share localStorage, so to test several
 // "phones" on one computer give each tab its own slot: phone.html?room=ABCD&slot=2
@@ -48,6 +49,7 @@ let picking = null;    // { promptId, optionId } while choosing a Hunt a rival t
 let sent = null;       // { promptId, optionId, targetId } last answer we sent
 let lastPromptId = null;
 let choiceError = '';
+let deadPicking = false; // choosing who gets the dead's Blessing
 let offering = null;    // { give: itemId | 'horse', label } while making a trade offer
 let notice = '';       // a short message from the host (offer sent, trader refused...)
 setInterval(tickCountdown, 250);
@@ -351,6 +353,15 @@ function renderRacing() {
         ? h('div', { class: 'race-where' }, 'The race is over: New York!')
         : h('div', { class: 'race-where' }, `Stage ${head.stageId} · ${head.stageName}`, h('span', { class: 'race-round' }, head.label))),
       you?.prompt ? choiceCard(you.prompt) : null,
+      r?.status === 'dead' && !you?.isAI ? deadCard(you.deadVote, {
+        picking: deadPicking,
+        onPick: (on) => { deadPicking = on; renderScreen(); },
+        onVote: (category, targetId) => {
+          deadPicking = false;
+          if (!net.send(msg(TO_HOST.DEAD_VOTE, { category, targetId }))) notice = 'Not connected. Your vote was not sent.';
+          renderScreen();
+        },
+      }) : null,
       youCard(),
       notice ? h('p', { class: 'notice' }, notice) : null,
       r ? statusCard(r) : null,
@@ -361,7 +372,7 @@ function renderRacing() {
       r && (r.status !== 'dead' || you?.valentine?.outcome) ? valentineCard(you?.valentine) : null,
       r?.hints?.length ? hintsCard(r.hints) : null,
       r?.status === 'dead'
-        ? h('p', { class: 'waiting fallen' }, 'You can still follow the race below. Dead riders get to vote on the living in a later update.')
+        ? h('p', { class: 'waiting fallen' }, 'Your final status is below, and the race goes on in the feed.')
         : !you?.prompt && h('p', { class: 'waiting' }, 'Watch the stream. When you have a decision to make, it appears here.'),
     ),
   );

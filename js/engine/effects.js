@@ -16,12 +16,13 @@ import { npcDies, npcRetires } from './field.js';
 import { palmBand, palmExit, palmLost, logPalm } from './palm.js';
 import { loseHorse, giveHorse, canHaveHorse, hasHorse, takeHorse, newHorseName, log as logHorse } from './horses.js';
 import { formAlliance, breakAlliance, allyOf } from './alliances.js';
+import { blessed } from './dead.js';
 
 export const EFFECTS = {
   // dies: '<cause shown on the Fallen screen>'. Pair with by: '<role>' for kill credit.
   dies: {
     fits: (ctx, who) =>
-      who.status !== 'dead' && !(who.tier === 'canon' && RULES.canonImmuneStages.includes(ctx.stage.id)),
+      who.status !== 'dead' && !(who.tier === 'canon' && RULES.canonImmuneStages.includes(ctx.stage.id)) && !blessed(ctx, who),
     apply: (ctx, who, cause, roles, effects) => {
       const killer = effects.by ? roles[effects.by] : null;
       if (killer) killer.kills = (killer.kills ?? 0) + 1;

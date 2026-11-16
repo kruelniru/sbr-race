@@ -283,6 +283,14 @@ export default {
     joinerWinLimit: 1.3,
   },
 
+  // ---------------------------------------------------------------- dead players (milestone 6a)
+  // Each round the dead vote Hazard / Ambush / Blessing (js/engine/dead.js).
+  dead: {
+    hazard: { victims: 3, pace: -1, npcDeaths: [2, 5] }, // −1 pace each, one injured; no named racer dies
+    ambush: { bonus: 6 },      // the rider "with the dead's fury" fights at NPC skill + this
+    blessing: { pace: 2 },     // + heal + protected this round
+  },
+
   // ---------------------------------------------------------------- choices
   choices: {
     timerSeconds: 30,          // host setting (choiceTimer)

@@ -13,8 +13,13 @@ import RULES from '../../data/rules.js';
 import NPC_NAMES from '../../data/npc-names.js';
 import { startWorthiness, DEATH_HOOKS } from './racers.js';
 
+/** The NPC field size: the host setting, or rules.fieldSize. */
+export function fieldSize(state) {
+  return Number(state.settings?.fieldSize) || RULES.fieldSize;
+}
+
 export function initField(state, rng) {
-  state.field = { racing: RULES.fieldSize, retired: 0, dead: 0, packLeaders: [], kept: [], nextId: 1 };
+  state.field = { racing: fieldSize(state), retired: 0, dead: 0, packLeaders: [], kept: [], nextId: 1 };
   for (let i = 0; i < RULES.packLeaders; i++) state.field.packLeaders.push(makeNpc(state, rng, { named: false, packLeader: true }));
 }
 

@@ -39,6 +39,7 @@ export class HostLobby {
     this.onBuyHorse = null;        // RaceHost: (player, quality | null) => void
     this.onOffer = null;           // RaceHost: (player, { give, to, ask }) => void
     this.onCancelOffer = null;     // RaceHost: (player) => void
+    this.onDeadVote = null;        // RaceHost: (player, { category, targetId }) => void
     this.timerView = null;         // RaceHost: () => { remainingMs, durationMs, paused } | null
 
     // After a host reload nobody is connected until their phone says hello.
@@ -102,6 +103,9 @@ export class HostLobby {
         break;
       case TO_HOST.CANCEL_OFFER:
         this.onCancelOffer?.(player);
+        break;
+      case TO_HOST.DEAD_VOTE:
+        if (typeof m.category === 'string' && (m.targetId == null || typeof m.targetId === 'string')) this.onDeadVote?.(player, { category: m.category, targetId: m.targetId ?? null });
         break;
       default:
         // VOTE arrives in milestone 6.
@@ -278,7 +282,11 @@ export class HostLobby {
 
   /** Host preferences (speed, side stories, effects, sub event frequency, choice timer). Allowed any time. */
   setHostSetting(key, value) {
-    if (!['revealSpeed', 'autoSkipSide', 'effects', 'subEventFreq', 'choiceTimer'].includes(key)) return;
+    if (!['revealSpeed', 'autoSkipSide', 'effects', 'subEventFreq', 'choiceTimer', 'fieldSize'].includes(key)) return;
+    if (key === 'fieldSize') {
+      if (this.state.phase !== 'lobby') return; // fixed once the race starts
+      value = [200, 350, 500, 750].includes(Number(value)) ? Number(value) : 500;
+    }
     if (key === 'subEventFreq' && !['low', 'normal', 'high'].includes(value)) return;
     if (key === 'choiceTimer') value = Math.max(10, Math.min(90, Math.round(Number(value)) || 30));
     this.state.settings[key] = value;

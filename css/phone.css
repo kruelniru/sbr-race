@@ -241,3 +241,8 @@ legend { margin-bottom: 8px; }
 .parts-card .item { grid-template-columns: 1fr; gap: 8px; }
 .parts-card .item-actions { flex-direction: row; flex-wrap: wrap; align-items: center; }
 .parts-card .item-use, .parts-card .item-deliver { max-width: none; flex: 1 1 auto; }
+
+/* milestone 6a: the dead's vote */
+.dead-card { background: linear-gradient(160deg, #1b1a24, var(--panel)); border: 1px solid #5d6a8a; border-radius: var(--radius); padding: 16px; margin: 0 0 16px; }
+.dead-card h2 { margin: 0 0 6px; color: #c9d4ff; }
+.dead-intro, .dead-wait { color: var(--muted); margin: 0 0 12px; }

@@ -92,6 +92,7 @@ js/engine/           pure game logic, no DOM (Node can import it)
   corpse.js          the Saint's Corpse: parts, finds, merging, rejection, the President (M5b)
   agents.js          Valentine's agents' ambushes and Funny Valentine (M5b)
   valentine.js       the secret Valentine offer, its rewards and errands (M5b)
+  dead.js            dead players' vote: Hazard, Ambush, Blessing (M6a)
   finale-sections.js extra finale cards (Stands awakened)
   plans.js           Stage Plan lookups
   reveal.js          round result -> host cards + text-based timing (shared with the sim)

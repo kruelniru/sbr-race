@@ -34,6 +34,7 @@ import { standMods } from './stands.js';
 import { allyOf } from './alliances.js';
 import { hasHorse, takeHorse } from './horses.js';
 import { carried, takePart } from './corpse.js';
+import { blessed } from './dead.js';
 
 const F = () => RULES.fights;
 
@@ -97,6 +98,7 @@ export function npcDefend(rng, r) {
 /** Can this racer die right now? (Canon racers can't in Stage 1.) */
 export function mortal(ctx, who) {
   if (who.immortal) return false; // Funny Valentine
+  if (blessed(ctx, who)) return false; // the dead's Blessing (milestone 6a)
   return !(who.tier === 'canon' && RULES.canonImmuneStages.includes(ctx.stage?.id));
 }
 

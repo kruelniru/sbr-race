@@ -28,6 +28,7 @@ import { castNpc, keepNpc, npcDies } from './field.js';
 import { awakenStand } from './stands.js';
 import { render } from './text.js';
 import { displayRoles } from './events.js';
+import { blessed } from './dead.js';
 
 const C = () => RULES.corpse;
 
@@ -242,6 +243,7 @@ export function rejectionChance(worthiness = 50) {
 }
 
 function mortalNow(ctx, who) {
+  if (blessed(ctx, who)) return false;
   return !(who.tier === 'canon' && RULES.canonImmuneStages.includes(ctx.stage?.id));
 }
 

@@ -313,6 +313,9 @@ function lobbySettings(view) {
       h('select', { onchange: (e) => lobby.setHostSetting('subEventFreq', e.target.value) },
         [['low', 'Low (~1 a round)'], ['normal', 'Normal (~2–3)'], ['high', 'High (~4–5)']].map(([v, label]) =>
           h('option', { value: v, selected: (view.settings.subEventFreq ?? 'normal') === v }, label)))),
+    h('label', { class: 'setting' }, h('span', {}, 'NPC field'),
+      h('select', { onchange: (e) => lobby.setHostSetting('fieldSize', e.target.value), disabled: view.phase !== 'lobby' },
+        [200, 350, 500, 750].map((v) => h('option', { value: v, selected: Number(view.settings.fieldSize ?? 500) === v }, `${v} riders`)))),
     h('label', { class: 'setting' }, h('span', {}, 'Choice timer'),
       h('select', { onchange: (e) => lobby.setHostSetting('choiceTimer', e.target.value) },
         [15, 20, 30, 45, 60].map((v) => h('option', { value: v, selected: Number(view.settings.choiceTimer ?? 30) === v }, `${v} seconds`)))),
