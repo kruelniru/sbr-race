@@ -34,7 +34,11 @@ export default {
   canonEventChance: 0.4,   // a canon racer gets their own event this often
   retiredEventChance: 0.25,// a retired racer gets an event this often
   // How likely an event that would kill this tier is (weight multiplier).
-  deathOdds: { pc: 0.95, canon: 0.35, npc: 1 },
+  deathOdds: { pc: 0.75, canon: 0.35, npc: 1 },
+  // PCs: deaths lean late (x by stage). Stages 1–2 are safe for PCs anyway, except
+  // risks they choose (the Devil's Palm, piercing yourself with an Arrow).
+  pcDeathByStage: { 1: 0, 2: 0, 3: 0.2, 4: 0.4, 5: 0.6, 6: 1.2, 7: 1.5, 8: 1.7, 9: 1.9 },
+  pcSafeStages: [1, 2],
   canonImmuneStages: [1],  // canon racers can't die in these stages
 
   // Personality nudges: multiply an event's weight by tag for the FOCUS racer.

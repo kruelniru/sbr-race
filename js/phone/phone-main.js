@@ -14,6 +14,7 @@ import { keepAwake } from './wake-lock.js';
 import { worthinessBar, standCard, itemsCard, hintsCard, partsCard, valentineCard, storyCard } from './secrets.js';
 import { trader, offerForm, pendingOffer } from './trade.js';
 import { deadCard } from './dead.js';
+import { sevenTaps, openPinPad, openCheatMenu } from '../ui/cheat-ui.js';
 
 // Storage keys. Tabs in one browser share localStorage, so to test several
 // "phones" on one computer give each tab its own slot: phone.html?room=ABCD&slot=2
@@ -82,6 +83,25 @@ keepAwake((mode) => {
 
 init();
 
+// ---------------------------------------------------------------- the secret cheat menu (testing)
+// 7 quick taps on the connection status, then the PIN. The host checks it;
+// a wrong PIN just closes the pad. Nothing in the normal UI hints at this.
+let cheatWanted = false;
+function openCheats() {
+  openCheatMenu({
+    stands: you?.cheat?.stands ?? [],
+    onAction: (action, value) => net?.send(msg(TO_HOST.CHEAT, { action, value })),
+  });
+}
+ui.status.addEventListener('click', sevenTaps(() => {
+  if (you?.cheat) return openCheats();
+  openPinPad((pin) => {
+    if (!pin || !net?.send(msg(TO_HOST.CHEAT_UNLOCK, { pin }))) return;
+    cheatWanted = true;
+    setTimeout(() => { cheatWanted = false; }, 8000);
+  });
+}));
+
 function init() {
   const fromUrl = normalizeCode(new URLSearchParams(location.search).get('room'));
   const last = normalizeCode(store.get(LAST_ROOM));
@@ -131,6 +151,7 @@ function handle(m) {
     case TO_PHONE.YOU:
       you = m.you;
       notice = m.notice ?? '';
+      if (cheatWanted && you?.cheat) { cheatWanted = false; openCheats(); }
       timer = m.timer ? { ...m.timer, at: performance.now() } : null;
       if (you?.prompt?.id !== lastPromptId) {
         lastPromptId = you?.prompt?.id ?? null;

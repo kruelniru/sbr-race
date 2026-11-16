@@ -73,6 +73,8 @@ export function addWorthiness(who, n, ctx) {
   if (n > 0 && who.worthiness > RULES.worthiness.halfAbove) n = Math.floor(n / 2);
   if (!n) return;
   who.worthiness = Math.max(0, Math.min(100, who.worthiness + n));
+  // The game log (exported after the game): every change, with numbers.
+  if (who.tier === 'pc' && who.worthiness !== before) (who.wLog ??= []).push({ stage: ctx?.stage?.id ?? 0, round: ctx?.roundLabel ?? '', change: who.worthiness - before, from: before, to: who.worthiness });
   if (!ctx || who.worthiness === before) return;
   // n is the applied change (after halving above 80), so halved gains still get a line.
   const W = RULES.worthiness;

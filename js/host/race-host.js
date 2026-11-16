@@ -22,10 +22,13 @@
 // host reload resumes mid-round, even mid-choice.
 
 import { startRace, runRound, syncShown, nextRoundHeader } from '../engine/race.js';
+import STAGES from '../../data/stages.js';
+const STAGES_COUNT = STAGES.length;
 import { buildCards, cardSeconds } from '../engine/reveal.js';
 import { needsStagePlans, openStagePlans, openSubEvents, closeChoices, answerPrompt, useItem, chooseHorse } from '../engine/choices.js';
 import { offerTrade, cancelTrade } from '../engine/trades.js';
 import { castDeadVote, deadVoters } from '../engine/dead.js';
+import { exportGameLog } from './log-export.js';
 import { getPlayer } from '../engine/state.js';
 
 export class RaceHost {
@@ -106,6 +109,32 @@ export class RaceHost {
     this.lobby.broadcastPublic();
     this.lobby.sendPrivateAll();
     this.nextRound(); // Stage 1's plan opens right away
+  }
+
+  /**
+   * Cheat menu (testing): fast-forward to the start of the Final Stage.
+   * Every skipped round runs instantly (anyone unanswered gets their ★ pick)
+   * and isn't revealed; then the Final Stage's plans open as usual.
+   */
+  cheatSkipToFinal() {
+    const state = this.state, race = this.race;
+    if (!race || race.over) return;
+    clearTimeout(this.timer);
+    if (race.choice && !race.choice.closed) closeChoices(state);
+    race.choiceTimer = null;
+    race.choosing = false;
+    while (!race.over && race.stageIdx < STAGES_COUNT - 1) runRound(state);
+    race.reveal = null;
+    syncShown(state);
+    this.lobby.broadcastPublic();
+    this.lobby.sendPrivateAll();
+    this.onChange();
+    this.nextRound();
+  }
+
+  /** The full game log (only after the game ends). */
+  exportLog() {
+    if (this.race?.over) exportGameLog(this.state);
   }
 
   /** After a host reload: pick up where the reveal left off. */

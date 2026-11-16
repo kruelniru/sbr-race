@@ -48,6 +48,15 @@ export const deadVoters = (state) => readyPlayers(state).filter((p) => p.status 
 /** Living PCs a Blessing can go to. */
 export const blessTargets = (state) => readyPlayers(state).filter((p) => p.status === 'racing').map((p) => ({ id: p.id, name: p.name }));
 
+/**
+ * Can't die right now, except from a risk they chose (the Palm, an Arrow):
+ * a PC in the safe stages (rules.pcSafeStages), a Blessing, or Love Train.
+ */
+export function deathProof(ctx, who) {
+  if (who?.tier === 'pc' && RULES.pcSafeStages.includes(ctx?.stage?.id)) return true;
+  return blessed(ctx, who);
+}
+
 /** Is this racer protected by a Blessing right now? */
 export function blessed(ctx, who) {
   if (ctx?.state && isLoveTrain(ctx.state, who)) return true; // Love Train (milestone 6b): misfortune slides off
@@ -100,7 +109,7 @@ export function resolveDeadVote(ctx) {
   const votes = Object.values(v.votes);
   if (!votes.length) return [];
   const category = tally(ctx.rng, votes.map((x) => x.category));
-  const log = { round: race.roundNo, stage: ctx.stage.id, category, voters: votes.length };
+  const log = { round: race.roundNo, stage: ctx.stage.id, category, voters: votes.length, votes: Object.entries(v.votes).map(([voter, x]) => ({ voter, category: x.category, target: x.targetId })) };
   let lines = [];
   if (category === 'blessing') {
     const living = new Set(blessTargets(ctx.state).map((t) => t.id));

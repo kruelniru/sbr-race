@@ -52,6 +52,7 @@ import { ambushChance, pickAgent, resolveAmbush, otherAmbushes, canFaceValentine
 import { isJoiner, dueOffers, joinValentine, refuseValentine, deliver, log as logValentine } from './valentine.js';
 import { PART_HINTS } from '../../data/corpse.js';
 import { blessed } from './dead.js';
+import { recordChoices } from './game-log.js';
 import { FINAL_STAGE, chooseBoss, bossRacer, isBoss, resolveBringDown, resolveValentineHunt, resolveValentineRematch } from './final-stage.js';
 
 export const SUBS = [...SUB_EVENTS, PALM, ATTACKED, STRIKE].map((s) => ({ ...normalizeEvent({ ...s, when: s.when ?? {}, effects: {} }), options: s.options, secret: !!s.secret, special: s.special, fightKind: s.fightKind, leanTag: s.leanTag, targetText: s.targetText }));
@@ -275,6 +276,20 @@ export function openSubEvents(state) {
     prompts.push(rivalPrompt(rng, state, key, 'rival-hunter', hunter, render(RIVAL.hunterText, display(roles)), winOptions(target, [], RIVAL.hunter), roles));
     if (target.tier === 'pc') {
       prompts.push(rivalPrompt(rng, state, key, 'rival-target', target, render(RIVAL.targetText, display(roles)), RIVAL.target, roles));
+    }
+  }
+
+  // 0. Cheat menu (testing): a forced sub event for a player.
+  for (const p of racingPcs(state).filter((x) => x.forceSub && !busy.has(x.id))) {
+    const kind = p.forceSub;
+    p.forceSub = null;
+    busy.add(p.id);
+    if (kind === 'palm') prompts.push(subPromptFor(ctx, PALM_SUB, p, roundNo, { a: p }));
+    else if (kind === 'offer') { p.valentineOffered = true; prompts.push(specialPrompt(rng, state, VALENTINE_OFFER, p, roundNo, { a: p.id }, VALENTINE_OFFER.text)); }
+    else if (kind === 'fv') { p.facedValentine = true; prompts.push(specialPrompt(rng, state, FUNNY_VALENTINE, p, roundNo, { a: p.id }, FUNNY_VALENTINE.text)); }
+    else if (kind === 'fight') {
+      const npc = castNpc(ctx);
+      if (npc) { keepNpc(state, npc); prompts.push(subPromptFor(ctx, SUBS.find((s) => s.id === ATTACKED.id), p, roundNo, { a: p, b: npc })); }
     }
   }
 
@@ -721,6 +736,7 @@ export function closeChoices(state) {
     if (option.needsTarget) prompt.answer.targetId = pickTarget(rng, prompt.targets);
   }
   choice.closed = true;
+  recordChoices(state, choice); // the exported game log
   if (choice.kind === 'plan') {
     applyStagePlans(state, choice, rng);
     state.race.choice = null;
@@ -867,10 +883,10 @@ function outcomeFits(ctx, outcome, roles) {
   return true;
 }
 
-function outcomeWeight(outcome, roles) {
+function outcomeWeight(outcome, roles, ctx = null) {
   let w = outcome.weight;
   for (const [k, effs] of Object.entries(outcome.effects)) {
-    if (effs.dies) w *= deathWeight(roles[k]);
+    if (effs.dies) w *= deathWeight(roles[k], false, ctx?.stage?.id);
     if (effs.horse) w *= planOf(roles[k])?.horseMult ?? 1;
   }
   return w;
@@ -938,7 +954,7 @@ function resolveSub(ctx, prompt, targetPrompt = null) {
   if (!roles || roles.a.status !== 'racing') return null;
   const option = sub.options.find((o) => o.id === prompt.answer.optionId) ?? sub.options[0];
   const outcomes = option.outcomes.filter((o) => outcomeFits(ctx, o, roles));
-  const outcome = ctx.rng.weighted(outcomes, (o) => outcomeWeight(o, roles));
+  const outcome = ctx.rng.weighted(outcomes, (o) => outcomeWeight(o, roles, ctx));
   if (!outcome) return null;
   const text = render(outcome.text, display(roles));
   applyEffects(ctx, outcome.effects, roles);

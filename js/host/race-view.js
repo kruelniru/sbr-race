@@ -162,6 +162,10 @@ function raceControls(state, rh) {
       slot(rh.onSideStory, { onclick: () => rh.skipSide() }, 'Skip side stories ⏭'),
     ),
     settingsRow(state, rh),
+    // After the game ends (never during it): the full game log, HTML + JSON.
+    state.race?.over ? h('div', { class: 'export-row' },
+      h('button', { class: 'btn btn-small', onclick: () => rh.exportLog() }, 'Export game log'),
+      state.cheatsUsed ? h('span', { class: 'cheats-used' }, 'Cheats used') : null) : null,
   );
 }
 
@@ -319,6 +323,7 @@ function renderCard(state, card) {
     // ------------------------------------------------------------ finale
     case 'finale-title':
       return h('div', { class: 'card card-finale card-title' },
+        state.cheatsUsed ? h('div', { class: 'cheats-used' }, 'Cheats used') : null,
         h('div', { class: 'label' }, 'Trinity Church, New York'),
         h('h2', { class: 'card-big' }, 'The race is over'),
         h('p', { class: 'hint' }, 'Who stands on the podium?'),
@@ -403,6 +408,7 @@ function renderCard(state, card) {
 
     case 'the-end':
       return h('div', { class: 'card card-finale' },
+        state.cheatsUsed ? h('div', { class: 'cheats-used' }, 'Cheats used') : null,
         h('h2', {}, 'Final standings'),
         standingsList(card.standings),
         h('p', { class: 'hint end-note' }, 'Thanks for riding.'),

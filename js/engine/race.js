@@ -36,6 +36,7 @@ import { initAgents } from './agents.js';
 import { scheduleOffers, valentineEnding } from './valentine.js';
 import { resolveDeadVote, openDeadVote } from './dead.js';
 import { decideEnding } from './endings.js';
+import { recordRound } from './game-log.js';
 
 /** Round types for a stage with n rounds: Day/Night alternate, last is the Finish Line. */
 export function roundTypes(n) {
@@ -275,6 +276,8 @@ export function runRound(state) {
   }
   // The dead vote on the next round while this one is revealed.
   openDeadVote(state);
+  recordRound(state, result); // the exported game log
+  if (result.finale) race.finale = result.finale;
   state.rngState = rng.getState();
   return result;
 }

@@ -34,7 +34,7 @@ import { standMods } from './stands.js';
 import { allyOf } from './alliances.js';
 import { hasHorse, takeHorse } from './horses.js';
 import { carried, takePart } from './corpse.js';
-import { blessed } from './dead.js';
+import { deathProof } from './dead.js';
 import { isLoveTrain, redirectMisfortune } from './final-stage.js';
 
 const F = () => RULES.fights;
@@ -99,8 +99,15 @@ export function npcDefend(rng, r) {
 /** Can this racer die right now? (Canon racers can't in Stage 1.) */
 export function mortal(ctx, who) {
   if (who.immortal) return false; // Funny Valentine
-  if (blessed(ctx, who)) return false; // the dead's Blessing (milestone 6a)
+  if (deathProof(ctx, who)) return false; // safe stages for PCs, the dead's Blessing, Love Train
   return !(who.tier === 'canon' && RULES.canonImmuneStages.includes(ctx.stage?.id));
+}
+
+/** PC deaths lean late: in earlier stages a beaten PC more often gets away (rules.pcDeathByStage). */
+function lateEnough(ctx, who) {
+  if (who.tier !== 'pc') return true;
+  const m = RULES.pcDeathByStage[ctx.stage?.id] ?? 1;
+  return m >= 1 || ctx.rng.chance(m);
 }
 
 function die(ctx, who, cause, killer, masked = false) {
@@ -180,7 +187,7 @@ export function resolveFight(ctx, spec) {
     win(margin, caught);
   } else {
     // Reversal: the defender wins.
-    if (spec.defend === 'fight-kill' && -margin >= F().killMargin && mortal(ctx, x)) {
+    if (spec.defend === 'fight-kill' && -margin >= F().killMargin && mortal(ctx, x) && lateEnough(ctx, x)) {
       outcome = 'reversal-kill';
       death = true;
       text += masked ? LINES.unmasked : LINES.reversalKill;
@@ -210,7 +217,7 @@ export function resolveFight(ctx, spec) {
       outcome = 'kill-missed';
       text += LINES.killMissed + (redirectMisfortune(ctx, y, x) ?? '');
     } else if (choice === 'kill') {
-      if (m < F().killMargin || ctx.rng.chance(F().killEscape) || !mortal(ctx, y)) {
+      if (m < F().killMargin || ctx.rng.chance(F().killEscape) || !mortal(ctx, y) || !lateEnough(ctx, y)) {
         outcome = 'kill-missed';
         y.injured = true;
         text += LINES.killMissed;

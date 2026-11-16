@@ -88,8 +88,9 @@ export function lintEvents(events = EVENTS) {
  * How likely a deadly event is to pick this racer: tier odds × Stage Plan,
  * and a Stand helps survive hazards (rules.standTier.hazardDeath).
  */
-export function deathWeight(racer, hazard = false) {
+export function deathWeight(racer, hazard = false, stageId = null) {
   let w = (RULES.deathOdds[racer.tier] ?? 1) * (planOf(racer)?.deathMult ?? 1);
+  if (racer.tier === 'pc' && stageId != null) w *= RULES.pcDeathByStage[stageId] ?? 1;
   if (hazard) w *= standMods(racer)?.hazardDeath ?? 1;
   return w;
 }
@@ -157,7 +158,7 @@ export function roleFits(ctx, e, key, racer) {
   return true;
 }
 
-function eventWeight(e, focus) {
+function eventWeight(e, focus, ctx = null) {
   let w = e.weight;
   const P = RULES.personalityLean[focus.personality] ?? {};
   for (const tag of e.tags) {
@@ -166,7 +167,7 @@ function eventWeight(e, focus) {
     w *= focus.lean?.[tag] ?? 1;
   }
   if (e.lean) w *= e.lean[focus.personality] ?? 1;
-  if (e.effects[e.focusKey]?.dies) w *= deathWeight(focus, isHazard(e));
+  if (e.effects[e.focusKey]?.dies) w *= deathWeight(focus, isHazard(e), ctx?.stage?.id);
   if (e.tags.includes('stand')) w *= RULES.standEventWeight;
   // Devil's Palm lines for a canon racer follow the Worthiness band odds.
   if (e.palmOutcome) {
@@ -201,7 +202,7 @@ export function castRoles(ctx, e, focus) {
         (r) => !used.has(r.id) && !ctx.assigned.has(r.id) && !(spec.notAlly && r.id === focus.ally) && roleFits(ctx, e, key, r),
       );
       const dies = !!e.effects[key]?.dies;
-      who = ctx.rng.weighted(pool, (r) => (dies ? deathWeight(r, isHazard(e)) : 1));
+      who = ctx.rng.weighted(pool, (r) => (dies ? deathWeight(r, isHazard(e), ctx.stage?.id) : 1));
     } else if (spec.is === 'ally') {
       const a = allyOf(ctx.state, focus);
       who = a && !used.has(a.id) && !ctx.assigned.has(a.id) && roleFits(ctx, e, key, a) ? a : null;
@@ -227,7 +228,7 @@ export function runMainEvent(ctx, focus) {
   const fresh = (e) => (ctx.eventCounts[e.id] ?? 0) < (e.minor ? cap.minor : cap.full);
   let candidates = EVENTS.filter((e) => fresh(e) && whenFits(e, ctx) && roleFits(ctx, e, e.focusKey, focus));
   for (let tries = 0; tries < 10 && candidates.length; tries++) {
-    const e = ctx.rng.weighted(candidates, (ev) => eventWeight(ev, focus));
+    const e = ctx.rng.weighted(candidates, (ev) => eventWeight(ev, focus, ctx));
     if (!e) return null;
     const roles = castRoles(ctx, e, focus);
     if (!roles) {

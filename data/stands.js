@@ -80,4 +80,11 @@ export const BANNED = [
 ];
 
 export const ALL_STANDS = [...POOL, ...CANON_STANDS];
+
+// Requiem Stands: never in the pool. Only the cheat menu (testing) can give
+// one for now; the secret Requiem ending (milestone 6d) is the one real way.
+export const REQUIEM_STANDS = [
+  { id: 'gold-experience-requiem', name: 'Gold Experience Requiem', tier: 'legendary', requiem: true, from: 'gold-experience', flavor: 'Returns every action to zero. Whatever was done to you never arrives.' },
+  { id: 'silver-chariot-requiem', name: 'Silver Chariot Requiem', tier: 'legendary', requiem: true, from: 'silver-chariot', flavor: 'Puts every soul around it to sleep, and wakes them in the wrong bodies.' },
+];
 export const STAND_BY_ID = Object.fromEntries(ALL_STANDS.map((s) => [s.id, s]));

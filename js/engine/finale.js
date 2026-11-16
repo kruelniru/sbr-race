@@ -35,6 +35,7 @@ export function buildFinale(state) {
   const podium = ranked.slice(0, 3).map((r, i) => ({ rank: i + 1, ...brief(r) }));
   return {
     podium,
+    cheatsUsed: !!state.cheatsUsed, // a cheated game always says so
     // Milestone 6b: the main ending (null when normal) and epilogue cards.
     ending: endingCard(state),
     epilogues: epilogues(state, podium),

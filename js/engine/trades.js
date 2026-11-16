@@ -115,7 +115,8 @@ export function resolveTrade(ctx, t, accepted) {
   const { state } = ctx;
   const from = pc(state, t.from);
   const to = pc(state, t.to);
-  const log = (outcome) => (state.race.tradeLog ??= []).push({ outcome, gift: !t.ask, give: t.give === 'horse' ? 'horse' : 'item', stage: ctx.stage.id });
+  const giveKind = t.give === 'horse' ? 'horse' : (state.items ?? []).find((i) => i.id === t.give)?.kind ?? 'item';
+  const log = (outcome) => (state.race.tradeLog ??= []).push({ outcome, gift: !t.ask, give: t.give === 'horse' ? 'horse' : 'item', giveKind, ask: t.ask ?? null, from: t.from, to: t.to, stage: ctx.stage.id });
   if (!accepted) {
     t.status = 'refused';
     addHint(from, `${to?.name} turns down your offer.`, ctx);

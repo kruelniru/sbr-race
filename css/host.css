@@ -239,3 +239,7 @@
 .worth-bar { display: inline-flex; gap: 3px; }
 .worth-seg { width: 14px; height: 10px; border-radius: 2px; background: linear-gradient(90deg, var(--gold, #d9a441) calc(var(--fill) * 100%), #ffffff22 0); }
 .worth-word { font-size: .85em; color: var(--muted, #b9a88f); }
+
+/* the game log export and the cheat marker */
+.export-row { display: flex; gap: 12px; align-items: center; justify-content: center; margin-top: 8px; }
+.cheats-used { display: inline-block; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: #a1281b; border-radius: 6px; padding: 2px 10px; font-size: .85rem; }

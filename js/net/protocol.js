@@ -13,6 +13,8 @@ export const TO_HOST = Object.freeze({
   BUY_HORSE: 'buy_horse', // { quality | null }  pick a horse at the trader (Stage Plan window, town stages)
   OFFER: 'offer',         // { give: itemId | 'horse', to, ask: null | 'arrow' | 'rokakaka' | 'horse' }  secret trade offer
   CANCEL_OFFER: 'cancel_offer', // {}
+  CHEAT_UNLOCK: 'cheat_unlock', // { pin }  the secret cheat menu (wrong PIN: silently ignored)
+  CHEAT: 'cheat',         // { action, value? }  a cheat on yourself (only after a correct PIN)
   DEAD_VOTE: 'dead_vote', // { category: 'hazard' | 'ambush' | 'blessing', targetId? }  a dead player's vote for the next round
   VOTE: 'vote',           // { promptId, optionId }        (milestone 6)
   PING: 'ping',           // {}

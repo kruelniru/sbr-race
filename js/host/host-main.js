@@ -12,6 +12,10 @@ import { raceView, sceneFor, countdownText, barPct } from './race-view.js';
 import { Backdrop } from './backdrop.js';
 import CANON from '../../data/canon-racers.js';
 import { h, $, mount, avatar } from '../ui/dom.js';
+import { sevenTaps, openPinPad, openCheatMenu } from '../ui/cheat-ui.js';
+import { verifyPin, applyCheat, CHEAT_STANDS } from '../engine/cheats.js';
+import { CHEAT_PIN_HASH } from '../config.js';
+import { exportGameLog } from './log-export.js';
 
 const DEBUG = new URLSearchParams(location.search).has('debug');
 const app = $('#app');
@@ -115,6 +119,17 @@ function startRace() {
 
 function makeRaceHost() {
   const rh = new RaceHost({ lobby, onChange: lobby.onChange, debug: DEBUG });
+  // The secret cheat menu on a phone: the right PIN unlocks it for that phone only.
+  lobby.onCheatUnlock = async (player, pin) => {
+    if (!(await verifyPin(pin, CHEAT_PIN_HASH))) return; // wrong: nothing happens
+    player.cheatUnlocked = true;
+    lobby.sendPrivate(player.id);
+  };
+  lobby.onCheat = (player, { action, value }) => {
+    if (!player.cheatUnlocked) return;
+    const res = hostCheat(player.name, player.id, action, value);
+    lobby.sendPrivate(player.id, res.ok ? 'Cheat applied.' : res.error);
+  };
   // The choice countdown ticks without re-rendering (or re-saving) the screen.
   rh.onTick = () => {
     const t = rh.timerView();
@@ -269,8 +284,27 @@ function statusBadge() {
     reclaiming: 'Reclaiming room…',
     'signaling-lost': 'Reconnecting to server…',
   };
-  return h('div', { class: `net-status net-${netStatus.status}`, title: netStatus.detail },
+  return h('div', { class: `net-status net-${netStatus.status}`, title: netStatus.detail, onclick: cheatTap },
     labels[netStatus.status] ?? netStatus.status);
+}
+
+// ---------------------------------------------------------------- the secret cheat menu (testing)
+// 7 quick taps on the status badge, then the PIN. A wrong PIN closes silently.
+const cheatTap = sevenTaps(() => openPinPad(async (pin) => {
+  if (!(await verifyPin(pin, CHEAT_PIN_HASH))) return;
+  openCheatMenu({
+    players: lobby.state.players.filter((p) => p.hasCharacter).map((p) => ({ id: p.id, name: p.name + (p.isAI ? ' (AI)' : '') })),
+    stands: CHEAT_STANDS,
+    onAction: (action, value, target) => hostCheat('host', target, action, value),
+  });
+}));
+
+/** Apply a cheat (host menu or an unlocked phone). Records it; the game is marked "Cheats used". */
+function hostCheat(by, target, action, value) {
+  const res = applyCheat(lobby.state, { by, target, action, value });
+  if (res.ok && action === 'skip-stage9') raceHost?.cheatSkipToFinal();
+  if (res.ok) { lobby.sendPrivate(target); lobby.onChange(); }
+  return res;
 }
 
 /** Lobby settings: minimum riders and filling empty slots with AI racers. */

@@ -28,7 +28,7 @@ import { castNpc, keepNpc, npcDies } from './field.js';
 import { awakenStand } from './stands.js';
 import { render } from './text.js';
 import { displayRoles } from './events.js';
-import { blessed } from './dead.js';
+import { deathProof } from './dead.js';
 
 const C = () => RULES.corpse;
 
@@ -107,6 +107,22 @@ export function takePart(ctx, item, to, how, from = null, { quiet = false } = {}
   const got = giveTo(ctx, part, to, how, { item, from: loser });
   if (got && to.tier === 'pc') hint(to, 'receivedQuiet', { part: part.name }, ctx);
   return got;
+}
+
+/** Cheat menu (testing): every part goes to this racer, merged at once. */
+export function cheatGiveAllParts(ctx, who) {
+  for (const part of ctx.state.corpse?.parts ?? []) {
+    const item = (ctx.state.items ?? []).find((i) => i.kind === 'part' && i.partId === part.id);
+    if (item?.owner === who.id) continue;
+    const got = giveTo(ctx, part, who, 'cheat', { item: item ?? null });
+    if (got) got.merged = true;
+  }
+  ctx.state.race.mergeQueue = (ctx.state.race.mergeQueue ?? []).filter((q) => !(ctx.state.items ?? []).some((i) => i.id === q.id && i.owner === who.id));
+}
+
+/** Cheat menu: every part this racer carries comes loose. */
+export function cheatDropAllParts(ctx, who) {
+  for (const it of carried(ctx.state, who)) makeLoose(ctx, it, 'cheat');
 }
 
 /** A part comes loose from its holder (the finale's Bring-down). */
@@ -248,7 +264,7 @@ export function rejectionChance(worthiness = 50) {
 }
 
 function mortalNow(ctx, who) {
-  if (blessed(ctx, who)) return false;
+  if (deathProof(ctx, who)) return false;
   return !(who.tier === 'canon' && RULES.canonImmuneStages.includes(ctx.stage?.id));
 }
 

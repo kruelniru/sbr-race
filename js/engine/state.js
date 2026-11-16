@@ -19,6 +19,7 @@ import { Rng } from './rng.js';
 import { ITEM_KINDS, canUse } from './items.js';
 import { myOffer, tradeTargets } from './trades.js';
 import { deadVoteView } from './dead.js';
+import { CHEAT_STANDS } from './cheats.js';
 import { hasHorse } from './horses.js';
 import RULES from '../../data/rules.js';
 
@@ -184,6 +185,8 @@ export function privateView(state, playerId) {
       horse: hasHorse(p) ? tradeTargets(state, p, 'horse') : [],
     } : null,
     canAskHorse: p.mount === 'horse' && !!p.onFoot,
+    // The cheat menu: only for a phone that entered the right PIN (never hinted otherwise).
+    cheat: p.cheatUnlocked ? { stands: CHEAT_STANDS } : null,
     // Milestone 6a: the dead's vote (dead human players only).
     deadVote: deadVoteView(state, p.id),
     // Milestone 5b: only the joiner's own phone knows (the M6 secrets reveal tells everyone).

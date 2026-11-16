@@ -477,6 +477,8 @@ Dead players keep playing: each round they vote on what happens to the living. T
 
 The race winner is whoever has the most points among racers who reach New York. Dying knocks you out; retiring takes you out of the points race, but you stay in the story and can still hunt corpse parts.
 
+**Survival** (after the first live tests): players shouldn't die often. About 48% of PCs reach New York. **Stages 1–2 are safe for PCs:** nothing kills a PC there except a risk they chose (going into the Devil's Palm, piercing themselves with a Stand Arrow), at the usual rates; every fight, event, hazard, ambush or rejection leaves them hurt, slowed or robbed instead, and the line says so. From Stage 3 on, PC deaths lean late (`rules.pcDeathByStage`: ×0.2 in Stage 3 up to ×1.9 in Stage 9, for deadly events and for being killed in a fight). Canon racers keep their own rule (safe in Stage 1); NPCs are unaffected.
+
 **Points per stage:** 1st 100, 2nd 90, 3rd 80, and so on down to 10 for 10th. 11th–20th get 5 each, to keep it fair. Placements rank the named racers still racing plus the pack leaders.
 
 **Placement score** at each Finish Line: riding skill + pace earned from this stage's events − injury penalty − on-foot penalty (Riders who lost their horse) + Runner terrain modifiers + luck (Pocoloco) + randomness. Stage Plans (milestone 3) and horse quality (milestone 5) plug in here. All the numbers are in `data/rules.js`.
@@ -569,6 +571,10 @@ The race winner is still whoever has the most points (except that in the Preside
 **Open questions for milestone 6:**
 
 - **Love Train** (settled in milestone 6b): the boss needs 3+ parts and Love Train 5+; in the sim there's a boss in about half of all games and Love Train in about one in twelve.
+
+**The full game log** (after the game ends, never during it): the host gets **Export game log**, which downloads two files. (a) A readable, self-contained HTML page to share: every round in order with every line, the decisions everyone made (and whether they timed out), the Fallen and the Finish Lines; then, per stage, everything the stream didn't see, marked SECRET: Worthiness changes with numbers, Stands and their sources, corpse part movements, Valentine offers, joins, errands and deliveries, trades, the dead's votes, and every fight with its scores; then the ending. (b) The same as raw JSON (`js/engine/game-log.js` buildGameLog), with the seed and settings. Both carry the seed, the settings, the dates and whether cheats were used.
+
+**The secret cheat menu** (testing): tap the connection status in the top right (host or phone) 7 times within 3 seconds; a digits-only PIN pad appears. The right PIN opens the menu; a wrong one closes the pad without a word. Nothing else hints at it. Only a SHA-256 hash of the PIN is stored (`CHEAT_PIN_HASH` in `js/config.js`), set by `node tools/set-cheat-pin.js`; an empty hash means it never opens. A phone's PIN is checked by the host, and its cheats apply to that player only; the host's menu picks any player. Cheats: Worthiness ±10 or set; join or leave Valentine; gain all 9 parts or lose them; give any Stand (Requiem included) or remove it; a Stand Arrow or a Rokakaka; lose your horse or get a Thoroughbred; skip to the start of Stage 9 (skipped rounds run instantly, unrevealed); kill or revive; force the next sub event (the Palm, Valentine's offer, Funny Valentine, a fight). Every use is recorded; a game with any cheat says **Cheats used** on the finale's first and last cards and in both export files.
 
 **Debugging:** with `?debug=1`, the host prints every fight to the browser console with a `[fight]` prefix: both sides' base scores, rolls, the margin, both choices and the outcome.
 
@@ -680,3 +686,6 @@ Decisions made after the original design, in the order they came up:
 96. The secrets reveal (M6c): Valentine's riders and the dark hats unmasked, Worthiness, each part's journey, Stand sources, the real causes of vague deaths, the finale's secrets; then final standings. Each phone gets its own story after the last reveal.
 97. The Fallen screen shows "by a rider in a dark hat" for a masked errand kill (it used to name the joiner); the reveal unmasks it.
 98. Survival retune: PC death odds 0.46 → 0.95 brings PCs reaching New York to about 38%; agents −8 → −2 keeps the President's ending near 15–20% (joiners keeping parts had lowered it).
+99. Survival after the first live tests: about 48% of PCs reach New York (PC death odds 0.95 → 0.75). Stages 1–2 are safe for PCs except the Palm and the Arrow; later PC deaths lean toward Stages 6–9 (×0.2 in Stage 3 … ×1.9 in Stage 9), for events and fights alike.
+100. The full game log: exported by the host only after the game ends, as a readable HTML page (secrets marked) and raw JSON, both with the seed, settings, dates and the cheat flag.
+101. The secret cheat menu for testing: 7 quick taps on the connection status, then a PIN checked against a stored SHA-256 hash (set with tools/set-cheat-pin.js; the PIN is never in the repo). Every cheat is recorded and the game is marked "Cheats used" on the finale and in the exports.

@@ -40,6 +40,8 @@ export class HostLobby {
     this.onOffer = null;           // RaceHost: (player, { give, to, ask }) => void
     this.onCancelOffer = null;     // RaceHost: (player) => void
     this.onDeadVote = null;        // RaceHost: (player, { category, targetId }) => void
+    this.onCheatUnlock = null;     // host-main: (player, pin) => void
+    this.onCheat = null;           // host-main: (player, { action, value }) => void
     this.timerView = null;         // RaceHost: () => { remainingMs, durationMs, paused } | null
 
     // After a host reload nobody is connected until their phone says hello.
@@ -103,6 +105,12 @@ export class HostLobby {
         break;
       case TO_HOST.CANCEL_OFFER:
         this.onCancelOffer?.(player);
+        break;
+      case TO_HOST.CHEAT_UNLOCK:
+        if (typeof m.pin === 'string') this.onCheatUnlock?.(player, m.pin);
+        break;
+      case TO_HOST.CHEAT:
+        if (typeof m.action === 'string') this.onCheat?.(player, { action: m.action, value: m.value ?? null });
         break;
       case TO_HOST.DEAD_VOTE:
         if (typeof m.category === 'string' && (m.targetId == null || typeof m.targetId === 'string')) this.onDeadVote?.(player, { category: m.category, targetId: m.targetId ?? null });

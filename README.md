@@ -96,6 +96,8 @@ js/engine/           pure game logic, no DOM (Node can import it)
   final-stage.js     the boss, Love Train, Bring them down, Funny Valentine's last stand (M6b)
   endings.js         the main ending and epilogues (M6b)
   secrets.js         the secrets reveal and each player's story (M6c)
+  game-log.js        the full game log (exported after the game)
+  cheats.js          the secret cheat menu (testing; PIN hash only)
   finale-sections.js extra finale cards (Stands awakened)
   plans.js           Stage Plan lookups
   reveal.js          round result -> host cards + text-based timing (shared with the sim)
@@ -255,3 +257,7 @@ the whole game in localStorage too, so reloading the host tab offers
 `{role}` is a name, `{role.they|them|their|theirs|themself}` is a pronoun
 (capitalize it to capitalize the word), and `{role:singular/plural}` is verb
 agreement (`{role:s}` and `{role:es}` are shorthands). See `js/engine/text.js`.
+
+## Cheat PIN (testing)
+
+Run `node tools/set-cheat-pin.js` and type a PIN (4–12 digits) twice. Only its hash is written to `js/config.js`; commit and push that file.
