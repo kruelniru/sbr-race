@@ -211,3 +211,7 @@
 /* milestone 5b: anonymous announcements ("Someone has been deemed worthy of the Saint.") */
 .event-line.announce { justify-content: center; }
 .event-line.announce p { font-style: italic; color: var(--gold-2, #f3d58a); letter-spacing: .02em; text-align: center; }
+
+/* ?debug=1: each phone's connection route */
+.tag-route { background: #1f3a2a; color: #9fe0b5; }
+.tag-route.relay { background: #3a2a10; color: #f3d58a; }

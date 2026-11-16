@@ -33,6 +33,7 @@ export class HostLobby {
     this.connToPlayer = new Map(); // connId -> playerId
     this.playerToConn = new Map(); // playerId -> connId
     this.lastSeen = new Map();     // playerId -> ms timestamp
+    this.connInfo = new Map();     // connId -> { type: 'direct' | 'relay', ... } (?debug=1 only)
     this.onChoice = null;          // RaceHost: (player, CHOICE message) => void
     this.onUseItem = null;         // RaceHost: (player, itemId) => void
     this.onBuyHorse = null;        // RaceHost: (player, quality | null) => void
@@ -44,6 +45,24 @@ export class HostLobby {
     for (const p of state.players) if (!p.isAI) p.connected = false;
 
     setInterval(() => this.#sweep(), 3000);
+  }
+
+  // ------------------------------------------------------------ connection routes (?debug=1)
+
+  /** HostNet reports which route a phone's connection uses. */
+  handleConnType(connId, info) {
+    const prev = this.connInfo.get(connId);
+    this.connInfo.set(connId, info);
+    if (prev?.type === info.type && prev?.local === info.local) return;
+    const player = getPlayer(this.state, this.connToPlayer.get(connId));
+    console.log(`[net] ${player?.name || `connection ${connId}`}: ${info.type.toUpperCase()} (local ${info.local}, remote ${info.remote}, ${info.protocol}${info.server ? `, via ${info.server}` : ''})`);
+    this.onChange?.();
+  }
+
+  /** 'direct' | 'relay' | null for a player's live connection. */
+  connTypeOf(playerId) {
+    const connId = this.playerToConn.get(playerId);
+    return connId == null ? null : this.connInfo.get(connId)?.type ?? null;
   }
 
   // ------------------------------------------------------------ network in

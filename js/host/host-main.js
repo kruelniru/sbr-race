@@ -55,6 +55,7 @@ async function openRoom(saved) {
   const net = new HostNet({
     onMessage: (connId, m) => lobby.handleMessage(connId, m),
     onClose: (connId) => lobby.handleClose(connId),
+    onConnType: DEBUG ? (connId, info) => lobby.handleConnType(connId, info) : null,
     onStatus: (status, detail = '') => {
       netStatus = { status, detail };
       render();
@@ -239,6 +240,8 @@ function disconnectedNote(view) {
 }
 
 function playerCard(p) {
+  // ?debug=1: how this phone reaches the host (direct, or through the TURN relay).
+  const route = DEBUG && !p.isAI ? lobby.connTypeOf(p.id) : null;
   return h('li', { class: 'player-card' + (p.connected ? '' : ' offline') },
     avatar(p.name, p.picture, 'lg'),
     h('div', { class: 'player-info' },
@@ -250,6 +253,7 @@ function playerCard(p) {
     h('div', { class: 'tags' },
       p.mount === 'runner' && h('span', { class: 'tag' }, 'Runner'),
       p.isAI && h('span', { class: 'tag tag-ai' }, 'AI'),
+      DEBUG && !p.isAI && h('span', { class: 'tag tag-route' + (route === 'relay' ? ' relay' : '') }, route ? route : 'route…'),
     ),
     h('button', {
       class: 'kick', title: 'Remove rider',

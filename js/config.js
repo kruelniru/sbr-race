@@ -41,6 +41,13 @@ export const ICE_SERVERS = [
   // Use credentials you're fine sharing, and rotate them if they're abused.
   // ===================================================================
 
+  // Metered free plan (50 GB/month). To rotate: delete this credential in the Metered dashboard, create a new one, paste the new entries here, push.
+  { urls: 'stun:stun.relay.metered.ca:80' },
+  { urls: 'turn:global.relay.metered.ca:80', username: 'dc53a25404cdaab409031edd', credential: '0ls4Wwb9yDp67uBq' },
+  { urls: 'turn:global.relay.metered.ca:80?transport=tcp', username: 'dc53a25404cdaab409031edd', credential: '0ls4Wwb9yDp67uBq' },
+  { urls: 'turn:global.relay.metered.ca:443', username: 'dc53a25404cdaab409031edd', credential: '0ls4Wwb9yDp67uBq' },
+  { urls: 'turns:global.relay.metered.ca:443?transport=tcp', username: 'dc53a25404cdaab409031edd', credential: '0ls4Wwb9yDp67uBq' },
+
   // Best-effort fallback: the PeerJS project's own public TURN server.
   // Unofficial, no uptime guarantee. Keep it as a backup, not the plan.
   {

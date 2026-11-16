@@ -12,10 +12,11 @@ export class HostNet {
    * @param {(connId:number) => void} handlers.onClose
    * @param {(status:string, detail?:string) => void} [handlers.onStatus]
    */
-  constructor({ onMessage, onClose, onStatus = () => {} }) {
+  constructor({ onMessage, onClose, onStatus = () => {}, onConnType = null }) {
     this.onMessage = onMessage;
     this.onClose = onClose;
     this.onStatus = onStatus;
+    this.onConnType = onConnType; // (connId, { type: 'direct' | 'relay', local, remote, protocol, server }) for ?debug=1
     this.peer = null;
     this.conns = new Map(); // connId -> DataConnection
     this.nextConnId = 1;
@@ -100,6 +101,16 @@ export class HostNet {
       }
     });
 
+    // Which route did WebRTC pick? Checked a few times: ICE can switch routes.
+    if (this.onConnType) {
+      const check = async () => {
+        if (!this.conns.has(connId)) return;
+        const info = await connectionType(conn.peerConnection);
+        if (info) this.onConnType(connId, info);
+      };
+      conn.on('open', () => { for (const ms of [1500, 6000, 20000]) setTimeout(check, ms); });
+    }
+
     const closed = () => {
       if (!this.conns.has(connId)) return;
       this.conns.delete(connId);
@@ -137,6 +148,36 @@ export class HostNet {
   destroy() {
     this.peer?.destroy();
     this.conns.clear();
+  }
+}
+
+/**
+ * The route a WebRTC connection uses, from its stats: 'relay' if either end of
+ * the selected candidate pair is a TURN relay candidate, otherwise 'direct'.
+ */
+export async function connectionType(pc) {
+  if (!pc?.getStats) return null;
+  try {
+    const stats = await pc.getStats();
+    const byId = new Map();
+    stats.forEach((s) => byId.set(s.id, s));
+    let pair = null;
+    stats.forEach((s) => {
+      if (s.type === 'transport' && s.selectedCandidatePairId) pair = byId.get(s.selectedCandidatePairId);
+    });
+    if (!pair) stats.forEach((s) => { if (s.type === 'candidate-pair' && s.state === 'succeeded' && (s.nominated || s.selected) && !pair) pair = s; });
+    if (!pair) return null;
+    const local = byId.get(pair.localCandidateId);
+    const remote = byId.get(pair.remoteCandidateId);
+    const relay = local?.candidateType === 'relay' || remote?.candidateType === 'relay';
+    return {
+      type: relay ? 'relay' : 'direct',
+      local: local?.candidateType ?? '?', remote: remote?.candidateType ?? '?',
+      protocol: local?.relayProtocol ?? local?.protocol ?? '?',
+      server: local?.candidateType === 'relay' ? local.url ?? local.address ?? '' : '',
+    };
+  } catch {
+    return null;
   }
 }
 
