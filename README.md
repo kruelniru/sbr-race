@@ -84,13 +84,17 @@ js/engine/           pure game logic, no DOM (Node can import it)
   choices.js         Stage Plans, sub events, Hunt a rival, Palm/Arrow/Rokakaka prompts, items in use
   stands.js          Stand odds, the pool, giving/removing Stands, canon locks
   palm.js            the Devil's Palm outcomes, private hints
-  items.js           the item inventory (owner field; trading in M5)
+  items.js           the item inventory (owner field)
+  fights.js          every fight: score, both sides' choices, outcomes, kill tags (M5)
+  horses.js          horse quality, losing/taking/buying horses, the trader (M5)
+  alliances.js       one ally at a time, canon fit, ride double, breaking up (M5)
+  trades.js          secret trade offers, answered in the next window (M5)
   finale-sections.js extra finale cards (Stands awakened)
   plans.js           Stage Plan lookups
   reveal.js          round result -> host cards + text-based timing (shared with the sim)
   finale.js          podium, awards, memorial, and the registry for later finale sections
 js/host/             host-main.js, lobby.js, race-host.js (reveal, Back, skipping), race-view.js, backdrop.js, persist.js, debug.js
-js/phone/            phone-main.js, secrets.js (Worthiness bar, Stand, Items, hints), character-form.js, image.js, wake-lock.js, feed.js
+js/phone/            phone-main.js, secrets.js (Worthiness bar, Stand, Items, hints), trade.js (horse trader, trade offers), character-form.js, image.js, wake-lock.js, feed.js
 js/ui/dom.js         small DOM helpers
 data/                game content, separate from the engine
   rules.js           every tunable number (points, placement, death odds, choices, pacing...)
@@ -155,6 +159,17 @@ tests/               node --test
   `data/sub-events.js`. Numbers: `rules.js` (`worthiness`, `standOdds`,
   `standTier`, `palm`, `arrows`, `rokakaka`).
 - The finale adds a **Stands awakened** card after the awards.
+
+### Fights, horses, alliances, trading (milestone 5a)
+- One fight system (`js/engine/fights.js`) for Hunt a rival, "Attacked on the
+  trail", "A chance to strike" and PC vs PC: both sides commit first ("If you
+  win: kill / let them go / take their horse"; fight back to kill / fight back
+  and let them go / flee). Numbers: `rules.js` → `fights`, `standTier`.
+- Horses have a quality (Nag / Sound / Fine / Thoroughbred). In Stages 5, 6, 8
+  and 9 the Stage Plan card has a **Horse trader**. Numbers: `rules.js` → `horses`.
+- **Ally up** (Stage Plan) and alliance sub events; `rules.js` → `alliances`.
+- **Trading:** "Offer" buttons on Items and the horse row send a secret offer;
+  the receiver answers in their next decision.
 
 **Host controls:** ◂ Back (view-only: steps through earlier cards and earlier
 rounds, changes nothing), Pause/Auto, Next, Back to live, Skip side stories.

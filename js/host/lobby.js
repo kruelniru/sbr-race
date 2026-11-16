@@ -35,6 +35,9 @@ export class HostLobby {
     this.lastSeen = new Map();     // playerId -> ms timestamp
     this.onChoice = null;          // RaceHost: (player, CHOICE message) => void
     this.onUseItem = null;         // RaceHost: (player, itemId) => void
+    this.onBuyHorse = null;        // RaceHost: (player, quality | null) => void
+    this.onOffer = null;           // RaceHost: (player, { give, to, ask }) => void
+    this.onCancelOffer = null;     // RaceHost: (player) => void
     this.timerView = null;         // RaceHost: () => { remainingMs, durationMs, paused } | null
 
     // After a host reload nobody is connected until their phone says hello.
@@ -69,6 +72,17 @@ export class HostLobby {
         break;
       case TO_HOST.USE_ITEM:
         if (typeof m.itemId === 'string') this.onUseItem?.(player, m.itemId);
+        break;
+      case TO_HOST.BUY_HORSE:
+        if (m.quality === null || typeof m.quality === 'string') this.onBuyHorse?.(player, m.quality);
+        break;
+      case TO_HOST.OFFER:
+        if (typeof m.give === 'string' && typeof m.to === 'string' && (m.ask == null || typeof m.ask === 'string')) {
+          this.onOffer?.(player, { give: m.give, to: m.to, ask: m.ask ?? null });
+        }
+        break;
+      case TO_HOST.CANCEL_OFFER:
+        this.onCancelOffer?.(player);
         break;
       default:
         // VOTE arrives in milestone 6.
@@ -262,8 +276,10 @@ export class HostLobby {
     for (const [playerId, connId] of this.playerToConn) this.net.send(connId, this.#youMsg(playerId));
   }
 
-  sendPrivate(playerId) {
-    this.#sendTo(playerId, this.#youMsg(playerId));
+  sendPrivate(playerId, notice = null) {
+    const m = this.#youMsg(playerId);
+    if (notice) m.notice = notice;
+    this.#sendTo(playerId, m);
   }
 
   /** YOU: the player's private view, plus the choice timer if their prompt is open. */

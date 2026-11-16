@@ -16,6 +16,7 @@ import RULES from '../../data/rules.js';
 import STAGES from '../../data/stages.js';
 import HORSES from '../../data/horse-names.js';
 import { startQuality, canonQuality } from './horses.js';
+import { allyOf } from './alliances.js';
 import { Rng } from './rng.js';
 import { readyPlayers } from './state.js';
 import { initPcRacer, makeCanonRacer, canonDefs, namedRacers, findRacer, startWorthiness, canonStartingStand } from './racers.js';
@@ -271,6 +272,12 @@ export function nextRoundHeader(state) {
   };
 }
 
+/** Who this racer rides with (alliances are public: the stream announces them). */
+function allyName(state, p) {
+  const a = allyOf(state, p);
+  return a ? a.name : null;
+}
+
 /** The phone's Worthiness bar: a coarse level (0..barSteps), never the number. */
 export function worthinessLevel(w) {
   const steps = RULES.worthiness.barSteps;
@@ -289,7 +296,9 @@ export function syncShown(state) {
       status: p.status,
       mount: p.mount,
       horse: p.horse,
+      horseQuality: p.horseQuality ?? null,
       onFoot: p.onFoot,
+      ally: allyName(state, p),
       points: p.points,
       kills: p.kills,
       lastPlacement: last ? { stage: last.stage, rank: last.rank } : null,

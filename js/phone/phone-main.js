@@ -12,6 +12,7 @@ import { characterForm } from './character-form.js';
 import { MiniFeed } from './feed.js';
 import { keepAwake } from './wake-lock.js';
 import { worthinessBar, standCard, itemsCard, hintsCard } from './secrets.js';
+import { trader, offerForm, pendingOffer } from './trade.js';
 
 // Storage keys. Tabs in one browser share localStorage, so to test several
 // "phones" on one computer give each tab its own slot: phone.html?room=ABCD&slot=2
@@ -47,6 +48,8 @@ let picking = null;    // { promptId, optionId } while choosing a Hunt a rival t
 let sent = null;       // { promptId, optionId, targetId } last answer we sent
 let lastPromptId = null;
 let choiceError = '';
+let offering = null;    // { give: itemId | 'horse', label } while making a trade offer
+let notice = '';       // a short message from the host (offer sent, trader refused...)
 setInterval(tickCountdown, 250);
 
 const net = new PhoneNet({
@@ -125,6 +128,7 @@ function handle(m) {
 
     case TO_PHONE.YOU:
       you = m.you;
+      notice = m.notice ?? '';
       timer = m.timer ? { ...m.timer, at: performance.now() } : null;
       if (you?.prompt?.id !== lastPromptId) {
         lastPromptId = you?.prompt?.id ?? null;
@@ -347,11 +351,13 @@ function renderRacing() {
         : h('div', { class: 'race-where' }, `Stage ${head.stageId} · ${head.stageName}`, h('span', { class: 'race-round' }, head.label))),
       you?.prompt ? choiceCard(you.prompt) : null,
       youCard(),
+      notice ? h('p', { class: 'notice' }, notice) : null,
       r ? statusCard(r) : null,
+      offering ? offerSheet() : you?.offer ? offerPending(you.offer) : null,
       r && r.status !== 'dead' ? standCard(r) : null,
       itemsCard(you, (itemId) => {
         if (!net.send(msg(TO_HOST.USE_ITEM, { itemId }))) choiceError = 'Not connected. Try again in a moment.';
-      }),
+      }, canOffer('item') ? (it) => { offering = { give: it.id, label: it.label }; renderScreen(); } : null),
       r?.hints?.length ? hintsCard(r.hints) : null,
       r?.status === 'dead'
         ? h('p', { class: 'waiting fallen' }, 'You can still follow the race below. Dead riders get to vote on the living in a later update.')
@@ -414,11 +420,11 @@ function choiceCard(prompt) {
     h('span', { class: 'opt-label' }, o.label,
       prompt.star === o.id ? h('span', { class: 'star' }, '★ In character') : null),
     o.hint && h('span', { class: 'opt-hint' }, o.hint),
-    isChosen && o.needsTarget && targetName(chosen.targetId) ? h('span', { class: 'opt-target' }, `Hunting ${targetName(chosen.targetId)}`) : null);
+    isChosen && o.needsTarget && targetName(chosen.targetId) ? h('span', { class: 'opt-target' }, `${o.id === 'ally' ? 'Asking' : 'Hunting'} ${targetName(chosen.targetId)}`) : null);
   }));
 
   const targets = picking?.promptId === prompt.id && h('div', { class: 'target-pick' },
-    h('h3', {}, 'Who are you hunting?'),
+    h('h3', {}, picking?.optionId === 'ally' ? 'Who do you want to ride with?' : 'Who are you hunting?'),
     h('div', { class: 'target-list' }, (prompt.targets ?? []).map((t) =>
       h('button', { type: 'button', class: 'btn target-btn', onclick: () => sendChoice(prompt, picking.optionId, t.id) },
         t.name, t.tier !== 'pc' ? h('span', { class: 'ai-tag' }, t.tier === 'canon' ? 'canon' : 'NPC') : null))),
@@ -442,10 +448,39 @@ function choiceCard(prompt) {
     h('p', { class: 'choice-text' }, prompt.text),
     options,
     targets,
+    prompt.shop?.length ? traderCard(prompt) : null,
     status,
   );
   queueMicrotask(tickCountdown);
   return card;
+}
+
+// ---------------------------------------------------------------- milestone 5a: horses, alliances, trading
+
+const QUALITY = { nag: 'Nag', sound: 'Sound', fine: 'Fine', thoroughbred: 'Thoroughbred' };
+
+function canOffer(kind) {
+  if (!you?.tradeTargets || you.offer || offering) return false;
+  return (kind === 'horse' ? you.tradeTargets.horse : you.tradeTargets.item).length > 0;
+}
+
+function traderCard(prompt) {
+  return trader(prompt, !!you?.race?.onFoot, (quality) => {
+    if (!net.send(msg(TO_HOST.BUY_HORSE, { quality }))) choiceError = 'Not connected. Try again in a moment.';
+    renderScreen();
+  });
+}
+
+function offerSheet() {
+  return offerForm(you, offering, (o) => {
+    notice = o && !net.send(msg(TO_HOST.OFFER, o)) ? 'Not connected. Try again in a moment.' : o ? 'Sending…' : '';
+    offering = null;
+    renderScreen();
+  });
+}
+
+function offerPending(o) {
+  return pendingOffer(o, () => net.send(msg(TO_HOST.CANCEL_OFFER)));
 }
 
 function statusCard(r) {
@@ -456,11 +491,15 @@ function statusCard(r) {
   }[r.status];
   const mount = r.mount === 'runner'
     ? 'Runner: no horse, ever'
-    : r.onFoot ? `On foot (lost ${r.horse})` : `Horse: ${r.horse}`;
+    : r.onFoot
+      ? `On foot (lost ${r.horse})`
+      : [`${r.horse}${r.horseQuality ? ` · ${QUALITY[r.horseQuality]}` : ''}`,
+        canOffer('horse') ? h('button', { type: 'button', class: 'btn btn-small btn-quiet offer-horse', onclick: () => { offering = { give: 'horse', label: r.horse }; renderScreen(); } }, 'Offer') : null];
   return h('dl', { class: 'status-card' },
     h('dt', {}, 'Status'), h('dd', { class: `st-${status[1]}` }, status[0]),
     h('dt', {}, r.mount === 'runner' ? 'Running' : 'Horse'), h('dd', {}, mount),
     h('dt', {}, 'Points'), h('dd', {}, String(r.points)),
+    r.ally && r.status !== 'dead' ? [h('dt', {}, 'Riding with'), h('dd', {}, r.ally)] : null,
     r.lastPlacement && [h('dt', {}, 'Last stage'), h('dd', {}, `${ordinal(r.lastPlacement.rank)} in Stage ${r.lastPlacement.stage}`)],
     r.kills ? [h('dt', {}, 'Kills'), h('dd', {}, String(r.kills))] : null,
     you?.plan && r.status === 'racing' ? [h('dt', {}, 'Stage plan'), h('dd', {}, PLANS.find((x) => x.id === you.plan)?.label ?? you.plan)] : null,

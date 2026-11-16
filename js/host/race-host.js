@@ -23,7 +23,8 @@
 
 import { startRace, runRound, syncShown, nextRoundHeader } from '../engine/race.js';
 import { buildCards, cardSeconds } from '../engine/reveal.js';
-import { needsStagePlans, openStagePlans, openSubEvents, closeChoices, answerPrompt, useItem } from '../engine/choices.js';
+import { needsStagePlans, openStagePlans, openSubEvents, closeChoices, answerPrompt, useItem, chooseHorse } from '../engine/choices.js';
+import { offerTrade, cancelTrade } from '../engine/trades.js';
 import { getPlayer } from '../engine/state.js';
 
 export class RaceHost {
@@ -43,6 +44,9 @@ export class RaceHost {
     this.ticker = setInterval(() => this.#tick(), 250);
     lobby.onChoice = (player, m) => this.answer(player, m);
     lobby.onUseItem = (player, itemId) => this.useItem(player, itemId);
+    lobby.onBuyHorse = (player, quality) => this.buyHorse(player, quality);
+    lobby.onOffer = (player, offer) => this.offer(player, offer);
+    lobby.onCancelOffer = (player) => this.cancelOffer(player);
     lobby.timerView = () => this.timerView();
   }
 
@@ -284,6 +288,26 @@ export class RaceHost {
     if (!this.#windowOpen()) return;
     const res = useItem(this.state, player.id, itemId);
     if (res.ok) this.lobby.sendPrivate(player.id);
+  }
+
+  /** The horse trader (Stage Plan window in town stages). Private. */
+  buyHorse(player, quality) {
+    if (!this.#windowOpen()) return;
+    const res = chooseHorse(this.state, player.id, quality);
+    this.lobby.sendPrivate(player.id, res.ok ? null : res.error);
+  }
+
+  /** A secret trade offer; the receiver answers in their next window. */
+  offer(player, o) {
+    const res = offerTrade(this.state, player.id, o);
+    this.lobby.sendPrivate(player.id, res.ok ? 'Offer sent. They answer in their next decision.' : res.error);
+    if (res.ok) this.onChange();
+  }
+
+  cancelOffer(player) {
+    const res = cancelTrade(this.state, player.id);
+    this.lobby.sendPrivate(player.id, res.ok ? 'Offer cancelled.' : res.error);
+    if (res.ok) this.onChange();
   }
 
   /** Pause / resume the timer (the host is talking over the stream). */

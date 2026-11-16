@@ -89,7 +89,7 @@ At character creation a PC picks **Rider** (default) or **Runner**. Picking Runn
 - Runners have no horse, ever. Horse-death events skip them, and the on-foot penalty never applies. A Runner can't buy or be given a horse later.
 - **Terrain:** Runners get a placement bonus in rough terrain (desert, mountains, the ice at Mackinac) and a small penalty on open flats (the prairie, Illinois). There is also a flat calibration modifier. All of these are in `rules.js`.
 - **Runner-only events:** exhaustion, leg injuries (work like injured), raw feet, and shortcuts horses can't take (canyon gaps, goat paths, thin ice). Each comes with its own risks.
-- Balanced with the sim so Runners and Riders score about the same on average across a whole game.
+- Balanced with the sim so Runners and Riders score about the same on average across a whole game (Riders' points include what they spend on horses; the flat modifier is −7 since milestone 5).
 
 ## Race structure
 
@@ -180,15 +180,17 @@ Players make one Stage Plan per stage, plus sub events when something happens to
 | --- | --- | --- | --- |
 | Push hard | Better placement | More hazard and horse risk | M3 |
 | Pace yourself | Safe | Average placement | M3 |
-| Hunt a rival | A guaranteed sprint showdown with your pick | You might lose | M3 (a real fight in M5) |
+| Hunt a rival | A guaranteed fight with your pick | You might lose it, or worse; −5 placement | M3 (a real fight from M5) |
 | Lay low | Very safe | Bad placement | M3 |
 | Seek the Devil's Palm (Stages 2–3) | A guaranteed Edge of the Devil's Palm that stage | Low Worthiness can kill you; −5 placement | M4 |
 | Hunt a corpse part | Better odds of finding one | Valentine's agents notice you | M5 |
-| Ally up | Ride with someone (they accept or refuse) | They might betray you | M5 |
+| Ally up (only while you ride alone) | Ride with someone (they accept or refuse) | They might betray you | M5 |
 
 Plans whose systems don't exist yet are hidden, not greyed out. The numbers live in `data/plans.js`; the sim checks that no plan dominates (`--plans random`, `--plans <id>`, `--plans star`).
 
-**Hunt a rival (milestone 3):** pick any racing named racer (a PC, canon racer or named NPC), never yourself. Sometime in the stage you get a sprint showdown with them: go all out or ride smart; a PC target chooses too (race them or don't take the bait). The winner gets +5 points and pace. If the target dies or retires first, you get a normal event and the line "X's rival is gone." Several racers can hunt one target, but a target has at most one showdown per round; a hunter who can't get one by the end of the stage "never catches up".
+**Hunt a rival:** pick any racing named racer (a PC, canon racer or named NPC), never yourself. Sometime in the stage you catch up and it comes to a **fight** (see Fights), started by you: you choose what happens if you win, and a PC target chooses how to meet you at the same time. The winner gets +5 points and pace. If the target dies or retires first, you get a normal event and the line "X's rival is gone." Several racers can hunt one target, but a target has at most one showdown per round; a hunter who can't get one by the end of the stage "never catches up".
+
+**Ally up (milestone 5):** pick a racing named racer who rides alone. A PC answers in their next sub-event window ("Ride together?"); a canon racer answers by character fit (Gyro takes in the worthy, Diego rarely unless you're in the top five); a named NPC agrees 60% of the time. The stream announces the answer.
 
 **Sub events:** every round, each PC has a chance of one, and at least one PC always gets one (Low about 1 a round, Normal 2–3, High 4–5, a host setting; rival showdowns count toward it). Everyone affected answers at the same time, and the host screen announces it while the main flow waits. A sub event counts as that racer's event for the round. Some sub events chain (win a fight, then choose kill or spare).
 
@@ -209,17 +211,26 @@ In milestone 4:
 
 A person's choice result always shows in the Main Story, even a quiet one ("Kruel waits out the storm"). Quiet results for AI racers and timed-out players go to the Meanwhile card.
 
-Later milestones:
+In milestone 5a:
 
-- **Won a fight:** kill, spare, take their horse, or take their corpse part.
+- **Attacked on the trail:** an NPC attacks you. Fight back to kill, fight back and let them go, or flee.
+- **A chance to strike:** a named racer is alone and hasn't seen you. "If you win: kill them / let them go / take their horse", or leave them be. Ruthless racers get this one more often. If the target is a PC, they get "Someone is coming for you" at the same time.
+- **Your ally is in trouble:** stop and help (counts as help), or ride on (abandoning: the alliance ends, −12).
+- **A chance to betray:** your ally is asleep beside their horse. Take it and go (−12, the alliance ends), or stay loyal. ★ only for Ruthless and Opportunist personalities, but anyone can pick it.
+- **Your second horse is gone:** go on, on foot, or retire.
+- **Ride together?** (an Ally up invitation from another player) and **A trade offer** (secret).
+
+There is no separate "Won a fight" window: fights ask "If you win:" in the same prompt (decision 57), so a fight never needs a second round of choices.
+
+In milestone 5b:
+
 - **Found a part:** keep it, hide it, or give it to someone.
 - **Ambushed by agents:** fight, flee, or hand over a part to live.
-- **Injured racer on the trail:** stop to help (lose time, gain Worthiness) or ride past.
 - **Valentine's offer (Stages 4–6 only):** join him or refuse.
 
-**PC vs PC fights:** both players choose at once. The attacker chooses kill, spare, or take a horse or part; the defender chooses fight back, flee, or surrender a part. Both choices combine into the result.
+**PC vs PC fights:** both players choose at once. The attacker chooses what happens if they win (kill, let them go, take their horse; a corpse part in M5b); the defender chooses fight back to kill, fight back and let them go, or flee (hand over a part in M5b). Both choices combine into the result. The sim checks it's a real gamble: an attacker with equal skill wins about half the decided PC vs PC fights.
 
-**Spares:** sparing someone you beat is tracked for every racer and feeds the **Most Merciful** award. Until fights arrive (milestone 5), a few "lets them go" events record spares; fights then use the same counter.
+**Spares:** sparing someone you beat is tracked for every racer and feeds the **Most Merciful** award. A few "lets them go" events record spares, and fights use the same counter.
 
 ## Alliances
 
@@ -231,7 +242,7 @@ Alliances are in from the start. How one forms depends on who's asking:
 | PC + canon racer | The character agrees if it fits them: Gyro takes in the worthy, Diego rarely allies unless it helps Diego |
 | PC + NPC | Random events |
 
-**What allies do:** help each other in events, share food and horses, and fight together. Points stay individual.
+**One ally at a time.** **What allies do:** an ally who isn't busy that round rides in to help in half your fights (+5); allies get shared-food, watch and drafting events; and a Rider on foot rides double with an ally who still has a horse (half the on-foot penalty). Points stay individual. Alliances are public (the stream announces them); your phone shows who you ride with. A death ends an alliance with no blame.
 
 **Breaking up:** betraying or abandoning an ally is a sub event choice and costs Worthiness (−12). A secret Valentine agent can sit inside an alliance without anyone knowing.
 
@@ -303,7 +314,7 @@ Stands come from every part of JoJo, each with a tier. The pool lives in `data/s
 
 **Worthiness shift:** every 10 points above 50 adds 2 points to Legendary, taken from the lowest tier (Common; Rare for corpse parts); every 10 below 50 does the reverse. It uses the exact value (Worthiness 65 = +3) and reaches ±10 at Worthiness 0 or 100. Corpse parts never give Common. Stand Arrows don't exist in SBR canon; they're a liberty, since the pool spans every part.
 
-**What a Stand does** (`rules.standTier`): a placement bonus (Common +1, Rare +1, Legendary +1.5; canon racers' own Stands get none, since their skill already includes them), better odds of surviving hazards (×0.92 / ×0.85 / ×0.88 death odds), Stand events, and a fight bonus hook for milestone 5 (+4 / +8 / +12, always with randomness on top).
+**What a Stand does** (`rules.standTier`): a placement bonus (Common +1, Rare +1, Legendary +1.5; canon racers' own Stands get none, since their skill already includes them), better odds of surviving hazards (×0.92 / ×0.85 / ×0.88 death odds), Stand events, and a fight bonus (+2.5 / +5 / +7.5). Fights are where Stands matter most: against an equal racer without one, a Stand user wins about 58% / 64% / 70% of decided fights (the sim prints this table). No one ever wins a fight automatically. The race-win check allows Common and Rare up to 2× their share of PCs and Legendary up to 2.5×, because survivorship alone puts every tier near 1.7×.
 
 **Stand events:** generic lines with a `{a.stand}` token, plus signature lines for every canon Stand and a handful of famous pool Stands. Generic lines for racers nobody controls (AI racers, canon racers, NPCs) go to the Meanwhile card; signature canon lines and every human PC's Stand lines stay in the Main Story.
 
@@ -360,17 +371,38 @@ Nine parts of the Saint's Corpse surface over the race, one per stage. Holding o
 
 ## Horses, fights and Valentine
 
-**Horses:** every Rider gets a named horse (canon horses where known: Slow Dancer, Valkyrie, Silver Bullet). Some deadly events kill the horse instead of the rider, leaving them on foot with much worse placements (−40). Ways to get a new horse (milestone 5; until then on foot is permanent):
+**Horses:** every Rider gets a named horse (canon horses where known: Slow Dancer, Valkyrie, Silver Bullet; Avdul rides his camel). Some deadly events kill the horse instead of the rider, leaving them on foot with much worse placements (−40).
 
-- Buy one in a town (costs points).
-- Be given one by another racer.
-- Take the horse of a racer who died.
+| Quality | Placement | Who gets it |
+| --- | --- | --- |
+| Nag | −4 | 20% of PCs' first horses; riderless horses |
+| Sound | 0 | 60% of PCs' first horses; the trader (40 points) |
+| Fine | +3 | 20% of PCs' first horses; the trader (70 points); other canon horses |
+| Thoroughbred | +6 | Slow Dancer, Valkyrie, Silver Bullet; never for sale |
 
-**Trading (milestone 5):** a player offers an item or a horse to another player from the phone; the other accepts or refuses in their next choice window, and the swap resolves with that round. No real-time haggling.
+Canon racers' horses are already part of their skill, so their modifier counts from their first horse. The phone shows your horse's name and quality.
 
-Losing a second horse means retiring or continuing on foot. Runners never have horses (see Runners).
+**Getting a new horse (milestone 5):**
 
-**Fights:** the winner chooses to kill or spare (canon racers usually spare, NPCs often kill). Other outcomes: the loser escapes, the fight reverses and the attacker dies, or both are injured and place worse.
+- **The horse trader:** in the Stage Plan window of stages that start in a town (leaving Kansas City, Chicago, Philadelphia and Union Beach: Stages 5, 6, 8 and 9), a Rider on foot, or one who could trade up, sees a "Horse trader" section inside the Stage Plan card. The horse is paid for and yours when the plan locks in. Canon racers on foot buy one too. In the sim a Sound horse is worth about 24 points a stage over riding on foot, so it pays for itself in every town except the last; Fine pays off only from the early towns.
+- **A riderless horse:** an on-foot Rider can catch one (main event).
+- **Taking one:** win a fight with "take their horse if you win", or betray an ally.
+- **Being given one:** through a trade.
+
+Runners never have, buy, catch or receive a horse.
+
+**Losing a second horse:** the next window asks "Go on, on foot" or "Retire".
+
+**Trading (milestone 5):** a player offers an item (Stand Arrow, Rokakaka) or their horse to another racing PC from the phone ("Offer" buttons on Items and the horse row), as a gift or for one thing back (an Arrow, a Rokakaka, or their horse if you're on foot). The receiver gets a **secret** "A trade offer" prompt in their next sub-event window and accepts or refuses; the swap resolves with that round, or quietly falls through if either side no longer has the thing. One open offer at a time; it can be cancelled until they're deciding. No real-time haggling. A gift with nothing back counts as help (+8 Worthiness); a trade counts as nothing. The stream never hears about it.
+
+**Fights (milestone 5)** use one system for every fight (`js/engine/fights.js`):
+
+- **Score:** riding skill (NPCs 50) + Stand fight bonus + Spin (+6 for Gyro and Wekapipo) + an ally riding in (+5, half the time) + a random roll (sd 12) for each side.
+- **Both sides commit first.** The attacker: "If you win: kill them / let them go / take their horse". The defender: fight back to kill / fight back and let them go / flee. Racers nobody controls decide by tier: canon racers usually spare, NPCs often kill.
+- **Outcomes:** a defender who flees gets away 55% of the time (caught, they fight at −6). A margin under 4: both hurt. Otherwise the winner's choice happens, but **a kill needs a clear win (margin 14)**: closer, the loser gets away hurt, or the attacker is driven off. A reversal (the defender wins) kills the attacker only on a clear win too.
+- **A Stand is revealed on stream** the first time its user fights with it ("Kruel fights with Killer Queen").
+- **Worthiness:** a kill you started −8 (hunting a rival counts); killing a loser who fled −12 (cruel); a defender's kill 0 (self-defense); letting go someone you beat +12, but only +4 if you started the fight (attacking and sparing isn't mercy); a failed kill attempt costs nothing.
+- Canon racers can't die in Stage 1 fights.
 
 **Valentine's agents** (Ringo Roadagain, Blackmore, Magent Magent and others) attack as events, not as racers. They mainly target corpse holders. **Funny Valentine** appears in Stages 8–9; a strong, worthy Stand user can beat him for a large bonus.
 
@@ -517,3 +549,13 @@ Decisions made after the original design, in the order they came up:
 54. Balance after 51–53: PC death odds 0.65 → 0.56 (more started kills among PCs had pushed New York survival down to 46%), Legendary placement +2 → +1.5 and hazard survival ×0.80 → ×0.88 (Legendary was at about 2.05× on some seeds). Single 1,500-game runs swing about ±0.2× on the 2× check, so it's judged on 4,500 games.
 55. Soft Worthiness hints for changes of 3–7 ("You feel steady." / "Something nags at you."), using the change actually applied, so halved gains above 80 aren't silent. 8+ keeps the stronger lines.
 56. Honorable must get the most help/spare events of any personality (Cautious had overtaken it, mostly by surviving longer). Leans: Honorable help 1.2 / spare 1.15 / cold 1.3, Cautious help and spare 0.8. Per PC per game: Honorable 3.3, Cautious 3.0, Opportunist 1.9, Glory-Seeker 1.4, Ruthless 0.7; Honorable still averages about 82.
+57. Fights ask "If you win:" in the same prompt as the attack, instead of a separate "Won a fight" window, so fights never add a round of choices.
+58. One fight resolver for everything (rival showdowns, Attacked on the trail, A chance to strike, PC vs PC; agents and Valentine in M5b): skill + Stand + Spin + ally + noise (sd 12 per side). A kill needs a margin of 14; fleeing escapes 55%; margin under 4 hurts both.
+59. Stand fight bonus +2.5 / +5 / +7.5, targeting a 58% / 64% / 70% win rate against an equal racer without a Stand (the core of fighting with Stands). The race-win check allows Common and Rare 2× and Legendary 2.5×; Legendary placement stays +1.5.
+60. Sparing in a fight you started gives +4, not +12; a defender who drives off an attacker gets +12; a failed kill attempt costs nothing. Killing a caught fleer is cruel (−12).
+61. Hunt a rival is a real fight started by the hunter; its plan death multiplier went from 1.45 to 1 and Opportunists no longer have it as their ★ (Ruthless still do). PC death odds from events 0.65 → 0.46 and "shot from ambush" weight 0.9 → 0.6 to keep about 45% of PCs reaching New York with fights in the game.
+62. Horse quality tiers (Nag −4, Sound 0, Fine +3, Thoroughbred +6); canon horses count from their first horse. Trader in Stages 5, 6, 8, 9 inside the Stage Plan card: Sound 40, Fine 70 (checked against the on-foot penalty in the sim). Riderless horses as main events. A second lost horse asks retire or go on.
+63. Alliances: one ally at a time; Ally up hidden while allied; PC invites answered in the next window; canon by character fit (rules.alliances.canon); NPCs 60% and by a rare "falls in with" event. Allies: +5 in half your fights, ride double on foot, shared-food help events. Abandon / betray −12.
+64. Trading: secret offer from the phone, answered in the receiver's next window, resolved with that round; one open offer at a time; a gift counts as help, a trade as nothing.
+65. Runner flat modifier −6 → −7, since Riders now spend points on horses. Personality leans retuned again for fights (Glory-Seeker ends near 65, accepted).
+66. The sim's old "reversals" figure counted every fight, including NPC ambushes that PCs usually win; PC vs PC fights are about even (attackers win about half the decided ones).

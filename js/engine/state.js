@@ -17,13 +17,15 @@ import CANON from '../../data/canon-racers.js';
 import { NAME_MAX, GENDER_MAX, PICTURE_MAX_BYTES, FEED_KEEP, DEFAULT_MIN_PLAYERS } from '../config.js';
 import { Rng } from './rng.js';
 import { ITEM_KINDS } from './items.js';
+import { myOffer, tradeTargets } from './trades.js';
+import { hasHorse } from './horses.js';
 
 export const PHASE = Object.freeze({
   LOBBY: 'lobby',
   RACING: 'racing', // lobby is locked from here on; only reconnects get in
 });
 
-export const STATE_VERSION = 5; // bump when the saved shape changes (old host saves are ignored)
+export const STATE_VERSION = 6; // bump when the saved shape changes (old host saves are ignored)
 
 export function createGameState(seed) {
   return {
@@ -172,6 +174,13 @@ export function privateView(state, playerId) {
     plan: p.plan ?? null, // this stage's Stage Plan (their own choice)
     // A choice window is open (items can be used now), for this player if racing.
     choiceOpen: !!(state.race?.choice && !state.race.choice.closed && p.status === 'racing'),
+    // Trading (milestone 5): your open offer, and who could take what.
+    offer: p.status === 'racing' ? myOffer(state, p.id) : null,
+    tradeTargets: p.status === 'racing' && state.race && !state.race.over ? {
+      item: tradeTargets(state, p, 'item'),
+      horse: hasHorse(p) ? tradeTargets(state, p, 'horse') : [],
+    } : null,
+    canAskHorse: p.mount === 'horse' && !!p.onFoot,
     // Kept Stand Arrows and Rokakaka. Usable while a choice window is open.
     items: (state.items ?? []).filter((i) => i.owner === p.id).map((i) => ({
       id: i.id, kind: i.kind, label: ITEM_KINDS[i.kind]?.label ?? i.kind, blurb: ITEM_KINDS[i.kind]?.blurb ?? '',

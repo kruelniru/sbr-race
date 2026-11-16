@@ -43,7 +43,7 @@ export function standCard(r) {
  * Kept Stand Arrows and Rokakaka. Usable while any decision is open; resolves
  * with that round. `onUse(itemId)` sends the request (again to cancel).
  */
-export function itemsCard(you, onUse) {
+export function itemsCard(you, onUse, onOffer = null) {
   const items = you?.items ?? [];
   if (!items.length) return null;
   const open = !!you.choiceOpen;
@@ -57,10 +57,12 @@ export function itemsCard(you, onUse) {
           h('div', { class: 'item-name' }, it.label),
           h('div', { class: 'item-blurb' }, it.blurb),
           !it.usable && it.why ? h('div', { class: 'item-why' }, it.why) : null),
-        h('button', {
-          type: 'button', class: 'btn btn-small item-use' + (it.pending ? ' btn-primary' : ''), disabled: !can,
-          onclick: () => onUse(it.id),
-        }, label));
+        h('div', { class: 'item-actions' },
+          h('button', {
+            type: 'button', class: 'btn btn-small item-use' + (it.pending ? ' btn-primary' : ''), disabled: !can,
+            onclick: () => onUse(it.id),
+          }, label),
+          onOffer && !it.pending ? h('button', { type: 'button', class: 'btn btn-small btn-quiet item-offer', onclick: () => onOffer(it) }, 'Offer') : null));
     })),
     h('p', { class: 'item-hint' }, open ? 'It happens with this round.' : 'You can use items while a decision is open.'));
 }
