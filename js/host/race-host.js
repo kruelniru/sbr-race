@@ -24,6 +24,7 @@
 import { startRace, runRound, syncShown, nextRoundHeader } from '../engine/race.js';
 import STAGES from '../../data/stages.js';
 const STAGES_COUNT = STAGES.length;
+const END_NOW_GUARD_MS = 3000; // End now can't be clicked in the first 3 seconds of a waiting screen
 import { buildCards, cardSeconds } from '../engine/reveal.js';
 import { needsStagePlans, openStagePlans, openSubEvents, closeChoices, answerPrompt, useItem, chooseHorse } from '../engine/choices.js';
 import { offerTrade, cancelTrade } from '../engine/trades.js';
@@ -372,10 +373,30 @@ export class RaceHost {
   }
 
   /** "End now": close the window; everyone unanswered gets their ★ option. */
-  endWindow() {
-    if (!this.#windowOpen()) return;
+  /**
+   * End now (milestone 7a guard). Disabled for the first 3 seconds of the
+   * waiting screen (a double-click on Next can't skip through), and while any
+   * human prompt is unanswered it needs `confirmed` (the host's "End now" in
+   * the confirmation). Returns { ok } | { ok: false, tooSoon } | { ok: false, needsConfirm }.
+   */
+  endWindow({ confirmed = false } = {}) {
+    if (!this.#windowOpen()) return { ok: false };
+    if (!this.endNowReady) return { ok: false, tooSoon: true };
+    if (!confirmed && this.humansDeciding) return { ok: false, needsConfirm: true };
     this.race.choiceTimer.ended = true;
     this.#finishWindow();
+    return { ok: true };
+  }
+
+  /** Any human prompt (public or secret) still unanswered? Never says who or how many. */
+  get humansDeciding() {
+    const c = this.race?.choice;
+    return !!c && !c.closed && c.prompts.some((x) => !x.answer && !getPlayer(this.state, x.playerId)?.isAI);
+  }
+
+  /** End now works 3 seconds after the waiting screen appears. */
+  get endNowReady() {
+    return Date.now() - (this.race?.choosingSince ?? 0) >= END_NOW_GUARD_MS;
   }
 
   /** Everything logged so far, as an exportable object (sim --choice-times). */
@@ -439,6 +460,10 @@ export class RaceHost {
     const log = this.race.timingLogOpen;
     // Stage Plans: the time spent before this point overlapped the results.
     if (log && log.overlapMs == null) log.overlapMs = this.race.choice.kind === 'plan' && this.race.choice.overlap ? this.#elapsed() : 0;
+    if (!this.race.choosing) {
+      this.race.choosingSince = Date.now();
+      setTimeout(() => this.onChange(), END_NOW_GUARD_MS + 50); // re-enable End now on screen
+    }
     this.race.choosing = true;
     this.onChange();
   }

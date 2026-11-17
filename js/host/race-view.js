@@ -130,7 +130,7 @@ function raceControls(state, rh) {
   const slot = (show, attrs, label) => h('button', {
     ...attrs,
     class: `${attrs.class ?? 'btn btn-small'}${show ? '' : ' slot-hidden'}`,
-    disabled: !show,
+    disabled: !show || !!attrs.disabled,
     'aria-hidden': show ? null : 'true',
     tabindex: show ? null : '-1',
   }, label);
@@ -142,11 +142,20 @@ function raceControls(state, rh) {
       h('div', { class: 'control-slots' },
         slot(false, {}, '◂ Back'),
         slot(true, { onclick: () => rh.togglePause() }, timer?.paused ? '▶ Resume timer' : '❚❚ Pause timer'),
-        h('div', { class: 'slot-main' }, slot(true, { class: 'btn btn-primary', onclick: () => rh.endWindow() }, 'End now ⏭')),
+        h('div', { class: 'slot-main' }, slot(true, {
+          class: 'btn btn-primary', disabled: !rh.endNowReady,
+          onclick: () => { if (rh.endWindow().needsConfirm) { rh.confirmingEnd = true; rh.onChange(); } },
+        }, 'End now ⏭')),
         slot(false, {}, 'Back to live ⏭'),
         slot(false, {}, 'Skip side stories ⏭'),
       ),
       settingsRow(state, rh),
+      // Some humans are still deciding: never say who, or how many (secret prompts stay hidden).
+      rh.confirmingEnd ? h('div', { class: 'confirm-overlay', role: 'dialog' }, h('div', { class: 'confirm-card' },
+        h('p', {}, "Some players are still deciding. End now? Anyone who hasn't answered gets their ★ In character pick."),
+        h('div', { class: 'confirm-actions' },
+          h('button', { class: 'btn btn-primary', onclick: () => { rh.confirmingEnd = false; rh.endWindow({ confirmed: true }); rh.onChange(); } }, 'End now'),
+          h('button', { class: 'btn', onclick: () => { rh.confirmingEnd = false; rh.onChange(); } }, 'Keep waiting')))) : null,
     );
   }
   return h('footer', { class: 'race-controls' },
@@ -337,7 +346,7 @@ function renderCard(state, card) {
           : card.winner ? 'Winner of the Steel Ball Run' : `${ordinal(p.rank)} place`),
         face(state, p.id, 'xl'),
         h('h2', { class: 'card-big' }, p.name),
-        h('div', { class: 'podium-points' }, `${p.points} points`),
+        h('div', { class: 'podium-points' }, `${p.points} points`, p.tieBroken ? h('span', { class: 'tie-note' }, ` (tie broken by ${p.tieBroken})`) : null),
         h('div', { class: 'hint' }, [p.tier === 'canon' ? 'Canon racer' : p.tier === 'npc' ? 'From the pack' : null, p.mount === 'runner' ? 'Runner' : null].filter(Boolean).join(' · ')),
       );
     }

@@ -63,6 +63,9 @@ export function placeStage(state, rng, stage) {
     const pts = RULES.points[i] ?? 0;
     r.points += pts;
     if (r.tier !== 'npc') r.placements.push({ stage: stage.id, rank });
+    // For tie-breaks (milestone 7a): stage wins, and the latest stage's place.
+    if (rank === 1) r.stageWins = (r.stageWins ?? 0) + 1;
+    r.lastStageRank = { stage: stage.id, rank };
     // A pack leader who places top 10 earns a name and joins the kept NPCs.
     if (r.tier === 'npc' && !r.name && rank <= 10) {
       r.name = npcName(state, rng, r.pronouns);
@@ -81,10 +84,31 @@ export function placeStage(state, rng, stage) {
 }
 
 /** Overall standings by points (named racers and named NPCs who scored). */
+/**
+ * Ranking order (milestone 7a): points, then more stage wins, then a better
+ * place in the latest (Final) stage, then a PC over a canon racer or NPC.
+ */
+export function compareRacers(a, b) {
+  return tieReason(a, b)?.order ?? 0;
+}
+
+/** Why `a` and `b` (equal on points or not) rank as they do: { order, why } or null if fully tied. */
+export function tieReason(a, b) {
+  if (b.points !== a.points) return { order: b.points - a.points, why: null };
+  const wa = a.stageWins ?? 0, wb = b.stageWins ?? 0;
+  if (wa !== wb) return { order: wb - wa, why: 'stage wins' };
+  const ra = finalRank(a), rb = finalRank(b);
+  if (ra !== rb) return { order: ra - rb, why: 'the Final Stage' };
+  const pa = a.tier === 'pc' ? 0 : 1, pb = b.tier === 'pc' ? 0 : 1;
+  if (pa !== pb) return { order: pa - pb, why: 'a player over a non-player' };
+  return null;
+}
+const finalRank = (r) => (r.lastStageRank?.stage === 9 ? r.lastStageRank.rank : 999);
+
 export function standings(state) {
   const npcs = [...state.field.packLeaders, ...state.field.kept].filter((n) => n.name && n.points > 0);
   const unique = [...new Map([...namedRacers(state), ...npcs].map((r) => [r.id, r])).values()];
   return unique
-    .sort((a, b) => b.points - a.points)
+    .sort(compareRacers)
     .map((r) => ({ id: r.id, name: r.name, tier: r.tier, points: r.points, status: r.status }));
 }

@@ -97,11 +97,10 @@ test('the recipe is never hinted at: no Requiem prompt without it, and no recipe
 
 test('The Saint Walks Again: all 9 parts at the final Finish Line wins outright', () => {
   const state = setup('saint');
-  const a = state.players[0];
-  a.worthiness = 100;
   const last = () => state.race.stageIdx === 8 && state.race.roundIdx === state.race.plan[8].types.length - 1;
   while (!last()) runRound(state);
-  if (a.status !== 'racing') { a.status = 'racing'; a.death = null; }
+  // Someone still racing in this world (not a D4C rider).
+  const a = state.players.find((p) => p.status === 'racing' && !p.otherWorld);
   const w = openSubEvents(state);
   // Keep the holder out of this round's fights, and safe for it, so the test is about the ending.
   w.prompts = w.prompts.filter((x) => x.playerId !== a.id && !Object.values(x.roles ?? {}).includes(a.id));

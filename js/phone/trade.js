@@ -23,9 +23,21 @@ export function trader(prompt, onFoot, onPick) {
 export function offerForm(you, offering, onDone) {
   const targets = offering.give === 'horse' ? you.tradeTargets.horse : you.tradeTargets.item;
   const sel = h('select', { class: 'offer-to' }, targets.map((t) => h('option', { value: t.id }, t.name)));
-  const asks = [['', 'Nothing: a gift'], ['arrow', 'A Stand Arrow'], ['rokakaka', 'A Rokakaka fruit'], ['part', 'A corpse part']];
-  if (you.canAskHorse && offering.give !== 'horse') asks.push(['horse', 'Their horse']);
-  const ask = h('select', { class: 'offer-ask' }, asks.map(([v, l]) => h('option', { value: v }, l)));
+  // Only what this person could actually give back: never the same thing you
+  // offer, and "their horse" only from someone who has one (milestone 7a).
+  const asksFor = (t) => {
+    const asks = [['', 'Nothing: a gift'], ['arrow', 'A Stand Arrow'], ['rokakaka', 'A Rokakaka fruit'], ['part', 'A corpse part']]
+      .filter(([v]) => !v || v !== offering.kind);
+    if (you.canAskHorse && offering.give !== 'horse' && t?.hasHorse) asks.push(['horse', 'Their horse']);
+    return asks;
+  };
+  const ask = h('select', { class: 'offer-ask' });
+  const fill = () => {
+    const t = targets.find((x) => x.id === sel.value) ?? targets[0];
+    ask.replaceChildren(...asksFor(t).map(([v, l]) => h('option', { value: v }, l)));
+  };
+  fill();
+  sel.addEventListener('change', fill);
   return h('section', { class: 'offer-card' },
     h('h3', {}, `Offer ${offering.label}`),
     h('label', { class: 'field' }, h('span', {}, 'To'), sel),

@@ -391,6 +391,13 @@ export function syncShown(state) {
       story: race.over ? storyFor(state, p) : null,
     };
     if (prev && race) addAlerts(state, p, prev, p.shown);
+    // Alerts queued by the engine this round (trades, fights, items...).
+    for (const a of p.pendingAlerts ?? []) {
+      p.alertSeq = (p.alertSeq ?? 0) + 1;
+      (p.alerts ??= []).push({ id: p.alertSeq, ...a });
+    }
+    p.pendingAlerts = [];
+    if ((p.alerts ?? []).length > 6) p.alerts.splice(0, p.alerts.length - 6);
     p.shown.alerts = (p.alerts ?? []).slice(-6);
   }
   race.shownHeader = race.over ? { over: true } : nextRoundHeader(state);

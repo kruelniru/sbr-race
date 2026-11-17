@@ -103,3 +103,13 @@ test('names ending in "." or "!" never start a new sentence (Mike O., Hey Ya!)',
   assert.equal(render('{c} drives {a} off.', r), 'Kruel drives Mike O. off.');
   assert.equal(render("{b}'s {b.stand} bristles as {b.horse} rears. {b.they} {b:is/are} calm.", r), "Pocoloco's Hey Ya! bristles as Mr. Ed rears. He is calm.");
 });
+
+test('plain events never blame a racer for a choice they never made (milestone 7a)', async () => {
+  const { default: E } = await import('../data/events/index.js');
+  const BLAME = /\b(gambl\w*|decid\w*|choos\w*|chose|bets?|insist\w*|ignor\w*|misjudg\w*|too far|reckless\w*|foolish\w*|stubborn\w*)\b/i;
+  for (const e of E) {
+    const focus = Object.entries(e.cast).find(([, c]) => (typeof c === 'string' ? c : c.is) === 'focus')[0];
+    const x = e.effects?.[focus] ?? {};
+    if (x.dies || x.injured || x.horse || x.retires) assert.doesNotMatch(e.text, BLAME, `${e.id}: "${e.text}"`);
+  }
+});

@@ -82,6 +82,15 @@ export function addWorthiness(who, n, ctx) {
   else if (Math.abs(n) >= W.softHintAt) addHint(who, n > 0 ? 'You feel steady.' : 'Something nags at you.', ctx);
 }
 
+/**
+ * A phone alert for this PC (milestone 7a): queued now, shown with the round's
+ * private update after the reveal (race.js syncShown), like the other alerts.
+ */
+export function addAlert(racer, level, title, text) {
+  if (racer?.tier !== 'pc') return;
+  (racer.pendingAlerts ??= []).push({ level, title, text });
+}
+
 /** A private line on this PC's phone (shown after the round's reveal). */
 export function addHint(racer, text, ctx) {
   if (racer?.tier !== 'pc') return;

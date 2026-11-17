@@ -286,7 +286,7 @@ export function openSubEvents(state) {
     p.forceSub = null;
     busy.add(p.id);
     if (kind === 'palm') prompts.push(subPromptFor(ctx, PALM_SUB, p, roundNo, { a: p }));
-    else if (kind === 'offer') { p.valentineOffered = true; prompts.push(specialPrompt(rng, state, VALENTINE_OFFER, p, roundNo, { a: p.id }, VALENTINE_OFFER.text)); }
+    else if (kind === 'offer') { p.valentineOffered = true; prompts.push(specialPrompt(rng, state, VALENTINE_OFFER, p, roundNo, { a: p.id }, p.mount === 'runner' ? VALENTINE_OFFER.textRunner : VALENTINE_OFFER.text)); }
     else if (kind === 'fv') { p.facedValentine = true; prompts.push(specialPrompt(rng, state, FUNNY_VALENTINE, p, roundNo, { a: p.id }, FUNNY_VALENTINE.text)); }
     else if (kind === 'fight') {
       const npc = castNpc(ctx);
@@ -339,8 +339,9 @@ export function openSubEvents(state) {
   }
   const humansAlive = readyPlayers(state).some((x) => !x.isAI && x.status !== 'dead');
   for (const due of (race.rokakakaDue ?? []).filter((x) => !x.placed && !x.dropped && x.round <= roundNo)) {
-    // Only human PCs ever find one; none drop once no human is alive, or after the last stage.
-    if (!humansAlive || stage.id > RULES.rokakaka.stages[1]) {
+    // Only human PCs ever find one; none drop once no human is alive, or after the last stage
+    // (a Rokakaka dropped by the dead can turn up again in any stage).
+    if (!humansAlive || (stage.id > RULES.rokakaka.stages[1] && !due.fromDeath)) {
       due.dropped = true;
       (race.rokakakaLog ??= []).push({ event: 'dropped', stage: stage.id, guaranteed: due.guaranteed, humansAlive, humansRacing: racingPcs(state).filter((x) => !x.isAI).length });
       continue;
@@ -505,7 +506,7 @@ function corpsePrompts(state, rng, stage, roundNo, roundsLeft, type, busy, promp
   // The Valentine offer (Stages 4–6).
   for (const p of dueOffers(state, rng, roundNo, stage.id, free())) {
     busy.add(p.id);
-    prompts.push(specialPrompt(rng, state, VALENTINE_OFFER, p, roundNo, { a: p.id }, VALENTINE_OFFER.text));
+    prompts.push(specialPrompt(rng, state, VALENTINE_OFFER, p, roundNo, { a: p.id }, p.mount === 'runner' ? VALENTINE_OFFER.textRunner : VALENTINE_OFFER.text));
     logValentine({ state, stage }, { event: 'offered', id: p.id, personality: p.personality, worthiness: p.worthiness });
   }
 

@@ -248,3 +248,9 @@
 .card-ending.ending-requiem h2 { color: #ffd76a; text-shadow: 0 0 24px rgba(255, 215, 106, .55); }
 .card-ending.ending-saint h2 { color: #fff4cf; text-shadow: 0 0 30px rgba(255, 244, 207, .6); }
 .card-ending.ending-requiem, .card-ending.ending-saint { border-color: #d9a441; }
+
+/* milestone 7a: End now confirmation */
+.confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 50; }
+.confirm-card { background: var(--panel, #2a2119); border: 1px solid var(--gold, #d9a441); border-radius: 14px; padding: 20px 24px; max-width: 520px; font-size: 1.15rem; }
+.confirm-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 14px; }
+.tie-note { font-size: .7em; color: var(--muted, #b9a88f); font-weight: 400; }

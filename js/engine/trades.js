@@ -15,7 +15,7 @@
 
 import RULES from '../../data/rules.js';
 import { readyPlayers } from './state.js';
-import { addWorthiness, addHint } from './racers.js';
+import { addWorthiness, addHint, addAlert } from './racers.js';
 import { ITEM_KINDS, itemsOf } from './items.js';
 import { hasHorse, canHaveHorse, loseHorse, giveHorse, QUALITY_LABEL } from './horses.js';
 import { takePart, partGiftWorthiness } from './corpse.js';
@@ -34,9 +34,11 @@ const askLabel = (ask) => (ask === 'horse' ? 'your horse' : ask === 'part' ? 'a 
 
 /** Who can receive this: racing PCs (no Runners or riders with a horse for a horse gift). */
 export function tradeTargets(state, from, give) {
+  // hasHorse is public (the stream shows horses lost): the phone only offers
+  // "their horse" from someone who has one.
   return readyPlayers(state).filter((p) => p.id !== from.id && p.status === 'racing'
     && (give !== 'horse' || (canHaveHorse(p) && p.onFoot)))
-    .map((p) => ({ id: p.id, name: p.name }));
+    .map((p) => ({ id: p.id, name: p.name, hasHorse: hasHorse(p) }));
 }
 
 /** A phone makes an offer (untrusted input). */
@@ -51,6 +53,10 @@ export function offerTrade(state, playerId, { give, to, ask = null } = {}) {
   }
   if (!tradeTargets(state, me, give).some((t) => t.id === to)) return { ok: false, error: "They can't take that." };
   if (ask === 'horse' && !(canHaveHorse(me) && me.onFoot)) return { ok: false, error: 'You can only ask for a horse while on foot.' };
+  const target = pc(state, to);
+  if (ask === 'horse' && !hasHorse(target)) return { ok: false, error: "They don't have a horse." };
+  const giveKind = give === 'horse' ? 'horse' : (state.items ?? []).find((i) => i.id === give)?.kind;
+  if (ask && ask === giveKind) return { ok: false, error: "You can't ask for the same thing you're offering." };
   if ((state.trades ?? []).some((t) => t.from === me.id && ['pending', 'asked'].includes(t.status))) {
     return { ok: false, error: 'You already have an offer out. Cancel it first.' };
   }
@@ -126,7 +132,8 @@ export function resolveTrade(ctx, t, accepted) {
   const okTo = to && to.status === 'racing' && (t.give !== 'horse' || (canHaveHorse(to) && to.onFoot));
   if (!from || from.status !== 'racing' || !stillGive || !okTo || (t.ask && !hasAsk(state, to, t.ask))) {
     t.status = 'failed';
-    for (const w of [from, to]) if (w) addHint(w, 'The trade falls through.', ctx);
+    // Both get a clear alert, never the reason (it could give away what the other holds).
+    for (const w of [from, to]) if (w) { addHint(w, 'The trade fell through.', ctx); addAlert(w, 'calm', 'The trade fell through', 'Nothing changed hands.'); }
     return log('failed');
   }
   // Swap.

@@ -186,7 +186,7 @@ test('a whole game: the finale has its ending, epilogues and the Corpse Holder a
     const state = setup('wg' + g, { players: 14, humans: 3 });
     while (!state.race.over) runRound(state);
     const f = buildFinale(state);
-    assert.ok(['normal', 'president-dead', 'president', 'double-cross', 'corpse', 'bloodbath'].includes(state.race.ending.id));
+    assert.ok(['normal', 'president-dead', 'president', 'double-cross', 'corpse', 'bloodbath', 'requiem', 'saint'].includes(state.race.ending.id));
     assert.equal(!!f.ending, state.race.ending.id !== 'normal');
     assert.ok(Array.isArray(f.epilogues));
     assert.ok(f.awards.some((a) => a.id === 'corpse'));

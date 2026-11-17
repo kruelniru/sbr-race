@@ -14,7 +14,7 @@
 // as the last, biggest moment.
 
 import { namedRacers, findRacerAnywhere } from './racers.js';
-import { standings } from './placement.js';
+import { standings, compareRacers, tieReason } from './placement.js';
 import { endingCard, epilogues } from './endings.js';
 import { corpseSummary } from './corpse.js';
 
@@ -30,7 +30,7 @@ export function buildFinale(state) {
   const finishers = racers.filter((r) => r.status === 'racing');
   const namedNpcFinishers = state.field.packLeaders.filter((n) => n.status === 'racing' && n.name);
   // Other-world riders (D4C) can't win; a secret ending's winner wins outright.
-  const ranked = [...finishers, ...namedNpcFinishers].filter((r) => !r.otherWorld).sort((a, b) => b.points - a.points);
+  const ranked = [...finishers, ...namedNpcFinishers].filter((r) => !r.otherWorld).sort(compareRacers);
   const outright = state.race.ending?.winnerId;
   if (outright) {
     const i = ranked.findIndex((r) => r.id === outright);
@@ -38,7 +38,12 @@ export function buildFinale(state) {
   }
   const brief = (r) => ({ id: r.id, name: r.name, tier: r.tier, points: r.points, mount: r.mount ?? 'horse' });
 
-  const podium = ranked.slice(0, 3).map((r, i) => ({ rank: i + 1, ...brief(r) }));
+  // A tie on points broken by the rules says so on the podium card.
+  const podium = ranked.slice(0, 3).map((r, i) => {
+    const next = ranked[i + 1], prev = ranked[i - 1];
+    const tie = (next && next.points === r.points ? tieReason(r, next) : null) ?? (prev && prev.points === r.points ? tieReason(prev, r) : null);
+    return { rank: i + 1, ...brief(r), ...(tie?.why && !outright ? { tieBroken: tie.why } : {}) };
+  });
   return {
     podium,
     cheatsUsed: !!state.cheatsUsed, // a cheated game always says so

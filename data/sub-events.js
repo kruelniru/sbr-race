@@ -187,7 +187,7 @@ export const SUB_EVENTS = [
   hazard('sub-hazard-fire', {
     title: 'Fire', when: { terrain: ['city'] },
     text: 'A warehouse fire is spreading across the street ahead.',
-    through: '{a} gallops through the smoke and past the fire.',
+    through: '{a} races through the smoke and past the fire.',
     hurt: '{a} gets through the fire with bad burns.',
     died: 'A burning wall comes down on {a}.', cause: 'caught in a fire',
     shelter: '{a} waits for the fire brigade to clear the street.',
@@ -272,7 +272,7 @@ export const SUB_EVENTS = [
   {
     id: 'sub-ally-trouble', title: 'Your ally is in trouble', weight: 2,
     text: '{b} is pinned under a fallen horse, and the rest of the field is closing in.',
-    cast: { a: 'focus', b: 'ally' },
+    cast: { a: 'focus', b: { is: 'ally', hasHorse: true } },
     options: [
       { id: 'help', label: 'Stop and help', hint: 'Lose time', lean: L(5, 0.6, 2, 1.5, 1.2), tags: ['help'],
         outcomes: [{ weight: 1, text: '{a} drags {b} clear and loses an hour doing it.', effects: { a: { pace: -1 } } }] },
@@ -281,9 +281,21 @@ export const SUB_EVENTS = [
     ],
   },
   {
+    // The same moment for an ally who runs (milestone 7a: no horse words for Runners).
+    id: 'sub-ally-trouble-runner', title: 'Your ally is in trouble', weight: 2,
+    text: '{b} is pinned under a rockslide, and the rest of the field is closing in.',
+    cast: { a: 'focus', b: { is: 'ally', mount: 'runner' } },
+    options: [
+      { id: 'help', label: 'Stop and help', hint: 'Lose time', lean: L(5, 0.6, 2, 1.5, 1.2), tags: ['help'],
+        outcomes: [{ weight: 1, text: '{a} heaves the rocks off {b} and loses an hour doing it.', effects: { a: { pace: -1 } } }] },
+      { id: 'abandon', label: 'Go on without them', hint: 'Keep your pace; the alliance ends', lean: L(0.1, 2.5, 0.6, 1.5, 2),
+        outcomes: [{ weight: 1, text: '{a} goes on and leaves {b} under the rocks.', effects: { a: { breakAlly: 'abandoned' }, b: { injured: true, pace: -1 } } }] },
+    ],
+  },
+  {
     id: 'sub-ally-betray', title: 'A chance to betray', weight: 1.2,
     text: '{b} is fast asleep, and {b.their} horse is tied right next to you.',
-    cast: { a: 'focus', b: { is: 'ally', hasHorse: true } },
+    cast: { a: { is: 'focus', mount: 'horse' }, b: { is: 'ally', hasHorse: true } },
     options: [
       { id: 'betray', label: 'Take their horse and go', hint: 'The alliance ends', lean: L(0.05, 3, 0.2, 0.5, 2.5),
         outcomes: [{ weight: 1, text: '{a} slips away in the night on {b.horse}, leaving {b} on foot.', effects: { a: { breakAlly: 'betrayed' }, b: { stolenBy: 'a' } } }] },
@@ -490,15 +502,17 @@ export const FUNNY_VALENTINE = {
 export const VALENTINE_OFFER = {
   id: 'valentine-offer', title: 'A man in a dark hat', secret: true,
   text: 'A man in a dark hat rides beside you for a mile. "The President could use someone like you. Fresh horses at every relay, his agents off your back, and when he holds the Corpse, a share of the glory."',
+  // Runners never get horse words (milestone 7a).
+  textRunner: 'A man in a dark hat falls into step beside you for a mile. "The President could use someone like you. Water and a clear road at every relay, his agents off your back, and when he holds the Corpse, a share of the glory."',
   options: [
-    { id: 'join', label: 'Join Valentine', hint: 'Secret. Agents never attack you, relay horses, a Stand if you have none, errands. Worthiness drops hard.', lean: L(0.05, 3, 0.4, 1, 3) },
+    { id: 'join', label: 'Join Valentine', hint: 'Secret. Agents never attack you, help at every relay, a Stand if you have none, errands. Worthiness drops hard.', lean: L(0.05, 3, 0.4, 1, 3) },
     { id: 'refuse', label: 'Refuse', hint: 'He tips his hat and is gone', lean: L(5, 0.6, 3, 1.5, 0.8) },
   ],
 };
 
 export const ERRAND = {
   id: 'valentine-errand', title: "Valentine's errand", secret: true,
-  text: 'A note under your saddle: "Bring me what they carry." Next round, you ride out in a dark hat with two agents at your back.',
+  text: 'A note slipped into your pack: "Bring me what they carry." Next round, you go out in a dark hat with two agents at your back.',
   options: [
     { id: 'ride', label: 'Ride the errand', hint: 'Ambush them, masked. Win and take a corpse part for the President, or their horse.', lean: L(0.3, 3, 0.5, 2, 3), needsTarget: true },
     { id: 'skip', label: 'Not this time', hint: 'Nothing happens', lean: L(4, 0.5, 3, 1, 0.8) },

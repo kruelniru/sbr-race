@@ -61,7 +61,7 @@ test('host choice flow: Stage 1 plan, overlap with results, early close, timing 
     let sawOverlap = false, stages = 0, guard = 0;
     while (!lobby.state.race.over && guard++ < 2000) {
       if (rh.choosing) {
-        if (guard % 3 === 0) rh.endWindow(); else answerAll(rh, lobby);
+        if (guard % 3 === 0) forceEnd(rh); else answerAll(rh, lobby);
         continue;
       }
       if (rh.windowKind === 'plan' && !rh.choosing) {
@@ -118,7 +118,7 @@ function drive(rh, lobby, { answer = true, max = 20000, onStep = null } = {}) {
   while (steps++ < max) {
     if (lobby.state.race.over && rh.waiting && !rh.choosing) return steps;
     onStep?.(steps);
-    if (rh.choosing) { if (answer) answerAll(rh, lobby); if (rh.choosing) rh.endWindow(); continue; }
+    if (rh.choosing) { if (answer) answerAll(rh, lobby); if (rh.choosing) forceEnd(rh); continue; }
     if (rh.waiting) rh.nextRound(); else rh.next();
   }
   throw new Error(`stuck after ${steps} steps (stage ${lobby.state.race.stageIdx + 1}, round ${lobby.state.race.roundIdx})`);
@@ -170,5 +170,39 @@ test('a phone disconnecting mid-window, then the host reloading mid-round, and t
     saved.players[1].connected = true; // a phone reconnects
     drive(rh2, lobby2);
     assert.ok(saved.race.over);
+  } finally { rh2.stop(); }
+});
+
+/** The host confirms End now after the 3-second guard (tests skip the wait). */
+function forceEnd(rh) {
+  rh.race.choosingSince = 0;
+  return rh.endWindow({ confirmed: true });
+}
+
+test('End now: a 3-second guard, and a confirmation while a human (even a secret prompt) is deciding', () => {
+  const lobby = fakeLobby('end-now', { humans: 2, players: 6 });
+  const rh = new RaceHost({ lobby, onChange: () => {} });
+  try {
+    rh.start();
+    assert.ok(rh.choosing);
+    assert.equal(rh.endNowReady, false, 'disabled for the first 3 seconds');
+    assert.deepEqual(rh.endWindow(), { ok: false, tooSoon: true });
+    rh.race.choosingSince = Date.now() - 4000;
+    assert.equal(rh.humansDeciding, true);
+    assert.deepEqual(rh.endWindow(), { ok: false, needsConfirm: true }, 'asks first');
+    assert.ok(rh.choosing, 'still open');
+    // Secret prompts count too, and the waiting view never names them.
+    const w = rh.race.choice;
+    w.prompts.forEach((x) => { if (lobby.state.players.find((p) => p.id === x.playerId && !p.isAI)) x.secret = true; });
+    assert.equal(rh.humansDeciding, true);
+    assert.equal(rh.endWindow({ confirmed: true }).ok, true, 'ends once confirmed');
+    // Every human answered: no confirmation needed (and the window closes by itself).
+    drive(rh, lobby, { max: 5, onStep: () => {} });
+  } catch (e) { if (!/stuck/.test(e.message)) throw e; } finally { rh.stop(); }
+  const ai = fakeLobby('end-now-ai', { humans: 0, players: 4 });
+  const rh2 = new RaceHost({ lobby: ai, onChange: () => {} });
+  try {
+    rh2.start();
+    assert.equal(rh2.humansDeciding, false, 'only AI: nothing to confirm');
   } finally { rh2.stop(); }
 });

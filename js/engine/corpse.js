@@ -139,6 +139,31 @@ function makeLoose(ctx, item, how) {
   log(ctx, part, 'loose', { how, from: item.owner });
 }
 
+// Milestone 7a: kept Stand Arrows and Rokakaka don't vanish with the dead.
+// A PC killer takes them (a Rokakaka only if the killer is a human PC);
+// otherwise they drop, and turn up again in a later find (a Rokakaka still
+// only for a human PC). state.race.itemLog records it for the reveal and the game log.
+DEATH_HOOKS.push((ctx, who, killer) => {
+  const race = ctx.state.race;
+  if (!race) return;
+  for (const it of (ctx.state.items ?? []).filter((i) => i.owner === who.id && ['arrow', 'rokakaka'].includes(i.kind))) {
+    const human = killer?.tier === 'pc' && !killer.isAI;
+    const takes = killer && killer.status !== 'dead' && killer.tier === 'pc' && !killer.otherWorld && (it.kind === 'arrow' || human);
+    const entry = { stage: ctx.stage?.id ?? 0, round: ctx.roundLabel ?? '', kind: it.kind, from: who.id };
+    if (takes) {
+      it.owner = killer.id; it.pendingUse = false;
+      race.itemLog = [...(race.itemLog ?? []), { ...entry, event: 'taken', to: killer.id }];
+      addHint(killer, `You find ${it.kind === 'arrow' ? 'a Stand Arrow' : 'a Rokakaka fruit'} on ${who.name}.`, ctx);
+      continue;
+    }
+    ctx.state.items = ctx.state.items.filter((i) => i.id !== it.id);
+    const later = (race.roundNo ?? 0) + (ctx.rng ? ctx.rng.int(2, 5) : 3);
+    if (it.kind === 'arrow') (race.arrowsDue ??= []).push({ round: later, fromDeath: true });
+    else (race.rokakakaDue ??= []).push({ round: later, guaranteed: false, fromDeath: true });
+    race.itemLog = [...(race.itemLog ?? []), { ...entry, event: 'dropped' }];
+  }
+});
+
 // A holder died: their killer takes what they carried (agents take it to the
 // President); a death with no killer drops it back onto the trail.
 DEATH_HOOKS.push((ctx, who, killer) => {
@@ -338,7 +363,8 @@ export function corpseFinishLine(ctx) {
 
 /** Anonymous host lines queued this round (merges; joining Valentine), as Main Story lines. */
 export function announcements(state) {
-  const out = (state.corpse?.announce ?? []).map((text) => ({
+  // Once per round each, however many merged or joined (milestone 7a).
+  const out = [...new Set(state.corpse?.announce ?? [])].map((text) => ({
     eventId: 'announce', text, ids: [], names: [], minor: false, death: false, tags: ['announce'], side: false, announce: true,
   }));
   if (state.corpse) state.corpse.announce = [];

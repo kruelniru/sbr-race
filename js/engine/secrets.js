@@ -184,6 +184,13 @@ registerFinaleSection({
       lines.push(`The Corpse Holder, ${top.name}, ${how.length > 1 ? `${how.slice(0, -1).join(', ')} and ${how.at(-1)}` : how[0]}.`);
     }
     lines.push(`The President ended with ${sum.president} ${sum.president === 1 ? 'part' : 'parts'}.`);
+    // What the dead left behind (milestone 7a).
+    for (const it of state.race.itemLog ?? []) {
+      const what = it.kind === 'arrow' ? 'Stand Arrow' : 'Rokakaka';
+      lines.push(it.event === 'taken'
+        ? `${nameOf(state, it.to)} took ${nameOf(state, it.from)}'s ${what}.`
+        : `${nameOf(state, it.from)}'s ${what} was lost on the trail in Stage ${it.stage}, for someone else to find.`);
+    }
     const def = e && ENDINGS[e.id];
     return { ending: def ? def.title : 'The race ended like any other', lines };
   },

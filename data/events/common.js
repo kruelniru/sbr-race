@@ -60,7 +60,7 @@ export default [
   // ------------------------------------------------------------ night
   { id: 'night-camp-thief', text: "{b} creeps up to {a}'s camp to steal {a.their} water. {a} wakes and shoots {b.them} dead.",
     cast: { a: 'focus', b: 'npc' }, effects: { b: { dies: 'shot stealing water', by: 'a' } }, tags: ['defend', 'kill-defense'], when: { rounds: ['night'] }, weight: 2.5 },
-  { id: 'night-spare-thief', text: '{a} catches {b} going through {a.their} saddlebags and sends {b.them} off with a warning.',
+  { id: 'night-spare-thief', text: '{a} catches {b} going through {a.their} pack and sends {b.them} off with a warning.',
     cast: { a: 'focus', b: 'npc' }, effects: { b: { sparedBy: 'a' } }, tags: ['spare'], when: { rounds: ['night'] }, weight: 2 },
   { id: 'night-robbed', text: "{b} robs {a}'s camp in the night, taking food and water.",
     cast: { a: 'focus', b: 'npc' }, effects: { a: { pace: -1 } }, tags: ['hazard'], when: { rounds: ['night'] }, weight: 2.5 },

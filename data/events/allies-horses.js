@@ -15,7 +15,7 @@ export default [
   { id: 'ally-watch', text: '{a} and {b} take turns keeping watch.',
     cast: { a: 'focus', b: 'ally' }, tags: ['minor'], when: { rounds: ['night'] }, weight: 2 },
   { id: 'ally-draft', text: '{a} and {b} trade the lead all day and save their horses.',
-    cast: { a: 'focus', b: 'ally' }, effects: { a: { pace: 1 }, b: { pace: 1 } }, tags: ['minor', 'pace'], weight: 1.5 },
+    cast: { a: { is: 'focus', hasHorse: true }, b: { is: 'ally', hasHorse: true } }, effects: { a: { pace: 1 }, b: { pace: 1 } }, tags: ['minor', 'pace'], weight: 1.5 },
   { id: 'ally-npc-falls-in', text: '{a} falls in with {b}, and the two agree to ride together for a while.',
     cast: { a: { is: 'focus', hasAlly: false }, b: 'npc' }, effects: { a: { ally: 'b' } }, tags: [], weight: 0.6 },
 ];
