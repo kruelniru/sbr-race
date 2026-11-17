@@ -131,8 +131,8 @@ test('Arrow and Rokakaka prompts are secret, with Stand-dependent options; Rokak
     closeChoices(state);
     runRound(state);
   }
-  assert.ok(arrows >= RULES.arrows.perGame[0] - 1 && arrows <= RULES.arrows.perGame[1], `${arrows} Arrows`); // one may land after every PC is out
-  assert.ok(rokas >= 2 && rokas <= 3, `${rokas} Rokakaka`);
+  assert.ok(arrows >= RULES.arrows.perGame[0] - 1 && arrows <= RULES.arrows.perGame[1] + 2, `${arrows} Arrows`); // one may land after every PC is out; Arrows the dead dropped turn up again
+  assert.ok(rokas >= RULES.rokakaka.guaranteed && rokas <= RULES.rokakaka.guaranteed + 1 + 2, `${rokas} Rokakaka`); // 4–5 a game (plus any the dead dropped)
 });
 
 test('Worthiness and Stands: the owner sees a bar level and their Stand; nobody else sees anything', () => {
@@ -178,8 +178,8 @@ test('Worthiness: start by personality, kill tags on every kill, hints for big c
   for (const e of kills) assert.equal(e.tags.filter((t) => KILL_KINDS.includes(t)).length, 1, e.id);
   const bad = normalizeEvent({ id: 'x', text: '{a} kills {b}.', cast: { a: 'focus', b: 'npc' }, effects: { b: { dies: 'x', by: 'a' } }, tags: ['kill'] });
   assert.equal(lintEvents([bad]).length, 1);
-  assert.equal(killWorthiness(['kill', 'kill-cruel']), -12);
-  assert.equal(killWorthiness(['kill-started']), -8);
+  assert.equal(killWorthiness(['kill', 'kill-cruel']), RULES.worthiness.killCruel);
+  assert.equal(killWorthiness(['kill-started']), RULES.worthiness.killStarted);
   assert.equal(killWorthiness(['defend', 'kill-defense']), 0);
 
   const state = setup('worth-1');
@@ -188,16 +188,16 @@ test('Worthiness: start by personality, kill tags on every kill, hints for big c
   me.hints = [];
   me.worthiness = 50;
   addWorthiness(me, RULES.worthiness.killStarted, ctx);
-  assert.equal(me.worthiness, 42);
+  assert.equal(me.worthiness, 50 + RULES.worthiness.killStarted);
   assert.equal(me.hints.at(-1).text, 'Something in you hardens.');
   addWorthiness(me, RULES.worthiness.palmSurvive, ctx);
-  assert.equal(me.hints.at(-1).text, 'You feel steady.', '3–7 gets the soft line');
-  addWorthiness(me, 2, ctx);
-  assert.equal(me.hints.length, 2, 'under 3 gives no hint');
+  assert.equal(me.hints.at(-1).text, 'You feel steady.', 'a small change gets the soft line');
+  addWorthiness(me, 1, ctx);
+  assert.equal(me.hints.length, 2, 'under 2 gives no hint');
   addWorthiness(me, RULES.worthiness.ridePast, ctx);
   assert.equal(me.hints.at(-1).text, 'Something nags at you.');
-  me.worthiness = 85;
-  addWorthiness(me, RULES.worthiness.help, ctx); // halved to +4
+  me.worthiness = 80;
+  addWorthiness(me, RULES.worthiness.help, ctx); // halved to +2
   assert.equal(me.hints.at(-1).text, 'You feel steady.', 'a halved gain still gets a line');
   me.worthiness = 50;
   addWorthiness(me, RULES.worthiness.spare, ctx);
@@ -206,20 +206,27 @@ test('Worthiness: start by personality, kill tags on every kill, hints for big c
   assert.ok(!JSON.stringify([publicView(state), hostScreenView(state)]).includes('lighter in the saddle'));
 });
 
-test('Worthiness: gains halve above 80, losses stay full; sabotage and ride-past are tagged and cost', () => {
+test('Worthiness: halved above 70, quartered above 85, only great deeds above 95; losses stay full', () => {
   const state = setup('worth-2');
   const [me] = state.players;
   const ctx = ctxOf(state);
-  me.worthiness = 81;
-  addWorthiness(me, RULES.worthiness.spare, ctx); // +12 -> +6
-  assert.equal(me.worthiness, 87);
-  addWorthiness(me, RULES.worthiness.palmSurvive, ctx); // +5 -> +2
+  me.worthiness = 70;
+  addWorthiness(me, 8, ctx);
+  assert.equal(me.worthiness, 78, 'at exactly 70 the gain is full');
+  addWorthiness(me, 8, ctx); // 78 > 70: +4
+  assert.equal(me.worthiness, 82);
+  me.worthiness = 86;
+  addWorthiness(me, 8, ctx); // > 85: +2
+  assert.equal(me.worthiness, 88);
+  addWorthiness(me, 3, ctx); // quartered, at least +1
   assert.equal(me.worthiness, 89);
-  addWorthiness(me, RULES.worthiness.killCruel, ctx);
-  assert.equal(me.worthiness, 77, 'losses are never halved');
-  me.worthiness = 80;
-  addWorthiness(me, RULES.worthiness.help, ctx);
-  assert.equal(me.worthiness, 88, 'at exactly 80 the gain is full');
+  me.worthiness = 96;
+  addWorthiness(me, 8, ctx);
+  assert.equal(me.worthiness, 96, 'above 95 an ordinary deed does nothing');
+  addWorthiness(me, 10, ctx, { great: true });
+  assert.equal(me.worthiness, 98, 'a great deed still counts (quartered)');
+  addWorthiness(me, -12, ctx);
+  assert.equal(me.worthiness, 86, 'losses are never reduced');
 
   // Every event that hurts another racer without killing says whose fault it is.
   const hurt = normalizeEvent({ id: 'y', text: '{a} trips {b}.', cast: { a: 'focus', b: 'npc' }, effects: { b: { pace: -2 } }, tags: [] });

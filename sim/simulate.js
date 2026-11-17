@@ -47,6 +47,17 @@ for (const kv of String(args.set ?? '').split(',').filter(Boolean)) {
 }
 const HORSE_VALUE = {}; // ridden at the Finish Line -> { n, pts }
 const FAIR = {};        // sub event prompts per living PC per round, by personality
+const M7 = { byPers: {}, games: 0, holders: 0, repeats: 0, humans: 0 }; // milestone 7b: prompts per human, by personality
+const GOOD_IDS = new Set(['sub-rescue', 'sub-rescue-canon', 'sub-guard-ally', 'sub-guard-stranger', 'sub-hard-horse', 'sub-hard-river', 'sub-hard-doctor']);
+const FIGHT_IDS = new Set(['sub-attacked', 'sub-strike', 'sub-camp-thief']);
+const FIGHT_SPECIALS = new Set(['agent-ambush', 'ride-after', 'funny-valentine']);
+function promptType(pr) {
+  if (pr.secret) return 'secret';
+  if (GOOD_IDS.has(pr.subId)) return 'good';
+  if (pr.subId === 'sub-palm') return 'palm';
+  if (FIGHT_IDS.has(pr.subId) || FIGHT_SPECIALS.has(pr.special) || /^rival|fight-target/.test(pr.kind ?? '')) return 'fight';
+  return 'other';
+}
 const GAMES = args.verbose ? 1 : Number(args.games ?? 100);
 const PLAYERS = Number(args.players ?? 18);
 const RUNNERS = args.runners != null ? Number(args.runners) : null;
@@ -88,6 +99,8 @@ function playGame(seed) {
   const horseValue = HORSE_VALUE;
   const partsByStage = []; // at each Finish Line: who holds the parts
   const fair = (FAIR.byPers ??= {});
+  const m7 = {}; // per human: { personality, types, titles }
+  const holders = new Set();
   while (!state.race.over) {
     if (needsStagePlans(state)) {
       const w = openStagePlans(state);
@@ -124,6 +137,13 @@ function playGame(seed) {
       if (humanIds.has(pr.playerId)) pr.answer.by = 'player';
     }
     windows.push({ kind: 'sub', humans: w.prompts.filter((x) => humanIds.has(x.playerId)).length });
+    for (const pr of w.prompts.filter((x) => humanIds.has(x.playerId))) {
+      const pc = pcsById[pr.playerId];
+      const h = (m7[pc.id] ??= { personality: pc.personality, types: {}, titles: {} });
+      const t = promptType(pr);
+      h.types[t] = (h.types[t] ?? 0) + 1;
+      if (pr.kind === 'sub' && pr.subId && pr.subId !== 'sub-palm') h.titles[pr.title] = (h.titles[pr.title] ?? 0) + 1; // (the Palm has its own schedule)
+    }
     // Fairness: prompts per living PC per round, by personality (Valentine-only prompts apart).
     for (const p of state.players.filter((x) => x.status === 'racing')) {
       const f = (fair[p.personality] ??= { rounds: 0, prompts: 0, valentine: 0 });
@@ -135,6 +155,7 @@ function playGame(seed) {
     closeChoices(state);
     const res = runRound(state);
     results.push(res);
+    for (const i of state.items ?? []) if (i.kind === 'part' && humanIds.has(i.owner)) holders.add(i.owner);
     simDeadVote(state, timeRng);
     // Horse value: stage points for racing PCs by what they ride at the Finish Line.
     if (res.placements) {
@@ -153,7 +174,56 @@ function playGame(seed) {
       standShare.push({ stage: res.stage.id, ofAll: living.filter((x) => x.stand).length / state.players.length, ofLiving: living.filter((x) => x.stand).length / (living.length || 1) });
     }
   }
+  // Milestone 7b totals.
+  M7.games++;
+  M7.holders += holders.size;
+  for (const p of state.players.slice(0, HUMANS)) {
+    const h = m7[p.id] ?? { personality: p.personality, types: {}, titles: {} };
+    const b = (M7.byPers[h.personality] ??= { n: 0, types: {}, ambush: 0, rokakaka: 0, helps: 0 });
+    b.n++; M7.humans++;
+    for (const [k, n] of Object.entries(h.types)) b.types[k] = (b.types[k] ?? 0) + n;
+    b.ambush += (state.race.agentLog ?? []).filter((a) => a.event === 'ambush' && a.id === p.id).length;
+    b.rokakaka += p.rokakakaFound ?? 0;
+    if (Object.values(h.titles).some((n) => n > RULES.good.maxPerTitle)) M7.repeats++;
+  }
+  const L = state.race.agentLog ?? [];
+  M7.partsLost = (M7.partsLost ?? 0) + L.filter((a) => a.event === 'beat' && a.human).reduce((t, a) => t + a.partsLost, 0);
+  const ra = L.filter((a) => a.event === 'ride-after');
+  M7.rideOffered = (M7.rideOffered ?? 0) + ra.length;
+  M7.rideChased = (M7.rideChased ?? 0) + ra.filter((a) => a.outcome !== 'let').length;
+  M7.rideGot = (M7.rideGot ?? 0) + ra.filter((a) => a.got).length;
+  for (const g of state.race.goodLog ?? []) {
+    const k = `${g.kind}`;
+    const x = ((M7.good ??= {})[k] ??= { n: 0, ok: 0, died: 0 });
+    x.n++;
+    if (g.saved || g.held) x.ok++;
+  }
+  for (const t of state.race.theftLog ?? []) bump((M7.theft ??= {}), t.choice === 'let' ? 'let' : t.outcome === 'escape' ? 'chased, got away' : 'chased, caught');
+  M7.rokaGames = M7.rokaGames ?? {};
+  bump(M7.rokaGames, String((state.race.rokakakaLog ?? []).filter((e) => e.event === 'found' || e.event === 'offered').length));
+  M7.refused = (M7.refused ?? 0) + (state.race.requiemRefused ?? []).length;
+  M7.pierced = (M7.pierced ?? 0) + (state.race.requiem ? 1 : 0);
   return { state, results, stageLog, windows, timeRng, palm, standShare, partsByStage };
+}
+
+function printM7b() {
+  const pct = (n, d) => `${((100 * (n ?? 0)) / (d || 1)).toFixed(0)}%`;
+  const f2 = (n) => n.toFixed(2);
+  console.log(`\nMilestone 7b: prompts per human per game (${HUMANS} humans)`);
+  const rows = Object.entries(M7.byPers).sort().map(([k, b]) => {
+    const t = (x) => (b.types[x] ?? 0) / b.n;
+    const all = ['good', 'fight', 'palm', 'other', 'secret'].reduce((s, x) => s + t(x), 0);
+    const drama = t('good') + t('fight') + t('palm');
+    return [k, b.n, f2(all), f2(t('good')), f2(t('fight')), f2(t('palm')), f2(drama), pct(drama, all - t('secret')), f2(t('other')), f2(t('secret')), f2(b.ambush / b.n), f2(b.rokakaka / b.n)];
+  });
+  table(['personality', 'n', 'prompts', 'good drama', 'fights', 'the Palm', 'on-stream drama', 'drama share of on-stream', 'other on-stream', 'secret', 'agent ambushes', 'Rokakaka found'], rows);
+  const amb = Object.values(M7.byPers).reduce((t, b) => t + b.ambush, 0);
+  console.log(`  agent ambushes per human per game ${f2(amb / (M7.humans || 1))} · parts lost to agents per human holder ${f2(M7.partsLost / (M7.holders || 1))} (${M7.holders} holders)`);
+  console.log(`  Ride after them: offered ${M7.rideOffered} · chased ${pct(M7.rideChased, M7.rideOffered)} · got it back ${pct(M7.rideGot, M7.rideChased)}`);
+  console.log('  good drama outcomes: ' + Object.entries(M7.good ?? {}).map(([k, x]) => `${k} ${x.n} (${k === 'rescue' ? 'saved' : 'riders came and were driven off'} ${pct(x.ok, x.n)})`).join(' · '));
+  console.log("  Someone's in your camp: " + Object.entries(M7.theft ?? {}).map(([k, n]) => `${k} ${n}`).join(' · '));
+  console.log(`  repeat limit broken (a title 3+ times for one player): ${M7.repeats} of ${M7.humans} humans`);
+  console.log(`  Requiem: pierced ${M7.pierced} of ${M7.games} games (1 in ${M7.pierced ? Math.round(M7.games / M7.pierced) : '∞'}) · the Arrow refused ${M7.refused}`);
 }
 
 /** Sim plan modes: random, star, or one fixed plan for everyone. */
@@ -417,6 +487,7 @@ function printStats(S) {
   printHunts(S);
   printDead(S);
   printM6b(S);
+  printM7b();
 
   console.log('\nChecks');
   console.log(`  canon deaths in Stage 1: ${S.canonStage1Deaths} ${S.canonStage1Deaths ? 'FAIL' : 'ok'}`);
@@ -548,7 +619,7 @@ function collectStands(S, state, results, palm) {
       bump(T.roka.after, later ? later.tier : 'none (stayed Standless)');
     }
   }
-  if (human < 2) {
+  if (human < RULES.rokakaka.guaranteed) {
     // Allowed only when no human PC was left racing to find one.
     const drops = (state.race.rokakakaLog ?? []).filter((e) => e.event === 'dropped');
     if (drops.some((e) => e.humansRacing > 0)) T.roka.gamesUnder2++;
@@ -611,7 +682,7 @@ function printStands(S) {
 
   const R = T.roka;
   console.log('\nRokakaka');
-  console.log(`  found ${f1(R.found / g)} per game (${f1(R.foundHuman / g)} by human PCs, ${R.found - R.foundHuman} by anyone else); games with fewer than 2 while a human was still racing: ${R.gamesUnder2} ${R.gamesUnder2 ? 'FAIL' : 'ok'} (fewer because every human was out: ${R.noHumansLeft ?? 0})`);
+  console.log(`  found ${f1(R.found / g)} per game (${f1(R.foundHuman / g)} by human PCs, ${R.found - R.foundHuman} by anyone else); games with fewer than ${RULES.rokakaka.guaranteed} while a human was still racing: ${R.gamesUnder2} ${R.gamesUnder2 ? 'FAIL' : 'ok'} (fewer because every human was out: ${R.noHumansLeft ?? 0})`);
   if (R.why) console.log('  short games: ' + JSON.stringify(R.why));
   console.log(`  eaten ${pct(R.eaten, R.found)} · kept ${pct(R.kept, R.found)} · left ${pct(R.left, R.found)}`);
   console.log(`  tier before eating: ${JSON.stringify(R.before)} · next Stand after: ${JSON.stringify(R.after)}`);
@@ -620,11 +691,13 @@ function printStands(S) {
     .map(([b, o]) => `${b}+: ${(o.stand ?? 0) + (o.died ?? 0)} tries, survived ${pct(o.stand ?? 0, (o.stand ?? 0) + (o.died ?? 0))} (rule ${RULES.arrows.survive.find((x) => x.min === +b).p}%)`).join(' · '));
 
   console.log('\nWorthiness at the end of the race (PCs; start by personality; 10th–90th percentile)');
-  table(['Personality', 'start', 'end avg', '10th–90th', 'end at 100', 'end below 25'], Object.entries(T.worth).map(([k, a]) => {
+  table(['Personality', 'start', 'end avg', '10th–90th', 'end at 95+', 'end below 25'], Object.entries(T.worth).map(([k, a]) => {
     const sorted = a.slice().sort((x, y) => x - y), q = (f) => sorted[Math.floor(f * (sorted.length - 1))];
-    return [k, RULES.worthiness.byPersonality[k], f1(avg(a)), `${q(0.1)}–${q(0.9)}`, pct(a.filter((x) => x >= 100).length, a.length), pct(a.filter((x) => x < 25).length, a.length)];
+    return [k, RULES.worthiness.byPersonality[k], f1(avg(a)), `${q(0.1)}–${q(0.9)}`, pct(a.filter((x) => x >= 95).length, a.length), pct(a.filter((x) => x < 25).length, a.length)];
   }));
 
+  const allW = Object.values(T.worth).flat();
+  console.log(`  all PCs ending at 95+: ${pct(allW.filter((x) => x >= 95).length, allW.length)} (target under 5%)`);
   console.log('  without Valentine joiners (joining costs −30): ' + Object.entries(T.worthNoJoin).map(([k, a]) => `${k} ${f1(avg(a))} (below 25: ${pct(a.filter((x) => x < 25).length, a.length)})`).join(' · '));
   console.log('  helps and spares per PC per game: ' + Object.entries(T.deeds).map(([k, d]) => `${k} ${f1(d.helps / d.n)} + ${f1(d.spares / d.n)} = ${f1((d.helps + d.spares) / d.n)}`).join(' · '));
   console.log('\nStand holders vs non-holders (Stand at the end of the race; PCs + canon)');

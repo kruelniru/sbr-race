@@ -26,6 +26,8 @@ export const livingAgents = (state) => (state.agents ?? []).filter((a) => a.stat
 export function ambushChance(state, r) {
   if (r.status !== 'racing' || !livingAgents(state).length) return 0;
   if (isJoiner(r) && valentineProtected(state, r)) return 0;
+  // Milestone 7b: they just beat or robbed this racer; they leave them be for a while.
+  if (r.agentsLeaveUntil && (state.race?.stageIdx ?? 0) + 1 <= r.agentsLeaveUntil) return 0;
   const parts = carried(state, r);
   let p;
   if (!parts.length) p = r.tier === 'canon' ? A().canonNonHolder : r.tier === 'pc' ? A().nonHolder : 0;
@@ -47,7 +49,7 @@ export function agentWin(rng, state, target) {
 
 /** An ambush fight: the agent attacks, the racer defends (`defend`). */
 export function resolveAmbush(ctx, agent, target, defend) {
-  log(ctx, { event: 'ambush', tier: target.tier, holder: carried(ctx.state, target).length, plan: target.plan ?? null });
+  log(ctx, { event: 'ambush', id: target.id, human: target.tier === 'pc' && !target.isAI, tier: target.tier, holder: carried(ctx.state, target).length, plan: target.plan ?? null });
   return resolveFight(ctx, {
     kind: 'agents', attacker: agent, defender: target, win: agentWin(ctx.rng, ctx.state, target), defend,
     bonusA: A().bonus, cause: "killed by Valentine's agents",

@@ -334,9 +334,10 @@ function addAlerts(state, p, prev, next) {
   }
   if (p.mount === 'horse' && prev.onFoot && !next.onFoot && alive) add('calm', 'You have a horse again', `${next.horse}${next.horseQuality ? `, a ${next.horseQuality} horse` : ''}.`);
   if (!prev.stand && next.stand) add('calm', 'You have a Stand', `${next.stand.name} (${next.stand.tier}). Only you know.`);
-  if (prev.stand && !next.stand && alive) add('calm', 'Your Stand is gone', `${prev.stand.name} has left you.`);
+  if (prev.stand && !next.stand && alive && !next.ateRokakaka) add('calm', 'Your Stand is gone', `${prev.stand.name} has left you.`);
   for (const name of next.parts ?? []) if (!(prev.parts ?? []).includes(name)) add('calm', 'A corpse part is yours', `${name.charAt(0).toUpperCase() + name.slice(1)}. Only you know.`);
-  if (alive) for (const name of prev.parts ?? []) if (!(next.parts ?? []).includes(name)) add('calm', 'You lost a corpse part', `${name.charAt(0).toUpperCase() + name.slice(1)} is no longer with you.`);
+  const told = (p.pendingAlerts ?? []).map((a) => a.text).join(' ');
+  if (alive) for (const name of prev.parts ?? []) if (!(next.parts ?? []).includes(name) && !told.includes(name)) add('calm', 'You lost a corpse part', `${name.charAt(0).toUpperCase() + name.slice(1)} is no longer with you.`);
   if (!prev.injured && next.injured && alive) add('calm', "You're badly hurt", 'It costs you placement until this stage ends.');
   if (prev.allyId && next.allyId !== prev.allyId && alive) {
     const a = state.players.concat(state.canon ?? []).find((r) => r.id === prev.allyId)
@@ -385,6 +386,7 @@ export function syncShown(state) {
       allyId: allyOf(state, p)?.id ?? null,
       parts,
       settling,            // a corpse part is merging: the Stand card says so
+      ateRokakaka: !p.stand && !!p.ateRokakaka, // milestone 7b: "Your Stand is gone (you ate a Rokakaka)"
       injured,
       nextTrader: p.mount === 'horse' && p.onFoot ? nextTraderText(state) : null,
       // Milestone 6c: your own story, once the last round has been revealed.

@@ -107,6 +107,12 @@ export const EFFECTS = {
     },
   },
 
+  // horseGiven: true. The Rider gives their horse away (a hard choice, milestone 7b): on foot, no loss counted.
+  horseGiven: {
+    fits: (ctx, who) => who.tier !== 'npc' && hasHorse(who),
+    apply: (ctx, who) => { loseHorse(ctx, who, { counts: false, how: 'given' }); },
+  },
+
   // getHorse: 'riderless'. An on-foot Rider catches a horse (a dead racer's).
   getHorse: {
     fits: (ctx, who) => who.tier !== 'npc' && canHaveHorse(who) && who.onFoot,

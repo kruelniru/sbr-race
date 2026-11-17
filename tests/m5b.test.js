@@ -191,7 +191,7 @@ test('agents: holders far likelier, non-holders sometimes, joiners never', () =>
   givePart(state, a, 0);
   givePart(state, a, 1, { hidden: true });
   const A = RULES.agents;
-  assert.equal(ambushChance(state, a), A.perHolder + A.perPart + A.perHidden);
+  assert.ok(Math.abs(ambushChance(state, a) - (A.perHolder + A.perPart + A.perHidden)) < 1e-9);
   assert.equal(ambushChance(state, b), A.nonHolder);
   b.plan = 'corpse';
   assert.equal(ambushChance(state, b), A.nonHolder * A.huntMult);
@@ -408,7 +408,7 @@ test('two living racers never hold the same Stand (whole games, every round)', (
     while (!state.race.over) {
       runRound(state);
       const f = state.field;
-      const held = [...state.players, ...state.canon, ...f.kept, ...f.packLeaders].filter((r) => r.status !== 'dead' && r.stand).map((r) => r.stand.id);
+      const held = [...new Set([...state.players, ...state.canon, ...f.kept, ...f.packLeaders])].filter((r) => r.status !== 'dead' && r.stand).map((r) => r.stand.id);
       assert.equal(new Set(held).size, held.length, `game ${g}, round ${state.race.roundNo}: a Stand held twice`);
     }
   }

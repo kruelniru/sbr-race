@@ -69,6 +69,7 @@ export function pickStand(state, rng, tier) {
  */
 export function giveStand(ctx, racer, def, source) {
   if (!def || racer.stand) return null;
+  racer.ateRokakaka = false;
   const s = ctx.state.stands;
   if (!s.out.includes(def.id)) s.out.push(def.id);
   s.unlocked = s.unlocked.filter((id) => id !== def.id);

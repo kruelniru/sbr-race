@@ -20,6 +20,9 @@ import { resolveFight } from '../js/engine/fights.js';
 import { readFileSync, readdirSync } from 'node:fs';
 import { storyFor } from '../js/engine/secrets.js';
 
+// These tests force the Arrow to accept; "the Arrow chooses" has its own test below.
+RULES.requiem.success = 1;
+
 function setup(seed, { players = 8, humans = 8 } = {}) {
   const state = createGameState(seed);
   const rng = new Rng(seed + ':roster');
@@ -154,4 +157,22 @@ test('the cheat menu warns when a Stand it gives was held by someone (an NPC too
   assert.equal(npc.stand, null, 'never two holders');
   assert.ok(RULES.requiem.minWorthiness === 80);
   resolveFight; // (imported for parity with other suites)
+});
+
+test('the Arrow chooses: when it refuses, everything is used up, the Stand stays, and only the phone knows', async () => {
+  const { pierceStand } = await import('../js/engine/secret-endings.js');
+  const state = setup('refuse');
+  const a = state.players[0];
+  applyCheat(state, { by: 'test', target: a.id, action: 'setup-requiem' });
+  const before = a.stand.name;
+  RULES.requiem.success = 0;
+  try {
+    const got = pierceStand({ state, rng: new Rng('r'), stage: { id: 5 }, roundLabel: 'Day 1' }, a);
+    assert.equal(got, null);
+    assert.equal(a.stand.name, before, 'the Stand stays as it was');
+    assert.equal(state.items.filter((i) => i.owner === a.id && ['arrow', 'rokakaka'].includes(i.kind)).length, 0, 'all three used up');
+    assert.ok(a.hints.some((h) => h.text === 'The Arrow turns in your hand and will not pierce. It has judged you.'));
+    assert.equal(state.corpse.announce.length, 0, 'nothing on stream');
+    assert.equal(state.race.requiem ?? null, null);
+  } finally { RULES.requiem.success = 1; }
 });

@@ -3,7 +3,7 @@ export default [
   { id: 's5-crowds', text: "Chicago's crowds slow {a} to a walk.",
     cast: { a: 'focus' }, effects: { a: { pace: -1 } }, tags: ['minor'], when: { stages: [5] }, weight: 4 },
   { id: 's5-pickpocket', text: "{b} lifts {a}'s wallet on a crowded street.",
-    cast: { a: 'focus', b: 'npc' }, tags: ['minor'], when: { stages: [5] }, weight: 3 },
+    cast: { a: { is: 'focus', notHuman: true }, b: 'npc' }, tags: ['minor'], when: { stages: [5] }, weight: 3 },
   { id: 's5-alley', text: '{b} corners {a} in an alley. Only {a} walks out.',
     cast: { a: 'focus', b: 'npc' }, effects: { b: { dies: 'killed in an alley', by: 'a' } }, tags: ['defend', 'kill-defense'], when: { stages: [5] }, weight: 2 },
   { id: 's5-hotel', text: '{a} sleeps in a real bed for once and rides out refreshed.',

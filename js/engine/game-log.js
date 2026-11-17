@@ -92,6 +92,7 @@ export function buildGameLog(state) {
       d4c: race.d4c ? { ...race.d4c } : null,
       itemsFromTheDead: (race.itemLog ?? []).map((e) => ({ ...e, from: name(e.from), to: name(e.to) })),
       requiem: race.requiem ? { ...race.requiem } : null,
+      requiemRefused: (race.requiemRefused ?? []).map((x) => ({ ...x, id: name(x.id) })),
       fv: race.fv ? { beaten: race.fv.beaten, dead: race.fv.dead, killers: (race.fv.killers ?? []).map(name), riders: (race.fv.riders ?? []).map(name), beatenBy: name(race.fv.beatenBy) } : null,
     },
     ending: race.ending ?? null,

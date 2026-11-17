@@ -561,3 +561,109 @@ export const ERRAND_TARGET = {
   text: 'A rider in a dark hat is closing in on you, with two more riders close behind.',
   options: AMBUSH.options,
 };
+
+// ------------------------------------------------------------ milestone 7b: good-aligned drama, the camp thief
+// They play out on stream (never secret) and lean toward Honorable and Cautious
+// players (leanTag 'heroic', rules.personalityLean), the way strikes lean toward Ruthless.
+// 'rescue' and 'guard' are resolved in code (js/engine/choices.js); the hard
+// choices are ordinary outcomes.
+const rescueOptions = [
+  { id: 'kill', label: 'Ride in: if you win, kill them', hint: 'Save them. A real fight: you might get hurt, or worse.', lean: L(0.6, 3, 0.4, 2, 1.5) },
+  { id: 'spare', label: 'Ride in: if you win, let them go', hint: 'Save them, and show mercy', lean: L(4, 0.6, 2.5, 2, 1.2) },
+  { id: 'leave', label: 'Not your fight', hint: 'Ride on', lean: L(0.3, 2, 1.5, 0.5, 2.5), tags: ['cold'] },
+];
+export const GOOD_SUBS = [
+  {
+    id: 'sub-rescue', title: 'A rescue', special: 'rescue', leanTag: 'heroic', weight: 1.6,
+    cast: { a: 'focus', b: 'npc', c: 'npc' },
+    text: '{b} has {c} on the ground by the creek, a gun at {c.their} head and a hand in {c.their} pack.',
+    options: rescueOptions,
+  },
+  {
+    id: 'sub-rescue-canon', title: 'A rescue', special: 'rescue', leanTag: 'heroic', weight: 0.8,
+    cast: { a: 'focus', b: 'npc', c: { is: 'named', tier: 'canon' } },
+    text: '{b} has {c} pinned against a wagon, gun drawn, and nobody else is stopping.',
+    options: rescueOptions,
+  },
+  {
+    id: 'sub-guard-ally', title: 'Stand guard', special: 'guard', leanTag: 'heroic', weight: 1.4,
+    cast: { a: 'focus', b: 'ally' }, when: { rounds: ['night'] },
+    text: '{b} is too hurt to keep watch tonight, and there are riders moving in the dark.',
+    options: [
+      { id: 'watch', label: 'Keep watch all night', hint: 'Lose time. If they come, you fight.', lean: L(4, 0.6, 3, 1.5, 1), tags: ['help'] },
+      { id: 'sleep', label: 'Get some sleep', hint: 'Keep your pace', lean: L(0.4, 2, 0.8, 1, 2), tags: ['cold'] },
+    ],
+  },
+  {
+    id: 'sub-guard-stranger', title: 'Stand guard', special: 'guard', leanTag: 'heroic', weight: 1.2,
+    cast: { a: 'focus', b: 'npc' }, when: { rounds: ['night'] },
+    text: '{b} is camped alone and feverish near you, and there are riders moving in the dark.',
+    options: [
+      { id: 'watch', label: 'Keep watch over them', hint: 'Lose time. If they come, you fight.', lean: L(4, 0.4, 2.5, 1.2, 0.8), tags: ['help'] },
+      { id: 'sleep', label: 'Get some sleep', hint: 'Keep your pace', lean: L(0.5, 2, 1, 1, 2), tags: ['cold'] },
+    ],
+  },
+  {
+    id: 'sub-hard-horse', title: 'A hard choice', leanTag: 'heroic', weight: 1,
+    cast: { a: { is: 'focus', hasHorse: true }, b: 'npc' },
+    text: '{b} has a broken leg and a wife in labor two towns over. {b.They} need{b:s} a horse, and yours is the only one in sight.',
+    options: [
+      { id: 'give', label: 'Give them your horse', hint: 'You go on foot. A great deed, +10 points.', lean: L(3, 0.1, 0.8, 0.6, 0.3), tags: ['help', 'save'],
+        outcomes: [{ weight: 1, text: '{a} hands {a.horse} to {b} and walks on alone.', effects: { a: { horseGiven: true, points: 10 } } }] },
+      { id: 'keep', label: 'Keep your horse', hint: 'Ride on', lean: L(1.5, 3, 3, 3, 3), tags: ['cold'],
+        outcomes: [{ weight: 1, text: '{a} wishes {b} luck and rides on.', effects: {}, minor: true }] },
+    ],
+  },
+  {
+    id: 'sub-hard-river', title: 'A hard choice', leanTag: 'heroic', weight: 1.2,
+    cast: { a: 'focus' }, when: { terrain: ['lake', 'coast', 'prairie', 'mountains', 'forest', 'desert'] },
+    text: "A family's wagon is stuck in the river with children aboard, and the water is rising.",
+    options: [
+      { id: 'help', label: 'Go in after them', hint: 'Lose a lot of time. A great deed, +10 points.', lean: L(4, 0.2, 2, 1.5, 0.5), tags: ['help', 'save'],
+        outcomes: [
+          { weight: 4, text: '{a} wades in and gets every child out. It costs {a.them} half a day.', effects: { a: { pace: -3, points: 10 } } },
+          { weight: 1, text: '{a} gets every child out, and comes out of the water hurt.', effects: { a: { pace: -2, points: 10, injured: true } } },
+        ] },
+      { id: 'past', label: 'Someone else will help', hint: 'Keep your pace', lean: L(0.3, 2.5, 1.2, 1.5, 2.5), tags: ['cold'],
+        outcomes: [{ weight: 1, text: '{a} looks away from the river and keeps going.', effects: {}, minor: true }] },
+    ],
+  },
+  {
+    id: 'sub-hard-doctor', title: 'A hard choice', leanTag: 'heroic', weight: 1, when: { terrain: ['city'] },
+    cast: { a: 'focus', b: 'npc' },
+    text: "A doctor won't treat {b}, dying in the street, without payment up front.",
+    options: [
+      { id: 'pay', label: 'Pay for it (−15 points)', hint: 'A great deed', lean: L(3, 0.1, 1.2, 1, 0.3), tags: ['help', 'save'],
+        outcomes: [{ weight: 1, text: '{a} pays the doctor for {b}, and {b} lives.', effects: { a: { points: -15 } } }] },
+      { id: 'no', label: 'Walk away', hint: 'Keep your points', lean: L(0.5, 3, 2, 2, 3), tags: ['cold'],
+        outcomes: [{ weight: 1, text: '{a} walks away from the doctor\'s door.', effects: {}, minor: true }] },
+    ],
+  },
+  {
+    // A theft only ever reaches a human through a choice (plain theft events are for AI racers and NPCs).
+    id: 'sub-camp-thief', title: "Someone's in your camp", special: 'fight', fightKind: 'chase', weight: 1.4,
+    cast: { a: 'focus', b: 'npc' }, when: { rounds: ['night'] },
+    text: 'You wake to {b} going through your pack in the dark.',
+    options: [
+      { id: 'chase-spare', label: 'Chase them: if you catch them, let them go', hint: 'Get it all back. They might fight.', lean: L(3, 0.8, 1, 2.5, 1.5) },
+      { id: 'chase-kill', label: 'Chase them: if you catch them, kill them', hint: 'Get it all back. Killing a thief costs Worthiness.', lean: L(0.3, 4, 0.4, 1.5, 2) },
+      { id: 'let', label: 'Let them go', hint: 'They take food and water. You lose time.', lean: L(1, 0.5, 3, 0.4, 1) },
+    ],
+  },
+];
+
+// Agents took a part from you: next round, you can ride after them.
+export const RIDE_AFTER = {
+  id: 'ride-after', title: 'Ride after them',
+  text: "{b}'s dust is still hanging over the trail. You could still catch {b.them}.",
+  lines: {
+    open: '{x} rides after {y}.',
+    won: ' {x} runs {y} down and makes {y.them} hand it back.',
+    back: ' {y} turns and drives {x} off.',
+    let: '{a} lets {b} go.',
+  },
+  options: [
+    { id: 'chase', label: 'Ride after them', hint: "They're running: you fight at an edge. Win and it's yours again.", lean: L(2, 3, 1.5, 4, 3) },
+    { id: 'let', label: 'Let it go', hint: 'Nothing happens', lean: L(1.5, 0.5, 2, 0.3, 0.8) },
+  ],
+};

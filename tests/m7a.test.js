@@ -32,7 +32,7 @@ function setup(seed, { players = 8, humans = 8, mount = null } = {}) {
 const ctx = (state, stage = 4) => ({ state, rng: new Rng('k'), stage: { id: stage }, roundLabel: 'Day 1', result: { deaths: [] } });
 
 test('Runners never get horse wording about themselves (whole games full of Runners)', () => {
-  const OWN = /\b(saddle\w*|stirrups?|spurs?|gallop\w*|reins|fresh horses|fallen horse|under the horse|relay horses)\b/i;
+  const OWN = /\b(saddle\w*|stirrups?|spurs?|gallop\w*|reins|fresh horses|relay horses)\b/i; // (an ally's fallen horse is theirs: the template test covers whose horse)
   for (let g = 0; g < 12; g++) {
     const state = setup('runners' + g, { players: 14, humans: 7, mount: 'runner' });
     const runners = new Set(state.players.map((p) => p.id));
@@ -97,6 +97,7 @@ test('ties: stage wins, then the Final Stage, then a PC; the podium says so', ()
   for (const r of [...state.players, ...state.canon]) r.points = 0;
   Object.assign(x, { status: 'racing', points: 900, stageWins: 1 });
   Object.assign(y, { status: 'racing', points: 900, stageWins: 3 });
+  state.race.ending = { id: 'normal' }; // (a seed can end in a secret ending, which wins outright)
   const f = buildFinale(state);
   assert.equal(f.podium[0].id, y.id);
   assert.equal(f.podium[0].tieBroken, 'stage wins');

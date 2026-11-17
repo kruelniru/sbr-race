@@ -66,11 +66,16 @@ export function startWorthiness(rng, tier, personality) {
  * rules.worthiness.hintAt or more (softHintAt for a softer line) gives a PC a private phone hint, so people
  * notice without seeing a number.
  */
-export function addWorthiness(who, n, ctx) {
+export function addWorthiness(who, n, ctx, { great = false } = {}) {
   if (who?.worthiness == null || !n) return;
   const before = who.worthiness;
-  // Diminishing gains near the top: the saints don't get there for free.
-  if (n > 0 && who.worthiness > RULES.worthiness.halfAbove) n = Math.floor(n / 2);
+  // Diminishing gains near the top: the saints don't get there for free (rules.worthiness).
+  const W0 = RULES.worthiness;
+  if (n > 0) {
+    if (who.worthiness > W0.greatOnlyAbove && !great) return;
+    if (who.worthiness > W0.quarterAbove) n = Math.max(1, Math.floor(n / 4));
+    else if (who.worthiness > W0.halfAbove) n = Math.max(1, Math.floor(n / 2));
+  }
   if (!n) return;
   who.worthiness = Math.max(0, Math.min(100, who.worthiness + n));
   // The game log (exported after the game): every change, with numbers.

@@ -32,7 +32,9 @@ export function standCard(r) {
       h('div', { class: 'stand-label' }, 'Your Stand'),
       h('p', { class: 'stand-none' }, r.settling
         ? 'The part is settling into you… By the end of next round you\'ll know if it accepts you.'
-        : 'No Stand yet. The Devil\'s Palm, a Stand Arrow, or a corpse part might change that.'));
+        : r.ateRokakaka
+          ? 'Your Stand is gone (you ate a Rokakaka). The Devil\'s Palm, a Stand Arrow, or a corpse part can give you a new one.'
+          : 'No Stand yet. The Devil\'s Palm, a Stand Arrow, or a corpse part might change that.'));
   }
   return h('section', { class: `stand-card tier-${r.stand.tier}` },
     h('div', { class: 'stand-label' }, 'Your Stand', h('span', { class: `tier-badge tier-${r.stand.tier}` }, TIER_LABEL[r.stand.tier] ?? r.stand.tier)),
@@ -53,12 +55,13 @@ export function itemsCard(you, onUse, onOffer = null) {
     h('h3', {}, 'Items'),
     h('ul', { class: 'item-list' }, items.map((it) => {
       const can = open && (it.usable || it.pending);
-      const label = it.pending ? 'Using this round · tap to cancel' : it.kind === 'arrow' ? 'Pierce yourself' : 'Eat it';
+      const label = it.pending ? 'Tap to cancel' : it.kind === 'arrow' ? 'Pierce yourself' : 'Eat it';
       return h('li', { class: 'item' + (it.pending ? ' pending' : '') },
         h('div', { class: 'item-text' },
           h('div', { class: 'item-name' }, it.label),
           h('div', { class: 'item-blurb' }, it.blurb),
-          !it.usable && it.why ? h('div', { class: 'item-why' }, it.why) : null),
+          it.pending ? h('div', { class: 'item-pending' }, it.kind === 'arrow' ? "You'll pierce yourself when the round is revealed." : "You'll eat this when the round is revealed.") : null,
+          !it.usable && !it.pending && it.why ? h('div', { class: 'item-why' }, it.why) : null),
         h('div', { class: 'item-actions' },
           h('button', {
             type: 'button', class: 'btn btn-small item-use' + (it.pending ? ' btn-primary' : ''), disabled: !can,

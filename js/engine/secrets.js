@@ -167,6 +167,7 @@ registerFinaleSection({
     if (d4c) lines.push(`Dirty Deeds Done Dirt Cheap: going into the Final Stage, Funny Valentine brought ${d4c.name} back from another world to ride for him. ${d4c.stayed ? 'The President won, so they stayed in this world.' : 'When it was over, they faded back into death.'}`);
     const rq = state.race.requiem;
     if (rq) lines.push(`In Stage ${rq.stage}, ${rq.name} pierced ${rq.from} with a Stand Arrow and it became ${rq.stand}.`);
+    for (const x of state.race.requiemRefused ?? []) lines.push(`In Stage ${x.stage}, ${nameOf(state, x.id)} tried to pierce ${x.stand} with a Stand Arrow. The Arrow refused.`);
     if (e?.id === 'saint') lines.push(`${e.winnerName} held all nine parts of the Saint's Corpse at Trinity Church.`);
     if (fv?.beatenBy) lines.push(`${nameOf(state, fv.beatenBy)} beat Funny Valentine in the Final Stage. Dirty Deeds Done Dirt Cheap: the Valentine who came back was from another world.`);
     if (fv?.dead) lines.push(`The other Valentine was killed by ${fv.killers.map((id) => nameOf(state, id)).join(' and ')}. No world was left for him to run to.`);

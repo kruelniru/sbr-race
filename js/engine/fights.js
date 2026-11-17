@@ -21,14 +21,14 @@
 // choice; a kill can still miss), or a reversal (the defender wins and
 // kills or drives them off).
 //
-// Worthiness: the attacker started it (kill −8; a fleeing loser −12, cruel);
-// a defender's kill is self-defense (0); sparing someone you beat +12, or
-// +4 if you started the fight (rules.worthiness.spareStarted).
+// Worthiness: the attacker started it (kill −6; a fleeing loser −10, cruel; a rescue's kill is defense);
+// a defender's kill is self-defense (0); sparing someone you beat +8, or
+// +2 if you started the fight (rules.worthiness.spareStarted). Milestone 7b: each PC's phone gets an alert saying what happened.
 
 import RULES from '../../data/rules.js';
 import { render } from './text.js';
 import { displayRoles } from './events.js';
-import { killRacer, addWorthiness } from './racers.js';
+import { killRacer, addWorthiness, addAlert } from './racers.js';
 import { npcDies } from './field.js';
 import { standMods } from './stands.js';
 import { allyOf } from './alliances.js';
@@ -135,7 +135,7 @@ function die(ctx, who, cause, killer, masked = false) {
 export function resolveFight(ctx, spec) {
   const { attacker: x, defender: y, kind } = spec;
   const W = RULES.worthiness;
-  const roles = { x, y };
+  const roles = { x, y, ...(spec.extra ?? {}) }; // extra: more roles the opening line names (a rescue's victim)
   const masked = !!spec.masked;
   let text = spec.open ?? LINES.open[kind] ?? LINES.open.strike;
   let outcome;
@@ -144,6 +144,8 @@ export function resolveFight(ctx, spec) {
   y.fights = (y.fights ?? 0) + 1;
   const carriedBefore = carried(ctx.state, y).length;
   let scores = null; // { a: { base, roll }, d } for the debug log
+  let took = []; // labels of the parts the winner took (the phone alert)
+  let horseTaken = null;
 
   // Notes stay templates (rendered once, at the end), keyed to the roles they name.
   const addNotes = (notes) => {
@@ -205,7 +207,7 @@ export function resolveFight(ctx, spec) {
       text += spec.reversalLine ?? LINES.reversalSpare;
       if (!spec.noSpareCredit) {
         y.spares = (y.spares ?? 0) + 1;
-        addWorthiness(y, W.spare, ctx);
+        addWorthiness(y, W.spare, ctx, { great: x.tier === 'pc' }); // sparing a PC who attacked you is a great deed
       }
     }
     if (kind === 'rival') { y.points += F().winPoints; y.pace += F().winPace; x.pace -= 1; }
@@ -233,15 +235,17 @@ export function resolveFight(ctx, spec) {
         death = true;
         text += cruel ? LINES.killFled : LINES.kill;
         die(ctx, y, spec.cause ?? 'killed in a fight', x, masked && y.tier !== 'npc');
-        addWorthiness(x, cruel ? W.killCruel : W.killStarted, ctx);
+        // A rescue: killing the attacker to save someone counts as defense.
+        addWorthiness(x, spec.rescue ? W.killDefense : cruel ? W.killCruel : W.killStarted, ctx);
       }
     } else if (choice === 'part' || choice === 'searched') {
       // Search them. The stream line is the same whether there was anything to find.
-      const got = takeParts(ctx, x, y, spec);
+      const got = takeParts(ctx, x, y, spec, took);
       outcome = got ? 'part' : 'searched';
       if (!got && spec.fallback === 'horse' && hasHorse(y) && choice === 'part') {
         outcome = 'horse';
         const lost = takeHorse(ctx, x, y);
+        horseTaken = lost;
         text += lost && x.horse === lost.name && !x.onFoot ? LINES.horse : LINES.horseDrive;
       } else {
         text += choice === 'searched' ? LINES.searched : LINES.part;
@@ -251,13 +255,14 @@ export function resolveFight(ctx, spec) {
     } else if (choice === 'horse') {
       outcome = 'horse';
       const lost = takeHorse(ctx, x, y);
+      horseTaken = lost;
       text += lost && x.horse === lost.name && !x.onFoot ? LINES.horse : LINES.horseDrive;
     } else {
       outcome = 'spare';
-      text += LINES.spare;
+      text += spec.spareLine ?? LINES.spare;
       if (x.tier !== 'agent') {
         x.spares = (x.spares ?? 0) + 1;
-        addWorthiness(x, W.spareStarted, ctx);
+        addWorthiness(x, spec.rescue ? W.spare : W.spareStarted, ctx);
       }
     }
     if (kind === 'rival') { x.points += F().winPoints; x.pace += F().winPace; y.pace -= 1; }
@@ -270,6 +275,7 @@ export function resolveFight(ctx, spec) {
       shown.x = { name: 'the rider in the dark hat', pronouns: 'they' };
     }
     const rendered = render(text, shown);
+    fightAlerts(x, y, outcome, { masked, took, horse: horseTaken, alertX: spec.alertX, alertY: spec.alertY });
     (ctx.state.race.fightLog ??= []).push({
       kind, outcome, stage: ctx.stage?.id,
       pvp: x.tier === 'pc' && y.tier === 'pc',
@@ -282,11 +288,52 @@ export function resolveFight(ctx, spec) {
   }
 }
 
+/**
+ * Milestone 7b: after any fight, each PC's phone says exactly what happened
+ * ("Ringo Roadagain beat you and took the left arm.", "You drove them off and kept everything.").
+ * A masked attacker stays "a rider in a dark hat". spec.alertX / alertY override a side's text.
+ */
+export function fightAlerts(x, y, outcome, { masked = false, took = [], horse = null, alertX = null, alertY = null } = {}) {
+  const cap = (n) => n.charAt(0).toUpperCase() + n.slice(1);
+  const xn = cap(masked ? 'a rider in a dark hat' : x.name);
+  const yn = cap(y.name ?? 'they');
+  const lostWhat = took.length ? `took ${list(took)}` : horse ? `took ${horse.name}` : null;
+  const X = {
+    escape: [`${yn} got away`, 'They fled before you could catch them.'],
+    'both-hurt': ['A standstill', `You fought ${yn} to a standstill. You're both hurt.`],
+    kill: [`You killed ${yn}`, ''],
+    'kill-missed': [`${yn} got away`, `You beat ${yn}, but they got away, badly hurt.`],
+    part: ['You won the fight', `You beat ${yn} and went through their things.`],
+    searched: ['You won the fight', `You beat ${yn} and went through their things.`],
+    horse: ['You won the fight', `You beat ${yn} and took their horse.`],
+    spare: ['You won the fight', `You beat ${yn} and let them go.`],
+    'reversal-spare': ['You lost the fight', `${yn} turned it around and drove you off.`],
+  };
+  const Y = {
+    escape: ['You got away', `You fled from ${xn} and kept everything.`],
+    'both-hurt': ['A standstill', `You fought ${xn} to a standstill. You're both hurt.`],
+    'kill-missed': ['You lost the fight', `${xn} beat you. You got away, badly hurt${lostWhat ? '' : ', and kept everything'}.`],
+    part: ['You lost the fight', `${xn} beat you and ${lostWhat ?? 'went through your things'}.`],
+    searched: ['You lost the fight', `${xn} beat you and went through your things. They found nothing, and you kept everything.`],
+    horse: ['You lost the fight', `${xn} beat you and ${horse ? `took ${horse.name}` : 'drove off your horse'}.`],
+    spare: ['You lost the fight', `${xn} beat you and let you go. You kept everything.`],
+    'reversal-kill': [`You killed ${masked ? 'the rider in the dark hat' : x.name}`, masked ? `It was ${x.name}${x.name.endsWith('.') ? '' : '.'}` : 'You kept everything.'],
+    'reversal-spare': ['You won the fight', `You drove ${masked ? 'the rider in the dark hat' : x.name} off and kept everything.`],
+  };
+  const sx = alertX?.[outcome] ?? X[outcome];
+  const sy = alertY?.[outcome] ?? Y[outcome];
+  if (sx && x.status !== 'dead') addAlert(x, 'calm', sx[0], sx[1]);
+  if (sy && y.status !== 'dead') addAlert(y, 'calm', sy[0], sy[1]);
+}
+
+const list = (xs) => (xs.length < 2 ? xs[0] : `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}`);
+
 /** The winner takes one corpse part (or every one, `takeAll`) the loser carries. Returns how many. */
-function takeParts(ctx, winner, loser, spec) {
+function takeParts(ctx, winner, loser, spec, took = []) {
   const items = carried(ctx.state, loser);
   if (!items.length) return 0;
   const list = spec.takeAll ? items : [ctx.rng.pick(items)];
+  for (const it of list) took.push(it.label);
   const to = spec.partTo === 'president' || winner.tier === 'agent' || winner.immortal ? 'president' : winner;
   for (const it of list) takePart(ctx, it, to, 'fight', loser);
   return list.length;

@@ -28,15 +28,15 @@
 // unanswered at close (timer ran out, disconnected) gets the ★ option.
 
 import RULES from '../../data/rules.js';
-import { SUB_EVENTS, RIVAL, PALM, ARROW, ROKAKAKA, ATTACKED, STRIKE, FIGHT_WIN, FIGHT_DEFEND, HORSE_TWO, ALLY_INVITE, TRADE,
+import { SUB_EVENTS, GOOD_SUBS, RIVAL, PALM, ARROW, ROKAKAKA, ATTACKED, STRIKE, FIGHT_WIN, FIGHT_DEFEND, HORSE_TWO, ALLY_INVITE, TRADE,
   FOUND_PART, STEAL_PART, AMBUSH, FUNNY_VALENTINE, VALENTINE_OFFER, ERRAND, ERRAND_TARGET,
-  BRING_DOWN, VALENTINE_RIDE, VALENTINE_REMATCH, REQUIEM } from '../../data/sub-events.js';
+  BRING_DOWN, VALENTINE_RIDE, VALENTINE_REMATCH, REQUIEM, RIDE_AFTER } from '../../data/sub-events.js';
 import { requiemReady, pierceStand, d4cReturn } from './secret-endings.js';
 import { EFFECTS } from './effects.js';
 import { render } from './text.js';
 import { Rng } from './rng.js';
 import { readyPlayers } from './state.js';
-import { namedRacers, addWorthiness, killRacer, retireRacer } from './racers.js';
+import { namedRacers, addWorthiness, killRacer, retireRacer, addAlert } from './racers.js';
 import { castNpc, keepNpc } from './field.js';
 import { normalizeEvent, whenFits, roleFits, castRoles, deathWeight, displayRoles } from './events.js';
 import { awakenStand, removeStand } from './stands.js';
@@ -48,15 +48,15 @@ import { resolveFight, npcWin, npcDefend, LINES as FIGHT_LINES } from './fights.
 import { hasHorse, townStage, shopOffers, buyHorse, aiBuys } from './horses.js';
 import { allyOf, formAlliance, canonAccepts, log as logAlly } from './alliances.js';
 import { pendingFor, tradePromptText, tradeLeans, resolveTrade } from './trades.js';
-import { looseParts, pickFinder, markFinding, resolveFind, resolveOtherFind, carried, takePart, holdHidden } from './corpse.js';
-import { ambushChance, pickAgent, resolveAmbush, otherAmbushes, canFaceValentine, resolveValentine, log as logAgents } from './agents.js';
+import { looseParts, pickFinder, markFinding, resolveFind, resolveOtherFind, carried, takePart, holdHidden, recoverPart } from './corpse.js';
+import { ambushChance, livingAgents, pickAgent, resolveAmbush, otherAmbushes, canFaceValentine, resolveValentine, log as logAgents } from './agents.js';
 import { isJoiner, dueOffers, joinValentine, refuseValentine, deliver, log as logValentine } from './valentine.js';
 import { PART_HINTS } from '../../data/corpse.js';
 import { blessed } from './dead.js';
 import { recordChoices } from './game-log.js';
 import { FINAL_STAGE, chooseBoss, bossRacer, isBoss, resolveBringDown, resolveValentineHunt, resolveValentineRematch } from './final-stage.js';
 
-export const SUBS = [...SUB_EVENTS, PALM, ATTACKED, STRIKE].map((s) => ({ ...normalizeEvent({ ...s, when: s.when ?? {}, effects: {} }), options: s.options, secret: !!s.secret, special: s.special, fightKind: s.fightKind, leanTag: s.leanTag, targetText: s.targetText }));
+export const SUBS = [...SUB_EVENTS, ...GOOD_SUBS, PALM, ATTACKED, STRIKE].map((s) => ({ ...normalizeEvent({ ...s, when: s.when ?? {}, effects: {} }), options: s.options, secret: !!s.secret, special: s.special, fightKind: s.fightKind, leanTag: s.leanTag, targetText: s.targetText }));
 const PALM_SUB = SUBS.find((s) => s.id === PALM.id);
 
 // ------------------------------------------------------------ personality picks
@@ -347,7 +347,9 @@ export function openSubEvents(state) {
       continue;
     }
     const humans = racingPcs(state).filter((x) => !x.isAI && !busy.has(x.id));
-    const pick = rng.pick(humans);
+    const R = RULES.rokakaka;
+    const pick = rng.weighted(humans, (x) => (x.rokakakaFound ? 1 : R.weightNoneYet) * (x.stand ? R.weightHasStand : 1));
+    if (pick) pick.rokakakaFound = (pick.rokakakaFound ?? 0) + 1;
     if (!pick) continue; // try again next round
     due.placed = roundNo;
     busy.add(pick.id);
@@ -478,6 +480,18 @@ function corpsePrompts(state, rng, stage, roundNo, roundsLeft, type, busy, promp
   for (const p of free().filter((x) => requiemReady(state, x))) {
     busy.add(p.id);
     prompts.push(specialPrompt(rng, state, REQUIEM, p, roundNo, { a: p.id }, REQUIEM.text));
+  }
+
+  // Ride after them (milestone 7b): the agents took a part last round.
+  for (const p of free().filter((x) => x.rideAfter)) {
+    const ra = p.rideAfter;
+    p.rideAfter = null;
+    const agent = livingAgents(state).find((x) => x.id === ra.agentId) ?? pickAgent(rng, state);
+    if (!agent || !ra.partIds.some((id) => state.corpse.parts.find((x) => x.id === id)?.status === 'president')) continue;
+    busy.add(p.id);
+    const pr = specialPrompt(rng, state, RIDE_AFTER, p, roundNo, { a: p.id, b: agent.id }, render(RIDE_AFTER.text, display({ a: p, b: agent })));
+    pr.partIds = ra.partIds;
+    prompts.push(pr);
   }
 
   // Agent ambushes (never a protected joiner). Fairness applies here too.
@@ -658,6 +672,10 @@ function subPrompt(ctx, pc, roundNo, busy) {
   const { rng } = ctx;
   for (const id of busy) ctx.assigned.add(id);
   let candidates = SUBS.filter((s) => whenFits(s, ctx) && roleFits(ctx, s, s.focusKey, pc));
+  // Milestone 7b: the same title at most twice a game, never twice in a row (unless nothing else fits).
+  const seen = pc.subHistory ?? [];
+  const fresh = candidates.filter((s) => s.title !== seen.at(-1) && seen.filter((t) => t === s.title).length < RULES.good.maxPerTitle);
+  if (fresh.length) candidates = fresh;
   for (let tries = 0; tries < 8 && candidates.length; tries++) {
     const s = rng.weighted(candidates, (x) => x.weight * (x.leanTag ? RULES.personalityLean[pc.personality]?.[x.leanTag] ?? 1 : 1));
     const roles = castRoles(ctx, s, pc);
@@ -681,6 +699,7 @@ function subPrompt(ctx, pc, roundNo, busy) {
       roles: Object.fromEntries(Object.entries(roles).map(([k, w]) => [k, w.id])),
     };
     autoAnswerIfAi(rng, ctx.state, prompt, options, pc.personality);
+    (pc.subHistory ??= []).push(s.title);
     // PC vs PC: the target answers at the same time.
     if (s.fightKind === 'strike' && roles.b.tier === 'pc') {
       prompt.pairKey = prompt.id;
@@ -936,6 +955,7 @@ function resolveSub(ctx, prompt, targetPrompt = null) {
   }
   if (prompt.special === STEAL_PART.id) return resolveSteal(ctx, prompt);
   if (prompt.special === AMBUSH.id) return resolveAgentAmbush(ctx, prompt);
+  if (prompt.special === RIDE_AFTER.id) return resolveRideAfter(ctx, prompt);
   if (prompt.special === FUNNY_VALENTINE.id) return resolveFunnyValentine(ctx, prompt);
   if (prompt.special === VALENTINE_OFFER.id) {
     const a = findAnyRacer(ctx.state, prompt.roles.a);
@@ -963,6 +983,8 @@ function resolveSub(ctx, prompt, targetPrompt = null) {
   const sub = SUBS.find((s) => s.id === prompt.subId);
   if (sub?.special === 'palm') return resolvePalm(ctx, prompt);
   if (sub?.special === 'fight') return resolveFightSub(ctx, sub, prompt, targetPrompt);
+  if (sub?.special === 'rescue') return resolveRescue(ctx, sub, prompt);
+  if (sub?.special === 'guard') return resolveGuard(ctx, sub, prompt);
   const roles = sub && rolesFor(ctx, prompt);
   if (!roles || roles.a.status !== 'racing') return null;
   const option = sub.options.find((o) => o.id === prompt.answer.optionId) ?? sub.options[0];
@@ -972,7 +994,7 @@ function resolveSub(ctx, prompt, targetPrompt = null) {
   const text = render(outcome.text, display(roles));
   applyEffects(ctx, outcome.effects, roles);
   if (option.tags?.includes('help')) roles.a.helps = (roles.a.helps ?? 0) + 1;
-  if (option.tags?.includes('help')) addWorthiness(roles.a, option.tags.includes('save') ? RULES.worthiness.save : RULES.worthiness.help, ctx);
+  if (option.tags?.includes('help')) addWorthiness(roles.a, option.tags.includes('save') ? RULES.worthiness.save : RULES.worthiness.help, ctx, { great: option.tags.includes('save') });
   if (option.tags?.includes('cold')) addWorthiness(roles.a, RULES.worthiness.ridePast, ctx);
   const death = Object.values(outcome.effects).some((e) => e.dies);
   const line = lineFor(ctx, `${sub.id}:${option.id}`, text, roles, { death, tags: option.tags ?? [] });
@@ -1001,6 +1023,7 @@ function resolveFightSub(ctx, sub, prompt, targetPrompt) {
   const roles = rolesFor(ctx, prompt);
   if (!roles || roles.a.status !== 'racing') return null;
   const { a, b } = roles;
+  if (sub.fightKind === 'chase') return resolveCampThief(ctx, sub, prompt);
   if (sub.fightKind === 'attacked') {
     const f = resolveFight(ctx, { kind: 'attacked', attacker: b, defender: a, win: npcWin(ctx.rng, b, a), defend: prompt.answer.optionId, cause: 'killed on the trail' });
     return lineFor(ctx, sub.id, f.text, f.roles, { death: f.death, tags: ['fight'] });
@@ -1014,6 +1037,93 @@ function resolveFightSub(ctx, sub, prompt, targetPrompt) {
   const defend = targetPrompt ? targetPrompt.answer.optionId : b.tier === 'pc' ? starOption(FIGHT_DEFEND, b.personality).id : npcDefend(ctx.rng, b);
   const f = resolveFight(ctx, { kind: 'strike', attacker: a, defender: b, win: prompt.answer.optionId, defend, cause: 'killed on the trail' });
   return lineFor(ctx, sub.id, f.text, f.roles, { death: f.death, tags: ['fight'] });
+}
+
+// ------------------------------------------------------------ milestone 7b: good-aligned drama
+
+const GOOD_LINES = {
+  rescueOpen: '{x} rides in to stop {y}, who has {v} at gunpoint.',
+  saved: ' {v} gets away safe.',
+  notSaved: ' {v} is left to {y.their} mercy.',
+  rescueLeave: '{a} sees {b} holding {c} at gunpoint, and rides on.',
+  guardQuiet: '{a} keeps watch over {b} all night. Nobody comes.',
+  guardOpen: '{a} keeps watch over {b} all night. Before dawn, {x} comes out of the dark.',
+  guardHeld: ' {b} lives to see the morning.',
+  sleep: '{a} sleeps, and leaves {b} to the night.',
+  thiefLet: '{a} lets {b} slip off into the dark with {a.their} food and water.',
+  thiefOpen: '{x} wakes to {y} in {x.their} camp and gives chase.',
+  thiefGone: ' {y} gets away with the food and water.',
+};
+
+/** A rescue: a real fight to save someone (kill counts as defense; sparing is mercy). */
+function resolveRescue(ctx, sub, prompt) {
+  const roles = rolesFor(ctx, prompt);
+  if (!roles || roles.a.status !== 'racing') return null;
+  const { a, b, c } = roles;
+  const choice = prompt.answer.optionId;
+  if (choice === 'leave' || b.status !== 'racing') {
+    addWorthiness(a, RULES.worthiness.ridePast, ctx);
+    return quiet(lineFor(ctx, `${sub.id}:leave`, render(GOOD_LINES.rescueLeave, display(roles)), roles, { tags: ['cold'] }), prompt);
+  }
+  const f = resolveFight(ctx, { kind: 'rescue', attacker: a, defender: b, win: choice, defend: npcDefend(ctx.rng, b), cause: 'killed in a rescue', open: GOOD_LINES.rescueOpen, extra: { v: c }, rescue: true });
+  const saved = a.status === 'racing' && !/^reversal/.test(f.outcome);
+  let text = f.text + render(saved ? GOOD_LINES.saved : GOOD_LINES.notSaved, display({ v: c, y: b }));
+  if (saved) {
+    a.points += RULES.good.rescuePoints;
+    a.helps = (a.helps ?? 0) + 1;
+    addWorthiness(a, RULES.worthiness.save, ctx, { great: true });
+    if (c.tier === 'npc') keepNpc(ctx.state, c);
+  }
+  (ctx.state.race.goodLog ??= []).push({ kind: 'rescue', stage: ctx.stage.id, id: a.id, personality: a.personality, saved, outcome: f.outcome });
+  return lineFor(ctx, `${sub.id}:${saved ? 'saved' : 'failed'}`, text, f.roles, { death: f.death, tags: ['fight', 'help'] });
+}
+
+/** Stand guard: lose time keeping watch; sometimes the riders come and you fight. */
+function resolveGuard(ctx, sub, prompt) {
+  const roles = rolesFor(ctx, prompt);
+  if (!roles || roles.a.status !== 'racing') return null;
+  const { a, b } = roles;
+  if (prompt.answer.optionId !== 'watch' || b.status !== 'racing') {
+    addWorthiness(a, RULES.worthiness.ridePast, ctx);
+    return quiet(lineFor(ctx, `${sub.id}:sleep`, render(GOOD_LINES.sleep, display(roles)), roles, { tags: ['cold'] }), prompt);
+  }
+  a.pace -= 1;
+  a.helps = (a.helps ?? 0) + 1;
+  addWorthiness(a, RULES.worthiness.help, ctx);
+  const raider = ctx.rng.chance(RULES.good.guardComes) ? castNpc(ctx) : null;
+  if (!raider) {
+    (ctx.state.race.goodLog ??= []).push({ kind: 'guard', stage: ctx.stage.id, id: a.id, personality: a.personality, came: false });
+    return lineFor(ctx, `${sub.id}:quiet`, render(GOOD_LINES.guardQuiet, display(roles)), roles, { tags: ['help'] });
+  }
+  ctx.usedNpcs?.add(raider.id);
+  // The watcher is defending: they fight to drive the raider off (a kill is self-defense).
+  const f = resolveFight(ctx, { kind: 'attacked', attacker: raider, defender: a, win: npcWin(ctx.rng, raider, a), defend: a.personality === 'ruthless' || a.personality === 'glory' ? 'fight-kill' : 'fight-spare', cause: 'killed standing guard', open: GOOD_LINES.guardOpen.replaceAll('{a', '{y').replaceAll('{b', '{g'), extra: { g: b } });
+  const held = a.status === 'racing' && /^reversal/.test(f.outcome);
+  if (held) { a.points += RULES.good.guardPoints; addWorthiness(a, RULES.worthiness.save, ctx, { great: true }); }
+  (ctx.state.race.goodLog ??= []).push({ kind: 'guard', stage: ctx.stage.id, id: a.id, personality: a.personality, came: true, held, outcome: f.outcome });
+  const text = f.text + (held ? render(GOOD_LINES.guardHeld, display({ b })) : '');
+  return lineFor(ctx, `${sub.id}:${held ? 'held' : 'fight'}`, text, { ...f.roles }, { death: f.death, tags: ['fight', 'help'] });
+}
+
+/** Someone's in your camp: chase them (a fight if they don't get away) or let them go. */
+function resolveCampThief(ctx, sub, prompt) {
+  const roles = rolesFor(ctx, prompt);
+  if (!roles || roles.a.status !== 'racing') return null;
+  const { a, b } = roles;
+  const choice = prompt.answer.optionId;
+  if (choice === 'let' || b.status !== 'racing') {
+    a.pace -= 1;
+    (ctx.state.race.theftLog ??= []).push({ stage: ctx.stage.id, id: a.id, choice: 'let' });
+    addAlert(a, 'calm', 'You let them go', 'They took food and water. It costs you time.');
+    return lineFor(ctx, `${sub.id}:let`, render(GOOD_LINES.thiefLet, display(roles)), roles);
+  }
+  const defend = ctx.rng.chance(RULES.good.thiefFlees) ? 'flee' : 'fight-spare';
+  const win = choice === 'chase-kill' ? 'kill' : 'spare';
+  const f = resolveFight(ctx, { kind: 'chase', attacker: a, defender: b, win, defend, cause: 'killed chasing a thief', open: GOOD_LINES.thiefOpen, noSpareCredit: true, reversalLine: ' {y} turns on {x} and drives {x.them} off.' });
+  const lost = f.outcome === 'escape' || /^reversal/.test(f.outcome);
+  if (lost && a.status === 'racing') { a.pace -= 1; addAlert(a, 'calm', 'They got away', 'They took food and water. It costs you time.'); }
+  (ctx.state.race.theftLog ??= []).push({ stage: ctx.stage.id, id: a.id, choice, outcome: f.outcome });
+  return lineFor(ctx, `${sub.id}:chase`, f.text + (f.outcome === 'escape' ? render(GOOD_LINES.thiefGone, display({ y: b })) : ''), f.roles, { death: f.death, tags: ['fight'] });
 }
 
 function resolveHorseTwo(ctx, prompt) {
@@ -1098,7 +1208,11 @@ function eat(ctx, a) {
   const before = a.stand?.tier ?? null;
   const st = removeStand(ctx.state, a);
   log(ctx, 'rokakakaLog', { event: 'eaten', tierBefore: before, racerId: a.id, logIndex: ctx.state.stands.log.length });
-  if (st) addHint(a, `You eat the Rokakaka. Equivalent exchange: ${st.name} leaves you, and takes something of you with it.`, ctx);
+  if (st) {
+    addHint(a, `You eat the Rokakaka. Equivalent exchange: ${st.name} leaves you, and takes something of you with it.`, ctx);
+    addAlert(a, 'calm', 'You ate the Rokakaka', `${st.name} is gone. The Devil's Palm, an Arrow or a corpse part can give you a new one.`);
+    a.ateRokakaka = true; // the Stand card says so until a new one arrives
+  }
 }
 
 function log(ctx, key, entry) {
@@ -1184,8 +1298,47 @@ function resolveSteal(ctx, prompt) {
 function resolveAgentAmbush(ctx, prompt) {
   const roles = rolesFor(ctx, prompt);
   if (!roles || roles.a.status !== 'racing') return null;
+  const before = carried(ctx.state, roles.a).map((it) => it.partId);
   const f = resolveAmbush(ctx, roles.b, roles.a, prompt.answer.optionId);
+  agentsAfter(ctx, roles.a, roles.b, f, before);
   return lineFor(ctx, AMBUSH.id, f.text, f.roles, { death: f.death, tags: ['fight'] });
+}
+
+const AGENT_BEAT = ['part', 'searched', 'kill-missed', 'spare', 'horse'];
+
+/** After an ambush: the cooldown, and "Ride after them" if they took a part. */
+function agentsAfter(ctx, a, agent, f, before) {
+  if (a.tier !== 'pc' || !AGENT_BEAT.includes(f.outcome)) return;
+  a.agentsLeaveUntil = ctx.stage.id + RULES.agents.cooldownStages;
+  const taken = before.filter((id) => ctx.state.corpse.parts.find((x) => x.id === id)?.status === 'president');
+  if (taken.length && a.status === 'racing') a.rideAfter = { agentId: agent.id, partIds: taken, stage: ctx.stage.id };
+  logAgents(ctx, { event: 'beat', id: a.id, human: !a.isAI, partsLost: taken.length });
+}
+
+/** Ride after them: a fight to get it back, with the agents at a small penalty. */
+function resolveRideAfter(ctx, prompt) {
+  const roles = rolesFor(ctx, prompt);
+  if (!roles || roles.a.status !== 'racing') return null;
+  const { a, b } = roles;
+  const L = RIDE_AFTER.lines;
+  if (prompt.answer.optionId !== 'chase' || b.status === 'dead') {
+    logAgents(ctx, { event: 'ride-after', id: a.id, outcome: 'let' });
+    return quiet(lineFor(ctx, 'ride-after:let', render(L.let, display(roles)), { a }), prompt);
+  }
+  const f = resolveFight(ctx, {
+    kind: 'agents-chase', attacker: a, defender: b, win: 'spare', defend: 'fight-spare', open: L.open,
+    bonusD: RULES.agents.bonus + RULES.agents.chasePenalty, noSpareCredit: true, reversalLine: L.back, spareLine: L.won, cause: "killed by Valentine's agents",
+  });
+  const text = f.text;
+  let got = 0;
+  if (a.status === 'racing' && ['spare', 'kill', 'kill-missed'].includes(f.outcome)) {
+    for (const id of prompt.partIds ?? []) {
+      const it = recoverPart(ctx, id, a);
+      if (it) { got++; addHint(a, `You got the ${it.label} back.`, ctx); }
+    }
+  }
+  logAgents(ctx, { event: 'ride-after', id: a.id, outcome: f.outcome, got });
+  return lineFor(ctx, 'ride-after:chase', text, f.roles, { death: f.death, tags: ['fight'] });
 }
 
 /** Face Funny Valentine, or take the long way round. */

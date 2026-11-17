@@ -17,5 +17,5 @@ export default [
   { id: 's2-oasis', text: '{a} finds a hidden spring and lets {a.horse} drink {a.their} fill.',
     cast: { a: { is: 'focus', hasHorse: true } }, effects: { a: { pace: 1 } }, tags: ['minor'], when: { stages: [2] }, weight: 3 },
   { id: 's2-water-thief', text: "{a} steals {b}'s water while {b.they} sleep{b:s} and leaves {b.them} to the desert.",
-    cast: { a: 'focus', b: 'named' }, effects: { a: { pace: 1 }, b: { pace: -2 } }, tags: ['sabotage', 'cold'], when: { stages: [2], rounds: ['night'] }, weight: 1 },
+    cast: { a: 'focus', b: { is: 'named', notHuman: true } }, effects: { a: { pace: 1 }, b: { pace: -2 } }, tags: ['sabotage', 'cold'], when: { stages: [2], rounds: ['night'] }, weight: 1 },
 ];

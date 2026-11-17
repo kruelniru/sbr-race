@@ -150,6 +150,8 @@ export function roleFits(ctx, e, key, racer) {
   // Canon racers who may walk into the Devil's Palm (and NPCs).
   if (spec.palm && !(racer.tier === 'npc' || racer.palm)) return false;
   if (spec.notSide && racer.side === spec.notSide) return false;
+  // Milestone 7b: anything that takes from a racer without asking hits only AI racers and NPCs.
+  if (spec.notHuman && racer.tier === 'pc' && !racer.isAI) return false;
   // Alliances (milestone 5): the focus has / hasn't an ally; a role isn't the focus's ally.
   if (spec.hasAlly != null && !!allyOf(ctx.state, racer) !== spec.hasAlly) return false;
   for (const [effKey, value] of Object.entries(e.effects[key] ?? {})) {
@@ -256,7 +258,7 @@ function resolve(ctx, e, roles) {
   }
   // Helping or saving someone: hidden Worthiness (DESIGN.md table).
   if (e.tags.includes('help')) roles[e.focusKey].helps = (roles[e.focusKey].helps ?? 0) + 1;
-  if (e.tags.includes('help')) addWorthiness(roles[e.focusKey], e.tags.includes('save') ? RULES.worthiness.save : RULES.worthiness.help, ctx);
+  if (e.tags.includes('help')) addWorthiness(roles[e.focusKey], e.tags.includes('save') ? RULES.worthiness.save : RULES.worthiness.help, ctx, { great: e.tags.includes('save') });
   // Kills: the racer with the kill credit, by the event's kill-* tag.
   // Sabotage or cheating; riding past someone in need.
   if (e.tags.includes('sabotage')) addWorthiness(roles[e.focusKey], RULES.worthiness.sabotage, ctx);

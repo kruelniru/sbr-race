@@ -25,7 +25,7 @@ import { readyPlayers } from './state.js';
 import { namedRacers, addHint, findRacerAnywhere } from './racers.js';
 import { giveStand, pickStand, removeStand } from './stands.js';
 import { itemsOf, removeItem } from './items.js';
-import { carried, presidentParts } from './corpse.js';
+import { carried, presidentParts, takePart } from './corpse.js';
 
 export const isOtherWorld = (r) => !!r?.otherWorld;
 
@@ -78,6 +78,8 @@ export function otherWorldEnding(state) {
   for (const r of namedRacers(state).filter((x) => x.otherWorld)) {
     if (r.status === 'dead') continue; // died again in the Final Stage
     if (won) { r.otherWorld.stayed = true; continue; }
+    // Fading back, they leave what they carried to the President they rode for.
+    for (const it of carried(state, r)) takePart({ state, stage: { id: 9 }, roundLabel: 'end' }, it, 'president', 'faded', r, { quiet: true });
     r.status = 'dead';
     r.death = { ...r.otherWorld.death, faded: true };
     r.otherWorld.faded = true;
@@ -116,6 +118,12 @@ export function pierceStand(ctx, p) {
   const items = itemsOf(ctx.state, p.id);
   removeItem(ctx.state, items.find((i) => i.kind === 'arrow').id);
   for (const it of items.filter((i) => i.kind === 'rokakaka').slice(0, 2)) removeItem(ctx.state, it.id);
+  // The Arrow chooses (milestone 7b): it may refuse. Everything is used up; nothing on stream.
+  if (!ctx.rng.chance(RULES.requiem.success)) {
+    (ctx.state.race.requiemRefused ??= []).push({ id: p.id, stage: ctx.stage.id, stand: p.stand.name });
+    addHint(p, 'The Arrow turns in your hand and will not pierce. It has judged you.', ctx);
+    return null;
+  }
   const old = p.stand;
   const def = requiemOf(old);
   removeStand(ctx.state, p);

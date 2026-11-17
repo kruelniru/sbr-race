@@ -52,6 +52,7 @@ let lastPromptId = null;
 let choiceError = '';
 let deadPicking = false; // choosing who gets the dead's Blessing
 let offering = null;    // { give: itemId | 'horse', label } while making a trade offer
+let confirmingItem = null; // milestone 7b: "Eat the Rokakaka? ... Eat it / Cancel"
 let notice = '';       // a short message from the host (offer sent, trader refused...)
 setInterval(tickCountdown, 250);
 
@@ -392,6 +393,7 @@ function renderRacing() {
       r ? statusCard(r) : null,
       offering ? offerSheet() : you?.offer ? offerPending(you.offer) : null,
       r && r.status !== 'dead' ? standCard(r) : null,
+      confirmingItem ? itemConfirm(confirmingItem, r) : null,
       itemsCard(you, useItem, canOffer('item') ? offerItem : null),
       partsCard(you, useItem, canOffer('item') ? offerItem : null, deliverItem),
       r && (r.status !== 'dead' || you?.valentine?.outcome) ? valentineCard(you?.valentine) : null,
@@ -529,7 +531,32 @@ function alertsBox() {
     } }, 'Got it'));
 }
 
+/** Arrows and Rokakaka ask first (milestone 7b); cancelling a pending use doesn't. */
 function useItem(itemId) {
+  const it = (you?.items ?? []).find((x) => x.id === itemId);
+  if (it && !it.pending && (it.kind === 'arrow' || it.kind === 'rokakaka')) {
+    confirmingItem = it;
+    renderScreen();
+    return;
+  }
+  sendUseItem(itemId);
+}
+
+function itemConfirm(it, r) {
+  const stand = r?.stand?.name;
+  const text = it.kind === 'rokakaka'
+    ? `Eat the Rokakaka? ${stand ?? 'Your Stand'} will leave you for good.`
+    : 'Pierce yourself with the Arrow? If you survive, you awaken a Stand. Worthiness decides.';
+  const close = () => { confirmingItem = null; renderScreen(); };
+  return h('div', { class: 'confirm-overlay', role: 'dialog' }, h('div', { class: 'confirm-card' },
+    h('p', {}, text),
+    h('div', { class: 'confirm-actions' },
+      h('button', { type: 'button', class: 'btn btn-quiet', onclick: close }, 'Cancel'),
+      h('button', { type: 'button', class: 'btn btn-primary confirm-yes', onclick: () => { const id = it.id; close(); sendUseItem(id); } },
+        it.kind === 'rokakaka' ? 'Eat it' : 'Pierce yourself'))));
+}
+
+function sendUseItem(itemId) {
   if (!net.send(msg(TO_HOST.USE_ITEM, { itemId }))) choiceError = 'Not connected. Try again in a moment.';
 }
 

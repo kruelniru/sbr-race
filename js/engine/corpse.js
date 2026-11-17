@@ -109,6 +109,13 @@ export function takePart(ctx, item, to, how, from = null, { quiet = false } = {}
   return got;
 }
 
+/** "Ride after them" (milestone 7b): a part the agents took goes back to the racer (if he still has it). */
+export function recoverPart(ctx, partId, to) {
+  const part = partById(ctx.state, partId);
+  if (!part || part.status !== 'president') return null;
+  return giveTo(ctx, part, to, 'recovered', {});
+}
+
 /** Cheat menu (testing): every part goes to this racer, merged at once. */
 export function cheatGiveAllParts(ctx, who) {
   for (const part of ctx.state.corpse?.parts ?? []) {
@@ -219,7 +226,7 @@ export function resolveFind(ctx, partId, finder, optionId, targetId) {
     const to = targetId && findRacerAnywhere(ctx.state, targetId);
     if (to && to.status !== 'dead' && to.id !== finder.id) {
       giveTo(ctx, part, to, 'given', { from: finder });
-      addWorthiness(finder, RULES.worthiness.givePart, ctx);
+      addWorthiness(finder, RULES.worthiness.givePart, ctx, { great: true });
       finder.helps = (finder.helps ?? 0) + 1;
       hint(finder, 'given', { part: part.name, to: to.name }, ctx);
       if (to.tier === 'pc') hint(to, 'received', { part: part.name, from: finder.name }, ctx);
@@ -265,7 +272,7 @@ export function deliverPart(ctx, item, from) {
 
 /** Give a part away from the phone (through a trade offer): +15 instead of help. */
 export function partGiftWorthiness(ctx, giver) {
-  addWorthiness(giver, RULES.worthiness.givePart, ctx);
+  addWorthiness(giver, RULES.worthiness.givePart, ctx, { great: true });
 }
 
 /** A hidden part is held after all (Items → Hold it): it merges this round. */

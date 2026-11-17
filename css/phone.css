@@ -252,3 +252,9 @@ legend { margin-bottom: 8px; }
 .story-card h2 { margin: 0 0 8px; color: var(--gold-2); }
 .story-card ul { margin: 0; padding-left: 18px; }
 .story-card li { margin: 4px 0; line-height: 1.4; }
+
+/* milestone 7b: item confirmations */
+.confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+.confirm-card { background: var(--panel, #2a2119); border: 1px solid var(--gold, #d9a441); border-radius: 14px; padding: 18px 20px; max-width: 420px; width: 100%; }
+.confirm-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
+.item-pending { font-size: .9em; color: var(--gold, #d9a441); margin-top: 4px; }

@@ -231,6 +231,16 @@ In milestone 5b (`data/sub-events.js`, resolved in `js/engine/corpse.js`, `agent
 - **A man in a dark hat** (Valentine's offer, secret, Stages 4–6): join Valentine or refuse.
 - **Valentine's errand** (secret, joiners only): pick a racer; next round you ambush them masked. Their prompt is **Someone is coming for you** (a rider in a dark hat): the agent-ambush options.
 
+In milestone 7b, good-aligned drama on stream (`GOOD_SUBS` in `data/sub-events.js`, resolved in `js/engine/choices.js`; leanTag `heroic`, weighted ×7 Honorable, ×5.5 Cautious, ×3 Glory-Seeker, ×1 Opportunist, ×0.25 Ruthless):
+
+- **A rescue:** an NPC (or a canon racer) has someone at gunpoint. Ride in, and if you win kill them or let them go, or ride on (−3). A real fight: killing the attacker counts as defense (0), sparing them is mercy (+8). Saving them is a great deed (+7) and +12 points; lose the fight and they're left to the attacker.
+- **Stand guard** (Night rounds; your hurt ally, or a feverish stranger): keep watch (lose time, +5) or sleep (−3). Half the time riders come and you fight to drive them off (a great deed, +8 points if you do).
+- **A hard choice:** help at a real cost: give a stranger your horse (you go on foot; a great deed, +10 points), wade into a river for a stuck family (lose a lot of time, sometimes hurt), or pay a doctor for a dying stranger (−15 points).
+- **Someone's in your camp** (Night rounds): chase them (if you catch them, let them go or kill them; they may fight) or let them go (they take food and water, and you lose time). **A theft never reaches a human without a choice:** the plain theft events (robbed in the night, horse thieves, a water thief, a pickpocket) only hit AI racers and NPCs.
+- **Ride after them:** the round after agents take a corpse part from you, you can ride after them (a fight in which they're at −2 more; win and it's yours again) or let it go. It never says which part.
+
+**Repeats:** one player never gets the same sub event title twice in a row, or more than twice a game, unless nothing else fits (the Devil's Palm keeps its own schedule).
+
 **PC vs PC fights:** both players choose at once. The attacker chooses what happens if they win (kill, let them go, take their horse, or **search them**: take a corpse part if they carry one; the stream line is the same either way, "goes through their things"). The defender chooses fight back to kill, fight back and let them go, flee, or **give up without a fight** (the attacker gets their choice; a kill on someone who gave up counts as cruel, −12). Both choices combine into the result. The sim checks it's a real gamble: an attacker with equal skill wins about half the decided PC vs PC fights.
 
 **Spares:** sparing someone you beat is tracked for every racer and feeds the **Most Merciful** award. A few "lets them go" events record spares, and fights use the same counter.
@@ -251,34 +261,35 @@ Alliances are in from the start. How one forms depends on who's asking:
 
 ## Worthiness
 
-Worthiness is a hidden 0–100 stat. PCs start by personality (Honorable 60, Cautious 55, Opportunist 50, Glory-Seeker 50, Ruthless 40; AI PCs use the same values); canon racers have their own values; NPCs start at 5–30. Each player sees only their own, on their phone, as an RDR2-style segmented bar with a word ("Unworthy" … "The Saint is watching") and no number; the phone is only ever sent a coarse level. Nobody else sees it, on the host or any other phone, until the finale's secrets reveal (milestone 6).
+Worthiness is a hidden 0–100 stat. PCs start by personality (Honorable 54, Cautious 58, Opportunist 55, Glory-Seeker 49, Ruthless 47; AI PCs use the same values; retuned in milestone 7b); canon racers have their own values; NPCs start at 5–30. Each player sees only their own, on their phone, as an RDR2-style segmented bar with a word ("Unworthy" … "The Saint is watching") and no number; the phone is only ever sent a coarse level. Nobody else sees it, on the host or any other phone, until the finale's secrets reveal (milestone 6).
 
 **Character creation** shows each personality's trade-off in one short line under its description, in words, never numbers (for example Ruthless: "Starts less worthy, but gets more chances to kill and sabotage.").
 
 | Action | Change | Active |
 | --- | --- | --- |
-| Give away a corpse part for nothing (found, or offered from the phone) | +15 (instead of +8) | M5b |
-| Spare someone you beat | +12 | M4 |
-| Save a life (help tagged `save`) | +10 (instead of +8) | M4 |
-| Help someone | +8 | M4 |
-| Survive the Devil's Palm | +5 | M4 |
+| Give away a corpse part for nothing (found, or offered from the phone) | +15 (instead of +5); a great deed | M5b |
+| Spare someone you beat | +8 (+2 in a fight you started); sparing a PC who attacked you is a great deed | M4, M7b |
+| Save a life (help tagged `save`, a rescue, driving off riders while standing guard) | +7 (instead of +5); a great deed | M4, M7b |
+| Help someone | +5 | M4 |
+| Survive the Devil's Palm | +3 | M4 |
 | Kill in self-defense (or by accident) | 0 | M4 |
 | Ride past someone who needs help | −3 | M4 |
 | Sabotage or cheat (cut a cinch, crowd into the rail, steal water) | −8 | M4 |
-| Any kill you started: you attacked, hunted or ambushed | −8 | M4 |
-| Kill someone helpless, fleeing or asleep | −12 (instead of −8) | M4 |
+| Any kill you started: you attacked, hunted or ambushed | −6 | M4 |
+| Kill someone helpless, fleeing or asleep | −10 (instead of −6) | M4 |
+| Kill the attacker in a rescue | 0 (defense) | M7b |
 | Steal a corpse part (asleep, or by searching someone you beat) | −8 | M5b |
 | Take a part from the body of someone you killed | 0 | M5b |
 | Abandon an ally | −12 | M5 |
 | Join Valentine | −30 | M5b |
 
-**Diminishing gains:** above 80, every gain is halved (rounded down), so a spare is +6 and the Palm +2; losses always count in full. Everything clamps to 0–100. A kill changes the Worthiness of the racer with the kill credit. Every kill event carries exactly one tag, `kill-defense`, `kill-started` or `kill-cruel`, and the content linter fails if one is missing. A Hunt a rival showdown that ends in a kill counts as started; showdowns can't kill yet, so this applies once milestone 5 fights can.
+**Diminishing gains** (milestone 7b): above 70 every gain is halved, above 85 quartered (rounded down, at least +1), and above 95 only **great deeds** raise it (giving away a corpse part, saving a life, sparing a PC who attacked you). Losses always count in full. Everything clamps to 0–100. A kill changes the Worthiness of the racer with the kill credit. Every kill event carries exactly one tag, `kill-defense`, `kill-started` or `kill-cruel`, and the content linter fails if one is missing. A Hunt a rival showdown that ends in a kill counts as started; showdowns can't kill yet, so this applies once milestone 5 fights can.
 
 Every event that hurts another racer without killing them (pace loss, injury, a forced retirement, a lost horse) is tagged either `sabotage` (−8 for the focus racer) or `no-fault` (a fair race, an accident, a rescue); the linter fails if neither is there. Riding past is tagged `cold` (−3, no hint). Ruthless racers get the most events where they start a kill or sabotage, Opportunists the next most (`rules.personalityLean`).
 
-**You notice it:** any change of 8 or more adds a private hint line: "You feel lighter in the saddle." when it goes up, "Something in you hardens." when it goes down. Changes of 3–7 get a softer line: "You feel steady." or "Something nags at you." (so a halved +4 help above 80 still registers). Changes under 3 are silent.
+**You notice it:** any change of 6 or more adds a private hint line: "You feel lighter in the saddle." when it goes up, "Something in you hardens." when it goes down. Changes of 2–5 get a softer line: "You feel steady." or "Something nags at you.". Changes under 2 are silent.
 
-**Worthiness barely matters at the Devil's Palm, and that's intended:** the Palm only runs in Stages 2–3, when most PCs are still near where they started (45–59, or 60+ for Honorable players). It matters more for Stand Arrows later in the race and for corpse parts in milestone 5, by which point players have moved apart. In the sim (4,500 games), end-of-race averages are Honorable 82, Cautious 74, Glory-Seeker 63, Opportunist 59 and Ruthless 35; 12% of Honorable and 3% of Cautious players end at 100, and 20% of Ruthless players end below 25.
+**Worthiness barely matters at the Devil's Palm, and that's intended:** the Palm only runs in Stages 2–3, when most PCs are still near where they started (45–59, or 60+ for Honorable players). It matters more for Stand Arrows later in the race and for corpse parts in milestone 5, by which point players have moved apart. In the sim (4,500 games, milestone 7b), end-of-race averages are Honorable 77, Cautious 71, Glory-Seeker 61, Opportunist 57 and Ruthless 34; 2% of Honorable players and nobody else end at 95+, and 29% of Ruthless players end below 25 (most of them joined Valentine). Honorable players help and spare the most (5.5 a game, Cautious 4.1, Ruthless 1.3).
 
 **What it decides:**
 
@@ -293,6 +304,8 @@ Every event that hurts another racer without killing them (pace loss, injury, a 
 
 - **Your horse is dead / was taken** (Riders): a large flashing red alert ("YOUR HORSE IS DEAD. You're on foot and far slower. Buy one at the next town, or take a riderless horse.") naming the next horse trader, plus a red **ON FOOT** banner on the status card until you ride again.
 - Calmer alerts: a Stand gained or lost, a corpse part gained or lost, a bad injury, your ally dead or gone, and a horse again.
+- **After every fight or theft** (milestone 7b), each PC in it is told exactly what happened: "Ringo Roadagain beat you and took the Spine.", "You drove them off and kept everything.", "A rider in a dark hat beat you and took Shiloh." (a masked rider stays masked), "They got away. They took food and water."
+- **You ate the Rokakaka.** "[Stand] is gone. The Devil's Palm, an Arrow or a corpse part can give you a new one." Until one does, the Stand card says "Your Stand is gone (you ate a Rokakaka)." 
 - While a part is merging (until the end of the next round), a Standless player's Stand card says "The part is settling into you…" instead of "No Stand yet".
 
 **Anonymous announcements on the host screen:** "Someone has been deemed worthy of the Saint." when a PC merges with a corpse part, and "Someone has fallen to the dark side." when a PC joins Valentine. Neither names the player; they come at the end of that round's Main Story, in gold italics, with no faces.
@@ -350,11 +363,11 @@ About 6–8 surface per game, seeded across Stages 2–8, each going to a PC (hu
 
 ### Rokakaka (our addition)
 
-Eating it removes your Stand completely, as equivalent exchange. You're Standless until an Arrow, the Palm or a corpse part gives you a fresh roll (normal odds, normal risks); the removed Stand goes back into the pool (canon Stands follow their lock rule). Only human-controlled PCs ever find one: at least 2 per game, given to random racing human PCs by the end of Stage 6, plus a third by chance (cap 3). If the finder falls before the find resolves, it turns up again the next round; if no human PC is left, none drop. The stream shows nothing until a resulting Stand is revealed by the usual rule, or the player dies.
+Eating it removes your Stand completely, as equivalent exchange. You're Standless until an Arrow, the Palm or a corpse part gives you a fresh roll (normal odds, normal risks); the removed Stand goes back into the pool (canon Stands follow their lock rule). Only human-controlled PCs ever find one: 4 per game, plus a fifth half the time (milestone 7b), given to racing human PCs by the end of Stage 6. Someone who hasn't found one yet is 3× likelier to get the next, and someone with a Stand 1.5× likelier. If the finder falls before the find resolves, it turns up again the next round; if no human PC is left, none drop. The stream shows nothing until a resulting Stand is revealed by the usual rule, or the player dies.
 
 ### Items
 
-Kept Arrows and Rokakaka sit in an **Items** section on their owner's phone (a general inventory with an owner field). A player can use an item while any choice window is open (a sub event or the Stage Plan); it resolves with that round. A kept Arrow is disabled while you have a Stand, and a Rokakaka while you don't. Nobody else knows what you hold.
+Kept Arrows and Rokakaka sit in an **Items** section on their owner's phone (a general inventory with an owner field). A player can use an item while any choice window is open (a sub event or the Stage Plan); it resolves with that round. A kept Arrow is disabled while you have a Stand, and a Rokakaka while you don't. Nobody else knows what you hold. **Using one asks first** (milestone 7b): "Eat the Rokakaka? [Stand] will leave you for good. Eat it / Cancel" (or "Pierce yourself with the Arrow?"). While it waits for the round, the item says "You'll eat this when the round is revealed." and its button cancels.
 
 ## Corpse parts
 
@@ -429,9 +442,11 @@ Runners never have, buy, catch or receive a horse.
 
 **Valentine's agents** (Ringo Roadagain, Blackmore, Magent Magent, Mike O., Dr. Ferdinand, Axl RO, the Pork Pie Hat Kid, the Tattoo You men, the Eleven Men) attack as events, not racers (`js/engine/agents.js`, `rules.agents`). Their Stands stay banned and are never named.
 
-- **Ambush chance per racer per round:** 4% + 6% per part carried (3% for a hidden one) for holders; 1.5% for PCs holding nothing, so an ambush proves nothing. ×2 on "Hunt a corpse part". Canon and NPC holders at half the rate (nobody controls them, and they can't hide a part or plan). Sub event fairness can lower a PC's chance. **Joiners are never ambushed, unless they carry a part that has merged with them** (below).
-- **The fight:** an agent fights at their own skill (57–66) minus 8 (tuned with deliveries, below, to keep the President's bad ending near one game in five). If they win they search you (a part if you carry one) or try to kill. Let them search you and they never kill. A PC can kill an agent; dead agents stay dead.
+- **Ambush chance per racer per round:** 8% + 12% per part carried (3% for a hidden one) for holders (4% + 6% before milestone 7b's "Ride after them"); 1.5% for PCs holding nothing, so an ambush proves nothing. ×2 on "Hunt a corpse part". Canon and NPC holders at half the rate (nobody controls them, and they can't hide a part or plan). Sub event fairness can lower a PC's chance. **Joiners are never ambushed, unless they carry a part that has merged with them** (below).
+- **The fight:** an agent fights at their own skill (57–66) minus 2 (tuned with deliveries and ambush rates to keep the President's bad ending near 15%). If they win they search you (a part if you carry one) or try to kill. Let them search you and they never kill. A PC can kill an agent; dead agents stay dead.
 - A PC's ambush is a sub event prompt; canon and NPC holders are ambushed inside the round.
+- **Cooldown** (milestone 7b): once agents beat or rob a PC, they leave that PC alone for the rest of the stage and the next 2.
+- **Ride after them** (milestone 7b): if they took a part, the next round offers the chase (see Choices). In the sim about 70% of chases win it back.
 
 **Funny Valentine** (Stages 8–9): "Face him / Avoid him", offered once to a PC with a Rare or Legendary Stand and Worthiness 60+, never to a joiner (20% a round while eligible). He fights at 77 before the roll, so a Legendary user wins about 30%. Driving him off: +50 points and pace. Losing: he takes every part you carry, or kills you on a clear win. He can never be killed. Avoiding him costs time.
 
@@ -560,7 +575,7 @@ Milestone 6d (`js/engine/secret-endings.js`). **None of this is ever hinted at i
 
 **The Requiem Arrow** (the rarest):
 - **The recipe:** a Stand Arrow and 2 Rokakaka in Items at the same time, a Legendary Stand, and Worthiness 80+. Trading counts, so players can trade for the pieces.
-- When all of it is true, a secret prompt appears in their next window: "Pierce your Stand". It consumes the Arrow and both Rokakaka and evolves their Stand into a Requiem: Gold Experience → Gold Experience Requiem, Silver Chariot → Silver Chariot Requiem, anything else → "[Stand] Requiem". This is the only place a banned Requiem Stand can appear (the cheat menu aside).
+- When all of it is true, a secret prompt appears in their next window: "Pierce your Stand". It consumes the Arrow and both Rokakaka. **The Arrow chooses** (milestone 7b): half the time it refuses. Everything is still used up, the phone says "The Arrow turns in your hand and will not pierce. It has judged you.", and nothing reaches the stream (the secrets reveal lists it). Otherwise it evolves their Stand into a Requiem: Gold Experience → Gold Experience Requiem, Silver Chariot → Silver Chariot Requiem, anything else → "[Stand] Requiem". This is the only place a banned Requiem Stand can appear (the cheat menu aside).
 - A Requiem's user can't be killed ("whatever is done to you never arrives"). The host gets one anonymous line: "Somewhere on the trail, a Stand has become something else."
 - **The Requiem ending:** reaching New York with it wins outright, with its own ending card. Breaking "no automatic wins" is intentional, because it should almost never happen.
 
@@ -726,3 +741,12 @@ Decisions made after the original design, in the order they came up:
 113. Plain events never blame a racer for a choice they didn't make ("The ice gives way under Kruel"); a content test checks every event that hurts its focus for "gambles", "decides", "too far" and the like. Choice wording stays in sub event outcomes, which follow a choice.
 114. Kept Arrows and Rokakaka no longer vanish with the dead: a PC killer takes them (a Rokakaka only a human one); otherwise they drop and turn up in a later find (a Rokakaka still only for a human PC, in any stage). The secrets reveal and the game log say where they went.
 115. End now is disabled for the first 3 seconds of a waiting screen, and asks "Some players are still deciding. End now? …" while any human prompt (secret ones included) is unanswered, never saying who or how many. No confirmation when every human has answered or only AI racers are left. Start Stage N never ends an open Stage Plan window early (it switches to the waiting screen), and the host has no keyboard shortcuts. The default choice timer is 30 seconds.
+116. Worthiness retune (milestone 7b): starts Honorable 54, Cautious 58, Opportunist 55, Glory 49, Ruthless 47; help +5, save +7, spare +8 (+2 if you started it), Palm +3, kills −6 / −10; gains halved above 70, quartered above 85, and only great deeds count above 95 (giving away a part, saving a life, sparing a PC who attacked you). Hints at 6+ (soft 2–5). End averages: Honorable 77, Cautious 71, Glory 61, Opportunist 57, Ruthless 34; 0% of PCs end at 95+ (2% of Honorable).
+117. Rokakaka: 4 per game, a fifth half the time, human PCs only; someone who hasn't found one is 3× likelier, a Stand holder 1.5×. The Arrow chooses: "Pierce your Stand" refuses half the time and still uses everything up. The Requiem is pierced in about 1 game in 205 (15% Runners) to 1 in 250 (60% Runners) with 5 people, 1 in 4,500 with 18.
+118. Good-aligned drama on stream: a rescue (a real fight; a kill is defense, saving them is a great deed and +12), standing guard (night; riders come half the time), hard choices (your horse, half a day, or 15 points), all leaning ×7 Honorable / ×5.5 Cautious / ×3 Glory / ×1 Opportunist / ×0.25 Ruthless. With the Devil's Palm counted as drama, on-stream dramatic prompts are 68–80% of a non-Ruthless player's on-stream prompts and 91% of a Ruthless player's (who hunts rivals by choice).
+119. No theft from a human without a choice: "Someone's in your camp" (chase them or let them go) for people; plain theft events only for AI racers and NPCs (role filter `notHuman`).
+120. Repeat limits: the same sub event title at most twice per player per game and never twice in a row, unless nothing else fits; the Devil's Palm keeps its own schedule.
+121. Agents: after beating or robbing a PC they leave them alone for the next 2 stages; a part they took can be chased the next round ("Ride after them", agents at −2 more; about 70% of chases win). Chases won about half a part a game back from the President, so ambush rates for holders went 4% + 6%/part → 8% + 12%/part: the President's ending stays at 14–15%, about 0.6 ambushes per human per game (Opportunists, who hunt parts, 1.6), 0.22 parts lost to agents per human holder.
+122. After every fight or theft, each PC's phone says exactly what happened (who, and what they took or didn't), keeping a masked rider masked; a part loss explained there isn't repeated as "You lost a corpse part".
+123. Arrows and Rokakaka ask before they're used ("Eat the Rokakaka? [Stand] will leave you for good."), say "You'll eat this when the round is revealed." while pending, alert "You ate the Rokakaka…" after the reveal, and the Stand card says "Your Stand is gone (you ate a Rokakaka)." until a new one arrives.
+124. Runners vs Riders with 5 people and AI fill (4,500 games): at 15% Runners 159.4 vs 159.3 points, at 60% Runners 165.1 vs 164.1; Runners are not ahead.

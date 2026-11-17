@@ -46,11 +46,13 @@ export default {
     // 'kill' = kills they start (kill-started / kill-cruel events). Tuned so
     // end-of-race Worthiness lands near Honorable 80, Cautious 75, Glory 60,
     // Opportunist 60, Ruthless 35 (sim).
-    honorable: { help: 0.9, spare: 1.15, kill: 0.45, sabotage: 0.3, cold: 1.3 },
-    ruthless: { kill: 2.2, sabotage: 2.4, cold: 2, help: 0.4, spare: 0.3 },
-    cautious: { risky: 0.5, kill: 0.7, hazard: 0.8, help: 0.72, spare: 0.72 },
-    glory: { risky: 1.8, sprint: 2, pace: 1.3, cold: 2.4, help: 0.5, sabotage: 1.3 },
-    opportunist: { sabotage: 2.4, kill: 1.6, cold: 2, sprint: 1.2, help: 0.7 },
+    // 'heroic' (milestone 7b): the rescue, standing guard and hard choices lean
+    // toward Honorable and Cautious, the way strikes lean toward Ruthless.
+    honorable: { help: 0.9, spare: 1.15, kill: 0.45, sabotage: 0.3, cold: 1.3, heroic: 7 },
+    ruthless: { kill: 2.2, sabotage: 2.4, cold: 2, help: 0.4, spare: 0.3, heroic: 0.25 },
+    cautious: { risky: 0.5, kill: 0.7, hazard: 0.8, help: 0.72, spare: 0.72, heroic: 5.5 },
+    glory: { risky: 1.8, sprint: 2, pace: 1.3, cold: 2.4, help: 0.5, sabotage: 1.3, heroic: 3 },
+    opportunist: { sabotage: 2.4, kill: 1.6, cold: 2, sprint: 1.2, help: 0.7, heroic: 1 },
   },
   // Canon racers rarely start kills and often help (on top of personality).
   canonLean: { kill: 0.35, help: 1.6, sabotage: 0.4, spare: 1.5 },
@@ -61,28 +63,32 @@ export default {
   // Canon racers have their own value in canon-racers.js (worthiness).
   worthiness: {
     // PCs (people and AI) start by personality; canon and NPCs by range.
-    byPersonality: { honorable: 60, cautious: 55, opportunist: 50, glory: 50, ruthless: 40 },
+    byPersonality: { honorable: 54, cautious: 58, opportunist: 55, glory: 49, ruthless: 47 }, // retuned in milestone 7b (rescues are great deeds)
     start: { pc: [50, 50], canon: [50, 80], npc: [5, 30] }, // pc: fallback only
-    help: 8,          // help someone (events / choices tagged 'help')
-    save: 10,         // save a life (tagged 'help' + 'save'); instead of help, not on top
-    spare: 12,        // spare someone you beat (sparedBy; a defender who drives off the attacker)
-    spareStarted: 4,  // ...but in a fight you started yourself (attacking and sparing isn't mercy)
-    palmSurvive: 5,   // walk out of the Devil's Palm alive
+    help: 5,          // help someone (events / choices tagged 'help')
+    save: 7,          // save a life (tagged 'help' + 'save'); instead of help, not on top
+    spare: 8,         // spare someone you beat (sparedBy; a defender who drives off the attacker)
+    spareStarted: 2,  // ...but in a fight you started yourself (attacking and sparing isn't mercy)
+    palmSurvive: 3,   // walk out of the Devil's Palm alive
     ridePast: -3,     // ride past someone who needs help (tagged 'cold'; sub event 'Ride past')
     sabotage: -8,     // sabotage or cheat (tagged 'sabotage'; see KILL_KINDS / HARM_KINDS)
-    halfAbove: 80,    // above this, gains are halved (rounded down); losses stay full
+    // Diminishing gains (milestone 7b): above halfAbove gains are halved, above
+    // quarterAbove quartered (at least +1); above greatOnlyAbove only great deeds
+    // raise it (giving away a corpse part, saving a life, sparing a PC who attacked you).
+    // Losses always count in full.
+    halfAbove: 70, quarterAbove: 85, greatOnlyAbove: 95,
     // Kills, for the racer with the kill credit (`by`). Every kill event has
     // exactly one of these tags (tests/stands.test.js checks it).
     killDefense: 0,   // 'kill-defense': they attacked you (or an accident)
-    killStarted: -8,  // 'kill-started': you attacked, hunted or ambushed
-    killCruel: -12,   // 'kill-cruel': helpless, fleeing or asleep (instead of -8)
+    killStarted: -6,  // 'kill-started': you attacked, hunted or ambushed
+    killCruel: -10,   // 'kill-cruel': helpless, fleeing or asleep (instead of -8)
     // Milestone 5:
     givePart: 15,     // give a corpse part away for nothing
     stealPart: -8,    // steal a part (asleep, or taken after a fight)
     abandonAlly: -12, // abandon an ally
     joinValentine: -30,
-    hintAt: 8,        // a change this big gives the phone a private hint line
-    softHintAt: 3,    // 3–7 gets a softer one ("You feel steady." / "Something nags at you.")
+    hintAt: 6,        // a change this big gives the phone a private hint line (8 before milestone 7b's smaller values)
+    softHintAt: 2,    // 2–5 gets a softer one ("You feel steady." / "Something nags at you.")
     barSteps: 20,     // the phone gets a coarse level (0–20), never the number
   },
 
@@ -137,9 +143,12 @@ export default {
 
   // ---------------------------------------------------------------- Rokakaka (our addition)
   rokakaka: {
-    guaranteed: 2,          // always found by human PCs, by the end of lastStage
-    thirdChance: 0.35,      // a third may drop
+    guaranteed: 4,          // always found by human PCs, by the end of lastStage (milestone 7b: was 2)
+    thirdChance: 0.5,       // one more may drop (4–5 a game)
     stages: [2, 6],
+    // Who finds the next one (human PCs only): someone who hasn't found one yet is
+    // likelier, and someone with a Stand (who can actually use it) a little likelier.
+    weightNoneYet: 3, weightHasStand: 1.5,
   },
 
   // A Stand tier's share of PC race wins may be at most this many times its
@@ -150,6 +159,14 @@ export default {
   // score = skill (NPCs npcSkill) + Stand fightBonus + Spin + ally + noise.
   // Nobody wins automatically: noise sd 12 keeps a Legendary Stand user at
   // about 75% against an equal racer without one.
+  // Milestone 7b: the good-aligned sub events (data/sub-events.js GOOD_SUBS).
+  good: {
+    rescuePoints: 12,     // saving someone in "A rescue"
+    guardComes: 0.5,      // "Stand guard": the riders come
+    guardPoints: 8,       // ...and you drive them off
+    thiefFlees: 0.7,      // "Someone's in your camp": the thief runs (else they fight)
+    maxPerTitle: 2,       // the same sub event title at most twice per player per game
+  },
   fights: {
     npcSkill: 50,
     sd: 12,
@@ -246,13 +263,17 @@ export default {
   // carry (perHidden for a hidden one); nonHolder for everyone else, so an
   // ambush never proves anything. Joiners are never ambushed.
   agents: {
-    nonHolder: 0.015, perHolder: 0.04, perPart: 0.06, perHidden: 0.03,
+    nonHolder: 0.015, perHolder: 0.08, perPart: 0.12, perHidden: 0.03, // milestone 7b: 0.04 and 0.06 before "Ride after them" won parts back
     huntMult: 2,               // "Hunt a corpse part"
     canonNonHolder: 0.005,
     othersMult: 0.5,           // canon and NPC holders (nobody controls them; they can't hide a part or plan)
     bonus: -2,                 // in a fight (their banned Stands are never used on stream; tuned so the President's bad ending stays near 15–20%)
     // What they do if they win: search for a part, or kill.
     wins: { holder: { part: 7, kill: 3 }, none: { part: 6, kill: 4 } },
+    // Milestone 7b: after agents beat or rob a PC, they leave them alone for the next 2 stages.
+    cooldownStages: 2,
+    // "Ride after them" (the round after they take a part): the agents fight at this, on top of `bonus`.
+    chasePenalty: -2,
   },
 
   // ---------------------------------------------------------------- Funny Valentine (milestone 5b)
@@ -312,7 +333,7 @@ export default {
 
   // ---------------------------------------------------------------- secret endings (milestone 6d)
   // Documented only in DESIGN.md → Secret endings. Never hinted at in the game.
-  requiem: { minWorthiness: 80 },
+  requiem: { minWorthiness: 80, success: 0.5 }, // the Arrow chooses: it refuses half the time (the items are used up anyway)
   d4c: { minPresidentParts: 3 }, // Valentine needs this many parts as Stage 9's plans close
 
   // ---------------------------------------------------------------- dead players (milestone 6a)
