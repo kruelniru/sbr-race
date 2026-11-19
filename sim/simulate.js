@@ -16,6 +16,8 @@
 //
 // Tune numbers in data/rules.js, data/stages.js and event weights in data/events.
 
+import { becomeRequiem } from '../js/engine/secret-endings.js';
+import { giveStand, pickStand } from '../js/engine/stands.js';
 import RULES from '../data/rules.js';
 import STAGES from '../data/stages.js';
 import { createGameState, addPlayer, applyCharacter } from '../js/engine/state.js';
@@ -65,6 +67,7 @@ const SEED = args.seed ?? 'sim';
 const PLAN_MODE = args.plans ?? 'ai'; // ai | random | star | <plan id>
 const FREQ = args.freq ?? 'normal';
 const HUMANS = args.humans != null ? Number(args.humans) : PLAYERS; // PCs played by people (timing, Main Story lines)
+const FORCE_REQUIEM = args['requiem-stage'] ? Number(args['requiem-stage']) : null; // tuning: a person gets a Requiem at this stage's start
 const CHOICE_TIMES = args['choice-times'] ? loadChoiceTimes(args['choice-times']) : null;
 
 const problems = lintEvents();
@@ -102,6 +105,7 @@ function playGame(seed) {
   const m7 = {}; // per human: { personality, types, titles }
   const holders = new Set();
   while (!state.race.over) {
+    if (FORCE_REQUIEM && state.race.stageIdx + 1 === FORCE_REQUIEM && state.race.roundIdx === 0 && !state.race.requiems?.length) forceRequiem(state, timeRng);
     if (needsStagePlans(state)) {
       const w = openStagePlans(state);
       const pcsById = Object.fromEntries(state.players.map((x) => [x.id, x]));
@@ -202,8 +206,74 @@ function playGame(seed) {
   M7.rokaGames = M7.rokaGames ?? {};
   bump(M7.rokaGames, String((state.race.rokakakaLog ?? []).filter((e) => e.event === 'found' || e.event === 'offered').length));
   M7.refused = (M7.refused ?? 0) + (state.race.requiemRefused ?? []).length;
-  M7.pierced = (M7.pierced ?? 0) + (state.race.requiem ? 1 : 0);
+  M7.pierced = (M7.pierced ?? 0) + ((state.race.requiems ?? []).length ? 1 : 0);
+  collectM7c(state, results);
   return { state, results, stageLog, windows, timeRng, palm, standShare, partsByStage };
+}
+
+// ---------------------------------------------------------------- milestone 7c: Acts and the Requiem
+const M7C = { games: 0, acts: {}, holders: {}, crafted: { human: 0, ai: 0, other: 0 }, pierce: { n: 0, ok: 0, bands: {} }, rq: { n: 0, won: 0, ny: 0, podium: 0, died: 0, stageSum: 0 }, johnny: { act2: 0, act3: 0, alive: 0 } };
+const BAND = (w) => (w >= 90 ? '90+' : w >= 70 ? '70–89' : w >= 50 ? '50–69' : w >= 30 ? '30–49' : 'under 30');
+function collectM7c(state, results) {
+  M7C.games++;
+  // Acts: who ever held an evolving Stand (Echoes, Tusk), by personality; evolutions by trigger.
+  const fam = new Set();
+  for (const e of state.stands.log) if (/^(echoes|tusk)-act/.test(e.standId) && e.racerTier === 'pc') fam.add(e.racerId);
+  for (const id of fam) {
+    const p = state.players.find((x) => x.id === id);
+    const h = (M7C.holders[p.personality] ??= { n: 0, evolved: 0, acts: 0 });
+    h.n++;
+    const a = (state.stands.acts ?? []).filter((x) => x.racerId === id);
+    h.acts += a.length;
+    if (a.length) h.evolved++;
+  }
+  for (const a of state.stands.acts ?? []) if (a.racerTier === 'pc') bump((M7C.acts[a.personality] ??= {}), a.trigger);
+  const johnny = state.canon.find((c) => c.canonId === 'johnny');
+  if (johnny) {
+    const ja = (state.stands.acts ?? []).filter((x) => x.racerId === johnny.id).map((x) => x.to);
+    if (ja.includes('Tusk Act 2')) M7C.johnny.act2++;
+    if (ja.includes('Tusk Act 3')) M7C.johnny.act3++;
+    if (johnny.status !== 'dead') M7C.johnny.alive++;
+  }
+  // The Requiem Arrow.
+  for (const x of state.race.requiemArrows ?? []) M7C.crafted[x.human ? 'human' : x.ai ? 'ai' : 'other']++;
+  for (const x of [...(state.race.requiems ?? []).filter((q) => q.source === 'requiem'), ...(state.race.requiemRefused ?? []).map((q) => ({ ...q, refused: true }))]) {
+    M7C.pierce.n++;
+    if (!x.refused) M7C.pierce.ok++;
+    const b = (M7C.pierce.bands[BAND(x.worthiness ?? 0)] ??= { n: 0, ok: 0 });
+    b.n++; if (!x.refused) b.ok++;
+  }
+  // Requiem holders: win rate, New York, by the stage it awakened.
+  const podium = results.at(-1).finale?.podium ?? [];
+  for (const q of state.race.requiems ?? []) {
+    const r = state.players.find((x) => x.id === q.id);
+    if (!r) continue;
+    M7C.rq.n++;
+    M7C.rq.stageSum += q.stage;
+    if (podium[0]?.id === r.id) M7C.rq.won++;
+    if (podium.slice(0, 3).some((x) => x.id === r.id)) M7C.rq.podium++;
+    if (r.status === 'racing') M7C.rq.ny++;
+    if (r.status === 'dead') M7C.rq.died++;
+  }
+}
+
+function printM7c() {
+  const pct = (n, d) => `${((100 * (n ?? 0)) / (d || 1)).toFixed(0)}%`;
+  const g = M7C.games;
+  console.log('\nMilestone 7c: Stand Acts (PCs who ever held Echoes or Tusk)');
+  table(['personality', 'holders', 'evolved at least once', 'Acts per holder', 'by fight', 'near-death', 'Worthiness', 'Finish Line'],
+    Object.entries(M7C.holders).sort().map(([k, h]) => {
+      const t = M7C.acts[k] ?? {};
+      const all = Object.values(t).reduce((a, b) => a + b, 0);
+      return [k, h.n, pct(h.evolved, h.n), (h.acts / (h.n || 1)).toFixed(2), pct(t.fight, all), pct(t.nearDeath, all), pct(t.worthiness, all), pct(t.finish, all)];
+    }));
+  console.log(`  Johnny's Tusk: Act 2 in ${pct(M7C.johnny.act2, g)} of games, Act 3 in ${pct(M7C.johnny.act3, g)} (he reaches New York in ${pct(M7C.johnny.alive, g)})`);
+  console.log('\nMilestone 7c: the Requiem Arrow (the sim knows the recipe; real players don\'t)');
+  const c = M7C.crafted;
+  console.log(`  Requiem Arrows crafted per game: by people ${(c.human / g).toFixed(3)} · AI PCs ${(c.ai / g).toFixed(3)} · NPCs and canon ${(c.other / g).toFixed(3)} · a game with one: ${pct(c.human + c.ai + c.other ? Object.values(c).reduce((a, b) => a + b, 0) : 0, g)} (per game, not distinct)`);
+  console.log(`  a person pierces in ${pct(M7C.pierce.n, g)} of games; the Arrow accepts ${pct(M7C.pierce.ok, M7C.pierce.n)} · by Worthiness: ` + ['under 30', '30–49', '50–69', '70–89', '90+'].map((b) => { const x = M7C.pierce.bands[b]; return `${b} ${x ? `${pct(x.ok, x.n)} of ${x.n}` : '–'}`; }).join(' · '));
+  const q = M7C.rq;
+  console.log(`  Requiem holders: ${q.n} (awakened in Stage ${(q.stageSum / (q.n || 1)).toFixed(1)} on average) · win the race ${pct(q.won, q.n)} · podium ${pct(q.podium, q.n)} · reach New York ${pct(q.ny, q.n)} · die ${pct(q.died, q.n)}  [target: win 50–60%]`);
 }
 
 function printM7b() {
@@ -224,6 +294,15 @@ function printM7b() {
   console.log("  Someone's in your camp: " + Object.entries(M7.theft ?? {}).map(([k, n]) => `${k} ${n}`).join(' · '));
   console.log(`  repeat limit broken (a title 3+ times for one player): ${M7.repeats} of ${M7.humans} humans`);
   console.log(`  Requiem: pierced ${M7.pierced} of ${M7.games} games (1 in ${M7.pierced ? Math.round(M7.games / M7.pierced) : '∞'}) · the Arrow refused ${M7.refused}`);
+}
+
+/** --requiem-stage: a random racing person gets a Stand (if none) and its Requiem. */
+function forceRequiem(state, rng) {
+  const p = rng.pick(state.players.slice(0, HUMANS).filter((x) => x.status === 'racing'));
+  if (!p) return;
+  const ctx = { state, rng, stage: { id: state.race.stageIdx + 1 }, roundLabel: 'sim' };
+  if (!p.stand) giveStand(ctx, p, pickStand(state, rng, 'rare'), 'sim');
+  if (p.stand) becomeRequiem(ctx, p, 'sim', { worthiness: p.worthiness });
 }
 
 /** Sim plan modes: random, star, or one fixed plan for everyone. */
@@ -488,6 +567,7 @@ function printStats(S) {
   printDead(S);
   printM6b(S);
   printM7b();
+  printM7c();
 
   console.log('\nChecks');
   console.log(`  canon deaths in Stage 1: ${S.canonStage1Deaths} ${S.canonStage1Deaths ? 'FAIL' : 'ok'}`);
@@ -698,7 +778,7 @@ function printStands(S) {
 
   const allW = Object.values(T.worth).flat();
   console.log(`  all PCs ending at 95+: ${pct(allW.filter((x) => x >= 95).length, allW.length)} (target under 5%)`);
-  console.log('  without Valentine joiners (joining costs −30): ' + Object.entries(T.worthNoJoin).map(([k, a]) => `${k} ${f1(avg(a))} (below 25: ${pct(a.filter((x) => x < 25).length, a.length)})`).join(' · '));
+  console.log(`  without Valentine joiners (joining costs ${RULES.worthiness.joinValentine}): ` + Object.entries(T.worthNoJoin).map(([k, a]) => `${k} ${f1(avg(a))} (below 25: ${pct(a.filter((x) => x < 25).length, a.length)})`).join(' · '));
   console.log('  helps and spares per PC per game: ' + Object.entries(T.deeds).map(([k, d]) => `${k} ${f1(d.helps / d.n)} + ${f1(d.spares / d.n)} = ${f1((d.helps + d.spares) / d.n)}`).join(' · '));
   console.log('\nStand holders vs non-holders (Stand at the end of the race; PCs + canon)');
   const order = ['legendary', 'rare', 'common', 'none'];
@@ -799,16 +879,16 @@ function printM5a(S) {
     return `${k} ${Math.round((100 * a) / (a + d || 1))}%`;
   }).join(' · ') + '  (attacked = an NPC attacks a PC)');
   // How much a Stand matters in a fight: a Stand user vs an equal racer without one.
-  const rows = ['common', 'rare', 'legendary'].map((tier) => {
+  const rows = ['common', 'rare', 'legendary', 'requiem'].map((tier) => {
     const rng = new Rng('standfight-' + tier);
     const ctx = { state: { players: [], canon: [], field: { packLeaders: [], kept: [] } }, rng };
-    const a = { tier: 'pc', skill: 65, stand: { tier } }, b = { tier: 'pc', skill: 65 };
+    const a = { tier: 'pc', skill: 65, stand: tier === 'requiem' ? { tier: 'legendary', requiem: true } : { tier } }, b = { tier: 'pc', skill: 65 };
     let win = 0, lose = 0, close = 0;
     for (let i = 0; i < 20000; i++) {
       const m = fightScore(ctx, a).score - fightScore(ctx, b).score;
       if (Math.abs(m) < RULES.fights.close) close++; else if (m > 0) win++; else lose++;
     }
-    return `${tier} +${RULES.standTier[tier].fightBonus}: wins ${Math.round((100 * win) / (win + lose))}% of decided fights (${Math.round((100 * close) / 20000)}% end with both hurt)`;
+    return `${tier} +${tier === 'requiem' ? RULES.standTier.legendary.fightBonus + RULES.requiem.fightBonus : RULES.standTier[tier].fightBonus}: wins ${Math.round((100 * win) / (win + lose))}% of decided fights (${Math.round((100 * close) / 20000)}% end with both hurt)`;
   });
   console.log('  Stand user vs an equal racer without one: ' + rows.join(' · '));
   console.log('  PCs who won a fight chose (whole sim): ' + Object.entries(T.byPers).map(([k, v]) => {
@@ -1081,7 +1161,7 @@ function printM6b(S) {
   const T = S.m6b, g = T.games;
   const pct = (n, d) => `${((100 * (n ?? 0)) / (d || 1)).toFixed(0)}%`;
   console.log('\nThe finale');
-  console.log('  main ending: ' + ['requiem', 'saint', 'president-dead', 'president', 'double-cross', 'corpse', 'bloodbath', 'normal'].map((k) => `${k} ${pct(T.endings[k], g)}`).join(' · '));
+  console.log('  main ending: ' + ['saint', 'president-dead', 'president', 'double-cross', 'corpse', 'bloodbath', 'normal'].map((k) => `${k} ${pct(T.endings[k], g)}`).join(' · '));
   console.log(`  a boss in ${pct(T.boss, g)} of games (Love Train ${pct(T.lt, g)}; ${Object.entries(T.bossTier).map(([k, n]) => `${k} ${pct(n, T.boss)}`).join(', ')}; a Valentine joiner ${pct(T.joinerBoss, T.boss)}) · the boss wins the race ${pct(T.bossWins, T.boss)} · a Love Train holder wins ${pct(T.ltWins, T.lt)} · the boss reaches New York ${pct(T.bossNY, T.boss)}, dies in the Final Stage ${pct(T.bossDied, T.boss)}, retires ${pct(T.bossRetired, T.boss)}`);
   console.log('  Bring down in games (joiners -> the holder lost): ' + Object.entries(T.bring).sort().map(([k, x]) => `${k} ${pct(x.won, x.n)} (${(x.n / g).toFixed(2)}/game)`).join(' · '));
   // The target odds, with equal riders (PCs at 65 with a Rare Stand on both sides).

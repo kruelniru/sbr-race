@@ -131,7 +131,7 @@ test('Arrow and Rokakaka prompts are secret, with Stand-dependent options; Rokak
     closeChoices(state);
     runRound(state);
   }
-  assert.ok(arrows >= RULES.arrows.perGame[0] - 1 && arrows <= RULES.arrows.perGame[1] + 2, `${arrows} Arrows`); // one may land after every PC is out; Arrows the dead dropped turn up again
+  assert.ok(arrows >= RULES.arrows.perGame[0] - 1 && arrows <= RULES.arrows.perGame[1] + (state.race.arrowsDue ?? []).filter((d) => d.fromDeath).length, `${arrows} Arrows`); // one may land after every PC is out; Arrows the dead dropped turn up again
   assert.ok(rokas >= RULES.rokakaka.guaranteed && rokas <= RULES.rokakaka.guaranteed + 1 + 2, `${rokas} Rokakaka`); // 4–5 a game (plus any the dead dropped)
 });
 
@@ -162,7 +162,7 @@ test('whole games stay consistent with Stands in play', () => {
     const ids = holders.map((r) => r.stand.id);
     assert.equal(new Set(ids).size, ids.length, 'no Stand is held twice by the living');
     for (const r of state.players) assert.ok(r.worthiness >= 0 && r.worthiness <= 100);
-    for (const e of state.stands.log) assert.ok(!BANNED.includes(e.stand));
+    for (const e of state.stands.log) assert.ok(e.source === 'requiem' || !BANNED.includes(e.stand)); // a Requiem form comes only from the Requiem Arrow
   }
 });
 
@@ -206,20 +206,22 @@ test('Worthiness: start by personality, kill tags on every kill, hints for big c
   assert.ok(!JSON.stringify([publicView(state), hostScreenView(state)]).includes('lighter in the saddle'));
 });
 
-test('Worthiness: halved above 70, quartered above 85, only great deeds above 95; losses stay full', () => {
+test('Worthiness: halved above halfAbove, quartered above quarterAbove, only great deeds above 95; losses stay full', () => {
   const state = setup('worth-2');
   const [me] = state.players;
   const ctx = ctxOf(state);
-  me.worthiness = 70;
+  const { halfAbove: H, quarterAbove: Q } = RULES.worthiness;
+  me.worthiness = H;
   addWorthiness(me, 8, ctx);
-  assert.equal(me.worthiness, 78, 'at exactly 70 the gain is full');
-  addWorthiness(me, 8, ctx); // 78 > 70: +4
-  assert.equal(me.worthiness, 82);
-  me.worthiness = 86;
-  addWorthiness(me, 8, ctx); // > 85: +2
-  assert.equal(me.worthiness, 88);
+  assert.equal(me.worthiness, H + 8, 'at exactly halfAbove the gain is full');
+  me.worthiness = H + 1;
+  addWorthiness(me, 8, ctx); // halved: +4
+  assert.equal(me.worthiness, H + 5);
+  me.worthiness = Q + 1;
+  addWorthiness(me, 8, ctx); // quartered: +2
+  assert.equal(me.worthiness, Q + 3);
   addWorthiness(me, 3, ctx); // quartered, at least +1
-  assert.equal(me.worthiness, 89);
+  assert.equal(me.worthiness, Q + 4);
   me.worthiness = 96;
   addWorthiness(me, 8, ctx);
   assert.equal(me.worthiness, 96, 'above 95 an ordinary deed does nothing');
@@ -233,7 +235,7 @@ test('Worthiness: halved above 70, quartered above 85, only great deeds above 95
   assert.equal(lintEvents([hurt]).length, 1);
   assert.equal(lintEvents([{ ...hurt, tags: ['sabotage'] }]).length, 0);
   assert.ok(EVENTS.filter((e) => e.tags.includes('sabotage')).length >= 8);
-  assert.equal(RULES.worthiness.sabotage, -8);
+  assert.ok(RULES.worthiness.sabotage < 0);
   assert.equal(RULES.worthiness.ridePast, -3);
   assert.ok(RULES.worthiness.ridePast > -RULES.worthiness.hintAt, 'riding past is quiet (no hint)');
   const past = SUBS.flatMap((s) => s.options ?? []).filter((o) => o.id === 'past');

@@ -261,7 +261,7 @@ Alliances are in from the start. How one forms depends on who's asking:
 
 ## Worthiness
 
-Worthiness is a hidden 0–100 stat. PCs start by personality (Honorable 54, Cautious 58, Opportunist 55, Glory-Seeker 49, Ruthless 47; AI PCs use the same values; retuned in milestone 7b); canon racers have their own values; NPCs start at 5–30. Each player sees only their own, on their phone, as an RDR2-style segmented bar with a word ("Unworthy" … "The Saint is watching") and no number; the phone is only ever sent a coarse level. Nobody else sees it, on the host or any other phone, until the finale's secrets reveal (milestone 6).
+Worthiness is a hidden 0–100 stat. PCs start by personality, in the order the personality cards describe (Honorable 60, Cautious 56, Opportunist 52, Glory-Seeker 50, Ruthless 42; AI PCs use the same values; milestone 7c). The end targets are hit with gain sizes, not starting values; canon racers have their own values; NPCs start at 5–30. Each player sees only their own, on their phone, as an RDR2-style segmented bar with a word ("Unworthy" … "The Saint is watching") and no number; the phone is only ever sent a coarse level. Nobody else sees it, on the host or any other phone, until the finale's secrets reveal (milestone 6).
 
 **Character creation** shows each personality's trade-off in one short line under its description, in words, never numbers (for example Ruthless: "Starts less worthy, but gets more chances to kill and sabotage.").
 
@@ -270,26 +270,26 @@ Worthiness is a hidden 0–100 stat. PCs start by personality (Honorable 54, Cau
 | Give away a corpse part for nothing (found, or offered from the phone) | +15 (instead of +5); a great deed | M5b |
 | Spare someone you beat | +8 (+2 in a fight you started); sparing a PC who attacked you is a great deed | M4, M7b |
 | Save a life (help tagged `save`, a rescue, driving off riders while standing guard) | +7 (instead of +5); a great deed | M4, M7b |
-| Help someone | +5 | M4 |
+| Help someone | +4 | M4 |
 | Survive the Devil's Palm | +3 | M4 |
 | Kill in self-defense (or by accident) | 0 | M4 |
 | Ride past someone who needs help | −3 | M4 |
-| Sabotage or cheat (cut a cinch, crowd into the rail, steal water) | −8 | M4 |
-| Any kill you started: you attacked, hunted or ambushed | −6 | M4 |
-| Kill someone helpless, fleeing or asleep | −10 (instead of −6) | M4 |
+| Sabotage or cheat (cut a cinch, crowd into the rail, steal water) | −5 | M4 |
+| Any kill you started: you attacked, hunted or ambushed | −4 | M4 |
+| Kill someone helpless, fleeing or asleep | −8 (instead of −4) | M4 |
 | Kill the attacker in a rescue | 0 (defense) | M7b |
-| Steal a corpse part (asleep, or by searching someone you beat) | −8 | M5b |
+| Steal a corpse part (asleep, or by searching someone you beat) | −6 | M5b |
 | Take a part from the body of someone you killed | 0 | M5b |
 | Abandon an ally | −12 | M5 |
-| Join Valentine | −30 | M5b |
+| Join Valentine | −25 | M5b |
 
-**Diminishing gains** (milestone 7b): above 70 every gain is halved, above 85 quartered (rounded down, at least +1), and above 95 only **great deeds** raise it (giving away a corpse part, saving a life, sparing a PC who attacked you). Losses always count in full. Everything clamps to 0–100. A kill changes the Worthiness of the racer with the kill credit. Every kill event carries exactly one tag, `kill-defense`, `kill-started` or `kill-cruel`, and the content linter fails if one is missing. A Hunt a rival showdown that ends in a kill counts as started; showdowns can't kill yet, so this applies once milestone 5 fights can.
+**Diminishing gains** (milestone 7b; thresholds moved in 7c): above 65 every gain is halved, above 80 quartered (rounded down, at least +1), and above 95 only **great deeds** raise it (giving away a corpse part, saving a life, sparing a PC who attacked you). Losses always count in full. Everything clamps to 0–100. A kill changes the Worthiness of the racer with the kill credit. Every kill event carries exactly one tag, `kill-defense`, `kill-started` or `kill-cruel`, and the content linter fails if one is missing. A Hunt a rival showdown that ends in a kill counts as started; showdowns can't kill yet, so this applies once milestone 5 fights can.
 
 Every event that hurts another racer without killing them (pace loss, injury, a forced retirement, a lost horse) is tagged either `sabotage` (−8 for the focus racer) or `no-fault` (a fair race, an accident, a rescue); the linter fails if neither is there. Riding past is tagged `cold` (−3, no hint). Ruthless racers get the most events where they start a kill or sabotage, Opportunists the next most (`rules.personalityLean`).
 
-**You notice it:** any change of 6 or more adds a private hint line: "You feel lighter in the saddle." when it goes up, "Something in you hardens." when it goes down. Changes of 2–5 get a softer line: "You feel steady." or "Something nags at you.". Changes under 2 are silent.
+**You notice it:** any change of 4 or more adds a private hint line: "You feel lighter in the saddle." when it goes up, "Something in you hardens." when it goes down. Changes of 2–3 get a softer line: "You feel steady." or "Something nags at you.". Changes under 2 are silent.
 
-**Worthiness barely matters at the Devil's Palm, and that's intended:** the Palm only runs in Stages 2–3, when most PCs are still near where they started (45–59, or 60+ for Honorable players). It matters more for Stand Arrows later in the race and for corpse parts in milestone 5, by which point players have moved apart. In the sim (4,500 games, milestone 7b), end-of-race averages are Honorable 77, Cautious 71, Glory-Seeker 61, Opportunist 57 and Ruthless 34; 2% of Honorable players and nobody else end at 95+, and 29% of Ruthless players end below 25 (most of them joined Valentine). Honorable players help and spare the most (5.5 a game, Cautious 4.1, Ruthless 1.3).
+**Worthiness barely matters at the Devil's Palm, and that's intended:** the Palm only runs in Stages 2–3, when most PCs are still near where they started (45–59, or 60+ for Honorable players). It matters more for Stand Arrows later in the race and for corpse parts in milestone 5, by which point players have moved apart. In the sim (4,500 games, milestone 7c), end-of-race averages are Honorable 77, Cautious 69, Glory-Seeker 62, Opportunist 57 and Ruthless 32; nobody ends at 95+, and 28% of Ruthless players end below 25 (most of them joined Valentine). Honorable players help and spare the most (5.5 a game, Cautious 4.1, Ruthless 1.3).
 
 **What it decides:**
 
@@ -319,9 +319,9 @@ Stands come from every part of JoJo, each with a tier. The pool lives in `data/s
 **The pool:**
 
 - **Legendary:** Star Platinum (no time stop), Killer Queen (no Bites the Dust), Gold Experience (not Requiem), Crazy Diamond, Stone Free, Weather Report (no Heavy Weather), Cream (heavy damage but never an instant kill: its user is blind inside the void, so it can miss, overshoot or hurt the user).
-- **Rare:** Magician's Red, Hierophant Green, Silver Chariot, Anubis, Hermit Purple, Sticky Fingers, Purple Haze, Spice Girl, Sex Pistols, Echoes Act 3, Aerosmith, Kraft Work, Soft & Wet, The Hand (only erases space to pull things closer, never a person).
+- **Rare:** Magician's Red, Hierophant Green, Silver Chariot, Anubis, Hermit Purple, Sticky Fingers, Purple Haze, Spice Girl, Sex Pistols, Aerosmith, Kraft Work, Soft & Wet, The Hand (only erases space to pull things closer, never a person).
 - **Common:** Echoes Act 1, Harvest, Pearl Jam, Highway Star, Moody Blues, Beach Boy, Little Feet, Tower of Gray, Ebony Devil, Surface, Planet Waves, Paisley Park.
-- **Banned, never obtainable:** The World, Star Platinum: The World, King Crimson, Made in Heaven, Gold Experience Requiem, Silver Chariot Requiem, Tusk Acts 2–4, Wonder of U, C-Moon, Bites the Dust, Green Day, Metallica, Whitesnake, D4C, and every Stand of Valentine's non-racer agents (Mandom, Catch the Rainbow, 20th Century Boy, Tubular Bells, Civil War, Tatoo You!, Wired…).
+- **Banned, never obtainable:** The World, Star Platinum: The World, King Crimson, Made in Heaven, Gold Experience Requiem, Silver Chariot Requiem and every other Requiem form (only the Requiem Arrow gives one), Tusk Act 4 (Tusk's Requiem), Wonder of U, C-Moon, Bites the Dust, Green Day, Metallica, Whitesnake, D4C, and every Stand of Valentine's non-racer agents (Mandom, Catch the Rainbow, 20th Century Boy, Tubular Bells, Civil War, Tatoo You!, Wired…).
 
 **Canon Stands** stay locked while their owner lives and join the pool when they die (Johnny's Tusk enters only as Act 1, even if he dies before awakening it). Tiers once unlocked: Cream Starter, In a Silent Way, Boku no Rhythm wo Kiitekure, Tusk Act 1 and Scary Monsters are Rare; Oh! Lonesome Me, Hey Ya! and Tomb of the Boom 1–3 are Common. Valentine-side racers' Stands (Oyecomova, the Boom Booms) do enter the pool. A PC's or NPC's Stand dies with them.
 
@@ -356,6 +356,17 @@ A racer who goes in gets one outcome from their Worthiness band (tuned with the 
 | 0–24 | 15% | 25% | 25% | 35% |
 
 Awakening a Stand and coming out with nothing read the same on stream ("walks back out at dusk, silent"). Canon racers with `palm` (Norisuke, Mrs. Robinson, Avdul) and NPCs walk in too; an NPC who awakens a Stand becomes a breakout NPC (cap 5 a game).
+
+### Stand Acts (milestone 7c)
+
+Acts are a general system in `data/stands.js` (`family`, `act`, `next`; later Acts in `EVOLVED`, never in the pool):
+
+- **Echoes:** Act 1 (Common, the only one that can be rolled) → Act 2 (Rare) → Act 3 (Rare).
+- **Tusk:** Act 1 enters the pool only when Johnny dies (as Act 1, whatever Act he reached), then evolves to Act 2 (Rare) and Act 3 (Legendary). Johnny's own Tusk evolves on a schedule if he lives: Act 2 in Stages 4–5, Act 3 in Stages 7–8. Tusk Act 4 is only Tusk's Requiem.
+- **Triggers** (anyone holding an evolving Stand, Johnny's Tusk aside): winning a fight with the Stand 18%, surviving a killing blow or the Palm's "lost" 20%, a single Worthiness gain of 8+ 10%, each Finish Line held with it 8%. At most one Act per stage.
+- **Who knows:** the user gets an alert ("Your Stand evolved: Echoes Act 1 is now Echoes Act 2…") and a hint. The stream sees it only if the Stand was already revealed ("Rebecca's Echoes splits its shell and crawls out bigger. Echoes Act 2."). Each Act has signature events.
+- **Rokakaka:** eating a later Act sends the Stand back into the pool as Act 1.
+- The secrets reveal ("Where the Stands came from"), the phone story and the game log list every Act and when.
 
 ### Stand Arrows (our addition)
 
@@ -562,7 +573,7 @@ The race winner is still whoever has the most points (except that in the Preside
 
 ## Secret endings
 
-Milestone 6d (`js/engine/secret-endings.js`). **None of this is ever hinted at in the game**; this section is the only place the rules are written down. They outrank every other ending.
+Milestone 6d (`js/engine/secret-endings.js`). **None of this is ever hinted at in the game**; this section is the only place the rules are written down. The Saint Walks Again outranks every other ending; D4C and the Requiem change the race but aren't endings.
 
 **D4C (Dirty Deeds Done Dirt Cheap).** When the Final Stage's plans close, if Funny Valentine is alive and holds 3+ corpse parts, he brings one fallen racer back from another world to ride for him: a dead human PC if there is one, then a dead AI PC, then a dead canon racer.
 - The stream: "Dirty Deeds Done Dirt Cheap. Kruel rides again… from another world."
@@ -573,15 +584,22 @@ Milestone 6d (`js/engine/secret-endings.js`). **None of this is ever hinted at i
 
 **The Saint Walks Again.** One racer still racing holds all 9 parts at the final Finish Line. They win outright, whatever the points, with their own ending card. Not canon: our secret ending. Nearly impossible.
 
-**The Requiem Arrow** (the rarest):
-- **The recipe:** a Stand Arrow and 2 Rokakaka in Items at the same time, a Legendary Stand, and Worthiness 80+. Trading counts, so players can trade for the pieces.
-- When all of it is true, a secret prompt appears in their next window: "Pierce your Stand". It consumes the Arrow and both Rokakaka. **The Arrow chooses** (milestone 7b): half the time it refuses. Everything is still used up, the phone says "The Arrow turns in your hand and will not pierce. It has judged you.", and nothing reaches the stream (the secrets reveal lists it). Otherwise it evolves their Stand into a Requiem: Gold Experience → Gold Experience Requiem, Silver Chariot → Silver Chariot Requiem, anything else → "[Stand] Requiem". This is the only place a banned Requiem Stand can appear (the cheat menu aside).
-- A Requiem's user can't be killed ("whatever is done to you never arrives"). The host gets one anonymous line: "Somewhere on the trail, a Stand has become something else."
-- **The Requiem ending:** reaching New York with it wins outright, with its own ending card. Breaking "no automatic wins" is intentional, because it should almost never happen.
+**The Requiem Arrow** (milestone 7c; replaces the old recipe):
+- **Crafting:** anyone holding a Stand Arrow and 2 Rokakaka in Items at the same time can combine them into one item, the Requiem Arrow. A human PC gets a secret prompt ("Your Arrow and the fruit hum together. Combine them?": Combine / Not now), at most once a stage while they hold all three, and no other hint. AI PCs combine them on their own by personality (a chance each round: Glory and Ruthless 60%, Opportunist 50%, Honorable 30%, Cautious 20%); NPCs and canon racers always.
+- **Using it:** only a human PC. One who has a Stand (any tier, not already a Requiem) and a Requiem Arrow gets a secret "Pierce your Stand" prompt in their next window. AI racers and NPCs carry one, and it goes to their killer (an agent excepted) or drops and turns up for a human PC a few rounds later; it can be traded or given.
+- **The Arrow chooses** by Worthiness, with no gate: 30 or less 15%, 50 30%, 70 50%, 90 65%, 100 70%, in between interpolated. A refusal uses the Arrow up, leaves the Stand as it was, and only the phone knows: "The Arrow turns in your hand and will not pierce. It has judged you."
+- **Success** turns the Stand into its own Requiem form (`REQUIEMS` in `data/stands.js`: one for every obtainable Stand, each with signature events in `data/events/requiems.js`; Gold Experience Requiem and Silver Chariot Requiem as in canon; Echoes Requiem from any Act; Tusk's is Tusk Act 4, Infinite Rotation). The stream gets one anonymous line, "An Arrow has found its mark. Somewhere out there rides a Stand that no one will ever reach the end of.", and the phone: "This is Requiem. [Stand] is gone. What stands in its place cannot be reached, and cannot be stopped."
+- **What a Requiem does** (it no longer wins outright):
+  - Fights: +5 on top of the Legendary +7.5, so it wins about 80% of decided fights against an equal racer without a Stand. No automatic wins.
+  - Survival: deadly events pick its user ×0.15 as often, and a killing blow in a fight lands only 25% of the time (otherwise they get away hurt). Not immortal.
+  - Corpse parts: ×3 likelier to find one, and a part never rejects them.
+  - Placement: +60 at the first Finish Line after it awakens, +40 at every Finish Line after that.
+  - Its signature events show the power on stream (and reveal it, like any Stand line).
+- **After the race:** an epilogue card, "A Requiem rode in the Steel Ball Run" (who, which Stand, how far they got), and a card of its own in the secrets reveal (who, which Stand, from what, and when; with every Requiem Arrow combined and every refusal). The phone story and the game log say so too.
 
-**Priority:** Requiem > The Saint Walks Again > the President is dead > the President takes the Corpse > the Double-Cross > Holder of the Saint's Corpse > the Bloodbath > normal.
+**Priority:** The Saint Walks Again (the only secret instant win) > the President is dead > the President takes the Corpse > the Double-Cross > Holder of the Saint's Corpse > the Bloodbath > normal.
 
-**Testing:** the cheat menu has "Set up Requiem" (an Arrow, 2 Rokakaka, a Legendary Stand and Worthiness 80) and "Trigger D4C" (pick a dead player; they return when Stage 9's plans close, or at once if those have closed).
+**Testing:** the cheat menu has "Set up Requiem" (a Requiem Arrow, and a Legendary Stand if the player has none), a Requiem Arrow under Items, every Requiem form in the Stand list and "Trigger D4C" (pick a dead player; they return when Stage 9's plans close, or at once if those have closed).
 
 ## Settings, tech and later ideas
 
@@ -612,15 +630,14 @@ Milestone 6d (`js/engine/secret-endings.js`). **None of this is ever hinted at i
 
 **The full game log** (after the game ends, never during it): the host gets **Export game log**, which downloads two files. (a) A readable, self-contained HTML page to share: every round in order with every line, the decisions everyone made (and whether they timed out), the Fallen and the Finish Lines; then, per stage, everything the stream didn't see, marked SECRET: Worthiness changes with numbers, Stands and their sources, corpse part movements, Valentine offers, joins, errands and deliveries, trades, the dead's votes, and every fight with its scores; then the ending. (b) The same as raw JSON (`js/engine/game-log.js` buildGameLog), with the seed and settings. Both carry the seed, the settings, the dates and whether cheats were used.
 
-**The secret cheat menu** (testing): tap the connection status in the top right (host or phone) 7 times within 3 seconds; a digits-only PIN pad appears. The right PIN opens the menu; a wrong one closes the pad without a word. Nothing else hints at it. Only a SHA-256 hash of the PIN is stored (`CHEAT_PIN_HASH` in `js/config.js`), set by `node tools/set-cheat-pin.js`; an empty hash means it never opens. A phone's PIN is checked by the host, and its cheats apply to that player only; the host's menu picks any player. Cheats: Worthiness ±10 or set; join or leave Valentine; gain all 9 parts or lose them; give any Stand (Requiem included) or remove it; a Stand Arrow or a Rokakaka; lose your horse or get a Thoroughbred; skip to the start of Stage 9 (skipped rounds run instantly, unrevealed); kill or revive; force the next sub event (the Palm, Valentine's offer, Funny Valentine, a fight). Every use is recorded; a game with any cheat says **Cheats used** on the finale's first and last cards and in both export files.
+**The secret cheat menu** (testing): tap the connection status in the top right (host or phone) 7 times within 3 seconds; a digits-only PIN pad appears. The right PIN opens the menu; a wrong one closes the pad without a word. Nothing else hints at it. Only a SHA-256 hash of the PIN is stored (`CHEAT_PIN_HASH` in `js/config.js`), set by `node tools/set-cheat-pin.js`; an empty hash means it never opens. A phone's PIN is checked by the host, and its cheats apply to that player only; the host's menu picks any player. Cheats: Worthiness ±10 or set; join or leave Valentine; gain all 9 parts or lose them; give any Stand (every Requiem form included) or remove it; a Stand Arrow, a Rokakaka or a Requiem Arrow; lose your horse or get a Thoroughbred; skip to the start of Stage 9 (skipped rounds run instantly, unrevealed); kill or revive; force the next sub event (the Palm, Valentine's offer, Funny Valentine, a fight). Every use is recorded; a game with any cheat says **Cheats used** on the finale's first and last cards and in both export files.
 
 **Debugging:** with `?debug=1`, the host prints every fight to the browser console with a `[fight]` prefix: both sides' base scores, rolls, the margin, both choices and the outcome.
 
 **Ideas for later:**
 
 - **Spin:** Gyro or Wekapipo teaches it, giving better fight odds.
-- **Stand Acts:** Stands level up after big moments, like Tusk Act 1 to Act 4.
-- **D4C:** in the Final Stage, one dead character returns as their other-world self.
+- **A super-rare ending for a Requiem holder who also holds 5–6 corpse parts** (to be designed). Ideas so far: Love Train and the Requiem merge (misfortune is sent back at whoever attacks them); the Corpse chooses the Requiem holder as the Saint's protector; or a Requiem vs D4C finale.
 
 ## Decision log
 
@@ -750,3 +767,8 @@ Decisions made after the original design, in the order they came up:
 122. After every fight or theft, each PC's phone says exactly what happened (who, and what they took or didn't), keeping a masked rider masked; a part loss explained there isn't repeated as "You lost a corpse part".
 123. Arrows and Rokakaka ask before they're used ("Eat the Rokakaka? [Stand] will leave you for good."), say "You'll eat this when the round is revealed." while pending, alert "You ate the Rokakaka…" after the reveal, and the Stand card says "Your Stand is gone (you ate a Rokakaka)." until a new one arrives.
 124. Runners vs Riders with 5 people and AI fill (4,500 games): at 15% Runners 159.4 vs 159.3 points, at 60% Runners 165.1 vs 164.1; Runners are not ahead.
+125. Starting Worthiness follows the personality cards again (Honorable 60, Cautious 56, Opportunist 52, Glory 50, Ruthless 42); the end targets come from gain sizes: help +4, sabotage −5, kills −4 / −8, stealing a part −6, joining Valentine −25, halved above 65, quartered above 80, hints at 4+. End averages: Honorable 77, Cautious 69, Glory 62, Opportunist 57, Ruthless 32 (39 without joiners).
+126. Stand Acts (milestone 7c): only Act 1 can be rolled. Echoes Act 1 → 2 → 3 (Common, Rare, Rare); Tusk Act 1 enters the pool only when Johnny dies, then evolves to Acts 2 and 3; Johnny's own Tusk evolves on schedule (Stages 4–5 and 7–8). Triggers: a fight won 18% (25% in the plan; Ruthless evolved fastest), near-death 20%, a Worthiness gain of 8+ 10%, each Finish Line 8%; one Act a stage. Acts per holder: Glory 0.56, Opportunist 0.53, Ruthless 0.52, Honorable 0.42, Cautious 0.37. Announced only if the Stand was revealed; a Rokakaka resets it to Act 1.
+127. A Requiem form for every obtainable Stand (42), each with a signature event, in data/stands.js REQUIEMS (Echoes and Tusk share one across Acts; Tusk's is Tusk Act 4).
+128. The Requiem Arrow replaces the old recipe: anyone can combine a Stand Arrow and 2 Rokakaka (a secret prompt for people; AI by personality; NPCs always), but only a human PC can pierce, with any Stand and no Worthiness gate. The Arrow chooses by Worthiness (15% at 30 or less up to 70% at 100). In the sim (whose people know the recipe), a person pierces in 12% of 5-person games and 2% of 18-person games; the Arrow accepts 16% under 30, 27% at 30–49, 45% at 50–69, 55% at 70–89. Real players don't know the recipe, so this overstates it.
+129. A Requiem no longer wins the race (the Requiem ending is gone; The Saint Walks Again is the only secret instant win). Instead: +12.5 in fights (wins 81% of decided fights against an equal racer without a Stand), deadly events ×0.15 and killing blows land 25%, part finds ×3 and never rejected, +60 placement at the next Finish Line and +40 after. A Requiem from Stage 5 wins the race about 62%, from Stage 6 54%, from Stage 4 75%; the sim's own Requiems come late (Stage 7.3 on average: Rokakaka arrive through Stage 6), where even always placing first wins only about 50%, so they win 38% and reach New York 92%. An epilogue card and its own secrets-reveal card replace the ending.

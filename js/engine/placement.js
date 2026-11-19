@@ -37,6 +37,8 @@ export function placementScore(racer, stage, rng, state = null) {
   // Stage Plan. Optionally, hunting costs nothing once you carry 3+ parts (rules.finale.holderNoHuntPenalty).
   const plan = planOf(racer);
   if (!(plan?.id === 'corpse' && RULES.finale.holderNoHuntPenalty && state && carried(state, racer).length >= RULES.finale.bossMin)) score += plan?.placement ?? 0;
+  // A Requiem (milestone 7c): a big boost at the first Finish Line after it awakens, a smaller one after.
+  if (racer.stand?.requiem && racer.requiem) score += racer.requiem.finishes ? RULES.requiem.placementAfter : RULES.requiem.placementFirst;
   // Stand tier (rules.standTier). Canon racers' own Stands are already in their skill.
   if (racer.stand && !['canon', 'awaken'].includes(racer.stand.source)) score += standMods(racer).placement;
   // Horse quality (milestone 5); on foot with an ally on a horse, you ride double.
@@ -66,6 +68,7 @@ export function placeStage(state, rng, stage) {
     // For tie-breaks (milestone 7a): stage wins, and the latest stage's place.
     if (rank === 1) r.stageWins = (r.stageWins ?? 0) + 1;
     r.lastStageRank = { stage: stage.id, rank };
+    if (r.requiem && r.stand?.requiem) r.requiem.finishes++; // the big boost is spent
     // A pack leader who places top 10 earns a name and joins the kept NPCs.
     if (r.tier === 'npc' && !r.name && rank <= 10) {
       r.name = npcName(state, rng, r.pronouns);

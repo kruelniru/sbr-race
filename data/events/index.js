@@ -16,9 +16,10 @@ import stage9 from './stage-9.js';
 import stands from './stands.js';
 import palm from './palm.js';
 import alliesHorses from './allies-horses.js';
+import requiems from './requiems.js';
 
 export default [
   ...common, ...finish, ...runners, ...retired, ...canon,
   ...stage1, ...stage2, ...stage3, ...stage4, ...stage5, ...stage6, ...stage7, ...stage8, ...stage9,
-  ...stands, ...palm, ...alliesHorses,
+  ...stands, ...palm, ...alliesHorses, ...requiems,
 ];

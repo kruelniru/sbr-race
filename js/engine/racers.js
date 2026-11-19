@@ -5,7 +5,7 @@ import RULES from '../../data/rules.js';
 import CANON from '../../data/canon-racers.js';
 import { readyPlayers } from './state.js';
 import { STAND_BY_ID } from '../../data/stands.js';
-import { standOwnerDied } from './stands.js';
+import { standOwnerDied, tryEvolve } from './stands.js';
 
 /**
  * Called on every death (named racers and NPCs): (ctx, who, killer | null).
@@ -81,27 +81,15 @@ export function addWorthiness(who, n, ctx, { great = false } = {}) {
   // The game log (exported after the game): every change, with numbers.
   if (who.tier === 'pc' && who.worthiness !== before) (who.wLog ??= []).push({ stage: ctx?.stage?.id ?? 0, round: ctx?.roundLabel ?? '', change: who.worthiness - before, from: before, to: who.worthiness });
   if (!ctx || who.worthiness === before) return;
+  if (n >= RULES.acts.worthinessMin) tryEvolve(ctx, who, 'worthiness'); // milestone 7c
   // n is the applied change (after halving above 80), so halved gains still get a line.
   const W = RULES.worthiness;
   if (Math.abs(n) >= W.hintAt) addHint(who, n > 0 ? 'You feel lighter in the saddle.' : 'Something in you hardens.', ctx);
   else if (Math.abs(n) >= W.softHintAt) addHint(who, n > 0 ? 'You feel steady.' : 'Something nags at you.', ctx);
 }
 
-/**
- * A phone alert for this PC (milestone 7a): queued now, shown with the round's
- * private update after the reveal (race.js syncShown), like the other alerts.
- */
-export function addAlert(racer, level, title, text) {
-  if (racer?.tier !== 'pc') return;
-  (racer.pendingAlerts ??= []).push({ level, title, text });
-}
-
-/** A private line on this PC's phone (shown after the round's reveal). */
-export function addHint(racer, text, ctx) {
-  if (racer?.tier !== 'pc') return;
-  (racer.hints ??= []).push({ text, stage: ctx?.stage?.id ?? 0, round: ctx?.roundLabel ?? '' });
-  if (racer.hints.length > 12) racer.hints.splice(0, racer.hints.length - 12);
-}
+import { addAlert, addHint } from './notify.js';
+export { addAlert, addHint };
 
 export function makeCanonRacer(def, horse, worthiness) {
   return {

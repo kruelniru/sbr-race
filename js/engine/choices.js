@@ -30,8 +30,8 @@
 import RULES from '../../data/rules.js';
 import { SUB_EVENTS, GOOD_SUBS, RIVAL, PALM, ARROW, ROKAKAKA, ATTACKED, STRIKE, FIGHT_WIN, FIGHT_DEFEND, HORSE_TWO, ALLY_INVITE, TRADE,
   FOUND_PART, STEAL_PART, AMBUSH, FUNNY_VALENTINE, VALENTINE_OFFER, ERRAND, ERRAND_TARGET,
-  BRING_DOWN, VALENTINE_RIDE, VALENTINE_REMATCH, REQUIEM, RIDE_AFTER } from '../../data/sub-events.js';
-import { requiemReady, pierceStand, d4cReturn } from './secret-endings.js';
+  BRING_DOWN, VALENTINE_RIDE, VALENTINE_REMATCH, REQUIEM, REQUIEM_CRAFT, RIDE_AFTER } from '../../data/sub-events.js';
+import { requiemReady, pierceStand, d4cReturn, craftReady, craftRequiemArrow, autoCraft } from './secret-endings.js';
 import { EFFECTS } from './effects.js';
 import { render } from './text.js';
 import { Rng } from './rng.js';
@@ -39,7 +39,7 @@ import { readyPlayers } from './state.js';
 import { namedRacers, addWorthiness, killRacer, retireRacer, addAlert } from './racers.js';
 import { castNpc, keepNpc } from './field.js';
 import { normalizeEvent, whenFits, roleFits, castRoles, deathWeight, displayRoles } from './events.js';
-import { awakenStand, removeStand } from './stands.js';
+import { awakenStand, removeStand, tryEvolve } from './stands.js';
 import { rollPalm, palmExit, palmLost, logPalm, addHint } from './palm.js';
 import { addItem, itemsOf, removeItem, canUse } from './items.js';
 import { getPlan, planOf, plansFor } from './plans.js';
@@ -476,7 +476,23 @@ function corpsePrompts(state, rng, stage, roundNo, roundsLeft, type, busy, promp
     }
   }
 
-  // The Requiem Arrow (secret ending): the prompt appears only when the recipe is complete.
+  // A Requiem Arrow someone dropped when they died turns up for a human PC (milestone 7c).
+  const humansRacing = racingPcs(state).filter((x) => !x.isAI);
+  for (const due of (race.requiemArrowsDue ?? []).filter((d) => !d.placed && d.round <= roundNo)) {
+    const p = rng.pick(humansRacing);
+    if (!p) continue;
+    due.placed = roundNo;
+    addItem(state, 'requiem-arrow', p, { stage: stage.id, round: 'found' });
+    addHint(p, 'Something in the dirt is humming: an Arrow, strange and warm. You keep it.', { stage: { id: stage.id }, roundLabel: '' });
+  }
+
+  // The Requiem Arrow (secret, milestone 7c). Holding a Stand Arrow and 2 Rokakaka:
+  // combine them? (once a stage while you hold all three). Holding a Requiem Arrow and a Stand: pierce.
+  for (const p of free().filter((x) => !x.isAI && craftReady(state, x) && x.craftAsked !== stage.id)) {
+    p.craftAsked = stage.id;
+    busy.add(p.id);
+    prompts.push(specialPrompt(rng, state, REQUIEM_CRAFT, p, roundNo, { a: p.id }, REQUIEM_CRAFT.text));
+  }
   for (const p of free().filter((x) => requiemReady(state, x))) {
     busy.add(p.id);
     prompts.push(specialPrompt(rng, state, REQUIEM, p, roundNo, { a: p.id }, REQUIEM.text));
@@ -784,6 +800,7 @@ export function prepareRound(state) {
 
 /** Resolve the closed sub-event window. Returns lines for the Main Story. */
 export function resolveSubEvents(ctx, choice) {
+  autoCraft(ctx); // racers nobody controls combine an Arrow and 2 Rokakaka on their own (milestone 7c)
   const lines = [...choice.notes, ...resolveItems(ctx)];
   // Racers in any prompt this round (an ally can't ride in from their own decision).
   ctx.inPrompts = new Set(choice.prompts.flatMap((x) => [x.playerId, ...Object.values(x.roles ?? {})]));
@@ -974,6 +991,11 @@ function resolveSub(ctx, prompt, targetPrompt = null) {
     return null; // secret
   }
   if (prompt.special === ERRAND_TARGET.id) return resolveErrand(ctx, prompt.errandId, prompt.answer.optionId);
+  if (prompt.special === REQUIEM_CRAFT.id) {
+    const a = findAnyRacer(ctx.state, prompt.roles.a);
+    if (a && prompt.answer.optionId === 'combine') craftRequiemArrow(ctx, a);
+    return null; // secret
+  }
   if (prompt.special === REQUIEM.id) {
     const a = findAnyRacer(ctx.state, prompt.roles.a);
     if (a && prompt.answer.optionId === 'pierce') pierceStand(ctx, a);
@@ -1174,6 +1196,7 @@ function resolvePalm(ctx, prompt) {
   }
   if (outcome === 'lost') {
     const r = palmLost(ctx, a);
+    tryEvolve(ctx, a, 'nearDeath'); // lost in the Palm and out alive (milestone 7c)
     return lineFor(ctx, `sub-palm:${r}`, render(r === 'retired' ? PALM.lines.retired : PALM.lines.lost, d), { a });
   }
   palmExit(ctx, a, outcome);

@@ -2,7 +2,7 @@
 //
 // Stages 4–6: 1–2 PCs a stage get a secret offer from "a man in a dark hat"
 // (likelier with low Worthiness, and for Ruthless and Opportunist players;
-// once per PC). Joining costs Worthiness −30, and the host announces only
+// once per PC). Joining costs Worthiness (rules.worthiness.joinValentine), and the host announces only
 // "Someone has fallen to the dark side." In return:
 //   1. agents never ambush them (agents.js);
 //   2. relay horses: +3 placement every remaining stage (placement.js);

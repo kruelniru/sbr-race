@@ -63,32 +63,32 @@ export default {
   // Canon racers have their own value in canon-racers.js (worthiness).
   worthiness: {
     // PCs (people and AI) start by personality; canon and NPCs by range.
-    byPersonality: { honorable: 54, cautious: 58, opportunist: 55, glory: 49, ruthless: 47 }, // retuned in milestone 7b (rescues are great deeds)
+    byPersonality: { honorable: 60, cautious: 56, opportunist: 52, glory: 50, ruthless: 42 }, // in the personality cards' order (M7c); ends tuned with gain sizes
     start: { pc: [50, 50], canon: [50, 80], npc: [5, 30] }, // pc: fallback only
-    help: 5,          // help someone (events / choices tagged 'help')
+    help: 4,          // help someone (events / choices tagged 'help')
     save: 7,          // save a life (tagged 'help' + 'save'); instead of help, not on top
     spare: 8,         // spare someone you beat (sparedBy; a defender who drives off the attacker)
     spareStarted: 2,  // ...but in a fight you started yourself (attacking and sparing isn't mercy)
     palmSurvive: 3,   // walk out of the Devil's Palm alive
     ridePast: -3,     // ride past someone who needs help (tagged 'cold'; sub event 'Ride past')
-    sabotage: -8,     // sabotage or cheat (tagged 'sabotage'; see KILL_KINDS / HARM_KINDS)
+    sabotage: -5,     // sabotage or cheat (tagged 'sabotage'; see KILL_KINDS / HARM_KINDS)
     // Diminishing gains (milestone 7b): above halfAbove gains are halved, above
     // quarterAbove quartered (at least +1); above greatOnlyAbove only great deeds
     // raise it (giving away a corpse part, saving a life, sparing a PC who attacked you).
     // Losses always count in full.
-    halfAbove: 70, quarterAbove: 85, greatOnlyAbove: 95,
+    halfAbove: 65, quarterAbove: 80, greatOnlyAbove: 95,
     // Kills, for the racer with the kill credit (`by`). Every kill event has
     // exactly one of these tags (tests/stands.test.js checks it).
     killDefense: 0,   // 'kill-defense': they attacked you (or an accident)
-    killStarted: -6,  // 'kill-started': you attacked, hunted or ambushed
-    killCruel: -10,   // 'kill-cruel': helpless, fleeing or asleep (instead of -8)
+    killStarted: -4,  // 'kill-started': you attacked, hunted or ambushed
+    killCruel: -8,    // 'kill-cruel': helpless, fleeing or asleep (instead of -8)
     // Milestone 5:
     givePart: 15,     // give a corpse part away for nothing
-    stealPart: -8,    // steal a part (asleep, or taken after a fight)
+    stealPart: -6,    // steal a part (asleep, or taken after a fight)
     abandonAlly: -12, // abandon an ally
-    joinValentine: -30,
-    hintAt: 6,        // a change this big gives the phone a private hint line (8 before milestone 7b's smaller values)
-    softHintAt: 2,    // 2–5 gets a softer one ("You feel steady." / "Something nags at you.")
+    joinValentine: -25,
+    hintAt: 4,        // a change this big gives the phone a private hint line (a kill, a help, a spare)
+    softHintAt: 2,    // 2–3 gets a softer one ("You feel steady." / "Something nags at you.")
     barSteps: 20,     // the phone gets a coarse level (0–20), never the number
   },
 
@@ -113,6 +113,15 @@ export default {
     legendary: { placement: 1.5, hazardDeath: 0.88, fightBonus: 7.5 }, // fightBonus: added to fight scores (milestone 5)
   },
   standEventWeight: 1.5,     // weight multiplier on Stand events for Stand users
+
+  // Stand Acts (milestone 7c): a Stand with a next Act (Echoes, Tusk) may evolve
+  // on these triggers, at most one Act per stage. Johnny's own Tusk evolves on
+  // a schedule instead (Act 2 in Stages 4–5, Act 3 in Stages 7–8).
+  acts: {
+    chance: { fight: 0.18, nearDeath: 0.2, worthiness: 0.1, finish: 0.08 }, // fight 25% → 18%: Ruthless evolved fastest
+    worthinessMin: 8,          // a single Worthiness gain this big (after halving)
+    johnny: [{ to: 'tusk-act-2', stages: [4, 5] }, { to: 'tusk-act-3', stages: [7, 8] }],
+  },
 
   // ---------------------------------------------------------------- Devil's Palm (Stages 2–3)
   // Outcome odds (%) for a racer who goes in, by Worthiness band (min is inclusive).
@@ -333,7 +342,21 @@ export default {
 
   // ---------------------------------------------------------------- secret endings (milestone 6d)
   // Documented only in DESIGN.md → Secret endings. Never hinted at in the game.
-  requiem: { minWorthiness: 80, success: 0.5 }, // the Arrow chooses: it refuses half the time (the items are used up anyway)
+  // The Requiem Arrow (milestone 7c; DESIGN.md → Secret endings). Crafted from a
+  // Stand Arrow and 2 Rokakaka; only a human PC can pierce with it.
+  requiem: {
+    // The Arrow chooses: success by Worthiness [worthiness, chance], interpolated.
+    success: [[30, 0.15], [50, 0.3], [70, 0.5], [90, 0.65], [100, 0.7]],
+    // AI PCs combine the pieces by personality (a chance each round); NPCs and canon racers always.
+    aiCraft: { honorable: 0.3, cautious: 0.2, opportunist: 0.5, glory: 0.6, ruthless: 0.6 },
+    // What a Requiem does (it no longer wins outright).
+    fightBonus: 5,       // on top of the Legendary tier's fightBonus (total +12.5: wins about 80% of decided fights against an equal racer without a Stand)
+    deathMult: 0.15,     // deadly events pick its user this much less often
+    fightKillLands: 0.25, // a killing blow in a fight lands this often (otherwise they get away hurt)
+    findMult: 3,         // corpse part finds; and a part never rejects its user
+    placementFirst: 60,  // the next Finish Line after it awakens (Stage 5–6 Requiems win about 55–60%)
+    placementAfter: 40,  // every Finish Line after that
+  },
   d4c: { minPresidentParts: 3 }, // Valentine needs this many parts as Stage 9's plans close
 
   // ---------------------------------------------------------------- dead players (milestone 6a)

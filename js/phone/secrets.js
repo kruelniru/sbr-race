@@ -63,7 +63,8 @@ export function itemsCard(you, onUse, onOffer = null) {
           it.pending ? h('div', { class: 'item-pending' }, it.kind === 'arrow' ? "You'll pierce yourself when the round is revealed." : "You'll eat this when the round is revealed.") : null,
           !it.usable && !it.pending && it.why ? h('div', { class: 'item-why' }, it.why) : null),
         h('div', { class: 'item-actions' },
-          h('button', {
+          // Some items have no button: their prompt finds you (milestone 7c).
+          it.kind === 'requiem-arrow' ? null : h('button', {
             type: 'button', class: 'btn btn-small item-use' + (it.pending ? ' btn-primary' : ''), disabled: !can,
             onclick: () => onUse(it.id),
           }, label),

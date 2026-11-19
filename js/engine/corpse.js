@@ -153,19 +153,22 @@ function makeLoose(ctx, item, how) {
 DEATH_HOOKS.push((ctx, who, killer) => {
   const race = ctx.state.race;
   if (!race) return;
-  for (const it of (ctx.state.items ?? []).filter((i) => i.owner === who.id && ['arrow', 'rokakaka'].includes(i.kind))) {
+  for (const it of (ctx.state.items ?? []).filter((i) => i.owner === who.id && ['arrow', 'rokakaka', 'requiem-arrow'].includes(i.kind))) {
     const human = killer?.tier === 'pc' && !killer.isAI;
-    const takes = killer && killer.status !== 'dead' && killer.tier === 'pc' && !killer.otherWorld && (it.kind === 'arrow' || human);
+    // A Requiem Arrow goes to any killer who isn't an agent (milestone 7c); Arrows to a PC; Rokakaka to a human PC.
+    const takes = killer && killer.status !== 'dead' && !killer.otherWorld && killer.tier !== 'agent' && !killer.immortal
+      && (it.kind === 'requiem-arrow' || (killer.tier === 'pc' && (it.kind === 'arrow' || human)));
     const entry = { stage: ctx.stage?.id ?? 0, round: ctx.roundLabel ?? '', kind: it.kind, from: who.id };
     if (takes) {
       it.owner = killer.id; it.pendingUse = false;
       race.itemLog = [...(race.itemLog ?? []), { ...entry, event: 'taken', to: killer.id }];
-      addHint(killer, `You find ${it.kind === 'arrow' ? 'a Stand Arrow' : 'a Rokakaka fruit'} on ${who.name}.`, ctx);
+      addHint(killer, `You find ${it.kind === 'arrow' ? 'a Stand Arrow' : it.kind === 'requiem-arrow' ? 'a strange, humming Arrow' : 'a Rokakaka fruit'} on ${who.name}.`, ctx);
       continue;
     }
     ctx.state.items = ctx.state.items.filter((i) => i.id !== it.id);
     const later = (race.roundNo ?? 0) + (ctx.rng ? ctx.rng.int(2, 5) : 3);
     if (it.kind === 'arrow') (race.arrowsDue ??= []).push({ round: later, fromDeath: true });
+    else if (it.kind === 'requiem-arrow') (race.requiemArrowsDue ??= []).push({ round: later });
     else (race.rokakakaDue ??= []).push({ round: later, guaranteed: false, fromDeath: true });
     race.itemLog = [...(race.itemLog ?? []), { ...entry, event: 'dropped' }];
   }
@@ -197,6 +200,7 @@ export function findWeight(r) {
   if (r.plan === 'corpse') w *= F.huntMult;
   if (r.status === 'retired') w *= F.retired;
   if (r.tier === 'canon') w *= F.canon * (F.canonSeekers[r.canonId] ?? 1);
+  if (r.stand?.requiem) w *= RULES.requiem.findMult; // milestone 7c
   return w;
 }
 
@@ -317,7 +321,7 @@ export function processMerges(ctx, { all = false } = {}) {
     if (!who || !part || who.status === 'dead') continue;
     const w = who.worthiness ?? 50;
     const band = C().rejection.find((b) => w >= b.min)?.min ?? 0;
-    if (ctx.rng.chance(rejectionChance(w))) {
+    if (!who.stand?.requiem && ctx.rng.chance(rejectionChance(w))) { // a part never rejects a Requiem's user
       if (ctx.rng.chance(C().rejectionDeath) && mortalNow(ctx, who)) {
         const L = ctx.rng.pick(PART_LINES.rejected);
         log(ctx, part, 'rejected-death', { to: who.id, toTier: who.tier, worthiness: w, band });

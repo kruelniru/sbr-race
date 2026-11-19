@@ -43,7 +43,7 @@ export const CHEAT_ACTIONS = [
   'valentine-join', 'valentine-leave',
   'parts-all', 'parts-none',
   'stand-give', 'stand-remove',
-  'item-arrow', 'item-rokakaka',
+  'item-arrow', 'item-rokakaka', 'item-requiem-arrow',
   'horse-lose', 'horse-thoroughbred',
   'skip-stage9', 'kill', 'revive',
   'force-palm', 'force-offer', 'force-fv', 'force-fight',
@@ -97,10 +97,17 @@ export function applyCheat(state, { by, target, action, value = null }) {
       }
       if (p.stand) removeStand(state, p);
       giveStand(ctx, p, def, 'cheat');
+      if (def.requiem && p.stand) {
+        // A Requiem form straight from the cheat menu (milestone 7c): it works like a pierced one.
+        p.stand.requiem = true;
+        p.requiem = { stage: ctx.stage.id, round: state.race.roundNo ?? 0, finishes: 0 };
+        (state.race.requiems ??= []).push({ id: p.id, name: p.name, stand: def.name, from: 'the cheat menu', stage: ctx.stage.id, source: 'cheat' });
+      }
       break;
     }
     case 'stand-remove': if (p.stand) removeStand(state, p); break;
     case 'item-arrow': addItem(state, 'arrow', p, { stage: ctx.stage.id, round: 'cheat' }); break;
+    case 'item-requiem-arrow': addItem(state, 'requiem-arrow', p, { stage: ctx.stage.id, round: 'cheat' }); break;
     case 'item-rokakaka': addItem(state, 'rokakaka', p, { stage: ctx.stage.id, round: 'cheat' }); break;
     case 'horse-lose': loseHorse(ctx, p); break;
     case 'horse-thoroughbred': if (!canHaveHorse(p)) return { ok: false, error: 'Runners never get a horse.' }; giveHorse(p, newHorseName(state, ctx.rng), 'thoroughbred'); break;
@@ -113,16 +120,14 @@ export function applyCheat(state, { by, target, action, value = null }) {
       state.race.fallenSince = state.race.fallenSince.filter((f) => f.id !== p.id);
       break;
     case 'setup-requiem': {
-      // An Arrow, 2 Rokakaka, a Legendary Stand (kept if they have one) and Worthiness 80.
+      // A Requiem Arrow, and a Stand if they have none (milestone 7c): the "Pierce your Stand" prompt comes next window.
       if (!alive) return { ok: false, error: 'They are dead.' };
-      addItem(state, 'arrow', p, { stage: ctx.stage.id, round: 'cheat' });
-      addItem(state, 'rokakaka', p, { stage: ctx.stage.id, round: 'cheat' });
-      addItem(state, 'rokakaka', p, { stage: ctx.stage.id, round: 'cheat' });
-      if (p.stand?.tier !== 'legendary' || p.stand.requiem) {
+      if (p.isAI) return { ok: false, error: 'Only a person can pierce with a Requiem Arrow.' };
+      addItem(state, 'requiem-arrow', p, { stage: ctx.stage.id, round: 'cheat' });
+      if (!p.stand || p.stand.requiem) {
         if (p.stand) removeStand(state, p);
         giveStand(ctx, p, pickStand(state, ctx.rng, 'legendary'), 'cheat');
       }
-      p.worthiness = Math.max(p.worthiness ?? 0, 80);
       break;
     }
     case 'trigger-d4c': {

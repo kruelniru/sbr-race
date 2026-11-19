@@ -86,7 +86,7 @@ function value(state, who, kind) {
   if (kind === 'horse') return who.onFoot ? V.horse : V.horseMounted;
   if (kind === 'arrow') return who.stand ? V.arrowHasStand : V.arrow;
   if (kind === 'rokakaka') return who.stand ? V.rokakakaHasStand : V.rokakaka;
-  if (kind === 'part') return V.part;
+  if (kind === 'part' || kind === 'requiem-arrow') return V.part;
   return 0;
 }
 

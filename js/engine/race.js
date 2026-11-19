@@ -20,7 +20,7 @@ import { allyOf } from './alliances.js';
 import { Rng } from './rng.js';
 import { readyPlayers } from './state.js';
 import { initPcRacer, makeCanonRacer, canonDefs, namedRacers, findRacer, startWorthiness, canonStartingStand } from './racers.js';
-import { initStands, giveStand } from './stands.js';
+import { initStands, giveStand, evolveStand, nextAct, tryEvolve } from './stands.js';
 import { CANON_STANDS, STAND_BY_ID } from '../../data/stands.js';
 import { displayRoles } from './events.js';
 import { render } from './text.js';
@@ -139,6 +139,10 @@ function scheduleStandEvents(state, rng) {
     const slots = roundsInStages(race.plan, Math.min(...def.awakens), Math.max(...def.awakens));
     race.awakenings.push({ standId: def.id, round: rng.pick(slots).round });
   }
+  // Johnny's Tusk evolves on schedule if he lives (milestone 7c).
+  if (state.canon.some((c) => c.canonId === 'johnny')) {
+    race.actsDue = RULES.acts.johnny.map((a) => ({ canonId: 'johnny', to: a.to, round: rng.pick(roundsInStages(race.plan, a.stages[0], a.stages[1])).round }));
+  }
 }
 
 const AWAKEN_LINES = {
@@ -161,6 +165,15 @@ function canonAwakenings(ctx) {
       eventId: `awaken-${aw.standId}`, text: render(AWAKEN_LINES[aw.standId] ?? '{a} feels something stir.', displayRoles({ a: racer })),
       ids: [racer.id], names: [{ name: racer.name, tier: racer.tier }], minor: false, death: false, tags: ['stand'], side: racer.status !== 'racing',
     });
+  }
+  // Johnny's Tusk Acts.
+  for (const due of ctx.state.race.actsDue ?? []) {
+    if (due.done || due.round > ctx.state.race.roundNo) continue;
+    const racer = ctx.state.canon.find((c) => c.canonId === due.canonId);
+    if (!racer || racer.status === 'dead') { due.done = true; continue; }
+    if (!racer.stand || STAND_BY_ID[racer.stand.id]?.family !== 'tusk') continue; // not awakened yet: wait
+    due.done = true;
+    if (racer.stand.id !== due.to && nextAct(racer)) evolveStand(ctx, racer, 'schedule');
   }
   return lines;
 }
@@ -230,6 +243,10 @@ export function runRound(state) {
   // 2b. Corpse parts that came to someone this round merge (or reject them).
   result.events.push(...processMerges(ctx, { all: type === 'finish' && race.stageIdx === STAGES.length - 1 }));
   if (type === 'finish') corpseFinishLine(ctx);
+  // Stand Acts: each Finish Line held with an evolving Stand (milestone 7c).
+  if (type === 'finish') for (const r of [...namedRacers(state), ...state.field.kept]) if (r.status === 'racing') tryEvolve(ctx, r, 'finish');
+  result.events.push(...(ctx.lateLines ?? [])); // Acts announced this round (a revealed Stand only)
+  ctx.lateLines = [];
   // Anonymous host lines ("Someone has been deemed worthy of the Saint.").
   result.events.push(...announcements(state));
 

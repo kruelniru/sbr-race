@@ -9,6 +9,7 @@
 //   secrets-corpse-1/2  each corpse part's journey
 //   secrets-stands      where each Stand came from
 //   secrets-deaths      the real cause of every vague death
+//   secrets-requiem     milestone 7c: who held a Requiem, which Stand, when (a card of its own)
 //   secrets-finale      the main ending, the Corpse Holder's story, D4C and Valentine's death
 //
 // It also builds each player's own story for their phone (`storyFor`).
@@ -19,6 +20,9 @@ import { corpseSummary } from './corpse.js';
 import { worthinessLevel } from './race.js';
 import { ENDINGS } from './endings.js';
 import { standings } from './placement.js';
+import { STAND_BY_ID } from '../../data/stands.js';
+
+const STAND_FLAVOR = (name) => Object.values(STAND_BY_ID).find((s) => s.name === name)?.flavor ?? '';
 
 export function worthWord(level) {
   if (level >= 16) return 'The Saint is watching';
@@ -137,7 +141,13 @@ registerFinaleSection({
   build: (state) => {
     const log = (state.stands?.log ?? []).filter((e) => e.source !== 'canon');
     if (!log.length) return null;
-    return { users: log.map((e) => ({ id: e.racerId, name: findRacerAnywhere(state, e.racerId)?.name ?? e.name, stand: e.stand, tier: e.tier, source: STAND_SOURCES[e.source] ?? e.source })) };
+    // Milestone 7c: Acts it grew into after (Echoes Act 1 → Echoes Act 2 …).
+    const acts = state.stands.acts ?? [];
+    return { users: log.map((e, i) => {
+      const next = log.slice(i + 1).find((x) => x.racerId === e.racerId);
+      const evolved = acts.filter((a) => a.racerId === e.racerId && a.stage >= e.stage && (!next || a.stage <= next.stage)).map((a) => `${a.to} (Stage ${a.stage})`);
+      return { id: e.racerId, name: findRacerAnywhere(state, e.racerId)?.name ?? e.name, stand: e.stand, tier: e.tier, source: STAND_SOURCES[e.source] ?? e.source, evolved };
+    }) };
   },
 });
 
@@ -155,6 +165,24 @@ registerFinaleSection({
   },
 });
 
+// Milestone 7c: the Requiem gets a card of its own, the biggest secret of the night.
+registerFinaleSection({
+  id: 'secrets-requiem', order: 106.5,
+  build: (state) => {
+    const qs = state.race.requiems ?? [];
+    const refused = state.race.requiemRefused ?? [];
+    if (!qs.length && !refused.length) return null;
+    return {
+      holders: qs.map((q) => {
+        const r = findRacerAnywhere(state, q.id);
+        return { id: q.id, name: q.name, stand: q.stand, from: q.from, stage: q.stage, cheat: q.source === 'cheat', dead: r?.status === 'dead', flavor: STAND_FLAVOR(q.stand) };
+      }),
+      refused: refused.map((x) => `In Stage ${x.stage}, ${nameOf(state, x.id)} drove a Requiem Arrow at ${x.stand}. The Arrow refused.`),
+      crafted: (state.race.requiemArrows ?? []).map((x) => `In Stage ${x.stage}, ${nameOf(state, x.id)} combined a Stand Arrow and two Rokakaka into a Requiem Arrow.`),
+    };
+  },
+});
+
 registerFinaleSection({
   id: 'secrets-finale', order: 107,
   build: (state) => {
@@ -165,9 +193,6 @@ registerFinaleSection({
     if (boss) lines.push(`Going into the Final Stage, the Saint's Corpse chose ${boss.name}${boss.loveTrain ? ', with Love Train' : ''}${boss.joiner ? ', who secretly rode for Valentine' : ''}.`);
     const d4c = state.race.d4c;
     if (d4c) lines.push(`Dirty Deeds Done Dirt Cheap: going into the Final Stage, Funny Valentine brought ${d4c.name} back from another world to ride for him. ${d4c.stayed ? 'The President won, so they stayed in this world.' : 'When it was over, they faded back into death.'}`);
-    const rq = state.race.requiem;
-    if (rq) lines.push(`In Stage ${rq.stage}, ${rq.name} pierced ${rq.from} with a Stand Arrow and it became ${rq.stand}.`);
-    for (const x of state.race.requiemRefused ?? []) lines.push(`In Stage ${x.stage}, ${nameOf(state, x.id)} tried to pierce ${x.stand} with a Stand Arrow. The Arrow refused.`);
     if (e?.id === 'saint') lines.push(`${e.winnerName} held all nine parts of the Saint's Corpse at Trinity Church.`);
     if (fv?.beatenBy) lines.push(`${nameOf(state, fv.beatenBy)} beat Funny Valentine in the Final Stage. Dirty Deeds Done Dirt Cheap: the Valentine who came back was from another world.`);
     if (fv?.dead) lines.push(`The other Valentine was killed by ${fv.killers.map((id) => nameOf(state, id)).join(' and ')}. No world was left for him to run to.`);
@@ -219,7 +244,10 @@ export function storyFor(state, p) {
   if (touched.size) lines.push(`You held ${touched.size} corpse ${touched.size === 1 ? 'part' : 'parts'} during the race${holding.length ? `, and ended with ${holding.join(', ')}` : ', and ended with none'}.`);
   if (p.otherWorld) lines.push(`Funny Valentine brought you back from another world for the Final Stage. ${p.otherWorld.stayed ? 'He won, and you stayed in this world.' : 'When it ended, you faded back into death.'}`);
   else if (p.valentine?.joined) lines.push(`You joined Valentine in Stage ${p.valentine.stage}, and ${YOUR_OUTCOMES[p.valentine.outcome] ?? 'rode for him'}.`);
-  if (state.race.requiem?.id === p.id) lines.push(`You pierced ${state.race.requiem.from} and it became ${state.race.requiem.stand}.`);
+  for (const a of (state.stands.acts ?? []).filter((x) => x.racerId === p.id)) lines.push(`In Stage ${a.stage}, ${a.from} evolved into ${a.to}.`);
+  for (const x of (state.race.requiemArrows ?? []).filter((q) => q.id === p.id)) lines.push(`In Stage ${x.stage}, you combined a Stand Arrow and two Rokakaka into a Requiem Arrow.`);
+  for (const x of (state.race.requiemRefused ?? []).filter((q) => q.id === p.id)) lines.push(`In Stage ${x.stage}, the Requiem Arrow refused you.`);
+  for (const q of (state.race.requiems ?? []).filter((x) => x.id === p.id)) lines.push(`In Stage ${q.stage}, ${q.source === 'cheat' ? 'the cheat menu gave you' : `you pierced ${q.from} and it became`} ${q.stand}. This was Requiem.`);
   lines.push(`Your Worthiness at the end: ${worthWord(worthinessLevel(p.worthiness))}.`);
   const e = state.race.ending;
   if (e && ENDINGS[e.id]) lines.push(`The race ended: ${ENDINGS[e.id].title}.`);

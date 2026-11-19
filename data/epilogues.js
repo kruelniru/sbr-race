@@ -32,6 +32,19 @@ export const CANON_EPILOGUES = {
 
 export const EPILOGUES = [
   {
+    // Milestone 7c: a Requiem no longer wins outright; anyone who held one gets this card.
+    id: 'requiem', title: 'A Requiem rode in the Steel Ball Run',
+    when: (c) => (c.state.race.requiems ?? []).length > 0,
+    text: (c) => (c.state.race.requiems ?? []).map((q) => {
+      const r = c.racers.find((x) => x.id === q.id);
+      const place = c.podium.findIndex((x) => x.id === q.id);
+      const how = !r ? '' : place === 0 ? ' and won the race'
+        : r.status === 'dead' ? ` until Stage ${r.death?.stage ?? '?'}, when even a Requiem was not enough`
+          : r.status === 'racing' ? ' all the way to New York' : '';
+      return `${q.name} rode with ${q.stand}${how}.`;
+    }).join(' ') + ' No one ever reached the end of it.',
+  },
+  {
     id: 'saint-smiles', title: 'The Saint Smiles',
     when: (c) => c.winner && (c.winner.kills ?? 0) === 0 && (c.winner.worthiness ?? 0) >= 75,
     text: (c) => `${c.winner.name} won the Steel Ball Run without taking a single life.`,

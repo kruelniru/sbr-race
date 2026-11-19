@@ -58,12 +58,19 @@ function play(seed, answer, opts) {
   return { state, prompts, results };
 }
 
-test('no theft from a human without a choice: theft events only hit AI racers and NPCs', () => {
-  const THEFT = new Set(['night-robbed', 'night-horse-stolen', 's2-water-thief', 's5-pickpocket']);
-  for (let g = 0; g < 8; g++) {
-    const { state, results } = play('theft' + g);
-    const humans = new Set(state.players.filter((p) => !p.isAI).map((p) => p.id));
-    for (const r of results) for (const e of r.events) if (THEFT.has(e.eventId)) assert.ok(!e.ids.some((id) => humans.has(id)), `${e.eventId}: ${e.text}`);
+test('no theft from a human without a choice: theft events only hit AI racers and NPCs', async () => {
+  const { default: E } = await import('../data/events/index.js');
+  const { roleFits, normalizeEvent } = await import('../js/engine/events.js');
+  const VICTIM = { 'night-robbed': 'a', 'night-horse-stolen': 'a', 's2-water-thief': 'b', 's5-pickpocket': 'a' };
+  const state = setup('theft', { players: 4, humans: 2 });
+  const [human, , ai] = [state.players[0], state.players[1], state.players[2]];
+  for (const [id, role] of Object.entries(VICTIM)) {
+    const e = normalizeEvent(E.find((x) => x.id === id));
+    assert.ok(e, id);
+    const spec = e.cast[role];
+    assert.equal(typeof spec === 'object' && spec.notHuman, true, `${id}: the victim (${role}) is never a human`);
+    assert.equal(roleFits(ctxOf(state), e, role, human), false);
+    if (!spec.hasHorse || ai.mount === 'horse') assert.equal(roleFits(ctxOf(state), e, role, ai), true, `${id}: an AI racer can be robbed`);
   }
 });
 

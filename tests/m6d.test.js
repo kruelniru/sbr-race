@@ -11,7 +11,8 @@ import { killRacer } from '../js/engine/racers.js';
 import { giveStand } from '../js/engine/stands.js';
 import { addItem } from '../js/engine/items.js';
 import { openSubEvents, closeChoices, answerPrompt, openStagePlans, needsStagePlans } from '../js/engine/choices.js';
-import { requiemReady } from '../js/engine/secret-endings.js';
+import { requiemReady, craftReady, pierceStand, requiemChance } from '../js/engine/secret-endings.js';
+import { requiemFor } from '../data/stands.js';
 import { applyCheat } from '../js/engine/cheats.js';
 import { buildFinale } from '../js/engine/finale.js';
 import { buildGameLog } from '../js/engine/game-log.js';
@@ -20,8 +21,9 @@ import { resolveFight } from '../js/engine/fights.js';
 import { readFileSync, readdirSync } from 'node:fs';
 import { storyFor } from '../js/engine/secrets.js';
 
-// These tests force the Arrow to accept; "the Arrow chooses" has its own test below.
-RULES.requiem.success = 1;
+// The Arrow's odds (milestone 7c: by Worthiness), forced for a test.
+const SUCCESS = RULES.requiem.success;
+const forceArrow = (p) => { RULES.requiem.success = [[0, p], [100, p]]; };
 
 function setup(seed, { players = 8, humans = 8 } = {}) {
   const state = createGameState(seed);
@@ -50,41 +52,55 @@ function finish(state, answer = () => null) {
   }
 }
 
-test('the Requiem Arrow: the hidden prompt appears only with the full recipe, and its holder wins outright', () => {
+test('the Requiem Arrow: combine an Arrow and 2 Rokakaka, then pierce; a Requiem no longer wins outright', () => {
   const state = setup('rq');
   const a = state.players[0];
   giveStand(ctx(state), a, POOL.find((s) => s.id === 'gold-experience'), 'arrow');
-  a.worthiness = 85;
+  a.worthiness = 20; // no Worthiness gate any more
   addItem(state, 'arrow', a, {});
   addItem(state, 'rokakaka', a, {});
-  assert.equal(requiemReady(state, a), false, 'one Rokakaka is not enough');
+  assert.equal(craftReady(state, a), false, 'one Rokakaka is not enough');
   addItem(state, 'rokakaka', a, {});
-  assert.equal(requiemReady(state, a), true);
-  a.worthiness = 79;
-  assert.equal(requiemReady(state, a), false, 'Worthiness 80+');
-  a.worthiness = 85;
+  assert.equal(craftReady(state, a), true);
+  assert.equal(requiemReady(state, a), false, 'the pieces alone are not a Requiem Arrow');
   const recipe = state.items.filter((i) => i.owner === a.id).map((i) => i.id);
-  finish(state, (p) => (p.special === 'requiem' ? 'pierce' : null));
-  assert.equal(a.stand.name, 'Gold Experience Requiem');
+  forceArrow(1);
+  try {
+    let craftPrompt = null;
+    finish(state, (p) => {
+      if (p.special === 'requiem-craft') { craftPrompt = p; return 'combine'; }
+      return p.special === 'requiem' ? 'pierce' : null;
+    });
+    assert.ok(craftPrompt?.secret, 'a secret prompt');
+    assert.equal(craftPrompt.text, 'Your Arrow and the fruit hum together. Combine them?');
+  } finally { RULES.requiem.success = SUCCESS; }
   assert.ok(!state.items.some((i) => recipe.includes(i.id)), 'all three consumed');
-  assert.equal(a.status, 'racing', 'nothing can kill its user');
-  assert.equal(state.race.ending.id, 'requiem');
+  assert.ok(state.race.requiemArrows.some((x) => x.id === a.id && x.stage === 1), 'combined at once');
+  assert.equal(state.race.requiems.find((x) => x.id === a.id).stand, 'Gold Experience Requiem');
+  assert.notEqual(state.race.ending.id, 'requiem', 'no Requiem ending');
   const f = buildFinale(state);
-  assert.equal(f.podium[0].id, a.id, 'wins outright');
-  assert.match(f.ending.text, /became Gold Experience Requiem/);
-  assert.ok(f.extras.find((x) => x.id === 'secrets-finale').data.lines.some((l) => /Requiem/.test(l)));
+  if (a.status === 'racing') assert.ok(f.epilogues.some((e) => e.id === 'requiem'), 'the Requiem epilogue');
+  const card = f.extras.find((x) => x.id === 'secrets-requiem').data;
+  assert.ok(card.holders.some((q) => q.id === a.id && q.stand === 'Gold Experience Requiem' && q.stage >= 1), 'its own card in the secrets reveal');
+  assert.ok(f.epilogues.some((e) => e.id === 'requiem') || a.status !== 'racing');
   assert.ok(storyFor(state, a).lines.some((l) => /Requiem/.test(l)));
-  assert.equal(buildGameLog(state).secret.requiem.stand, 'Gold Experience Requiem');
+  assert.ok(buildGameLog(state).secret.requiems.some((x) => x.stand === 'Gold Experience Requiem'));
 });
 
-test('"[Stand] Requiem" for other Legendary Stands', () => {
+test('every Stand has its own Requiem; Echoes and Tusk share one across Acts', () => {
   const state = setup('rq2');
   const a = state.players[0];
   applyCheat(state, { by: 'test', target: a.id, action: 'setup-requiem' });
-  assert.equal(requiemReady(state, a), true, 'the cheat sets up the whole recipe');
-  const before = a.stand.name;
-  finish(state, (p) => (p.special === 'requiem' ? 'pierce' : null));
-  assert.ok(a.stand.name === `${before} Requiem` || a.stand.name.endsWith('Requiem'));
+  assert.equal(requiemReady(state, a), true, 'the cheat gives a Requiem Arrow (and a Stand if needed)');
+  const before = a.stand.id;
+  forceArrow(1);
+  try {
+    assert.ok(pierceStand({ state, rng: new Rng('p'), stage: { id: 5 }, roundLabel: 'Day 1' }, a));
+  } finally { RULES.requiem.success = SUCCESS; }
+  assert.equal(a.stand.id, requiemFor(before).id);
+  assert.equal(requiemFor('echoes-act-1').id, requiemFor('echoes-act-3').id);
+  assert.equal(requiemFor('tusk-act-2').name, 'Tusk Act 4');
+  assert.equal(requiemFor('silver-chariot').name, 'Silver Chariot Requiem');
 });
 
 test('the recipe is never hinted at: no Requiem prompt without it, and no recipe words on any screen', () => {
@@ -155,24 +171,26 @@ test('the cheat menu warns when a Stand it gives was held by someone (an NPC too
   assert.ok(res.ok && /took it from them/.test(res.warning));
   assert.equal(a.stand.id, 'cream');
   assert.equal(npc.stand, null, 'never two holders');
-  assert.ok(RULES.requiem.minWorthiness === 80);
   resolveFight; // (imported for parity with other suites)
 });
 
-test('the Arrow chooses: when it refuses, everything is used up, the Stand stays, and only the phone knows', async () => {
-  const { pierceStand } = await import('../js/engine/secret-endings.js');
+test('the Arrow chooses: when it refuses, the Requiem Arrow is used up, the Stand stays, and only the phone knows', () => {
   const state = setup('refuse');
   const a = state.players[0];
   applyCheat(state, { by: 'test', target: a.id, action: 'setup-requiem' });
   const before = a.stand.name;
-  RULES.requiem.success = 0;
+  forceArrow(0);
   try {
     const got = pierceStand({ state, rng: new Rng('r'), stage: { id: 5 }, roundLabel: 'Day 1' }, a);
     assert.equal(got, null);
-    assert.equal(a.stand.name, before, 'the Stand stays as it was');
-    assert.equal(state.items.filter((i) => i.owner === a.id && ['arrow', 'rokakaka'].includes(i.kind)).length, 0, 'all three used up');
-    assert.ok(a.hints.some((h) => h.text === 'The Arrow turns in your hand and will not pierce. It has judged you.'));
-    assert.equal(state.corpse.announce.length, 0, 'nothing on stream');
-    assert.equal(state.race.requiem ?? null, null);
-  } finally { RULES.requiem.success = 1; }
+  } finally { RULES.requiem.success = SUCCESS; }
+  assert.equal(a.stand.name, before, 'the Stand stays as it was');
+  assert.equal(state.items.filter((i) => i.owner === a.id && i.kind === 'requiem-arrow').length, 0, 'used up');
+  assert.ok(a.hints.some((h) => h.text === 'The Arrow turns in your hand and will not pierce. It has judged you.'));
+  assert.equal(state.corpse.announce.length, 0, 'nothing on stream');
+  assert.equal((state.race.requiems ?? []).length, 0);
+  // The odds by Worthiness.
+  assert.equal(requiemChance(30), 0.15); assert.equal(requiemChance(10), 0.15);
+  assert.equal(requiemChance(50), 0.3); assert.equal(requiemChance(60), 0.4);
+  assert.equal(requiemChance(90), 0.65); assert.equal(requiemChance(100), 0.7);
 });

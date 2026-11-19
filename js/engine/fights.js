@@ -30,7 +30,7 @@ import { render } from './text.js';
 import { displayRoles } from './events.js';
 import { killRacer, addWorthiness, addAlert } from './racers.js';
 import { npcDies } from './field.js';
-import { standMods } from './stands.js';
+import { standMods, tryEvolve } from './stands.js';
 import { allyOf } from './alliances.js';
 import { hasHorse, takeHorse } from './horses.js';
 import { carried, takePart } from './corpse.js';
@@ -73,7 +73,7 @@ export function fightScore(ctx, r, bonus = 0, { masked = false } = {}) {
   let score = (r.tier === 'npc' ? F().npcSkill : r.skill) + bonus;
   const notes = [];
   // A masked rider still fights with their Stand, but the stream never sees it.
-  if (r.stand) { score += standMods(r).fightBonus ?? 0; if (!masked) notes.push(['stand', r]); }
+  if (r.stand) { score += (standMods(r).fightBonus ?? 0) + (r.stand.requiem ? RULES.requiem.fightBonus : 0); if (!masked) notes.push(['stand', r]); }
   if (r.canonId && F().spinUsers.includes(r.canonId)) { score += F().spin; notes.push(['spin', r]); }
   const ally = masked ? null : allyOf(ctx.state, r);
   if (ally && ally.status === 'racing' && !ctx.assigned?.has(ally.id) && !ctx.inPrompts?.has(ally.id) && ctx.rng.chance(F().allyChance)) {
@@ -100,6 +100,7 @@ export function npcDefend(rng, r) {
 export function mortal(ctx, who) {
   if (who.immortal) return false; // Funny Valentine
   if (deathProof(ctx, who)) return false; // safe stages for PCs, the dead's Blessing, Love Train
+  if (who.stand?.requiem && !ctx.rng.chance(RULES.requiem.fightKillLands)) return false; // a Requiem: the blow rarely lands
   return !(who.tier === 'canon' && RULES.canonImmuneStages.includes(ctx.stage?.id));
 }
 
@@ -276,6 +277,10 @@ export function resolveFight(ctx, spec) {
     }
     const rendered = render(text, shown);
     fightAlerts(x, y, outcome, { masked, took, horse: horseTaken, alertX: spec.alertX, alertY: spec.alertY });
+    // Stand Acts (milestone 7c): winning with your Stand, or surviving a killing blow.
+    if (X_WINS.includes(outcome) && !masked) tryEvolve(ctx, x, 'fight');
+    if (/^reversal/.test(outcome ?? '')) tryEvolve(ctx, y, 'fight');
+    if (outcome === 'kill-missed') tryEvolve(ctx, y, 'nearDeath');
     (ctx.state.race.fightLog ??= []).push({
       kind, outcome, stage: ctx.stage?.id,
       pvp: x.tier === 'pc' && y.tier === 'pc',
@@ -326,6 +331,7 @@ export function fightAlerts(x, y, outcome, { masked = false, took = [], horse = 
   if (sy && y.status !== 'dead') addAlert(y, 'calm', sy[0], sy[1]);
 }
 
+const X_WINS = ['kill', 'kill-missed', 'spare', 'part', 'searched', 'horse'];
 const list = (xs) => (xs.length < 2 ? xs[0] : `${xs.slice(0, -1).join(', ')} and ${xs.at(-1)}`);
 
 /** The winner takes one corpse part (or every one, `takeAll`) the loser carries. Returns how many. */

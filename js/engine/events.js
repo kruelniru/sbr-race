@@ -92,6 +92,7 @@ export function deathWeight(racer, hazard = false, stageId = null) {
   let w = (RULES.deathOdds[racer.tier] ?? 1) * (planOf(racer)?.deathMult ?? 1);
   if (racer.tier === 'pc' && stageId != null) w *= RULES.pcDeathByStage[stageId] ?? 1;
   if (hazard) w *= standMods(racer)?.hazardDeath ?? 1;
+  if (racer.stand?.requiem) w *= RULES.requiem.deathMult; // milestone 7c: much harder to kill, not immortal
   return w;
 }
 

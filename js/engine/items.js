@@ -12,6 +12,8 @@ export const ITEM_KINDS = {
   rokakaka: { label: 'Rokakaka fruit', blurb: 'Eat it and your Stand leaves you, for good.', needs: 'stand' },
   // A corpse part: usable only while hidden ("Hold it": it merges with you, maybe a Stand, maybe rejection).
   part: { label: 'Corpse part', blurb: "A part of the Saint's Corpse. Agents hunt whoever carries one.", needs: 'hidden' },
+  // Milestone 7c (secret): a Stand Arrow that drank two Rokakaka. It has no button: its prompt finds you.
+  'requiem-arrow': { label: 'Requiem Arrow', blurb: 'A strange Arrow, warm to the touch. It hums when your Stand is near.', needs: 'never' },
 };
 
 export function addItem(state, kind, owner, found) {

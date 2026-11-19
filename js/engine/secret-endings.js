@@ -11,20 +11,21 @@
 //        the joiners' bonus); otherwise they fade back into death at the end.
 //   The Saint Walks Again: one racer still racing holds all 9 parts at the
 //        final Finish Line. They win outright.
-//   The Requiem Arrow: a Stand Arrow and 2 Rokakaka in Items at once, a
-//        Legendary Stand and Worthiness 80+: a hidden "Pierce your Stand"
-//        prompt appears. It consumes all three and evolves the Stand into a
-//        Requiem (nothing can kill its user). Reaching New York with it wins outright.
+//   The Requiem Arrow (milestone 7c): anyone holding a Stand Arrow and 2
+//        Rokakaka can combine them into a Requiem Arrow (a secret prompt for
+//        people). Only a human PC with a Stand can pierce with it; the Arrow
+//        chooses by Worthiness. Success turns the Stand into its Requiem form:
+//        the strongest power in the game, but no longer an outright win.
 //
 // state.race.d4c = { id, name, from: { cause, stage, by }, stage } | null
-// state.race.requiem = { id, name, stand, from, stage } | null
+// state.race.requiems = [{ id, name, stand, from, stage, worthiness, chance }]; requiemArrows, requiemRefused
 
 import RULES from '../../data/rules.js';
-import { REQUIEM_STANDS, STAND_BY_ID } from '../../data/stands.js';
+import { requiemFor, baseStandId } from '../../data/stands.js';
 import { readyPlayers } from './state.js';
-import { namedRacers, addHint, findRacerAnywhere } from './racers.js';
+import { namedRacers, addHint, addAlert, findRacerAnywhere } from './racers.js';
 import { giveStand, pickStand, removeStand } from './stands.js';
-import { itemsOf, removeItem } from './items.js';
+import { itemsOf, removeItem, addItem } from './items.js';
 import { carried, presidentParts, takePart } from './corpse.js';
 
 export const isOtherWorld = (r) => !!r?.otherWorld;
@@ -95,51 +96,104 @@ export function saintHolder(state) {
   return [...namedRacers(state), ...(state.field?.kept ?? [])].find((r) => r.status === 'racing' && !r.otherWorld && carried(state, r).length === total) ?? null;
 }
 
-// ------------------------------------------------------------ The Requiem Arrow
+// ------------------------------------------------------------ The Requiem Arrow (milestone 7c)
 
-/** The recipe (never shown anywhere in the game). */
-export function requiemReady(state, p) {
-  if (!p || p.status !== 'racing' || p.otherWorld || p.stand?.tier !== 'legendary' || p.stand.requiem) return false;
-  if ((p.worthiness ?? 0) < RULES.requiem.minWorthiness) return false;
-  const items = itemsOf(state, p.id);
-  return items.filter((i) => i.kind === 'arrow').length >= 1 && items.filter((i) => i.kind === 'rokakaka').length >= 2;
+const isHuman = (r) => r?.tier === 'pc' && !r.isAI;
+
+/** Holds a Stand Arrow and 2 Rokakaka at once (anyone can combine them). */
+export function craftReady(state, r) {
+  if (!r || r.status === 'dead') return false;
+  const items = itemsOf(state, r.id);
+  return items.some((i) => i.kind === 'arrow') && items.filter((i) => i.kind === 'rokakaka').length >= 2;
 }
 
-/** The Requiem version of a Stand: the canon ones, or "[Stand] Requiem". */
-export function requiemOf(stand) {
-  const known = REQUIEM_STANDS.find((s) => s.from === stand.id);
-  if (known) return known;
-  return { id: `${stand.id}-requiem`, name: `${stand.name} Requiem`, tier: 'legendary', requiem: true, from: stand.id, flavor: `${STAND_BY_ID[stand.id]?.flavor ?? ''} Now it answers to something beyond its user.`.trim() };
-}
-
-/** "Pierce your Stand": consume the Arrow and both Rokakaka; the Stand becomes a Requiem. */
-export function pierceStand(ctx, p) {
-  if (!requiemReady(ctx.state, p)) return null;
-  const items = itemsOf(ctx.state, p.id);
+/** Combine one Arrow and 2 Rokakaka into a Requiem Arrow. */
+export function craftRequiemArrow(ctx, r) {
+  if (!craftReady(ctx.state, r)) return null;
+  const items = itemsOf(ctx.state, r.id);
   removeItem(ctx.state, items.find((i) => i.kind === 'arrow').id);
   for (const it of items.filter((i) => i.kind === 'rokakaka').slice(0, 2)) removeItem(ctx.state, it.id);
-  // The Arrow chooses (milestone 7b): it may refuse. Everything is used up; nothing on stream.
-  if (!ctx.rng.chance(RULES.requiem.success)) {
-    (ctx.state.race.requiemRefused ??= []).push({ id: p.id, stage: ctx.stage.id, stand: p.stand.name });
+  const item = addItem(ctx.state, 'requiem-arrow', r, { stage: ctx.stage?.id ?? 0, round: ctx.roundLabel ?? '' });
+  (ctx.state.race.requiemArrows ??= []).push({ id: r.id, tier: r.tier, human: isHuman(r), ai: !!r.isAI, personality: r.personality ?? null, stage: ctx.stage?.id ?? 0 });
+  addHint(r, 'The Arrow drinks the fruit, and something in it wakes. It is a different Arrow now.', ctx);
+  return item;
+}
+
+/** Racers nobody controls combine the pieces on their own: AI PCs by personality, NPCs and canon racers always. */
+export function autoCraft(ctx) {
+  const owners = new Set((ctx.state.items ?? []).filter((i) => i.kind === 'arrow').map((i) => i.owner));
+  for (const id of owners) {
+    const r = findRacerAnywhere(ctx.state, id);
+    if (!r || isHuman(r) || !craftReady(ctx.state, r)) continue;
+    const p = r.tier === 'pc' ? RULES.requiem.aiCraft[r.personality] ?? 0.4 : 1;
+    if (ctx.rng.chance(p)) craftRequiemArrow(ctx, r);
+  }
+}
+
+/** "Pierce your Stand": only a human PC with a Stand (not already a Requiem) and a Requiem Arrow. */
+export function requiemReady(state, p) {
+  if (!isHuman(p) || p.status !== 'racing' || p.otherWorld || !p.stand || p.stand.requiem) return false;
+  return itemsOf(state, p.id).some((i) => i.kind === 'requiem-arrow');
+}
+
+/** The Arrow chooses: success by Worthiness (rules.requiem.success, interpolated). */
+export function requiemChance(worthiness = 50) {
+  const T = RULES.requiem.success;
+  const w = Math.max(0, Math.min(100, worthiness));
+  if (w <= T[0][0]) return T[0][1];
+  for (let i = 1; i < T.length; i++) {
+    const [w1, p1] = T[i];
+    const [w0, p0] = T[i - 1];
+    if (w <= w1) return p0 + ((p1 - p0) * (w - w0)) / (w1 - w0);
+  }
+  return T.at(-1)[1];
+}
+
+/** The Requiem form of a Stand (data/stands.js REQUIEMS). */
+export function requiemOf(stand) {
+  return requiemFor(stand.id);
+}
+
+export const REQUIEM_LINE = 'An Arrow has found its mark. Somewhere out there rides a Stand that no one will ever reach the end of.';
+
+/** Drive the Requiem Arrow into your Stand. It is used up either way. */
+export function pierceStand(ctx, p, { force = false } = {}) {
+  if (!requiemReady(ctx.state, p)) return null;
+  const arrow = itemsOf(ctx.state, p.id).find((i) => i.kind === 'requiem-arrow');
+  removeItem(ctx.state, arrow.id);
+  const old = p.stand;
+  const chance = requiemChance(p.worthiness);
+  const entry = { id: p.id, stage: ctx.stage.id, stand: old.name, worthiness: p.worthiness ?? 0, chance };
+  if (!force && !ctx.rng.chance(chance)) {
+    (ctx.state.race.requiemRefused ??= []).push(entry);
     addHint(p, 'The Arrow turns in your hand and will not pierce. It has judged you.', ctx);
+    addAlert(p, 'calm', 'The Arrow refused', 'The Arrow turns in your hand and will not pierce. It has judged you.');
     return null;
   }
+  return becomeRequiem(ctx, p, 'requiem', entry);
+}
+
+/** Turn this racer's Stand into its Requiem form (the Arrow, or the cheat menu). */
+export function becomeRequiem(ctx, p, source = 'requiem', entry = {}) {
   const old = p.stand;
-  const def = requiemOf(old);
+  const def = old && requiemOf(old);
+  if (!def) return null;
+  const base = baseStandId(old.id);
   removeStand(ctx.state, p);
   // The old Stand doesn't go back into the pool: it became this.
-  if (!ctx.state.stands.out.includes(old.id)) ctx.state.stands.out.push(old.id);
-  giveStand(ctx, p, def, 'requiem');
+  for (const id of [old.id, base]) if (!ctx.state.stands.out.includes(id)) ctx.state.stands.out.push(id);
+  ctx.state.stands.unlocked = ctx.state.stands.unlocked.filter((id) => id !== base);
+  giveStand(ctx, p, def, source);
   p.stand.requiem = true;
-  ctx.state.race.requiem = { id: p.id, name: p.name, stand: def.name, from: old.name, stage: ctx.stage.id };
-  addHint(p, `You drive the Arrow into ${old.name}. It screams, and becomes ${def.name}. Whatever is done to you now never arrives.`, ctx);
-  ctx.state.corpse?.announce.push('Somewhere on the trail, a Stand has become something else.');
+  p.requiem = { stage: ctx.stage.id, round: ctx.state.race.roundNo ?? 0, finishes: 0 };
+  const rec = { ...entry, id: p.id, name: p.name, stand: def.name, from: old.name, stage: ctx.stage.id, round: ctx.roundLabel ?? '', source };
+  (ctx.state.race.requiems ??= []).push(rec);
+  addHint(p, `You drive the Arrow into ${old.name}. It screams, and becomes ${def.name}.`, ctx);
+  addAlert(p, 'calm', 'This is Requiem', `${old.name} is gone. What stands in its place cannot be reached, and cannot be stopped.`);
+  ctx.state.corpse?.announce.push(REQUIEM_LINE);
   return def;
 }
 
-/** Racing with a Requiem Stand (checked at the final Finish Line). */
-export function requiemHolder(state) {
-  const id = state.race?.requiem?.id;
-  const r = id ? findRacerAnywhere(state, id) : null;
-  return r && r.status === 'racing' && r.stand?.requiem ? r : null;
-}
+/** Everyone who ever held a Requiem this game (state.race.requiems). */
+export const requiemHolders = (state) => (state.race?.requiems ?? []).map((q) => findRacerAnywhere(state, q.id)).filter(Boolean);
+

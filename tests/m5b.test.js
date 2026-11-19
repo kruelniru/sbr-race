@@ -228,7 +228,7 @@ test('joining Valentine: −30, an anonymous announcement, a Stand if Standless,
   a.worthiness = 50;
   joinValentine(ctxOf(state, 'j', 4), a);
   assert.ok(isJoiner(a));
-  assert.equal(a.worthiness, 20);
+  assert.equal(a.worthiness, 50 + RULES.worthiness.joinValentine);
   assert.equal(a.stand?.source, 'valentine');
   const lines = announcements(state);
   assert.deepEqual(lines.map((l) => l.text), [PART_LINES.darkSide]);
