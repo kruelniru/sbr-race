@@ -51,12 +51,13 @@ test('Runners never get horse wording about themselves (whole games full of Runn
 
 test("events a Runner can be the focus of never mention the focus's own horse", async () => {
   const { default: E } = await import('../data/events/index.js');
+  const { default: ALTS } = await import('../data/events/alts.js');
   for (const e of E) {
     const [k, c] = Object.entries(e.cast).find(([, x]) => (typeof x === 'string' ? x : x.is) === 'focus');
     const spec = typeof c === 'string' ? {} : c;
     if (spec.hasHorse || spec.mount === 'horse' || spec.canon) continue; // Riders (or a specific canon racer) only
     const own = new RegExp(`\\{${k}\\.(horse|steed)\\}|\\{${k}\\.their\\} (saddle|stirrup|horse|reins)|saddle-sore|\\{${k}\\} (gallops|spurs|rides double)`);
-    assert.doesNotMatch(e.text, own, `${e.id}: ${e.text}`);
+    for (const t of [e.text, ...(ALTS[e.id] ?? [])]) assert.doesNotMatch(t, own, `${e.id}: ${t}`);
   }
 });
 
@@ -95,7 +96,7 @@ test('ties: stage wins, then the Final Stage, then a PC; the podium says so', ()
   while (!state.race.over) runRound(state);
   const [x, y] = [state.players[0], state.canon[0]];
   for (const r of [...state.players, ...state.canon]) r.points = 0;
-  Object.assign(x, { status: 'racing', points: 900, stageWins: 1 });
+  Object.assign(x, { status: 'racing', points: 900, stageWins: 1, otherWorld: null }); // (not a D4C rider, who can't place)
   Object.assign(y, { status: 'racing', points: 900, stageWins: 3 });
   state.race.ending = { id: 'normal' }; // (a seed can end in a secret ending, which wins outright)
   const f = buildFinale(state);

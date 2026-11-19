@@ -254,3 +254,11 @@
 .confirm-card { background: var(--panel, #2a2119); border: 1px solid var(--gold, #d9a441); border-radius: 14px; padding: 20px 24px; max-width: 520px; font-size: 1.15rem; }
 .confirm-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 14px; }
 .tie-note { font-size: .7em; color: var(--muted, #b9a88f); font-weight: 400; }
+
+/* milestone 7d: Funny Valentine's badge. Early: the jovial patron, round and patriotic. Late: lean and menacing, a dark hexagon. */
+.avatar-fv { background: radial-gradient(circle at 35% 30%, #f6f1e4, #c9d6ee 45%, #3b5998); color: #8b1e2d; border: 3px solid #b22234; box-shadow: 0 0 0 2px #f6f1e4 inset; position: relative; z-index: 1; }
+.avatar-fv-late { background: linear-gradient(160deg, #5a1520, #0b0607 70%); color: #e8c56a; border: none; border-radius: 0; box-shadow: none;
+  clip-path: polygon(50% 0, 100% 22%, 100% 78%, 50% 100%, 0 78%, 0 22%); letter-spacing: .04em; }
+.event-faces .avatar-fv + .avatar { margin-left: 6px; }
+.name-president { color: #f6f1e4; text-decoration: underline wavy #b22234 1px; text-underline-offset: 4px; }
+.name-president-late { color: #e8a0a8; font-weight: 800; letter-spacing: .02em; }

@@ -244,6 +244,8 @@ export function storyFor(state, p) {
   if (touched.size) lines.push(`You held ${touched.size} corpse ${touched.size === 1 ? 'part' : 'parts'} during the race${holding.length ? `, and ended with ${holding.join(', ')}` : ', and ended with none'}.`);
   if (p.otherWorld) lines.push(`Funny Valentine brought you back from another world for the Final Stage. ${p.otherWorld.stayed ? 'He won, and you stayed in this world.' : 'When it ended, you faded back into death.'}`);
   else if (p.valentine?.joined) lines.push(`You joined Valentine in Stage ${p.valentine.stage}, and ${YOUR_OUTCOMES[p.valentine.outcome] ?? 'rode for him'}.`);
+  const TALK = { corpse: 'asked about the Corpse, and he told you where to look', more: 'asked for more, and he paid, and trusted you less', 'question-plans': 'questioned him, and he told you what he wanted', 'question-d4c': 'questioned him, and he hinted he could be in more than one place', 'question-displeased': 'questioned him, and he did not like it', swear: 'swore your loyalty' };
+  for (const t of (state.race.valentineTalks ?? []).filter((x) => x.id === p.id)) lines.push(`In Stage ${t.stage}, you had a word with the President: you ${TALK[t.outcome] ?? t.topic}.`);
   for (const a of (state.stands.acts ?? []).filter((x) => x.racerId === p.id)) lines.push(`In Stage ${a.stage}, ${a.from} evolved into ${a.to}.`);
   for (const x of (state.race.requiemArrows ?? []).filter((q) => q.id === p.id)) lines.push(`In Stage ${x.stage}, you combined a Stand Arrow and two Rokakaka into a Requiem Arrow.`);
   for (const x of (state.race.requiemRefused ?? []).filter((q) => q.id === p.id)) lines.push(`In Stage ${x.stage}, the Requiem Arrow refused you.`);

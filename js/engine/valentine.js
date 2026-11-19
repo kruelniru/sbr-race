@@ -74,7 +74,10 @@ export function log(ctx, entry) {
 
 /** They said yes. */
 export function joinValentine(ctx, p) {
-  p.valentine = { joined: true, stage: ctx.stage.id, errandStage: ctx.stage.id };
+  p.valentine = { joined: true, stage: ctx.stage.id, errandStage: ctx.stage.id, trust: 0 };
+  // Milestone 7d: 2–3 private talks with the President over the rest of the race.
+  const T = RULES.valentine.talk;
+  p.valentine.talks = { left: ctx.rng.int(T.count[0], T.count[1]), next: (ctx.state.race?.roundNo ?? 0) + 2 };
   addWorthiness(p, RULES.worthiness.joinValentine, ctx);
   ctx.state.corpse?.announce.push(PART_LINES.darkSide);
   let stand = null;
@@ -134,6 +137,12 @@ export function valentineEnding(state) {
     if (r.valentine.otherWorld) r.valentine.outcome = outcome; // (D4C: decides whether they stay)
     r.valentine.outcome = outcome;
     if (triggered) { r.points += V().endingBonus; r.valentine.bonus = V().endingBonus; }
+    // Milestone 7d: a joiner who swore loyalty stands at his right hand.
+    if (triggered && r.valentine.rightHand) {
+      r.points += V().talk.rightHandBonus;
+      r.valentine.bonus += V().talk.rightHandBonus;
+      addHint(r, `You stood at his right hand, as he promised. +${V().talk.rightHandBonus} more.`, ctx);
+    }
     addHint(r, {
       won: `The President holds the Corpse. As promised: +${V().endingBonus} points.`,
       lost: "The President's plan failed. You rode for the losing side.",

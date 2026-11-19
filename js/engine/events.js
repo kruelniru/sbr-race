@@ -3,6 +3,8 @@
 
 import RULES from '../../data/rules.js';
 import ALL_EVENTS from '../../data/events/index.js';
+import ALTS from '../../data/events/alts.js';
+import PRESIDENT from '../../data/events/president.js';
 import { EFFECTS, EFFECT_KEYS } from './effects.js';
 import { render, lintTemplate } from './text.js';
 import { namedRacers, addWorthiness } from './racers.js';
@@ -41,10 +43,14 @@ export function normalizeEvent(e) {
     cast,
     focusKey,
     minor: (e.tags ?? []).includes('minor'),
+    // Milestone 7d: alternative texts (same roles and effects), each capped per game (rules.lineCap).
+    texts: [e.text, ...(e.alts ?? ALTS[e.id] ?? [])],
   };
 }
 
 export const EVENTS = ALL_EVENTS.map(normalizeEvent);
+// Funny Valentine's scenes (milestone 7d): scheduled, never drawn as ordinary events.
+export const PRESIDENT_EVENTS = PRESIDENT.map(normalizeEvent);
 
 /** Content checks; returns a list of problems (empty = good). */
 export function lintEvents(events = EVENTS) {
@@ -60,7 +66,7 @@ export function lintEvents(events = EVENTS) {
     for (const [k, c] of Object.entries(e.cast)) {
       if (!ROLE_KINDS.includes(c.is)) problems.push(`${where}: role ${k} has unknown kind "${c.is}"`);
     }
-    for (const p of lintTemplate(e.text ?? '', Object.keys(e.cast))) problems.push(`${where}: ${p}`);
+    for (const [i, t] of (e.texts ?? [e.text]).entries()) for (const p of lintTemplate(t ?? '', Object.keys(e.cast))) problems.push(`${where}${i ? ` (alt ${i})` : ''}: ${p}`);
     for (const [k, eff] of Object.entries(e.effects)) {
       if (!e.cast[k]) problems.push(`${where}: effects for unknown role ${k}`);
       for (const key of Object.keys(eff)) if (!EFFECT_KEYS.includes(key)) problems.push(`${where}: unknown effect "${key}"`);
@@ -226,10 +232,10 @@ export function castRoles(ctx, e, focus) {
 /**
  * Give `focus` a main event. Returns the resolved line, or null if nothing fits.
  */
-export function runMainEvent(ctx, focus) {
+export function runMainEvent(ctx, focus, list = EVENTS) {
   const cap = RULES.maxUsesPerRound;
-  const fresh = (e) => (ctx.eventCounts[e.id] ?? 0) < (e.minor ? cap.minor : cap.full);
-  let candidates = EVENTS.filter((e) => fresh(e) && whenFits(e, ctx) && roleFits(ctx, e, e.focusKey, focus));
+  const fresh = (e) => (ctx.eventCounts[e.id] ?? 0) < (e.minor ? cap.minor : cap.full) && freeVariants(ctx.state, e).length > 0;
+  let candidates = list.filter((e) => fresh(e) && whenFits(e, ctx) && roleFits(ctx, e, e.focusKey, focus));
   for (let tries = 0; tries < 10 && candidates.length; tries++) {
     const e = ctx.rng.weighted(candidates, (ev) => eventWeight(ev, focus, ctx));
     if (!e) return null;
@@ -243,9 +249,22 @@ export function runMainEvent(ctx, focus) {
   return null;
 }
 
+/** Texts of this event still under the per-game cap (rules.lineCap). */
+export function freeVariants(state, e) {
+  const uses = state.race?.lineUses ?? {};
+  const texts = e.texts ?? [e.text];
+  return texts.map((t, i) => i).filter((i) => (uses[`${e.id}#${i}`] ?? 0) < RULES.lineCap);
+}
+
 function resolve(ctx, e, roles) {
+  // Milestone 7d: the least-used text of this event (ties at random), capped per game.
+  const free = freeVariants(ctx.state, e);
+  const uses = (ctx.state.race.lineUses ??= {});
+  const least = Math.min(...free.map((i) => uses[`${e.id}#${i}`] ?? 0));
+  const variant = ctx.rng.pick(free.filter((i) => (uses[`${e.id}#${i}`] ?? 0) === least)) ?? 0;
+  uses[`${e.id}#${variant}`] = (uses[`${e.id}#${variant}`] ?? 0) + 1;
   // Render before effects so the text describes the moment it happened.
-  const text = render(e.text, displayRoles(roles));
+  const text = render((e.texts ?? [e.text])[variant], displayRoles(roles));
   // A Stand named in a line is revealed on stream when this line is shown.
   for (const who of Object.values(roles)) if (who.stand && text.includes(who.stand.name)) who.stand.revealed = true;
   // Main Story: involves someone still in the race (PC, canon, or a breakout
@@ -285,8 +304,14 @@ function resolve(ctx, e, roles) {
   const minor = (e.minor || generic) && !death;
   // Named racers in the line, so screens can highlight them (NPCs stay plain).
   const names = Object.values(roles).filter((w) => w.tier !== 'npc').map((w) => ({ name: w.name, tier: w.tier }));
+  // Funny Valentine's scenes: his name and badge on the host (early design to Stage 6, late from Stage 7).
+  if (e.tags.includes('president')) {
+    const late = (ctx.stage?.id ?? 0) >= RULES.president.lateFrom;
+    names.push({ name: 'Funny Valentine', tier: late ? 'president-late' : 'president' });
+    return { eventId: e.id, variant, text, ids, names, faces: [late ? 'fv:late' : 'fv:early'], minor: false, death: false, tags: e.tags, side: false };
+  }
   return {
-    eventId: e.id, text, ids, names, minor, death, tags: e.tags,
+    eventId: e.id, variant, text, ids, names, minor, death, tags: e.tags,
     // Side Story: minor lines, retired racers, NPC-only. A named death is always Main Story.
     side: minor || (!inMain && !namedDeath),
   };

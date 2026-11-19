@@ -31,6 +31,10 @@ export default {
 
   // ---------------------------------------------------------------- events
   maxUsesPerRound: { full: 1, minor: 2 }, // stops the same line repeating in a round
+  // Funny Valentine's scenes on stream (milestone 7d, data/events/president.js): this many
+  // per band of stages each game; his look changes from Stage lateFrom.
+  president: { bands: { early: [1, 3], mid: [4, 6], late: [7, 9] }, perBand: [2, 3], lateFrom: 7 },
+  lineCap: 3, // milestone 7d: the same event line (one text of it) at most this often per game; data/events/alts.js adds alternatives
   canonEventChance: 0.4,   // a canon racer gets their own event this often
   retiredEventChance: 0.25,// a retired racer gets an event this often
   // How likely an event that would kill this tier is (weight multiplier).
@@ -316,6 +320,18 @@ export default {
     // Sim check: joiners' share of race wins over their share of PCs still racing
     // at the start of Stage 4 (offers only reach them), on 4,500 games.
     joinerWinLimit: 1.3,
+    // Milestone 7d: "A word with the President" (secret talks for joiners).
+    talk: {
+      count: [2, 3],            // talks over the rest of the race
+      gap: [2, 4],              // rounds between them (never two in a row)
+      corpseFindMult: 2,        // "the road to {place}": finds that stage
+      morePoints: 15,           // asking for more...
+      lessTrustErrands: 0.5,    // ...and he offers fewer errands (this share skipped) and turns cold
+      questionDispleased: 0.35, // questioning him: he may be displeased (−10 points, trust drops)
+      questionPoints: -10,
+      swearWorthiness: -5,      // swearing loyalty...
+      rightHandBonus: 30,       // ...and more if his side wins (on top of endingBonus)
+    },
   },
 
   // ---------------------------------------------------------------- the finale (milestone 6b)

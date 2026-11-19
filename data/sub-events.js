@@ -427,6 +427,14 @@ export const PALM = {
     back: "{a} turns back at the edge of the Devil's Palm.",
     missed: "{a} searches for the Devil's Palm all stage, but never finds it.",
   },
+  // Milestone 7d: more ways to walk out (the same lines whether or not a Stand came of it).
+  outAlts: [
+    "{a} walks into the Devil's Palm at noon. At sunset {a.they} walk{a:s} out again, and won't say what {a.they} saw.",
+    "{a} disappears into the shimmering air of the Devil's Palm and comes back hours later, dust to the eyebrows.",
+    "{a} steps into the Devil's Palm and out again before dark, staring at {a.their} own hands.",
+    "{a} is gone into the Devil's Palm half a day, and comes back out quiet.",
+    "{a} walks out of the Devil's Palm looking older than when {a.they} went in.",
+  ],
 };
 
 export const ARROW = {
@@ -508,6 +516,76 @@ export const VALENTINE_OFFER = {
     { id: 'join', label: 'Join Valentine', hint: 'Secret. Agents never attack you, help at every relay, a Stand if you have none, errands. Worthiness drops hard.', lean: L(0.05, 3, 0.4, 1, 3) },
     { id: 'refuse', label: 'Refuse', hint: 'He tips his hat and is gone', lean: L(5, 0.6, 3, 1.5, 0.8) },
   ],
+  // Milestone 7d: more pitches, so the offer doesn't repeat in a game (the least used is picked).
+  // Each has a Rider and a Runner version. Same prompt, same rewards.
+  pitches: [
+    {
+      text: 'A man in a dark hat rides beside you for a mile. "The President could use someone like you. Fresh horses at every relay, his agents off your back, and when he holds the Corpse, a share of the glory."',
+      runner: 'A man in a dark hat falls into step beside you for a mile. "The President could use someone like you. Water and a clear road at every relay, his agents off your back, and when he holds the Corpse, a share of the glory."',
+    },
+    {
+      text: 'A man in a dark hat is waiting by your horse when you wake. He doesn\'t introduce himself. "You\'re tired. You\'ve been hunted. The President can make both of those stop. All he asks is that you remember who your friends are."',
+      runner: 'A man in a dark hat is sitting by your camp when you wake. He doesn\'t introduce himself. "You\'re tired. You\'ve been hunted. The President can make both of those stop. All he asks is that you remember who your friends are."',
+    },
+    {
+      text: 'At a water stop, a man in a dark hat waters his horse next to yours and talks to the trough, not to you. "Fresh horses. No ambushes. A future in Washington. The President rewards loyalty, and he never forgets a name."',
+      runner: 'At a water stop, a man in a dark hat fills his canteen next to you and talks to the creek, not to you. "Clear roads. No ambushes. A future in Washington. The President rewards loyalty, and he never forgets a name."',
+    },
+    {
+      text: 'A folded note is pinned to your saddle, sealed with an eagle. A man in a dark hat watches from across the street until you\'ve read it: "The nation has need of you. Ride with us, and the road will be kind. Nod once."',
+      runner: 'A folded note is tucked into your pack, sealed with an eagle. A man in a dark hat watches from across the street until you\'ve read it: "The nation has need of you. Run with us, and the road will be kind. Nod once."',
+    },
+  ],
+  // Stage 6: the President makes the offer himself (milestone 7d).
+  inPerson: {
+    title: 'The President',
+    text: 'A private carriage stops beside you on the lake road, and the door opens. It is Funny Valentine himself, alone, smiling as if you were old friends. "I have watched you ride. I would rather have you beside me than in my way. Fresh horses, my men at your back instead of your throat, and a place in what comes after. What do you say?"',
+    runner: 'A private carriage stops beside you on the lake road, and the door opens. It is Funny Valentine himself, alone, smiling as if you were old friends. "I have watched you run. I would rather have you beside me than in my way. A clear road, my men at your back instead of your throat, and a place in what comes after. What do you say?"',
+  },
+};
+
+// Milestone 7d: a joiner's private conversations with the President (secret,
+// 2–3 over the rest of the race, never two in a row; js/engine/choices.js).
+// Warm and persuasive through Stage 6, cold and commanding from Stage 7 (or
+// once he trusts you less). Each talk offers three of the four topics.
+export const PRESIDENT_TALK = {
+  id: 'president-talk', title: 'A word with the President', secret: true,
+  openers: {
+    warm: [
+      'A carriage pulls up beside your camp after dark. Funny Valentine himself steps out, all warmth, and sits by your fire as if he had nowhere better to be. "Tell me how the road is treating you."',
+      'You are shown into a hotel suite. Funny Valentine pours you coffee himself. "My friends are few, and I like to know them. Ask me anything."',
+      'A man in a dark hat leads you to a private railway car. The President is waiting, jacket off, sleeves rolled. "Sit. We have a few minutes."',
+    ],
+    cold: [
+      'You are brought to him at night, under guard. Funny Valentine does not stand, and does not smile. "Speak. Quickly."',
+      'He meets you in an empty church, lean and still, the scar at his brow pale in the candlelight. "You have something to say to me?"',
+      'Two men in dark hats walk you to the President\'s carriage. He does not look up from his papers. "Well?"',
+    ],
+  },
+  topics: {
+    corpse: { label: "Ask about the Saint's Corpse", hint: 'He might let something slip', lean: L(1, 2, 2, 3, 3) },
+    more: { label: 'Ask for more', hint: 'A few points now. He may trust you less.', lean: L(0.3, 2, 0.5, 2, 4) },
+    question: { label: 'Question his motives', hint: 'Risky. He may tell you something, or he may not like it.', lean: L(3, 1, 0.5, 2, 1) },
+    swear: { label: 'Swear your loyalty', hint: 'Worthiness drops a little. He will remember it.', lean: L(0.1, 3, 1, 1, 1.5) },
+  },
+  replies: {
+    warm: {
+      corpse: 'He leans in, smiling, and lowers his voice. "Between friends: my people say something holy lies along the road to {place}. Keep your eyes open there."',
+      more: 'He laughs and presses a fold of banknotes into your hand. "Of course." But the laugh ends a moment too soon.',
+      questionOk: 'He considers you for a long moment, then answers plainly. "I want the Corpse in one place, in the right hands, so this nation never kneels to anyone again. Is that so terrible?"',
+      questionD4c: 'He smiles at something only he can see. "You would be surprised how many places a man can be at once, when his country needs him." He does not explain.',
+      questionBad: 'The smile stays, but his eyes cool. "Curiosity is a fine quality in a newspaperman." He changes the subject, and does not change it back.',
+      swear: 'He takes your hand in both of his. "Then you are more than a rider to me. When this is over, you will stand at my right hand." You feel something in you give way.',
+    },
+    cold: {
+      corpse: 'He doesn\'t look up. "Something lies near {place}. Find it before they do. That is what you are for."',
+      more: 'He slides an envelope across the table without looking at you. "There. Don\'t ask again."',
+      questionOk: '"My motives." He almost smiles. "Every holy thing in one pair of hands, and those hands mine. Everyone else will be grateful later, or they will not be here."',
+      questionD4c: '"Do you know how many of me there are?" He watches your face. "Neither does anyone else. Remember that, before you think about leaving."',
+      questionBad: 'He stands, and you realize how thin and how close he is. "You are not here to ask me questions." Two men walk you out.',
+      swear: '"Loyalty." He says it like a man weighing a coin. "Good. Stay close. When it is done, those who stood with me will be remembered." It does not sound like a kindness.',
+    },
+  },
 };
 
 export const ERRAND = {

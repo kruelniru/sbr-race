@@ -194,9 +194,11 @@ export function looseParts(state, roundNo) {
 }
 
 /** Weight for finding a part (the corpse chooses the worthy). */
-export function findWeight(r) {
+export function findWeight(r, stageId = null) {
   const F = C().find;
   let w = F.base + (r.worthiness ?? 50) * F.perWorthiness;
+  // Milestone 7d: the President let slip where a part might be (a joiner's talk).
+  if (stageId != null && r.valentine?.partTip === stageId) w *= RULES.valentine.talk.corpseFindMult;
   if (r.plan === 'corpse') w *= F.huntMult;
   if (r.status === 'retired') w *= F.retired;
   if (r.tier === 'canon') w *= F.canon * (F.canonSeekers[r.canonId] ?? 1);
@@ -211,7 +213,8 @@ export function findWeight(r) {
 export function pickFinder(state, rng) {
   if (!rng.chance(C().findChance)) return null;
   const racers = namedRacers(state).filter((r) => r.status !== 'dead');
-  const pool = [...racers.map((r) => ({ r, w: findWeight(r) })), { r: 'npc', w: C().find.npcField }];
+  const stageId = (state.race?.stageIdx ?? 0) + 1;
+  const pool = [...racers.map((r) => ({ r, w: findWeight(r, stageId) })), { r: 'npc', w: C().find.npcField }];
   return rng.weighted(pool, (x) => x.w)?.r ?? null;
 }
 

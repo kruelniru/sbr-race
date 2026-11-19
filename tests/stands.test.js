@@ -132,7 +132,7 @@ test('Arrow and Rokakaka prompts are secret, with Stand-dependent options; Rokak
     runRound(state);
   }
   assert.ok(arrows >= RULES.arrows.perGame[0] - 1 && arrows <= RULES.arrows.perGame[1] + (state.race.arrowsDue ?? []).filter((d) => d.fromDeath).length, `${arrows} Arrows`); // one may land after every PC is out; Arrows the dead dropped turn up again
-  assert.ok(rokas >= RULES.rokakaka.guaranteed && rokas <= RULES.rokakaka.guaranteed + 1 + 2, `${rokas} Rokakaka`); // 4–5 a game (plus any the dead dropped)
+  assert.ok(rokas >= RULES.rokakaka.guaranteed && rokas <= RULES.rokakaka.guaranteed + 1 + (state.race.rokakakaDue ?? []).filter((d) => d.fromDeath).length, `${rokas} Rokakaka`); // 4–5 a game (plus any the dead dropped)
 });
 
 test('Worthiness and Stands: the owner sees a bar level and their Stand; nobody else sees anything', () => {

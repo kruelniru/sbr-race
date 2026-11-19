@@ -92,6 +92,8 @@ export function buildGameLog(state) {
       d4c: race.d4c ? { ...race.d4c } : null,
       itemsFromTheDead: (race.itemLog ?? []).map((e) => ({ ...e, from: name(e.from), to: name(e.to) })),
       requiems: (race.requiems ?? []).map((x) => ({ ...x, id: name(x.id) })),
+      valentineTalks: (race.valentineTalks ?? []).map((x) => ({ ...x, id: name(x.id) })),
+      valentinePitches: (race.offerLog ?? []).map((x) => ({ ...x, id: name(x.id) })),
       requiemArrows: (race.requiemArrows ?? []).map((x) => ({ ...x, id: name(x.id) })),
       acts: (state.stands?.acts ?? []).map((x) => ({ ...x, racerId: undefined, who: name(x.racerId) })),
       requiemRefused: (race.requiemRefused ?? []).map((x) => ({ ...x, id: name(x.id) })),

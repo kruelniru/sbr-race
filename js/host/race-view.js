@@ -275,7 +275,7 @@ export function barPct(timer) {
 
 // ---------------------------------------------------------------- cards
 
-function renderCard(state, card) {
+export function renderCard(state, card) { // (exported for render checks)
   const sideLabel = card.side ? h('div', { class: 'side-label' }, 'Side stories') : null;
   switch (card.kind) {
     case 'title':
@@ -291,7 +291,7 @@ function renderCard(state, card) {
         sideLabel,
         h('ul', { class: 'event-list' }, card.lines.map((e, i) =>
           h('li', { class: 'event-line' + (e.death ? ' death' : '') + (e.announce ? ' announce' : ''), style: `animation-delay:${i * 0.35}s` },
-            h('div', { class: 'event-faces' }, e.ids.map((id) => face(state, id))),
+            h('div', { class: 'event-faces' }, [...(e.faces ?? []), ...e.ids].map((id) => face(state, id))),
             h('p', {}, highlightNames(e.text, e.names)),
           ))),
       );
@@ -460,6 +460,8 @@ function fieldReport(report) {
 }
 
 function face(state, id, size = 'md') {
+  // Funny Valentine (milestone 7d): his own badge, the early design to Stage 6 and the late one from Stage 7.
+  if (id === 'fv:early' || id === 'fv:late') return h('div', { class: `avatar avatar-${size} avatar-initials avatar-fv${id === 'fv:late' ? ' avatar-fv-late' : ''}`, title: 'Funny Valentine' }, 'FV');
   const r = findRacer(state, id) ?? [...(state.field?.packLeaders ?? []), ...(state.field?.kept ?? [])].find((n) => n.id === id);
   return r ? avatar(r.name ?? '?', r.picture, size) : null;
 }

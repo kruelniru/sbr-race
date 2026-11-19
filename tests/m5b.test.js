@@ -62,7 +62,10 @@ test('corpse parts: nine, one per stage, secret like Stands', () => {
   }
 });
 
-test('corpse parts: a find is a secret prompt; keep / hide / give', () => {
+test('corpse parts: a find is a secret prompt; keep / hide / give', (t) => {
+  const steal = RULES.corpse.steal.chance;
+  RULES.corpse.steal.chance = 0; // (nobody steals the part this same night)
+  t.after(() => { RULES.corpse.steal.chance = steal; });
   let found = null;
   for (let g = 0; g < 30 && !found; g++) {
     const state = setup('c2-' + g, { players: 6, humans: 6 });

@@ -29,7 +29,7 @@
 
 import RULES from '../../data/rules.js';
 import { SUB_EVENTS, GOOD_SUBS, RIVAL, PALM, ARROW, ROKAKAKA, ATTACKED, STRIKE, FIGHT_WIN, FIGHT_DEFEND, HORSE_TWO, ALLY_INVITE, TRADE,
-  FOUND_PART, STEAL_PART, AMBUSH, FUNNY_VALENTINE, VALENTINE_OFFER, ERRAND, ERRAND_TARGET,
+  FOUND_PART, STEAL_PART, AMBUSH, FUNNY_VALENTINE, VALENTINE_OFFER, ERRAND, ERRAND_TARGET, PRESIDENT_TALK,
   BRING_DOWN, VALENTINE_RIDE, VALENTINE_REMATCH, REQUIEM, REQUIEM_CRAFT, RIDE_AFTER } from '../../data/sub-events.js';
 import { requiemReady, pierceStand, d4cReturn, craftReady, craftRequiemArrow, autoCraft } from './secret-endings.js';
 import { EFFECTS } from './effects.js';
@@ -286,7 +286,7 @@ export function openSubEvents(state) {
     p.forceSub = null;
     busy.add(p.id);
     if (kind === 'palm') prompts.push(subPromptFor(ctx, PALM_SUB, p, roundNo, { a: p }));
-    else if (kind === 'offer') { p.valentineOffered = true; prompts.push(specialPrompt(rng, state, VALENTINE_OFFER, p, roundNo, { a: p.id }, p.mount === 'runner' ? VALENTINE_OFFER.textRunner : VALENTINE_OFFER.text)); }
+    else if (kind === 'offer') { p.valentineOffered = true; prompts.push(offerPrompt(rng, state, p, roundNo)); }
     else if (kind === 'fv') { p.facedValentine = true; prompts.push(specialPrompt(rng, state, FUNNY_VALENTINE, p, roundNo, { a: p.id }, FUNNY_VALENTINE.text)); }
     else if (kind === 'fight') {
       const npc = castNpc(ctx);
@@ -536,14 +536,25 @@ function corpsePrompts(state, rng, stage, roundNo, roundsLeft, type, busy, promp
   // The Valentine offer (Stages 4–6).
   for (const p of dueOffers(state, rng, roundNo, stage.id, free())) {
     busy.add(p.id);
-    prompts.push(specialPrompt(rng, state, VALENTINE_OFFER, p, roundNo, { a: p.id }, p.mount === 'runner' ? VALENTINE_OFFER.textRunner : VALENTINE_OFFER.text));
+    prompts.push(offerPrompt(rng, state, p, roundNo));
     logValentine({ state, stage }, { event: 'offered', id: p.id, personality: p.personality, worthiness: p.worthiness });
+  }
+
+  // A word with the President (milestone 7d): a joiner's secret talks, spread out.
+  for (const p of free().filter((x) => isJoiner(x) && !x.otherWorld && x.valentine.talks?.left > 0 && roundNo >= x.valentine.talks.next && !race.fv?.dead)) {
+    busy.add(p.id);
+    const T = RULES.valentine.talk;
+    p.valentine.talks.left--;
+    p.valentine.talks.next = roundNo + rng.int(T.gap[0], T.gap[1]);
+    prompts.push(presidentTalkPrompt(rng, state, p, roundNo, stage.id));
   }
 
   // Errands: once a stage after joining; the ambush itself is next round.
   for (const p of free().filter((x) => isJoiner(x) && x.valentine.errandStage !== stage.id && roundsLeft > 1)) {
     if (!(roundsLeft <= 2 || rng.chance(1 / (roundsLeft - 1)))) continue;
     p.valentine.errandStage = stage.id;
+    // He offers fewer errands to someone he trusts less (milestone 7d).
+    if ((p.valentine.trust ?? 0) < 0 && rng.chance(RULES.valentine.talk.lessTrustErrands)) continue;
     const targets = rivalTargets(state, p);
     if (!targets.length) continue;
     busy.add(p.id);
@@ -562,6 +573,77 @@ function corpsePrompts(state, rng, stage, roundNo, roundsLeft, type, busy, promp
 /** "If you win" options: no "take their horse" if they have none. */
 function winOptions(target, extra = [], list = FIGHT_WIN) {
   return [...extra, ...list.filter((o) => !o.needsHorse || hasHorse(target))];
+}
+
+/**
+ * Valentine's offer (milestone 7d): the least-used pitch this game (Runner
+ * wording for Runners); in Stage 6 the President makes it in person.
+ */
+function offerPrompt(rng, state, p, roundNo) {
+  const runner = p.mount === 'runner';
+  const O = VALENTINE_OFFER;
+  if (currentStage(state).id === 6) {
+    state.race.offerLog = [...(state.race.offerLog ?? []), { id: p.id, pitch: 'in-person', stage: 6 }];
+    return specialPrompt(rng, state, { ...O, title: O.inPerson.title }, p, roundNo, { a: p.id }, runner ? O.inPerson.runner : O.inPerson.text);
+  }
+  const uses = (state.race.pitchUses ??= O.pitches.map(() => 0));
+  const least = Math.min(...uses);
+  const i = rng.pick(uses.map((n, k) => k).filter((k) => uses[k] === least));
+  uses[i]++;
+  state.race.offerLog = [...(state.race.offerLog ?? []), { id: p.id, pitch: i, stage: currentStage(state).id }];
+  return specialPrompt(rng, state, O, p, roundNo, { a: p.id }, runner ? O.pitches[i].runner : O.pitches[i].text);
+}
+
+/** "A word with the President": three of the four topics (one oath per joiner), in his tone for the arc. */
+const talkTone = (p, stageId) => (stageId >= RULES.president.lateFrom || (p.valentine?.trust ?? 0) < 0 ? 'cold' : 'warm');
+function presidentTalkPrompt(rng, state, p, roundNo, stageId) {
+  const T = PRESIDENT_TALK;
+  const tone = talkTone(p, stageId);
+  let ids = Object.keys(T.topics).filter((k) => k !== 'swear' || !p.valentine.rightHand);
+  ids = rng.shuffle(ids).slice(0, 3);
+  const options = Object.keys(T.topics).filter((k) => ids.includes(k)).map((k) => ({ id: k, ...T.topics[k] }));
+  const pr = specialPrompt(rng, state, { ...T, options }, p, roundNo, { a: p.id }, rng.pick(T.openers[tone]));
+  pr.id = `${pr.id}-${p.valentine.talks.left}`;
+  pr.tone = tone;
+  return pr;
+}
+
+function resolvePresidentTalk(ctx, prompt) {
+  const p = findAnyRacer(ctx.state, prompt.roles.a);
+  if (!p || p.status === 'dead' || !p.valentine) return null;
+  const T = RULES.valentine.talk;
+  const R = PRESIDENT_TALK.replies[prompt.tone ?? 'warm'];
+  const topic = prompt.answer.optionId;
+  let reply = '';
+  let outcome = topic;
+  if (topic === 'corpse') {
+    const next = STAGES.find((s) => s.id === ctx.stage.id + 1);
+    p.valentine.partTip = next ? next.id : ctx.stage.id;
+    reply = R.corpse.replace('{place}', next ? next.to : 'Trinity Church');
+  } else if (topic === 'more') {
+    p.points += T.morePoints;
+    p.valentine.trust = (p.valentine.trust ?? 0) - 1;
+    reply = R.more;
+  } else if (topic === 'question') {
+    if (ctx.rng.chance(T.questionDispleased)) {
+      p.points += T.questionPoints;
+      p.valentine.trust = (p.valentine.trust ?? 0) - 1;
+      reply = R.questionBad;
+      outcome = 'question-displeased';
+    } else {
+      const d4c = ctx.rng.chance(0.5);
+      reply = d4c ? R.questionD4c : R.questionOk;
+      outcome = d4c ? 'question-d4c' : 'question-plans';
+    }
+  } else if (topic === 'swear') {
+    addWorthiness(p, T.swearWorthiness, ctx);
+    p.valentine.rightHand = true;
+    reply = R.swear;
+  }
+  addHint(p, reply, ctx);
+  addAlert(p, 'calm', 'The President', reply);
+  (ctx.state.race.valentineTalks ??= []).push({ id: p.id, stage: ctx.stage.id, tone: prompt.tone, topic, outcome });
+  return null; // secret: nothing on stream
 }
 
 /** A prompt with fixed options (horse-two, ally-invite, trade). */
@@ -804,6 +886,8 @@ export function resolveSubEvents(ctx, choice) {
   const lines = [...choice.notes, ...resolveItems(ctx)];
   // Racers in any prompt this round (an ally can't ride in from their own decision).
   ctx.inPrompts = new Set(choice.prompts.flatMap((x) => [x.playerId, ...Object.values(x.roles ?? {})]));
+  // ...nor from an errand that will ambush them later this round.
+  for (const e of ctx.state.race.errands ?? []) if (!e.done && (choice.errands ?? []).includes(e.id)) { ctx.inPrompts.add(e.to); ctx.inPrompts.add(e.from); }
   const done = new Set();
   for (const prompt of ctx.rng.shuffle([...choice.prompts])) {
     if (prompt.groupKey) continue; // the Final Stage's group fights resolve together, below
@@ -972,6 +1056,7 @@ function resolveSub(ctx, prompt, targetPrompt = null) {
   }
   if (prompt.special === STEAL_PART.id) return resolveSteal(ctx, prompt);
   if (prompt.special === AMBUSH.id) return resolveAgentAmbush(ctx, prompt);
+  if (prompt.special === PRESIDENT_TALK.id) return resolvePresidentTalk(ctx, prompt);
   if (prompt.special === RIDE_AFTER.id) return resolveRideAfter(ctx, prompt);
   if (prompt.special === FUNNY_VALENTINE.id) return resolveFunnyValentine(ctx, prompt);
   if (prompt.special === VALENTINE_OFFER.id) {
@@ -1201,7 +1286,13 @@ function resolvePalm(ctx, prompt) {
   }
   palmExit(ctx, a, outcome);
   // Same line whether they awakened a Stand or got nothing.
-  return lineFor(ctx, 'sub-palm:out', render(PALM.lines.out, d), { a });
+  // The least-used way out this game (milestone 7d).
+  const outs = [PALM.lines.out, ...PALM.outAlts];
+  const uses = (ctx.state.race.lineUses ??= {});
+  const least = Math.min(...outs.map((t, i) => uses[`sub-palm:out#${i}`] ?? 0));
+  const i = ctx.rng.pick(outs.map((t, k) => k).filter((k) => (uses[`sub-palm:out#${k}`] ?? 0) === least));
+  uses[`sub-palm:out#${i}`] = least + 1;
+  return lineFor(ctx, 'sub-palm:out', render(outs[i], d), { a });
 }
 
 /** Survive the piercing by Worthiness band (rules.arrows.survive), then a Stand from the Arrow odds. */

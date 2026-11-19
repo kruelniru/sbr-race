@@ -28,7 +28,7 @@ import { buildFinale } from './finale.js';
 import './finale-sections.js'; // registers milestone 4+ finale sections
 import { storyFor } from './secrets.js'; // registers the secrets reveal (milestone 6c)
 import { initField, fieldAttrition, fieldReportText } from './field.js';
-import { runMainEvent } from './events.js';
+import { runMainEvent, PRESIDENT_EVENTS } from './events.js';
 import { placeStage, standings } from './placement.js';
 import { prepareRound, resolveSubEvents } from './choices.js';
 import { initCorpse, processMerges, corpseFinishLine, announcements } from './corpse.js';
@@ -139,6 +139,12 @@ function scheduleStandEvents(state, rng) {
     const slots = roundsInStages(race.plan, Math.min(...def.awakens), Math.max(...def.awakens));
     race.awakenings.push({ standId: def.id, round: rng.pick(slots).round });
   }
+  // Funny Valentine's scenes (milestone 7d): 2–3 rounds in each band of stages.
+  race.presidentDue = [];
+  for (const [band, [s0, s1]] of Object.entries(RULES.president.bands)) {
+    const slots = rng.shuffle(roundsInStages(race.plan, s0, s1)).slice(0, rng.int(...RULES.president.perBand));
+    for (const sl of slots) race.presidentDue.push({ band, round: sl.round });
+  }
   // Johnny's Tusk evolves on schedule if he lives (milestone 7c).
   if (state.canon.some((c) => c.canonId === 'johnny')) {
     race.actsDue = RULES.acts.johnny.map((a) => ({ canonId: 'johnny', to: a.to, round: rng.pick(roundsInStages(race.plan, a.stages[0], a.stages[1])).round }));
@@ -176,6 +182,22 @@ function canonAwakenings(ctx) {
     if (racer.stand.id !== due.to && nextAct(racer)) evolveStand(ctx, racer, 'schedule');
   }
   return lines;
+}
+
+/** Funny Valentine on stream (flavor): a scene from his band of the arc, watched by one racer. */
+function presidentScene(ctx) {
+  const race = ctx.state.race;
+  const due = (race.presidentDue ?? []).find((d) => !d.done && d.round <= race.roundNo);
+  if (!due) return [];
+  due.done = true;
+  if (race.fv?.dead) return [];
+  const list = PRESIDENT_EVENTS.filter((e) => e.band === due.band && !(race.presidentSeen ?? []).includes(e.id));
+  const watchers = ctx.rng.shuffle(namedRacers(ctx.state).filter((r) => r.status === 'racing' && !ctx.assigned.has(r.id)));
+  for (const r of watchers.slice(0, 6)) {
+    const line = runMainEvent(ctx, r, list);
+    if (line) { (race.presidentSeen ??= []).push(line.eventId); return [line]; }
+  }
+  return [];
 }
 
 export function currentStage(state) {
@@ -229,6 +251,7 @@ export function runRound(state) {
   result.events.push(...resolveDeadVote(ctx));
   result.events.push(...resolveSubEvents(ctx, choice));
   result.events.push(...canonAwakenings(ctx));
+  result.events.push(...presidentScene(ctx));
   race.choice = null;
 
   // 2. Main events.
